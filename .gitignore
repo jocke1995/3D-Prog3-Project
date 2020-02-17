@@ -1,0 +1,13 @@
+*.obj
+*.tlog
+*.log
+*.idb
+*.pdb
+*.exe
+*.ilk
+*.db
+*.*~
+\.vs
+\.git
+*.opendb
+testbench-master/uml.png
