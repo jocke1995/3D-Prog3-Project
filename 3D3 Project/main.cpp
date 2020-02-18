@@ -7,9 +7,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Renderer* renderer = new Renderer();
     renderer->CreateWindow(hInstance, nCmdShow, 800, 600, false, L"Windowname", L"windowTitle");
     renderer->InitD3D12();
-
-    // Update and Draw
-    renderer->Run();   
+    
+    // Fill allocators etc...
+    renderer->Execute();   
 
     delete renderer;
     return 0;
