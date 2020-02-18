@@ -12,13 +12,13 @@ public:
 	void CreateWindow(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle);
 	void InitD3D12();
 
-	void Run();
+	void Execute();
 
 private:
-	Window * window;
+	Window * window = nullptr;
 
-	void Update();
-	void Draw();
+	ID3D12Device5* device5 = nullptr;
+	bool CreateDevice();
 };
 
 #endif

@@ -12,14 +12,14 @@
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
 #define SAFE_RELEASE(p)			\
 {								\
-	if (p)						\
+	if ((*p))					\
 	{							\
-		p->Release();			\
-		p = 0;					\
+		(*p)->Release();		\
+		(*p) = NULL;			\
 	}							\
 }
 
-// är detta ok?
+// TODO: Är detta ok?
 #ifdef CreateWindow
 #undef CreateWindow
 #endif
