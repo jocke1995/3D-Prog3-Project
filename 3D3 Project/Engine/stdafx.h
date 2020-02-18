@@ -4,7 +4,7 @@
 #endif
 
 #include <d3d12.h>
-#include <dxgi1_4.h>
+#include <dxgi1_6.h>
 #include <D3Dcompiler.h>
 #include <DirectXMath.h>
 #include "d3dx12.h"
@@ -18,3 +18,26 @@
 		p = 0;					\
 	}							\
 }
+
+// är detta ok?
+#ifdef CreateWindow
+#undef CreateWindow
+#endif
+
+union float4
+{
+	struct { float x; float y; float z; float w; };
+	struct { float r; float g; float b; float a; };
+};
+
+union float3
+{
+	struct { float x; float y; float z;};
+	struct { float r; float g; float b;};
+};
+
+union float2
+{
+	struct { float u; float v;};
+	struct { float x; float y;};
+};
