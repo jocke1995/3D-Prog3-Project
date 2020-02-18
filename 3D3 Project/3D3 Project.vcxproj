@@ -153,11 +153,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Renderer.cpp" />
+    <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Engine\d3dx12.h" />
+    <ClInclude Include="Engine\Renderer.h" />
+    <ClInclude Include="Engine\stdafx.h" />
+    <ClInclude Include="Engine\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
