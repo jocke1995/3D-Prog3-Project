@@ -8,6 +8,7 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 	delete this->window;
+	delete this->rootSignature;
 }
 
 void Renderer::CreateWindow(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle)
@@ -18,6 +19,8 @@ void Renderer::CreateWindow(HINSTANCE hInstance, int nCmdShow, int screenWidth, 
 void Renderer::InitD3D12()
 {
 	// Init DX stuff... device, swapchain etc..
+
+	// Create Device
 	if (!this->CreateDevice())
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
@@ -28,11 +31,15 @@ void Renderer::InitD3D12()
 	D3D12_COMMAND_QUEUE_DESC cqd = {};
 	device5->CreateCommandQueue(&cqd, IID_PPV_ARGS(&this->commandQueue));
 
+	// Create SwapChain
 	if (!this->CreateSwapChain())
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
 		OutputDebugStringA("Error: Failed to create SwapChain!");
 	}
+
+	// Create Rootsignature
+	this->rootSignature = new RootSignature(this->device5);
 }
 
 void Renderer::Execute()
@@ -156,9 +163,9 @@ bool Renderer::CreateSwapChain()
 		&swapChain1)))
 	{
 		swapChainCreated = true;
-		if (SUCCEEDED(swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain3))))
+		if (SUCCEEDED(swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain4))))
 		{
-			swapChain3->Release();
+			swapChain4->Release();
 		}
 	}
 
