@@ -156,12 +156,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Renderer.cpp" />
+    <ClCompile Include="Engine\RootSignature.cpp" />
     <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\d3dx12.h" />
     <ClInclude Include="Engine\Renderer.h" />
+    <ClInclude Include="Engine\RootSignature.h" />
     <ClInclude Include="Engine\stdafx.h" />
     <ClInclude Include="Engine\Window.h" />
   </ItemGroup>

@@ -1,7 +1,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "Window.h"	// Window has:  #include "stdafx.h"
+#include "Window.h"
+#include "RootSignature.h"
 
 #define NUM_SWAP_BUFFERS 2
 
@@ -27,8 +28,11 @@ private:
 	ID3D12CommandQueue* commandQueue = nullptr;
 
 	// Swapchain
-	IDXGISwapChain4* swapChain3 = nullptr;
+	IDXGISwapChain4* swapChain4 = nullptr;
 	bool CreateSwapChain();
+
+	// Rootsignature
+	RootSignature* rootSignature = nullptr;
 };
 
 #endif
