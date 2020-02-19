@@ -155,15 +155,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="Engine\ConstantBuffer.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
     <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="Engine\Camera.h" />
+    <ClInclude Include="Engine\ConstantBuffer.h" />
     <ClInclude Include="Engine\d3dx12.h" />
+    <ClInclude Include="Engine\Mesh.h" />
+    <ClInclude Include="Engine\Object.h" />
     <ClInclude Include="Engine\Renderer.h" />
     <ClInclude Include="Engine\stdafx.h" />
     <ClInclude Include="Engine\Window.h" />
+    <ClInclude Include="Engine\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
