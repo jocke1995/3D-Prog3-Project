@@ -26,6 +26,12 @@ private:
 
 	// CommandQueue
 	ID3D12CommandQueue* commandQueue = nullptr;
+	bool CreateCommandQueue();
+
+	// TEMPORARY, JUST TO GET IT TO WORK WITH 1 THREAD:
+	ID3D12CommandAllocator* commandAllocator = nullptr;
+	ID3D12GraphicsCommandList5* commandList5 = nullptr;
+	void CreateAllocatorAndListTemporary();
 
 	// Swapchain
 	IDXGISwapChain4* swapChain4 = nullptr;

@@ -28,8 +28,14 @@ void Renderer::InitD3D12()
 	}
 
 	// Create CommandQueue
-	D3D12_COMMAND_QUEUE_DESC cqd = {};
-	device5->CreateCommandQueue(&cqd, IID_PPV_ARGS(&this->commandQueue));
+	if (!this->CreateCommandQueue())
+	{
+		// TODO: Errorbox or no? Göra en klass för debugsträngar?
+		OutputDebugStringA("Error: Failed to create CommandQueue!");
+	}
+
+	// TEMP
+	this->CreateAllocatorAndListTemporary();
 
 	// Create SwapChain
 	if (!this->CreateSwapChain())
@@ -122,6 +128,35 @@ bool Renderer::CreateDevice()
 	SAFE_RELEASE(&factory);
 
 	return deviceCreated;
+}
+
+bool Renderer::CreateCommandQueue()
+{
+	bool commandQueueCreated = true;
+
+	D3D12_COMMAND_QUEUE_DESC cqd = {};
+	HRESULT hr = device5->CreateCommandQueue(&cqd, IID_PPV_ARGS(&this->commandQueue));
+
+	if (hr != S_OK)
+	{
+		commandQueueCreated = false;
+	}
+
+	return commandQueueCreated;
+}
+
+void Renderer::CreateAllocatorAndListTemporary()
+{
+	device5->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+
+	device5->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		commandAllocator,
+		nullptr,
+		IID_PPV_ARGS(&commandList5));
+
+	commandList5->Close();
 }
 
 bool Renderer::CreateSwapChain()
