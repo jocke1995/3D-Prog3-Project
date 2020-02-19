@@ -3,6 +3,8 @@
 
 #include "Window.h"	// Window has:  #include "stdafx.h"
 
+#define NUM_SWAP_BUFFERS 2
+
 class Renderer
 {
 public:
@@ -17,8 +19,16 @@ public:
 private:
 	Window * window = nullptr;
 
+	// Device
 	ID3D12Device5* device5 = nullptr;
 	bool CreateDevice();
+
+	// CommandQueue
+	ID3D12CommandQueue* commandQueue = nullptr;
+
+	// Swapchain
+	IDXGISwapChain4* swapChain3 = nullptr;
+	bool CreateSwapChain();
 };
 
 #endif

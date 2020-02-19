@@ -21,7 +21,17 @@ void Renderer::InitD3D12()
 	if (!this->CreateDevice())
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Not good");
+		OutputDebugStringA("Error: Failed to create Device!");
+	}
+
+	// Create CommandQueue
+	D3D12_COMMAND_QUEUE_DESC cqd = {};
+	device5->CreateCommandQueue(&cqd, IID_PPV_ARGS(&this->commandQueue));
+
+	if (!this->CreateSwapChain())
+	{
+		// TODO: Errorbox or no? Göra en klass för debugsträngar?
+		OutputDebugStringA("Error: Failed to create SwapChain!");
 	}
 }
 
@@ -105,4 +115,54 @@ bool Renderer::CreateDevice()
 	SAFE_RELEASE(&factory);
 
 	return deviceCreated;
+}
+
+bool Renderer::CreateSwapChain()
+{
+	bool swapChainCreated = false;
+
+	IDXGIFactory4* factory = nullptr;
+	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&factory));
+
+	if (hr != S_OK)
+	{
+		// TODO: Errorbox or no? Göra en klass för debugsträngar?
+		OutputDebugStringA("Error: Failed to create DXGIFactory!");
+		return false;
+	}
+
+	//Create descriptor
+	DXGI_SWAP_CHAIN_DESC1 scDesc = {};
+	scDesc.Width = 0;
+	scDesc.Height = 0;
+	scDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	scDesc.Stereo = FALSE;
+	scDesc.SampleDesc.Count = 1;
+	scDesc.SampleDesc.Quality = 0;
+	scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scDesc.BufferCount = NUM_SWAP_BUFFERS;
+	scDesc.Scaling = DXGI_SCALING_NONE;
+	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	scDesc.Flags = 0;
+	scDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+
+	IDXGISwapChain1* swapChain1 = nullptr;
+	if (SUCCEEDED(factory->CreateSwapChainForHwnd(
+		this->commandQueue,
+		*this->window->GetHwnd(),
+		&scDesc,
+		nullptr,
+		nullptr,
+		&swapChain1)))
+	{
+		swapChainCreated = true;
+		if (SUCCEEDED(swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain3))))
+		{
+			swapChain3->Release();
+		}
+	}
+
+	SAFE_RELEASE(&factory);
+
+	return swapChainCreated;
 }
