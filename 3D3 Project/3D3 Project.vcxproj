@@ -155,15 +155,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\PipelineState.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
+    <ClCompile Include="Engine\RenderTarget.cpp" />
+    <ClCompile Include="Engine\RenderTask.cpp" />
     <ClCompile Include="Engine\RootSignature.cpp" />
+    <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\d3dx12.h" />
+    <ClInclude Include="Engine\PipelineState.h" />
     <ClInclude Include="Engine\Renderer.h" />
+    <ClInclude Include="Engine\RenderTarget.h" />
+    <ClInclude Include="Engine\RenderTask.h" />
     <ClInclude Include="Engine\RootSignature.h" />
+    <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\stdafx.h" />
     <ClInclude Include="Engine\Window.h" />
   </ItemGroup>

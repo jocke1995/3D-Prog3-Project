@@ -3,6 +3,7 @@
 
 #include "Window.h"
 #include "RootSignature.h"
+#include "RenderTask.h"
 
 #define NUM_SWAP_BUFFERS 2
 
