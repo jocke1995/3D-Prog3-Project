@@ -10,7 +10,8 @@ public:
 	PipelineState();
 	~PipelineState();
 
-
+	void CreateShader(LPCTSTR fileName, LPCTSTR filePath, ShaderType type);
+	bool CreatePSO();
 private:
 	LPCTSTR name;
 	ID3D12PipelineState* PSO = nullptr;

@@ -40,6 +40,10 @@ private:
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;
+
+	// RenderTasks
+	// TODO: Create funktion här..? inparametrar?
+	std::vector<RenderTask*> renderTasks;
 };
 
 #endif
