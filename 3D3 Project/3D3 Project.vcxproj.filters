@@ -22,7 +22,7 @@
     <Filter Include="Engine\Source Files">
       <UniqueIdentifier>{5f11e721-38ed-4bf4-9221-2348103f7da7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders">
+    <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -49,6 +49,9 @@
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Shader.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\RenderTaskTest.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,13 +83,16 @@
     <ClInclude Include="Engine\Shader.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\RenderTaskTest.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\PixelShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="Engine\HLSL\PixelShader.hlsl">
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\VertexShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="Engine\HLSL\VertexShader.hlsl">
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -12,17 +12,27 @@ PipelineState::~PipelineState()
 		delete this->PS;
 }
 
-void PipelineState::CreateShader(LPCTSTR fileName, LPCTSTR filePath, ShaderType type)
+void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
 {
 	if (type == ShaderType::VS)
-		this->VS = new Shader(fileName, filePath, type);
+		this->VS = new Shader(fileName, type);
 	else if (type == ShaderType::PS)
-		this->VS = new Shader(fileName, filePath, type);
+		this->PS = new Shader(fileName, type);
 
 }
 
-// TODO: Hur ska man göra utan att hårdkoda detta? inparametrar..?
-bool PipelineState::CreatePSO()
+ID3D12PipelineState** PipelineState::GetPSO()
 {
-	return false;
+	return &this->PSO;
 }
+
+Shader* PipelineState::GetShader(ShaderType type)
+{
+	if (type == ShaderType::VS)
+		return this->VS;
+	else if (type == ShaderType::PS)
+		return this->PS;
+
+	return nullptr;
+}
+

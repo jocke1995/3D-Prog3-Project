@@ -159,6 +159,7 @@
     <ClCompile Include="Engine\Renderer.cpp" />
     <ClCompile Include="Engine\RenderTarget.cpp" />
     <ClCompile Include="Engine\RenderTask.cpp" />
+    <ClCompile Include="Engine\RenderTaskTest.cpp" />
     <ClCompile Include="Engine\RootSignature.cpp" />
     <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Window.cpp" />
@@ -170,13 +171,14 @@
     <ClInclude Include="Engine\Renderer.h" />
     <ClInclude Include="Engine\RenderTarget.h" />
     <ClInclude Include="Engine\RenderTask.h" />
+    <ClInclude Include="Engine\RenderTaskTest.h" />
     <ClInclude Include="Engine\RootSignature.h" />
     <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\stdafx.h" />
     <ClInclude Include="Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\PixelShader.hlsl">
+    <FxCompile Include="Engine\HLSL\PixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -184,7 +186,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="HLSL\VertexShader.hlsl">
+    <FxCompile Include="Engine\HLSL\VertexShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

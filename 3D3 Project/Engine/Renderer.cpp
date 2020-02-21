@@ -24,14 +24,14 @@ void Renderer::InitD3D12()
 	if (!this->CreateDevice())
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Error: Failed to create Device!");
+		OutputDebugStringA("Error: Failed to create Device!\n");
 	}
 
 	// Create CommandQueue
 	if (!this->CreateCommandQueue())
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Error: Failed to create CommandQueue!");
+		OutputDebugStringA("Error: Failed to create CommandQueue!\n");
 	}
 
 	// TEMP
@@ -41,11 +41,22 @@ void Renderer::InitD3D12()
 	if (!this->CreateSwapChain())
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Error: Failed to create SwapChain!");
+		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
 
 	// Create Rootsignature
 	this->rootSignature = new RootSignature(this->device5);
+}
+
+void Renderer::CreateRenderTask(RenderTask* renderTask)
+{
+	this->CreatePSO(renderTask);
+}
+
+// TODO: Temporärt, de mesta här ska ligga i en klass som ärver från RenderTask
+void Renderer::AddRenderTask(RenderTask* renderTask)
+{
+	this->renderTasks.push_back(renderTask);
 }
 
 void Renderer::Execute()
@@ -169,7 +180,7 @@ bool Renderer::CreateSwapChain()
 	if (hr != S_OK)
 	{
 		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Error: Failed to create DXGIFactory!");
+		OutputDebugStringA("Error: Failed to create DXGIFactory!\n");
 		return false;
 	}
 
@@ -208,3 +219,17 @@ bool Renderer::CreateSwapChain()
 
 	return swapChainCreated;
 }
+
+bool Renderer::CreatePSO(RenderTask* renderTask)
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsd = *renderTask->Getgpsd();
+	renderTask->Getgpsd()->pRootSignature = this->rootSignature->GetRootSig();
+	HRESULT hr = device5->CreateGraphicsPipelineState(renderTask->Getgpsd(), IID_PPV_ARGS(renderTask->GetPipelineState()->GetPSO()));
+	if (!SUCCEEDED(hr))
+	{
+		return false;
+	}
+
+	return true;
+}
+
