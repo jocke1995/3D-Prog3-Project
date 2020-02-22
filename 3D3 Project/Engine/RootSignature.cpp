@@ -1,11 +1,10 @@
 #include "RootSignature.h"
 
-RootSignature::RootSignature(ID3D12Device5* device5)
+RootSignature::RootSignature()
 {
-	if(!this->CreateRootSignature(device5))
+	if(!this->CreateRootSignatureStructure())
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Error: Failed to create RootSignature!");
+		OutputDebugStringA("Error: Something went wrong when creating RootSignature\n");
 	}
 }
 
@@ -14,15 +13,18 @@ RootSignature::~RootSignature()
 
 }
 
-ID3D12RootSignature* RootSignature::GetRootSig()
+ID3D12RootSignature** RootSignature::GetRootSig()
 {
-	return this->rootSig;
+	return &this->rootSig;
 }
 
-bool RootSignature::CreateRootSignature(ID3D12Device5* device5)
+ID3DBlob* RootSignature::GetBlob()
 {
-	bool rootSignatureCreated = true;
+	return this->sBlob;
+}
 
+bool RootSignature::CreateRootSignatureStructure()
+{
 	D3D12_ROOT_PARAMETER rootParam[1]{};
 
 	rootParam[RS::POSITION].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
@@ -35,7 +37,7 @@ bool RootSignature::CreateRootSignature(ID3D12Device5* device5)
 	rsDesc.pParameters = rootParam;
 	rsDesc.NumStaticSamplers = 0; // TODO: Create Static Sampler
 
-	// HUR MAN SKA SAMPLA FRÅN TEXTUR?
+	// HUR MAN SKA SAMPLA FRÅN TEXTUR: 
 	// D3D12_STATIC_SAMPLER_DESC ssd{};
 	// ssd.ShaderRegister = 0;
 	// ssd.Filter = D3D12_FILTER_ANISOTROPIC;
@@ -46,29 +48,16 @@ bool RootSignature::CreateRootSignature(ID3D12Device5* device5)
 	// ssd.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	// rsDesc.pStaticSamplers = &ssd;	// Vad händer här?
 
-	ID3DBlob* sBlob;
-
-	HRESULT result = D3D12SerializeRootSignature(
+	HRESULT hr = D3D12SerializeRootSignature(
 		&rsDesc,
 		D3D_ROOT_SIGNATURE_VERSION_1,
-		&sBlob,
+		&this->sBlob,
 		nullptr);
 
-	if (result != S_OK)
+	if (hr != S_OK)
 	{
-		rootSignatureCreated = false;
+		OutputDebugStringA("Error: Failed to Serialize RootSignature!\n");
+		return false;
 	}
-
-	result = device5->CreateRootSignature(
-		0,
-		sBlob->GetBufferPointer(),
-		sBlob->GetBufferSize(),
-		IID_PPV_ARGS(&rootSig));
-
-	if (result != S_OK)
-	{
-		rootSignatureCreated = false;
-	}
-
-	return rootSignatureCreated;
+	return true;
 }

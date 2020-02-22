@@ -12,14 +12,16 @@ enum RS
 class RootSignature
 {
 public:
-	RootSignature(ID3D12Device5 * device5);
+	RootSignature();
 	~RootSignature();
 
-	ID3D12RootSignature* GetRootSig();
+	ID3D12RootSignature** GetRootSig();
+	ID3DBlob* GetBlob();
 private:
 	// Rootsignature
 	ID3D12RootSignature* rootSig;
-	bool CreateRootSignature(ID3D12Device5* device5);
+	ID3DBlob* sBlob;
+	bool CreateRootSignatureStructure();
 };
 
 #endif

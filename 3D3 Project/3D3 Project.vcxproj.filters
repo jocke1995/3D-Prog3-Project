@@ -25,6 +25,9 @@
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\RenderTasks">
+      <UniqueIdentifier>{a5e3d336-3a5d-4d14-b602-f4d8412b751d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -52,7 +55,7 @@
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\RenderTaskTest.cpp">
-      <Filter>Engine\Source Files</Filter>
+      <Filter>Engine\RenderTasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,7 +87,7 @@
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\RenderTaskTest.h">
-      <Filter>Engine\Header Files</Filter>
+      <Filter>Engine\RenderTasks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

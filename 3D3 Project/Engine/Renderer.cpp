@@ -18,19 +18,15 @@ void Renderer::CreateWindow(HINSTANCE hInstance, int nCmdShow, int screenWidth, 
 
 void Renderer::InitD3D12()
 {
-	// Init DX stuff... device, swapchain etc..
-
 	// Create Device
 	if (!this->CreateDevice())
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
 		OutputDebugStringA("Error: Failed to create Device!\n");
 	}
 
 	// Create CommandQueue
 	if (!this->CreateCommandQueue())
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
 		OutputDebugStringA("Error: Failed to create CommandQueue!\n");
 	}
 
@@ -40,22 +36,19 @@ void Renderer::InitD3D12()
 	// Create SwapChain
 	if (!this->CreateSwapChain())
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
 
 	// Create Rootsignature
-	this->rootSignature = new RootSignature(this->device5);
+	if (!this->CreateRootSignature())
+	{
+		OutputDebugStringA("Error: Failed to create SwapChain!\n");
+	}
 }
 
-void Renderer::CreateRenderTask(RenderTask* renderTask)
-{
-	this->CreatePSO(renderTask);
-}
-
-// TODO: Temporärt, de mesta här ska ligga i en klass som ärver från RenderTask
 void Renderer::AddRenderTask(RenderTask* renderTask)
 {
+	this->CreatePSO(renderTask);
 	this->renderTasks.push_back(renderTask);
 }
 
@@ -220,10 +213,32 @@ bool Renderer::CreateSwapChain()
 	return swapChainCreated;
 }
 
+bool Renderer::CreateRootSignature()
+{
+	this->rootSignature = new RootSignature();
+
+	HRESULT hr = device5->CreateRootSignature(
+		0,
+		this->rootSignature->GetBlob()->GetBufferPointer(),
+		this->rootSignature->GetBlob()->GetBufferSize(),
+		IID_PPV_ARGS(this->rootSignature->GetRootSig()));
+
+	if (hr != S_OK)
+	{
+		OutputDebugStringA("Error: Failed to create RootSignature!\n");
+		return false;
+	}
+	return true;
+}
+
 bool Renderer::CreatePSO(RenderTask* renderTask)
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsd = *renderTask->Getgpsd();
-	renderTask->Getgpsd()->pRootSignature = this->rootSignature->GetRootSig();
+
+	// Set the rootSignature in the pipeline state object descriptor
+	renderTask->Getgpsd()->pRootSignature = *this->rootSignature->GetRootSig();
+
+	// Create pipelineStateObject
 	HRESULT hr = device5->CreateGraphicsPipelineState(renderTask->Getgpsd(), IID_PPV_ARGS(renderTask->GetPipelineState()->GetPSO()));
 	if (!SUCCEEDED(hr))
 	{

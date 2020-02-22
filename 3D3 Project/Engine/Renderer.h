@@ -16,7 +16,6 @@ public:
 	void CreateWindow(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle);
 	void InitD3D12();
 
-	void CreateRenderTask(RenderTask* renderTask);
 	void AddRenderTask(RenderTask * renderTask);
 
 	void Execute();
@@ -43,6 +42,7 @@ private:
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;
+	bool CreateRootSignature();
 
 	// RenderTasks
 	std::vector<RenderTask*> renderTasks;

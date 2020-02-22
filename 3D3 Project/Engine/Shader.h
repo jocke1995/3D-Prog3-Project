@@ -17,6 +17,7 @@ private:
 	ID3DBlob* blob;
 	LPCTSTR fileName;	// Ex: vertexShader1
 
+	// Ska ligga i assetloader senare
 	bool CompileShader(ShaderType type, LPCTSTR filePath);
 };
 

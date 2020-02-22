@@ -12,7 +12,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->InitD3D12();
 
     RenderTask* testTask = new RenderTaskTest();
-    renderer->CreateRenderTask(testTask);
     renderer->AddRenderTask(testTask);
     
     // Fill allocators etc...
