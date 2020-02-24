@@ -25,6 +25,11 @@ private:
 
 	std::vector<ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
 
+
+
+
+
+
 	bool CreateDevice();
 };
 

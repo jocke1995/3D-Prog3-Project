@@ -7,19 +7,18 @@
 class Object
 {
 public:
-    Object(ConstantBuffer* constantBuffer) { this->transform = Transform(constantBuffer); };
+    Object(ConstantBuffer* constantBuffer) { this->transform = new Transform(constantBuffer); };
     virtual ~Object();
 
-    Transform& GetTransform();
+    Transform* GetTransform();
 
     virtual void Init() = 0;
     virtual void Update() = 0;
 
 protected:
-    
     std::vector<Mesh*> meshes;
     // TODO: Material*
-    Transform transform;
+    Transform* transform;
     
 };
 

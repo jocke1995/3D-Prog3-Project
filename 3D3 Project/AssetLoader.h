@@ -35,10 +35,10 @@ private:
     AssetLoader(AssetLoader const&) = delete;
     void operator=(AssetLoader const&) = delete;
 
-    std::map<std::string, Mesh*> loadedMeshes;
-    std::map<std::string, Mesh*> loadedTextures;
-    std::map<std::string, Mesh*> loadedMaterials;
-    std::map<std::string, Mesh*> loadedShaders;
+    std::map<std::wstring, Mesh*> loadedMeshes;
+    std::map<std::wstring, Mesh*> loadedTextures;
+    std::map<std::wstring, Mesh*> loadedMaterials;
+    std::map<std::wstring, Mesh*> loadedShaders;
 };
 
 

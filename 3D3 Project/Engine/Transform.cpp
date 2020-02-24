@@ -12,11 +12,6 @@ Transform::Transform(ConstantBuffer* constantBuffer)
 	this->worldMatrix = XMMatrixIdentity();
 }
 
-Transform::Transform()
-{
-	constantBuffer = nullptr;
-}
-
 Transform::~Transform()
 {
 }

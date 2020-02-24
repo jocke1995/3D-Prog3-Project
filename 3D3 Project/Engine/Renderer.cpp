@@ -50,17 +50,17 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 		entrySize = sizeof(CB_PER_OBJECT); // 16 float
 	}
 
-	resourceDesc.Width = UINT64(size * entrySize);
+	resourceDesc.Width = size * entrySize;
 	resourceDesc.Height = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.MipLevels = 1;
 	resourceDesc.SampleDesc.Count = 1;
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	ConstantBuffer* CB = new ConstantBuffer(name, size, type);
+	ConstantBuffer* CB = new ConstantBuffer(name, size, entrySize);
 	this->constantBuffers.push_back(CB);
 
-	ID3D12Resource1*& constantBufferResource = CB->GetResource();
+	ID3D12Resource1* constantBufferResource = CB->GetResource();
 
 	device5->CreateCommittedResource(
 		&heapProperties,
