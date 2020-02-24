@@ -19,3 +19,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC* RenderTask::Getgpsd()
 {
 	return &this->gpsd;
 }
+
+void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
+{
+	this->renderTargets.push_back(renderTarget);
+}

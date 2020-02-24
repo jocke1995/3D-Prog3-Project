@@ -1,8 +1,5 @@
 #include "Engine/Renderer.h"
 
-// TODO: kolla upp hur vi ska göra med dessa includes senare
-#include "Engine/RenderTaskTest.h"
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -13,7 +10,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     RenderTask* testTask = new RenderTaskTest();
     renderer->AddRenderTask(testTask);
-    
+
+    testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
+
     // Fill allocators etc...
     renderer->Execute();   
 

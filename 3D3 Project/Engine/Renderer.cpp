@@ -7,6 +7,10 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	for (auto rts1 : this->renderTargetsHolder)
+		for (auto rts2 : rts1.second)
+			delete rts2;
+
 	delete this->window;
 	delete this->rootSignature;
 }
@@ -44,6 +48,12 @@ void Renderer::InitD3D12()
 	{
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
+
+	// Create RenderTasks (SPECIFIC FOR KIND OF GAME LATER ON)
+	if (!this->CreateRenderTarget(RenderTargetTypes::SWAPCHAIN))
+	{
+		OutputDebugStringA("Error: Failed to create RenderTarget!\n");
+	}
 }
 
 void Renderer::AddRenderTask(RenderTask* renderTask)
@@ -58,6 +68,11 @@ void Renderer::Execute()
 	{
 		// Här inne ska vi fylla commandolistorna senare
 	}
+}
+
+RenderTarget* Renderer::GetRenderTarget(RenderTargetTypes rtt, int index)
+{
+	return this->renderTargetsHolder[rtt].at(index);
 }
 
 // -----------------------  Private Functions  ----------------------- //
@@ -246,5 +261,61 @@ bool Renderer::CreatePSO(RenderTask* renderTask)
 	}
 
 	return true;
+}
+
+bool Renderer::CreateRenderTarget(RenderTargetTypes rtt)
+{
+	if (rtt == RenderTargetTypes::SWAPCHAIN)
+	{
+		RenderTarget* renderTarget = new RenderTarget();
+
+		// Fill out descriptor for the render target views
+		D3D12_DESCRIPTOR_HEAP_DESC dhd = {};
+		dhd.NumDescriptors = NUM_SWAP_BUFFERS;
+		dhd.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+
+		// Create descriptorHeap for the renderTarget
+		HRESULT hr = this->device5->CreateDescriptorHeap(&dhd, IID_PPV_ARGS(renderTarget->GetRTHeap()));
+		if (hr != S_OK)
+		{
+			OutputDebugStringA("Error: Failed to create DescriptorHeap For SwapChainRenderTarget!\n");
+			return false;
+		}
+
+		// Set the size of the descriptor
+		renderTarget->SetRTDescriptorSize(this->device5->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE cdh = (*renderTarget->GetRTHeap())->GetCPUDescriptorHandleForHeapStart();
+
+		// Connect the renderTargets to the swapchain, so that the swapchain can easily swap between these two renderTargets
+		for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
+		{
+			hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(renderTarget->GetRenderTarget(i)));
+			if (hr != S_OK)
+			{
+				OutputDebugStringA("Error: Failed to GetBuffer from RenderTarget to Swapchain!\n");
+				return false;
+			}
+
+			device5->CreateRenderTargetView(*renderTarget->GetRenderTarget(i), nullptr, cdh);
+			cdh.ptr += renderTarget->GetRTDescriptorSize();
+		}
+
+		renderTarget->CreateViewport();
+		renderTarget->CreateScissorRect();
+
+		this->renderTargetsHolder[rtt].push_back(renderTarget);
+		return true;
+	}
+	else if (rtt == RenderTargetTypes::RENDERTARGET)
+	{
+		//this->renderTargets.push_back(new DetachedRenderTarget());
+	}
+	else if (rtt == RenderTargetTypes::DEPTH)
+	{
+		//this->renderTargets.push_back(new DepthRenderTarget());
+	}
+
+	return false;
 }
 
