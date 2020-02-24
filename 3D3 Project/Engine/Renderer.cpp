@@ -50,7 +50,7 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 		entrySize = sizeof(CB_PER_OBJECT); // 16 float
 	}
 
-	resourceDesc.Width = size * entrySize;
+	resourceDesc.Width = UINT64(size * entrySize);
 	resourceDesc.Height = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.MipLevels = 1;
@@ -72,7 +72,7 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 	);
 
 	// TODO: Fix name
-	constantBufferResource->SetName(L"cb heap");
+	constantBufferResource->SetName(name.c_str());
 
 	return CB;
 }

@@ -2,6 +2,7 @@
 #include "AssetLoader.h"
 
 #include "Engine/Transform.h"
+#include "Engine/Cube.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
@@ -14,7 +15,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Testar CB
     ConstantBuffer* CB = renderer->CreateConstantBuffer(L"test", D3D12_HEAP_TYPE_UPLOAD, 10, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
 
-    Transform trans(CB);
+    Cube* c = new Cube(CB);
 
     //AssetLoader::Get().LoadMesh(L"hej");
 

@@ -23,7 +23,7 @@ private:
 
 	ID3D12Device5* device5 = nullptr;
 
-	std::vector<ConstantBuffer*> constantBuffers;
+	std::vector<ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
 
 	bool CreateDevice();
 };

@@ -12,6 +12,11 @@ Transform::Transform(ConstantBuffer* constantBuffer)
 	this->worldMatrix = XMMatrixIdentity();
 }
 
+Transform::Transform()
+{
+	constantBuffer = nullptr;
+}
+
 Transform::~Transform()
 {
 }
@@ -57,7 +62,8 @@ ConstantBuffer* Transform::GetConstantBuffer()
 
 void Transform::UpdateWorldMatrix()
 {
-	this->worldMatrix = this->position * this->rotation * this->scale;
+	// TODO:: Add "translationOffsetMatrix"?
+	this->worldMatrix = this->scale * this->rotation * this->position;
 
 	XMFLOAT4X4 data;
 	XMStoreFloat4x4(&data, this->worldMatrix);

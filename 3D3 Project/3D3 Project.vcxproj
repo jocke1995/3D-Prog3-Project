@@ -157,6 +157,8 @@
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Engine\ConstantBuffer.cpp" />
+    <ClCompile Include="Engine\Cube.cpp" />
+    <ClCompile Include="Engine\Object.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="Engine\Window.cpp" />
@@ -166,6 +168,7 @@
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Cube.h" />
     <ClInclude Include="Engine\d3dx12.h" />
     <ClInclude Include="Engine\Mesh.h" />
     <ClInclude Include="Engine\Object.h" />

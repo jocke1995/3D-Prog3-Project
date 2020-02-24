@@ -11,6 +11,7 @@ class Transform
 {
 public:
 	Transform(ConstantBuffer* constantBufferPosition);
+	Transform(); // Never use
 	~Transform();
 
 	void SetPosition(float x, float y, float z);
