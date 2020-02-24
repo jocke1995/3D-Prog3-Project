@@ -3,35 +3,42 @@
 
 #include "stdafx.h"
 
+#include "ConstantBuffer.h"
+
+using namespace DirectX;
+
 class Transform
 {
 public:
-	Transform();
+	Transform(ConstantBuffer* constantBufferPosition);
 	~Transform();
 
-
-	SetPos();
-	SetRot();
-	SetScale();
-
-	GetPos();
-	GetRot();
-	GetScale();
-	GetWorldMatrix();
-
-	ConstantBuffer& GetConstantBuffer();
-private:
+	void SetPosition(float x, float y, float z);
+	void SetPosition(XMFLOAT3 pos);
 	
-	Mat4 WorldMatrix;
-
-	ConstantBuffer& worldConstantBuffer;
-
-
-	UpdateWorldMatrix();
+	void SetRotation(XMFLOAT3 axis, float angle);
+	void RotateX(float angle);
+	void RotateY(float angle);
+	void RotateZ(float angle);
 
 
+	void SetScale(float x, float y, float z);
+	void SetScale(XMFLOAT3 scale);
 
-    
+
+	ConstantBuffer* GetConstantBuffer();
+private:
+	XMMATRIX position;
+	XMMATRIX rotation;
+	XMMATRIX scale;
+
+	XMMATRIX worldMatrix;
+
+	ConstantBuffer* constantBuffer;
+	void* constantBufferOffset;
+
+	void UpdateWorldMatrix();
+
 };
 
 #endif

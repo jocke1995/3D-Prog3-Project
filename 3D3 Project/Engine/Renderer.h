@@ -14,7 +14,7 @@ public:
 	void InitD3D12();
 
 	// TODO: Stefan vilka inparametrar är smart att ha med? Hela Heap Properties?
-	ConstantBuffer& CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE type, unsigned int width, unsigned int height, unsigned int depthOrArraySize);
+	ConstantBuffer* CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type);
 
 	void Execute();
 

@@ -1,6 +1,8 @@
 #include "Engine/Renderer.h"
 #include "AssetLoader.h"
 
+#include "Engine/Transform.h"
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -10,7 +12,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->InitD3D12();
     
     // Testar CB
-    ConstantBuffer& CB = renderer->CreateConstantBuffer(L"test", D3D12_HEAP_TYPE_UPLOAD, 10 * sizeof(char), 1, 1);
+    ConstantBuffer* CB = renderer->CreateConstantBuffer(L"test", D3D12_HEAP_TYPE_UPLOAD, 10, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+
+    Transform trans(CB);
 
     //AssetLoader::Get().LoadMesh(L"hej");
 

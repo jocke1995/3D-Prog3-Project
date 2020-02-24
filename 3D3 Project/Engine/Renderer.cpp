@@ -30,7 +30,7 @@ void Renderer::InitD3D12()
 	}
 }
 
-ConstantBuffer& Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE type, unsigned int width, unsigned int height, unsigned int depthOrArraySize)
+ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type)
 {
 	// TODO: Skapar heap properties efter vi har skapat heapen???????????????????
 	D3D12_HEAP_PROPERTIES heapProperties = {};
@@ -42,14 +42,22 @@ ConstantBuffer& Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Width = sizeof(float) * 4;
+
+	unsigned int entrySize;
+	switch (type)
+	{
+	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT:
+		entrySize = sizeof(CB_PER_OBJECT); // 16 float
+	}
+
+	resourceDesc.Width = size * entrySize;
 	resourceDesc.Height = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.MipLevels = 1;
 	resourceDesc.SampleDesc.Count = 1;
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	ConstantBuffer* CB = new ConstantBuffer(name);
+	ConstantBuffer* CB = new ConstantBuffer(name, size, type);
 	this->constantBuffers.push_back(CB);
 
 	ID3D12Resource1*& constantBufferResource = CB->GetResource();
@@ -66,7 +74,7 @@ ConstantBuffer& Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 	// TODO: Fix name
 	constantBufferResource->SetName(L"cb heap");
 
-	return *CB;
+	return CB;
 }
 
 void Renderer::Execute()

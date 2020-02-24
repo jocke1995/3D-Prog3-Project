@@ -158,6 +158,7 @@
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Engine\ConstantBuffer.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
+    <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
