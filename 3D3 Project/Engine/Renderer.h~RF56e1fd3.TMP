@@ -69,7 +69,6 @@ private:
 	ID3D12Fence1* fence = nullptr;
 	HANDLE eventHandle = nullptr;
 	UINT64 fenceValue = 0;
-	void TempCreateFence();
 	void WaitForGPU();
 };
 
