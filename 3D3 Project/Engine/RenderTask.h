@@ -13,17 +13,21 @@ public:
 	~RenderTask();
 
 	PipelineState* GetPipelineState();
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC* Getgpsd();
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC* GetGpsd();
 
 	void AddRenderTarget(RenderTarget* renderTarget);
+
+	virtual void Execute(ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList5* commandList5, ID3D12RootSignature* rootSig, int backBufferIndex) = 0;
 private:
 
-	PipelineState* pipelineState = nullptr;
+	
 	// All specific rendertasks needs to fill out the description of the PSO.
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsd = {};
 	virtual void SPECIFY_GRAPHICS_PIPELINE_STATE_DESC() = 0;
 
+protected:
 	std::vector<RenderTarget*> renderTargets;
+	PipelineState* pipelineState = nullptr;
 };
 
 #endif

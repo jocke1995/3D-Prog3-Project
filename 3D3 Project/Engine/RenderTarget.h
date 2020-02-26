@@ -23,8 +23,9 @@ public:
 private:
 
 	ID3D12DescriptorHeap* renderTargetsHeap = nullptr;
-	ID3D12Resource1* renderTargets[NUM_SWAP_BUFFERS] = {};
 	UINT renderTargetDescriptorSize = 0;
+
+	ID3D12Resource1* renderTargets[NUM_SWAP_BUFFERS] = {};
 
 	D3D12_VIEWPORT viewport = {};
 	D3D12_RECT scissorRect = {};

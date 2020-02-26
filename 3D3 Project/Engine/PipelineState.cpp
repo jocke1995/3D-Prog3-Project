@@ -10,6 +10,8 @@ PipelineState::~PipelineState()
 		delete this->VS;
 	if (this->PS != nullptr)
 		delete this->PS;
+
+	SAFE_RELEASE(&this->PSO);
 }
 
 void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)

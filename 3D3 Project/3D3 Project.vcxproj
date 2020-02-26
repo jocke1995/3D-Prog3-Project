@@ -162,8 +162,8 @@
     <ClCompile Include="Engine\RenderTaskTest.cpp" />
     <ClCompile Include="Engine\RootSignature.cpp" />
     <ClCompile Include="Engine\Shader.cpp" />
-    <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\d3dx12.h" />
@@ -175,7 +175,7 @@
     <ClInclude Include="Engine\RootSignature.h" />
     <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\stdafx.h" />
-    <ClInclude Include="Engine\Window.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\HLSL\PixelShader.hlsl">

@@ -6,6 +6,8 @@ RenderTarget::RenderTarget()
 
 RenderTarget::~RenderTarget()
 {
+	SAFE_RELEASE(&this->renderTargetsHeap);
+	SAFE_RELEASE(this->renderTargets);
 }
 
 void RenderTarget::SetRTDescriptorSize(UINT size)

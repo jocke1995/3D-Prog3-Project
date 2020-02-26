@@ -10,7 +10,8 @@ RootSignature::RootSignature()
 
 RootSignature::~RootSignature()
 {
-
+	SAFE_RELEASE(&this->rootSig);
+	SAFE_RELEASE(&this->sBlob);
 }
 
 ID3D12RootSignature** RootSignature::GetRootSig()

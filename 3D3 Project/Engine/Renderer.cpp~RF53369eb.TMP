@@ -7,11 +7,8 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	SAFE_RELEASE(&this->commandQueue);
-	SAFE_RELEASE(&this->commandList5);
-	SAFE_RELEASE(&this->commandAllocator);
-
-
+	SAFE_RELEASE(&this->device5);
+	SAFE_RELEASE(&this->device5);
 	SAFE_RELEASE(&this->device5);
 
 	SAFE_RELEASE(&this->device5);
@@ -40,7 +37,6 @@ void Renderer::InitD3D12(HWND *hwnd)
 
 	// TEMP
 	this->CreateAllocatorAndListTemporary();
-	this->TempCreateFence();
 
 	// Create SwapChain
 	if (!this->CreateSwapChain(hwnd))
@@ -69,18 +65,12 @@ void Renderer::AddRenderTask(RenderTask* renderTask)
 
 void Renderer::Execute()
 {
-	int backBufferIndex = this->swapChain4->GetCurrentBackBufferIndex();
 	for (auto tasks : this->renderTasks)
 	{
-		tasks->Execute(this->commandAllocator, this->commandList5, *this->rootSignature->GetRootSig(), backBufferIndex);
+		tasks->Execute(this->commandAllocator, this->commandList5, *this->rootSignature->GetRootSig());
 	}
 
-	ID3D12CommandList* listsToExecute[] = { this->commandList5 };
-	this->commandQueue->ExecuteCommandLists(ARRAYSIZE(listsToExecute), listsToExecute);
-
-	WaitForGPU();
-
-	this->swapChain4->Present(0, 0);
+	// this->commandQueue->ExecuteCommandLists();
 }
 
 RenderTarget* Renderer::GetRenderTarget(RenderTargetTypes rtt, int index)
@@ -330,29 +320,5 @@ bool Renderer::CreateRenderTarget(RenderTargetTypes rtt)
 	}
 
 	return false;
-}
-
-void Renderer::TempCreateFence()
-{
-	device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-
-	fenceValue = 1;
-
-	// Event handle to use for GPU synchronization
-	eventHandle = CreateEvent(0, false, false, 0);
-}
-
-void Renderer::WaitForGPU()
-{
-	const UINT64 oldFence = fenceValue;
-	commandQueue->Signal(fence, oldFence);
-	fenceValue++;
-
-	//Wait until command queue is done.
-	if (fence->GetCompletedValue() < oldFence)
-	{
-		fence->SetEventOnCompletion(oldFence, eventHandle);
-		WaitForSingleObject(eventHandle, INFINITE);
-	}
 }
 
