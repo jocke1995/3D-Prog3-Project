@@ -155,14 +155,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\PipelineState.cpp" />
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Engine\ConstantBuffer.cpp" />
     <ClCompile Include="Engine\Cube.cpp" />
     <ClCompile Include="Engine\Object.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
+    <ClCompile Include="Engine\RenderTarget.cpp" />
+    <ClCompile Include="Engine\RenderTask.cpp" />
+    <ClCompile Include="Engine\RenderTaskTest.cpp" />
+    <ClCompile Include="Engine\RootSignature.cpp" />
+    <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="Engine\Window.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />
@@ -170,12 +176,36 @@
     <ClInclude Include="Engine\ConstantBuffer.h" />
     <ClInclude Include="Engine\Cube.h" />
     <ClInclude Include="Engine\d3dx12.h" />
+    <ClInclude Include="Engine\PipelineState.h" />
     <ClInclude Include="Engine\Mesh.h" />
     <ClInclude Include="Engine\Object.h" />
     <ClInclude Include="Engine\Renderer.h" />
+    <ClInclude Include="Engine\RenderTarget.h" />
+    <ClInclude Include="Engine\RenderTask.h" />
+    <ClInclude Include="Engine\RenderTaskTest.h" />
+    <ClInclude Include="Engine\RootSignature.h" />
+    <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\stdafx.h" />
-    <ClInclude Include="Engine\Window.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="Engine\Transform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Engine\HLSL\PixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Engine\HLSL\VertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

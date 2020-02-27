@@ -22,6 +22,15 @@
     <Filter Include="Engine\Source Files">
       <UniqueIdentifier>{5f11e721-38ed-4bf4-9221-2348103f7da7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\RenderTasks">
+      <UniqueIdentifier>{a5e3d336-3a5d-4d14-b602-f4d8412b751d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\RenderTargets">
+      <UniqueIdentifier>{78c2a34f-6362-40f7-9764-654bb06d07c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,7 +39,25 @@
     <ClCompile Include="Engine\Renderer.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Window.cpp">
+    <ClCompile Include="Engine\RootSignature.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\PipelineState.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Shader.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\RenderTaskTest.cpp">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\RenderTarget.cpp">
+      <Filter>Engine\RenderTargets</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\RenderTask.cpp">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ConstantBuffer.cpp">
@@ -59,7 +86,25 @@
     <ClInclude Include="Engine\Renderer.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Window.h">
+    <ClInclude Include="Engine\RootSignature.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\PipelineState.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Shader.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\RenderTaskTest.h">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\RenderTarget.h">
+      <Filter>Engine\RenderTargets</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\RenderTask.h">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ConstantBuffer.h">
@@ -83,5 +128,13 @@
     <ClInclude Include="Engine\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Engine\HLSL\PixelShader.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\HLSL\VertexShader.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

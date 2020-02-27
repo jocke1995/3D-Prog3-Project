@@ -21,6 +21,8 @@
 	}							\
 }
 
+#define NUM_SWAP_BUFFERS 2
+
 // TODO: Är detta ok?
 #ifdef CreateWindow
 #undef CreateWindow

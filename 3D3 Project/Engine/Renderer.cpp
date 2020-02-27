@@ -7,26 +7,60 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	SAFE_RELEASE(&this->commandQueue);
+	SAFE_RELEASE(&this->commandList5);
+	SAFE_RELEASE(&this->commandAllocator);
 	for (ConstantBuffer* CB : constantBuffers)
 	{
 		delete CB;
 	}
 
-	delete this->window;
+	SAFE_RELEASE(&this->device5);
+
+	SAFE_RELEASE(&this->device5);
+
+
+	delete this->rootSignature;
+
+	for (auto rts1 : this->renderTargetsHolder)
+		for (auto rts2 : rts1.second)
+			delete rts2;
 }
 
-void Renderer::CreateWindow(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle)
+void Renderer::InitD3D12(HWND *hwnd)
 {
-	this->window = new Window(hInstance, nCmdShow, screenWidth, screenHeight, fullScreen, windowName, windowTitle);
-}
-
-void Renderer::InitD3D12()
-{
-	// Init DX stuff... device, swapchain etc..
+	// Create Device
 	if (!this->CreateDevice())
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
-		OutputDebugStringA("Not good");
+		OutputDebugStringA("Error: Failed to create Device!\n");
+	}
+
+	// Create CommandQueue
+	if (!this->CreateCommandQueue())
+	{
+		OutputDebugStringA("Error: Failed to create CommandQueue!\n");
+	}
+
+	// TEMP
+	this->CreateAllocatorAndListTemporary();
+	this->TempCreateFence();
+
+	// Create SwapChain
+	if (!this->CreateSwapChain(hwnd))
+	{
+		OutputDebugStringA("Error: Failed to create SwapChain!\n");
+	}
+
+	// Create Rootsignature
+	if (!this->CreateRootSignature())
+	{
+		OutputDebugStringA("Error: Failed to create SwapChain!\n");
+	}
+
+	// Create RenderTasks (SPECIFIC FOR KIND OF GAME LATER ON)
+	if (!this->CreateRenderTarget(RenderTargetTypes::SWAPCHAIN))
+	{
+		OutputDebugStringA("Error: Failed to create RenderTarget!\n");
 	}
 }
 
@@ -77,12 +111,31 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 	return CB;
 }
 
+void Renderer::AddRenderTask(RenderTask* renderTask)
+{
+	this->CreatePSO(renderTask);
+	this->renderTasks.push_back(renderTask);
+}
+
 void Renderer::Execute()
 {
-	while (!this->window->ExitWindow())
+	int backBufferIndex = this->swapChain4->GetCurrentBackBufferIndex();
+	for (auto tasks : this->renderTasks)
 	{
-		// Här inne ska vi fylla commandolistorna senare
+		tasks->Execute(this->commandAllocator, this->commandList5, *this->rootSignature->GetRootSig(), backBufferIndex);
 	}
+
+	ID3D12CommandList* listsToExecute[] = { this->commandList5 };
+	this->commandQueue->ExecuteCommandLists(ARRAYSIZE(listsToExecute), listsToExecute);
+
+	WaitForGPU();
+
+	this->swapChain4->Present(0, 0);
+}
+
+RenderTarget* Renderer::GetRenderTarget(RenderTargetTypes rtt, int index)
+{
+	return this->renderTargetsHolder[rtt].at(index);
 }
 
 // -----------------------  Private Functions  ----------------------- //
@@ -102,7 +155,7 @@ bool Renderer::CreateDevice()
 	}
 	SafeRelease(debugController);
 #else
-	HMODULE mD3D12 = LoadLibrary(L"D3D12.dll"); // istället för GetModuleHandle
+	HMODULE mD3D12 = LoadLibrary(L"D3D12.dll"); // istï¿½llet fï¿½r GetModuleHandle
 
 	PFN_D3D12_GET_DEBUG_INTERFACE f = (PFN_D3D12_GET_DEBUG_INTERFACE)GetProcAddress(mD3D12, "D3D12GetDebugInterface");
 	if (SUCCEEDED(f(IID_PPV_ARGS(&debugController))))
@@ -158,3 +211,198 @@ bool Renderer::CreateDevice()
 
 	return deviceCreated;
 }
+
+bool Renderer::CreateCommandQueue()
+{
+	bool commandQueueCreated = true;
+
+	D3D12_COMMAND_QUEUE_DESC cqd = {};
+	HRESULT hr = device5->CreateCommandQueue(&cqd, IID_PPV_ARGS(&this->commandQueue));
+
+	if (hr != S_OK)
+	{
+		commandQueueCreated = false;
+	}
+
+	return commandQueueCreated;
+}
+
+void Renderer::CreateAllocatorAndListTemporary()
+{
+	device5->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+
+	device5->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		commandAllocator,
+		nullptr,
+		IID_PPV_ARGS(&commandList5));
+
+	commandList5->Close();
+}
+
+bool Renderer::CreateSwapChain(HWND *hwnd)
+{
+	bool swapChainCreated = false;
+
+	IDXGIFactory4* factory = nullptr;
+	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&factory));
+
+	if (hr != S_OK)
+	{
+		// TODO: Errorbox or no? Gï¿½ra en klass fï¿½r debugstrï¿½ngar?
+		OutputDebugStringA("Error: Failed to create DXGIFactory!\n");
+		return false;
+	}
+
+	//Create descriptor
+	DXGI_SWAP_CHAIN_DESC1 scDesc = {};
+	scDesc.Width = 0;
+	scDesc.Height = 0;
+	scDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	scDesc.Stereo = FALSE;
+	scDesc.SampleDesc.Count = 1;
+	scDesc.SampleDesc.Quality = 0;
+	scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scDesc.BufferCount = NUM_SWAP_BUFFERS;
+	scDesc.Scaling = DXGI_SCALING_NONE;
+	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	scDesc.Flags = 0;
+	scDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+
+	IDXGISwapChain1* swapChain1 = nullptr;
+	if (SUCCEEDED(factory->CreateSwapChainForHwnd(
+		this->commandQueue,
+		*hwnd,
+		&scDesc,
+		nullptr,
+		nullptr,
+		&swapChain1)))
+	{
+		swapChainCreated = true;
+		if (SUCCEEDED(swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain4))))
+		{
+			swapChain4->Release();
+		}
+	}
+
+	SAFE_RELEASE(&factory);
+
+	return swapChainCreated;
+}
+
+bool Renderer::CreateRootSignature()
+{
+	this->rootSignature = new RootSignature();
+
+	HRESULT hr = device5->CreateRootSignature(
+		0,
+		this->rootSignature->GetBlob()->GetBufferPointer(),
+		this->rootSignature->GetBlob()->GetBufferSize(),
+		IID_PPV_ARGS(this->rootSignature->GetRootSig()));
+
+	if (hr != S_OK)
+	{
+		OutputDebugStringA("Error: Failed to create RootSignature!\n");
+		return false;
+	}
+	return true;
+}
+
+bool Renderer::CreatePSO(RenderTask* renderTask)
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsd = *renderTask->GetGpsd();
+
+	// Set the rootSignature in the pipeline state object descriptor
+	renderTask->GetGpsd()->pRootSignature = *this->rootSignature->GetRootSig();
+
+	// Create pipelineStateObject
+	HRESULT hr = device5->CreateGraphicsPipelineState(renderTask->GetGpsd(), IID_PPV_ARGS(renderTask->GetPipelineState()->GetPSO()));
+	if (!SUCCEEDED(hr))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Renderer::CreateRenderTarget(RenderTargetTypes rtt)
+{
+	if (rtt == RenderTargetTypes::SWAPCHAIN)
+	{
+		RenderTarget* renderTarget = new RenderTarget();
+
+		// Fill out descriptor for the render target views
+		D3D12_DESCRIPTOR_HEAP_DESC dhd = {};
+		dhd.NumDescriptors = NUM_SWAP_BUFFERS;
+		dhd.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+
+		// Create descriptorHeap for the renderTarget
+		HRESULT hr = this->device5->CreateDescriptorHeap(&dhd, IID_PPV_ARGS(renderTarget->GetRTHeap()));
+		if (hr != S_OK)
+		{
+			OutputDebugStringA("Error: Failed to create DescriptorHeap For SwapChainRenderTarget!\n");
+			return false;
+		}
+
+		// Set the size of the descriptor
+		renderTarget->SetRTDescriptorSize(this->device5->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE cdh = (*renderTarget->GetRTHeap())->GetCPUDescriptorHandleForHeapStart();
+
+		// Connect the renderTargets to the swapchain, so that the swapchain can easily swap between these two renderTargets
+		for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
+		{
+			hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(renderTarget->GetRenderTarget(i)));
+			if (hr != S_OK)
+			{
+				OutputDebugStringA("Error: Failed to GetBuffer from RenderTarget to Swapchain!\n");
+				return false;
+			}
+
+			device5->CreateRenderTargetView(*renderTarget->GetRenderTarget(i), nullptr, cdh);
+			cdh.ptr += renderTarget->GetRTDescriptorSize();
+		}
+
+		renderTarget->CreateViewport();
+		renderTarget->CreateScissorRect();
+
+		this->renderTargetsHolder[rtt].push_back(renderTarget);
+		return true;
+	}
+	else if (rtt == RenderTargetTypes::RENDERTARGET)
+	{
+		//this->renderTargets.push_back(new DetachedRenderTarget());
+	}
+	else if (rtt == RenderTargetTypes::DEPTH)
+	{
+		//this->renderTargets.push_back(new DepthRenderTarget());
+	}
+
+	return false;
+}
+
+void Renderer::TempCreateFence()
+{
+	device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+
+	fenceValue = 1;
+
+	// Event handle to use for GPU synchronization
+	eventHandle = CreateEvent(0, false, false, 0);
+}
+
+void Renderer::WaitForGPU()
+{
+	const UINT64 oldFence = fenceValue;
+	commandQueue->Signal(fence, oldFence);
+	fenceValue++;
+
+	//Wait until command queue is done.
+	if (fence->GetCompletedValue() < oldFence)
+	{
+		fence->SetEventOnCompletion(oldFence, eventHandle);
+		WaitForSingleObject(eventHandle, INFINITE);
+	}
+}
+

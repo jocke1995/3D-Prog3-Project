@@ -15,7 +15,7 @@ ConstantBuffer::ConstantBuffer(std::wstring name, unsigned int size, unsigned in
 ConstantBuffer::~ConstantBuffer()
 {
 	// Make sure to not destory if still used on GPU
-	constantBufferResource->Release();
+	SAFE_RELEASE(&constantBufferResource);
 }
 
 bool ConstantBuffer::SetData(void* location, const void* data, size_t entrySize)
