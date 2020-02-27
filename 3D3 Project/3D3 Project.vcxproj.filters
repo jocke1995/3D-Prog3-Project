@@ -35,12 +35,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\PipelineState.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
@@ -59,9 +53,6 @@
     <ClCompile Include="Engine\RenderTaskTest.cpp">
       <Filter>Engine\RenderTasks</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\RenderTarget.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
@@ -79,6 +70,51 @@
     </ClCompile>
     <ClCompile Include="Engine\ConstantBuffer.cpp">
       <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssetLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DescriptorHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\PipelineState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTaskTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RootSignature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Transform.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,9 +151,6 @@
     <ClInclude Include="Engine\RenderTaskTest.h">
       <Filter>Engine\RenderTasks</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\RenderTarget.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
@@ -133,9 +166,24 @@
     <ClInclude Include="Engine\Cube.h">
       <Filter>Objects\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AssetLoader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
+    <ClInclude Include="src\AssetLoader.h" />
+    <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Engine\Camera.h" />
+    <ClInclude Include="src\Engine\ConstantBuffer.h" />
+    <ClInclude Include="src\Engine\Cube.h" />
+    <ClInclude Include="src\Engine\d3dx12.h" />
+    <ClInclude Include="src\Engine\DescriptorHeap.h" />
+    <ClInclude Include="src\Engine\Mesh.h" />
+    <ClInclude Include="src\Engine\Object.h" />
+    <ClInclude Include="src\Engine\PipelineState.h" />
+    <ClInclude Include="src\Engine\Renderer.h" />
+    <ClInclude Include="src\Engine\RenderTarget.h" />
+    <ClInclude Include="src\Engine\RenderTask.h" />
+    <ClInclude Include="src\Engine\RenderTaskTest.h" />
+    <ClInclude Include="src\Engine\RootSignature.h" />
+    <ClInclude Include="src\Engine\Shader.h" />
+    <ClInclude Include="src\Engine\stdafx.h" />
+    <ClInclude Include="src\Engine\Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\HLSL\PixelShader.hlsl">

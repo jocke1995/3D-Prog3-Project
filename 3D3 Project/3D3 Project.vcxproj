@@ -78,8 +78,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <SourcePath>$(SourcePath)</SourcePath>
-    <IncludePath>
-    </IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryWPath>$(LibraryWPath)</LibraryWPath>
+    <ExcludePath>$(ExcludePath)</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,8 +93,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <SourcePath>$(SourcePath)</SourcePath>
-    <IncludePath>
-    </IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryWPath>$(LibraryWPath)</LibraryWPath>
+    <ExcludePath>$(ExcludePath)</ExcludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -171,7 +179,6 @@
   <ItemGroup>
     <ClCompile Include="Engine\DescriptorHeap.cpp" />
     <ClCompile Include="Engine\PipelineState.cpp" />
-    <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Engine\ConstantBuffer.cpp" />
     <ClCompile Include="Engine\Cube.cpp" />
     <ClCompile Include="Engine\Object.cpp" />
@@ -182,11 +189,23 @@
     <ClCompile Include="Engine\RootSignature.cpp" />
     <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="src\AssetLoader.cpp" />
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Engine\Cube.cpp" />
+    <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
+    <ClCompile Include="src\Engine\Object.cpp" />
+    <ClCompile Include="src\Engine\PipelineState.cpp" />
+    <ClCompile Include="src\Engine\Renderer.cpp" />
+    <ClCompile Include="src\Engine\RenderTarget.cpp" />
+    <ClCompile Include="src\Engine\RenderTask.cpp" />
+    <ClCompile Include="src\Engine\RenderTaskTest.cpp" />
+    <ClCompile Include="src\Engine\RootSignature.cpp" />
+    <ClCompile Include="src\Engine\Shader.cpp" />
+    <ClCompile Include="src\Engine\Transform.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\ConstantBuffer.h" />
     <ClInclude Include="Engine\Cube.h" />
@@ -202,7 +221,24 @@
     <ClInclude Include="Engine\RootSignature.h" />
     <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\stdafx.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="src\AssetLoader.h" />
+    <ClInclude Include="src\Engine\Camera.h" />
+    <ClInclude Include="src\Engine\ConstantBuffer.h" />
+    <ClInclude Include="src\Engine\Cube.h" />
+    <ClInclude Include="src\Engine\d3dx12.h" />
+    <ClInclude Include="src\Engine\DescriptorHeap.h" />
+    <ClInclude Include="src\Engine\Mesh.h" />
+    <ClInclude Include="src\Engine\Object.h" />
+    <ClInclude Include="src\Engine\PipelineState.h" />
+    <ClInclude Include="src\Engine\Renderer.h" />
+    <ClInclude Include="src\Engine\RenderTarget.h" />
+    <ClInclude Include="src\Engine\RenderTask.h" />
+    <ClInclude Include="src\Engine\RenderTaskTest.h" />
+    <ClInclude Include="src\Engine\RootSignature.h" />
+    <ClInclude Include="src\Engine\Shader.h" />
+    <ClInclude Include="src\Engine\stdafx.h" />
+    <ClInclude Include="src\Engine\Transform.h" />
+    <ClInclude Include="src\Window.h" />
     <ClInclude Include="Engine\Transform.h" />
   </ItemGroup>
   <ItemGroup>
