@@ -7,6 +7,15 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <vector>
+#include <DirectXMath.h>
+
+// For wstring convertion
+#include <locale>
+#include <codecvt>
+
+
+
 
 class AssetLoader
 {
