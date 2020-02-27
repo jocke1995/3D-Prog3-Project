@@ -19,7 +19,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     renderer->AddRenderTask(testTask);
 
-
     // GAMELOOP
     while (!window->ExitWindow())
     {

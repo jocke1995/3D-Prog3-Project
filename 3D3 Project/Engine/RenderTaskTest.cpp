@@ -60,10 +60,13 @@ void RenderTaskTest::SPECIFY_GRAPHICS_PIPELINE_STATE_DESC()
 {
 	this->GetGpsd()->PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
-	this->GetGpsd()->VS.pShaderBytecode = this->GetPipelineState()->GetShader(ShaderType::VS)->GetBlob()->GetBufferPointer();
-	this->GetGpsd()->VS.BytecodeLength = this->GetPipelineState()->GetShader(ShaderType::VS)->GetBlob()->GetBufferSize();
-	this->GetGpsd()->PS.pShaderBytecode = this->GetPipelineState()->GetShader(ShaderType::PS)->GetBlob()->GetBufferPointer();
-	this->GetGpsd()->PS.BytecodeLength = this->GetPipelineState()->GetShader(ShaderType::PS)->GetBlob()->GetBufferSize();
+	ID3DBlob* blobVS = *this->GetPipelineState()->GetShader(ShaderType::VS)->GetBlob();
+	ID3DBlob* blobPS = *this->GetPipelineState()->GetShader(ShaderType::PS)->GetBlob();
+
+	this->GetGpsd()->VS.pShaderBytecode = blobVS->GetBufferPointer();
+	this->GetGpsd()->VS.BytecodeLength = blobVS->GetBufferSize();
+	this->GetGpsd()->PS.pShaderBytecode = blobPS->GetBufferPointer();
+	this->GetGpsd()->PS.BytecodeLength = blobPS->GetBufferSize();
 
 	// RenderTarget
 	this->GetGpsd()->RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;

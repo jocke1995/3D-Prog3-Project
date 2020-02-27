@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Shader.h"
+#include "../AssetLoader.h"
 
 class PipelineState
 {

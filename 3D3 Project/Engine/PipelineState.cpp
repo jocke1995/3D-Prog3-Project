@@ -16,11 +16,10 @@ PipelineState::~PipelineState()
 
 void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
 {
-	if (type == ShaderType::VS)
-		this->VS = new Shader(fileName, type);
-	else if (type == ShaderType::PS)
-		this->PS = new Shader(fileName, type);
-
+	if(type == ShaderType::VS)
+		this->VS = AssetLoader::Get().LoadShader(fileName, type);
+	else if(type == ShaderType::PS)
+		this->PS = AssetLoader::Get().LoadShader(fileName, type);
 }
 
 ID3D12PipelineState** PipelineState::GetPSO()

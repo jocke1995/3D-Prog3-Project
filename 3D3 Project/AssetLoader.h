@@ -2,6 +2,8 @@
 #define ASSETLOADER_H
 
 #include "Engine/Mesh.h"
+#include "Engine/Shader.h"
+
 #include <string>
 #include <map>
 #include <iostream>
@@ -25,7 +27,7 @@ public:
     //Material& LoadMaterial(std::wstring path);
 
     // Shader -------------
-    //Shader& LoadShader(std::wstring path);
+    Shader* LoadShader(std::wstring fileName, ShaderType type);
 
     // Scene --------------
 
@@ -36,12 +38,12 @@ private:
     void operator=(AssetLoader const&) = delete;
 
     std::map<std::wstring, Mesh*> loadedMeshes;
-    std::map<std::wstring, Mesh*> loadedTextures;
-    std::map<std::wstring, Mesh*> loadedMaterials;
-    std::map<std::wstring, Mesh*> loadedShaders;
+    //std::map<std::wstring, Mesh*> loadedTextures;
+    //std::map<std::wstring, Mesh*> loadedMaterials;
+    std::map<std::wstring, Shader*> loadedShaders;
+
+    void CompileShader(ShaderType type, LPCWSTR entireFilePath, ID3DBlob** blob);
+    std::wstring filePathShaders = L"Engine/HLSL/";
 };
-
-
-
 
 #endif
