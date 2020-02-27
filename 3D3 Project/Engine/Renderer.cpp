@@ -7,15 +7,17 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	CloseHandle(this->eventHandle);
+	SAFE_RELEASE(&this->fence);
+
+	SAFE_RELEASE(&this->device5);
+
 	SAFE_RELEASE(&this->commandQueue);
+	// TEMP
 	SAFE_RELEASE(&this->commandList5);
 	SAFE_RELEASE(&this->commandAllocator);
 
-
-	SAFE_RELEASE(&this->device5);
-
-	SAFE_RELEASE(&this->device5);
-
+	SAFE_RELEASE(&this->swapChain4);
 
 	delete this->rootSignature;
 
@@ -272,6 +274,10 @@ bool Renderer::CreatePSO(RenderTask* renderTask)
 	{
 		return false;
 	}
+
+	// TODO: Ska vi göra detta på alla "objekt"? Vad gör det för skillnad?
+	// ID3D12PipelineState* pso = (*renderTask->GetPipelineState()->GetPSO());
+	// pso->SetName(L"PSO?");
 
 	return true;
 }

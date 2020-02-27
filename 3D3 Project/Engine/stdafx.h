@@ -34,12 +34,12 @@ union float4
 
 union float3
 {
-	struct { float x; float y; float z;};
-	struct { float r; float g; float b;};
+	struct { float x; float y; float z; };
+	struct { float r; float g; float b; };
 };
 
 union float2
 {
-	struct { float u; float v;};
-	struct { float x; float y;};
+	struct { float u; float v; };
+	struct { float x; float y; };
 };
