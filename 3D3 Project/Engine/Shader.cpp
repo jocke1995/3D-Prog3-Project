@@ -18,6 +18,7 @@ Shader::Shader(LPCTSTR fileName, ShaderType type)
 
 Shader::~Shader()
 {
+	SAFE_RELEASE(&this->blob);
 }
 
 ID3DBlob* Shader::GetBlob()
@@ -69,5 +70,8 @@ bool Shader::CompileShader(ShaderType type, LPCTSTR filePath)
 		OutputDebugStringA(errorMsg);
 		return false;
 	}
+
+	// TODO: KANSKE INTE SKA VARA HÄR
+	// SAFE_RELEASE(&errorMessages);
 	return true;
 }
