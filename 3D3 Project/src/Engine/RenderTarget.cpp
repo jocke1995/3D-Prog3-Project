@@ -6,26 +6,17 @@ RenderTarget::RenderTarget()
 
 RenderTarget::~RenderTarget()
 {
-	SAFE_RELEASE(&this->renderTargetsHeap);
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 	{
 		SAFE_RELEASE(&this->renderTargets[i]);
 	}
+
+	delete this->descriptorHeap;
 }
 
-void RenderTarget::SetRTDescriptorSize(UINT size)
+DescriptorHeap* RenderTarget::GetDescriptorHeap()
 {
-	this->renderTargetDescriptorSize = size;
-}
-
-UINT RenderTarget::GetRTDescriptorSize()
-{
-	return this->renderTargetDescriptorSize;
-}
-
-ID3D12DescriptorHeap** RenderTarget::GetRTHeap()
-{
-	return &this->renderTargetsHeap;
+	return this->descriptorHeap;
 }
 
 ID3D12Resource1** RenderTarget::GetRenderTarget(UINT index)
@@ -50,6 +41,11 @@ void RenderTarget::CreateScissorRect(unsigned int width, unsigned int height)
 	scissorRect.right = (long)width;
 	scissorRect.top = (long)0;
 	scissorRect.bottom = (long)height;
+}
+
+void RenderTarget::CreateDescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT size)
+{
+	this->descriptorHeap = new DescriptorHeap(type, size);
 }
 
 D3D12_VIEWPORT* RenderTarget::GetViewPort()

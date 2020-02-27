@@ -1,7 +1,7 @@
 #ifndef RENDERTARGET_H
 #define RENDERTARGET_H
 
-#include "stdafx.h"
+#include "DescriptorHeap.h"
 
 class RenderTarget
 {
@@ -9,10 +9,7 @@ public:
 	RenderTarget();
 	~RenderTarget();
 
-	void SetRTDescriptorSize(UINT size);
-
-	UINT GetRTDescriptorSize();
-	ID3D12DescriptorHeap** GetRTHeap();
+	DescriptorHeap* GetDescriptorHeap();
 	ID3D12Resource1** GetRenderTarget(UINT index);
 	D3D12_VIEWPORT* GetViewPort();
 	D3D12_RECT* GetScissorRect();
@@ -20,10 +17,11 @@ public:
 	void CreateViewport(unsigned int width = 800, unsigned int height = 600);
 	void CreateScissorRect(unsigned int width = 800, unsigned int height = 600);
 
-private:
+	void CreateDescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT size);
 
-	ID3D12DescriptorHeap* renderTargetsHeap = nullptr;
-	UINT renderTargetDescriptorSize = 0;
+private:
+	
+	DescriptorHeap* descriptorHeap = nullptr;
 
 	ID3D12Resource1* renderTargets[NUM_SWAP_BUFFERS] = {};
 

@@ -335,23 +335,23 @@ bool Renderer::CreateRenderTarget(RenderTargetTypes rtt)
 	{
 		RenderTarget* renderTarget = new RenderTarget();
 
-		// Fill out descriptor for the render target views
-		D3D12_DESCRIPTOR_HEAP_DESC dhd = {};
-		dhd.NumDescriptors = NUM_SWAP_BUFFERS;
-		dhd.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		UINT size = this->device5->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+		renderTarget->CreateDescriptorHeap(DESCRIPTOR_HEAP_TYPES::RTV, size);
 
 		// Create descriptorHeap for the renderTarget
-		HRESULT hr = this->device5->CreateDescriptorHeap(&dhd, IID_PPV_ARGS(renderTarget->GetRTHeap()));
+		D3D12_DESCRIPTOR_HEAP_DESC *dhd = renderTarget->GetDescriptorHeap()->GetDesc();
+		ID3D12DescriptorHeap** descriptorHeap = renderTarget->GetDescriptorHeap()->GetID3D12DescriptorHeap();
+		HRESULT hr = this->device5->CreateDescriptorHeap(dhd, IID_PPV_ARGS(descriptorHeap));
 		if (hr != S_OK)
 		{
 			OutputDebugStringA("Error: Failed to create DescriptorHeap For SwapChainRenderTarget!\n");
 			return false;
 		}
 
-		// Set the size of the descriptor
-		renderTarget->SetRTDescriptorSize(this->device5->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+		renderTarget->GetDescriptorHeap()->SetCPUGPUHeapStart();
 
-		D3D12_CPU_DESCRIPTOR_HANDLE cdh = (*renderTarget->GetRTHeap())->GetCPUDescriptorHandleForHeapStart();
+		D3D12_CPU_DESCRIPTOR_HANDLE cdh = *renderTarget->GetDescriptorHeap()->GetCPUHeapAt(0);
 
 		// Connect the renderTargets to the swapchain, so that the swapchain can easily swap between these two renderTargets
 		for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
@@ -364,7 +364,7 @@ bool Renderer::CreateRenderTarget(RenderTargetTypes rtt)
 			}
 
 			device5->CreateRenderTargetView(*renderTarget->GetRenderTarget(i), nullptr, cdh);
-			cdh.ptr += renderTarget->GetRTDescriptorSize();
+			cdh.ptr += renderTarget->GetDescriptorHeap()->GetHandleIncrementSize();
 		}
 
 		renderTarget->CreateViewport();
