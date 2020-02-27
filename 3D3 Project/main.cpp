@@ -1,5 +1,9 @@
 #include "Engine/Renderer.h"
+#include "AssetLoader.h"
 #include "Window.h"
+
+#include "Engine/Transform.h"
+#include "Engine/Cube.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
@@ -7,7 +11,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
     Renderer* renderer = new Renderer();
-
+ 
     renderer->InitD3D12(window->GetHwnd());
 
     RenderTask* testTask = new RenderTaskTest();

@@ -2,7 +2,6 @@
 
 PipelineState::PipelineState()
 {
-	
 }
 
 PipelineState::~PipelineState()
@@ -21,6 +20,7 @@ void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
 		this->VS = new Shader(fileName, type);
 	else if (type == ShaderType::PS)
 		this->PS = new Shader(fileName, type);
+
 }
 
 ID3D12PipelineState** PipelineState::GetPSO()

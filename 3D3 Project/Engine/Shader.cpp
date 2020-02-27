@@ -11,7 +11,7 @@ Shader::Shader(LPCTSTR fileName, ShaderType type)
 
 	if (!this->CompileShader(type, filePath.c_str()))
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
+		// TODO: Errorbox or no? Gï¿½ra en klass fï¿½r debugstrï¿½ngar?
 		OutputDebugStringA("Error: Failed to create Shader!\n");
 	}
 }
@@ -71,7 +71,7 @@ bool Shader::CompileShader(ShaderType type, LPCTSTR filePath)
 		return false;
 	}
 
-	// TODO: KANSKE INTE SKA VARA HÄR
+	// TODO: KANSKE INTE SKA VARA Hï¿½R
 	// SAFE_RELEASE(&errorMessages);
 	return true;
 }

@@ -4,6 +4,7 @@
 #include <map>
 #include "RootSignature.h"
 #include "RenderTask.h"
+#include "ConstantBuffer.h"
 
 #include "RenderTaskTest.h"
 
@@ -23,6 +24,11 @@ public:
 
 	void InitD3D12(HWND *hwnd);
 
+	// TODO: Stefan vilka inparametrar �r smart att ha med? Hela Heap Properties?
+	ConstantBuffer* CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type);
+
+	void AddRenderTask(RenderTask * renderTask);
+
 	void AddRenderTask(RenderTask * renderTask);
 
 	void Execute();
@@ -33,6 +39,14 @@ private:
 
 	// Device
 	ID3D12Device5* device5 = nullptr;
+
+	std::vector<ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
+
+
+
+
+
+
 	bool CreateDevice();
 
 	// CommandQueue

@@ -7,12 +7,28 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	CloseHandle(this->eventHandle);
-	SAFE_RELEASE(&this->fence);
+	SAFE_RELEASE(&this->commandQueue);
+	SAFE_RELEASE(&this->commandList5);
+	SAFE_RELEASE(&this->commandAllocator);
+	for (ConstantBuffer* CB : constantBuffers)
+	{
+		delete CB;
+	}
 
 	SAFE_RELEASE(&this->device5);
 
-	SAFE_RELEASE(&this->commandQueue);
+
+
+	delete this->rootSignature;
+
+	for (auto rts1 : this->renderTargetsHolder)
+		for (auto rts2 : rts1.second)
+			delete rts2;
+}
+	CloseHandle(this->eventHandle);
+	SAFE_RELEASE(&this->fence);
+
+
 	// TEMP
 	SAFE_RELEASE(&this->commandList5);
 	SAFE_RELEASE(&this->commandAllocator);
@@ -24,8 +40,6 @@ Renderer::~Renderer()
 	for (auto rts1 : this->renderTargetsHolder)
 		for (auto rts2 : rts1.second)
 			delete rts2;
-}
-
 void Renderer::InitD3D12(HWND *hwnd)
 {
 	// Create Device
@@ -61,6 +75,53 @@ void Renderer::InitD3D12(HWND *hwnd)
 	{
 		OutputDebugStringA("Error: Failed to create RenderTarget!\n");
 	}
+}
+
+ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type)
+{
+	// TODO: Skapar heap properties efter vi har skapat heapen???????????????????
+	D3D12_HEAP_PROPERTIES heapProperties = {};
+	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.CreationNodeMask = 1; //used when multi-gpu
+	heapProperties.VisibleNodeMask = 1; //used when multi-gpu
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+
+	D3D12_RESOURCE_DESC resourceDesc = {};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+
+	unsigned int entrySize;
+	switch (type)
+	{
+	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT:
+		entrySize = sizeof(CB_PER_OBJECT); // 16 float
+	}
+
+	resourceDesc.Width = size * entrySize;
+	resourceDesc.Height = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	ConstantBuffer* CB = new ConstantBuffer(name, size, entrySize);
+	this->constantBuffers.push_back(CB);
+
+	ID3D12Resource1* constantBufferResource = CB->GetResource();
+
+	device5->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constantBufferResource)
+	);
+
+	// TODO: Fix name
+	constantBufferResource->SetName(name.c_str());
+
+	return CB;
 }
 
 void Renderer::AddRenderTask(RenderTask* renderTask)
@@ -107,7 +168,7 @@ bool Renderer::CreateDevice()
 	}
 	SafeRelease(debugController);
 #else
-	HMODULE mD3D12 = LoadLibrary(L"D3D12.dll"); // istället för GetModuleHandle
+	HMODULE mD3D12 = LoadLibrary(L"D3D12.dll"); // istï¿½llet fï¿½r GetModuleHandle
 
 	PFN_D3D12_GET_DEBUG_INTERFACE f = (PFN_D3D12_GET_DEBUG_INTERFACE)GetProcAddress(mD3D12, "D3D12GetDebugInterface");
 	if (SUCCEEDED(f(IID_PPV_ARGS(&debugController))))
@@ -202,7 +263,7 @@ bool Renderer::CreateSwapChain(HWND *hwnd)
 
 	if (hr != S_OK)
 	{
-		// TODO: Errorbox or no? Göra en klass för debugsträngar?
+		// TODO: Errorbox or no? Gï¿½ra en klass fï¿½r debugstrï¿½ngar?
 		OutputDebugStringA("Error: Failed to create DXGIFactory!\n");
 		return false;
 	}
@@ -274,10 +335,6 @@ bool Renderer::CreatePSO(RenderTask* renderTask)
 	{
 		return false;
 	}
-
-	// TODO: Ska vi göra detta på alla "objekt"? Vad gör det för skillnad?
-	// ID3D12PipelineState* pso = (*renderTask->GetPipelineState()->GetPSO());
-	// pso->SetName(L"PSO?");
 
 	return true;
 }
@@ -362,3 +419,7 @@ void Renderer::WaitForGPU()
 	}
 }
 
+
+	// TODO: Ska vi gï¿½ra detta pï¿½ alla "objekt"? Vad gï¿½r det fï¿½r skillnad?
+	// ID3D12PipelineState* pso = (*renderTask->GetPipelineState()->GetPSO());
+	// pso->SetName(L"PSO?");
