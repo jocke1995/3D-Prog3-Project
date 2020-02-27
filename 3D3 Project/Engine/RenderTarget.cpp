@@ -7,6 +7,10 @@ RenderTarget::RenderTarget()
 RenderTarget::~RenderTarget()
 {
 	SAFE_RELEASE(&this->renderTargetsHeap);
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+	{
+		SAFE_RELEASE(&this->renderTargets[i]);
+	}
 }
 
 void RenderTarget::SetRTDescriptorSize(UINT size)
@@ -57,9 +61,3 @@ D3D12_RECT* RenderTarget::GetScissorRect()
 {
 	return &this->scissorRect;
 }
-
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-	{
-		SAFE_RELEASE(&this->renderTargets[i]);
-	}
-	SAFE_RELEASE(this->renderTargets);

@@ -15,9 +15,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->InitD3D12(window->GetHwnd());
 
     RenderTask* testTask = new RenderTaskTest();
+    testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
+
     renderer->AddRenderTask(testTask);
 
-    testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
 
     // GAMELOOP
     while (!window->ExitWindow())

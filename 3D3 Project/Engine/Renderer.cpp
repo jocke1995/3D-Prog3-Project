@@ -7,39 +7,29 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	CloseHandle(this->eventHandle);
+	SAFE_RELEASE(&this->fence);
+
+	SAFE_RELEASE(&this->device5);
+	SAFE_RELEASE(&this->swapChain4);
+
 	SAFE_RELEASE(&this->commandQueue);
+	// TEMP
 	SAFE_RELEASE(&this->commandList5);
 	SAFE_RELEASE(&this->commandAllocator);
+
+	delete this->rootSignature;
+
 	for (ConstantBuffer* CB : constantBuffers)
 	{
 		delete CB;
 	}
 
-	SAFE_RELEASE(&this->device5);
-
-
-
-	delete this->rootSignature;
-
 	for (auto rts1 : this->renderTargetsHolder)
 		for (auto rts2 : rts1.second)
 			delete rts2;
 }
-	CloseHandle(this->eventHandle);
-	SAFE_RELEASE(&this->fence);
 
-
-	// TEMP
-	SAFE_RELEASE(&this->commandList5);
-	SAFE_RELEASE(&this->commandAllocator);
-
-	SAFE_RELEASE(&this->swapChain4);
-
-	delete this->rootSignature;
-
-	for (auto rts1 : this->renderTargetsHolder)
-		for (auto rts2 : rts1.second)
-			delete rts2;
 void Renderer::InitD3D12(HWND *hwnd)
 {
 	// Create Device

@@ -29,8 +29,6 @@ public:
 
 	void AddRenderTask(RenderTask * renderTask);
 
-	void AddRenderTask(RenderTask * renderTask);
-
 	void Execute();
 
 	RenderTarget* GetRenderTarget(RenderTargetTypes rtt, int index);
