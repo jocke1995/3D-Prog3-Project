@@ -177,18 +177,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\DescriptorHeap.cpp" />
-    <ClCompile Include="Engine\PipelineState.cpp" />
-    <ClCompile Include="Engine\ConstantBuffer.cpp" />
-    <ClCompile Include="Engine\Cube.cpp" />
-    <ClCompile Include="Engine\Object.cpp" />
-    <ClCompile Include="Engine\Renderer.cpp" />
-    <ClCompile Include="Engine\RenderTarget.cpp" />
-    <ClCompile Include="Engine\RenderTask.cpp" />
-    <ClCompile Include="Engine\RenderTaskTest.cpp" />
-    <ClCompile Include="Engine\RootSignature.cpp" />
-    <ClCompile Include="Engine\Shader.cpp" />
-    <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="src\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
     <ClCompile Include="src\Engine\Cube.cpp" />
@@ -206,21 +194,6 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Camera.h" />
-    <ClInclude Include="Engine\ConstantBuffer.h" />
-    <ClInclude Include="Engine\Cube.h" />
-    <ClInclude Include="Engine\d3dx12.h" />
-    <ClInclude Include="Engine\DescriptorHeap.h" />
-    <ClInclude Include="Engine\PipelineState.h" />
-    <ClInclude Include="Engine\Mesh.h" />
-    <ClInclude Include="Engine\Object.h" />
-    <ClInclude Include="Engine\Renderer.h" />
-    <ClInclude Include="Engine\RenderTarget.h" />
-    <ClInclude Include="Engine\RenderTask.h" />
-    <ClInclude Include="Engine\RenderTaskTest.h" />
-    <ClInclude Include="Engine\RootSignature.h" />
-    <ClInclude Include="Engine\Shader.h" />
-    <ClInclude Include="Engine\stdafx.h" />
     <ClInclude Include="src\AssetLoader.h" />
     <ClInclude Include="src\Engine\Camera.h" />
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
@@ -239,10 +212,9 @@
     <ClInclude Include="src\Engine\stdafx.h" />
     <ClInclude Include="src\Engine\Transform.h" />
     <ClInclude Include="src\Window.h" />
-    <ClInclude Include="Engine\Transform.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\HLSL\PixelShader.hlsl">
+    <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -250,7 +222,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Engine\HLSL\VertexShader.hlsl">
+    <FxCompile Include="src\Engine\HLSL\VertexShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
