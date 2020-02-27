@@ -19,6 +19,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
 
+    // Test
+    Mesh* a = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
+
     // GAMELOOP
     while (!window->ExitWindow())
     {
