@@ -22,14 +22,14 @@ ID3D12DescriptorHeap** DescriptorHeap::GetID3D12DescriptorHeap()
 
 D3D12_CPU_DESCRIPTOR_HANDLE* DescriptorHeap::GetCPUHeapAt(UINT backBufferIndex)
 {
-	CPUHeapStart.ptr += this->HandleIncrementSize * backBufferIndex;
-	return &CPUHeapStart;
+	CPUHeapAt.ptr = CPUHeapStart.ptr + this->HandleIncrementSize * backBufferIndex;
+	return &CPUHeapAt;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE* DescriptorHeap::GetGPUHeapAt(UINT backBufferIndex)
 {
-	GPUHeapStart.ptr += this->HandleIncrementSize * backBufferIndex;
-	return &GPUHeapStart;
+	GPUHeapAt.ptr = GPUHeapStart.ptr + this->HandleIncrementSize * backBufferIndex;
+	return &GPUHeapAt;
 }
 
 UINT DescriptorHeap::GetHandleIncrementSize()
