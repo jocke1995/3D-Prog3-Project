@@ -19,7 +19,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 
 	commandList5->SetGraphicsRootSignature(rootSig);
 
-	// Ändra state på front/backbuffer
+	// Change state on front/backbuffer
 	commandList5->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 		*this->renderTargets[0]->GetRenderTarget(backBufferIndex),
 		D3D12_RESOURCE_STATE_PRESENT,
@@ -43,7 +43,19 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	commandList5->SetPipelineState(*this->pipelineState->GetPSO());
 
 	// Draw
-	commandList5->DrawInstanced(3, 1, 0, 0);
+	size_t num_vertices = 0;
+	ID3D12Resource1* vbResource;
+	for (auto object : this->objects)
+	{
+		vbResource = *object->GetMesh()->GetVBResource();
+		// TODO: Change when we have setup the rootsignature correctly
+		commandList5->SetGraphicsRootShaderResourceView(RS::POSITION,
+			vbResource->GetGPUVirtualAddress());
+
+		num_vertices = object->GetMesh()->GetNumVertices();
+		commandList5->DrawInstanced(num_vertices, 1, 0, 0);
+	}
+	
 
 	// Ändra state på front/backbuffer
 	commandList5->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(

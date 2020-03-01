@@ -86,6 +86,9 @@
     <ClCompile Include="src\Engine\Object.cpp">
       <Filter>Objects\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Mesh.cpp">
+      <Filter>Objects\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\DescriptorHeap.h">

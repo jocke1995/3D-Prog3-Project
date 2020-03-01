@@ -23,10 +23,11 @@
 
 #define NUM_SWAP_BUFFERS 2
 
-// TODO: Är detta ok?
-#ifdef CreateWindow
-#undef CreateWindow
-#endif
+// TODO: Fyll upp senare när vi vet vad vi ska ha för saker.
+enum RS
+{
+	POSITION
+};
 
 union float4
 {

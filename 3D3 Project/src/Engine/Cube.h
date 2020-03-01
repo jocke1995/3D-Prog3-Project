@@ -7,7 +7,7 @@
 class Cube : public Object
 {
 public:
-    Cube(ConstantBuffer* constantBuffer);
+    Cube(ConstantBuffer* constantBuffer, Mesh* mesh);
     ~Cube();
 
 private:

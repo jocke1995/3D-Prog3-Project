@@ -25,3 +25,8 @@ void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 	this->renderTargets.push_back(renderTarget);
 }
 
+void RenderTask::AddObjectToDraw(Object* object)
+{
+	this->objects.push_back(object);
+}
+
