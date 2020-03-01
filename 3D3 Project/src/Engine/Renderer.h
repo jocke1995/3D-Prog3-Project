@@ -16,6 +16,11 @@ enum RenderTargetTypes
 	DEPTH
 };
 
+enum ConstantBufferIndex
+{
+	CB_TRANSFORM
+};
+
 class Renderer
 {
 public:
@@ -25,7 +30,7 @@ public:
 	void InitD3D12(HWND *hwnd);
 
 	// Create Constant Buffer
-	ConstantBuffer* CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type);
+	ConstantBuffer* CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type);
 	// Create Vertex Buffer
 	void CreateVertexBuffer(Mesh* mesh);
 
@@ -34,13 +39,14 @@ public:
 	void Execute();
 
 	RenderTarget* GetRenderTarget(RenderTargetTypes rtt, int index);
+	ConstantBuffer* GetConstantBuffer(ConstantBufferIndex index);
 
 private:
 
 	// Device
 	ID3D12Device5* device5 = nullptr;
 
-	std::vector<ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
+	std::map<unsigned int, ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
 
 	bool CreateDevice();
 

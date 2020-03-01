@@ -23,7 +23,7 @@ public:
 
 	bool SetData(void* location, const void* data, size_t entrySize);
 	void* GetValidLocation();
-	ID3D12Resource1* GetResource();
+	ID3D12Resource1** GetResource();
 
 private:
 	std::wstring name = nullptr;

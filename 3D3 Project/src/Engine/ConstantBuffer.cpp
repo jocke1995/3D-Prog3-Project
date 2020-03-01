@@ -10,6 +10,8 @@ ConstantBuffer::ConstantBuffer(std::wstring name, unsigned int size, unsigned in
 	{
 		validLocations.insert(i);
 	}
+
+
 }
 
 ConstantBuffer::~ConstantBuffer()
@@ -53,7 +55,7 @@ void* ConstantBuffer::GetValidLocation()
 	return location;
 }
 
-ID3D12Resource1* ConstantBuffer::GetResource()
+ID3D12Resource1** ConstantBuffer::GetResource()
 {
-	return this->constantBufferResource;
+	return &this->constantBufferResource;
 }

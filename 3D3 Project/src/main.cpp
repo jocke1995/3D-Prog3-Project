@@ -17,19 +17,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
     renderer->AddRenderTask(testTask);
 
-
     // Test Mesh, kan användas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
     renderer->CreateVertexBuffer(cubeMesh);
 
     // Unique For each object
-    D3D12_HEAP_TYPE hp = {};
-    ConstantBuffer* constantBuffer1 = renderer->CreateConstantBuffer(L"tempCB", hp, 4, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
-    Object* cube = new Cube(constantBuffer1, cubeMesh);
+    ConstantBuffer* transformConstantBuffer = renderer->GetConstantBuffer(ConstantBufferIndex::CB_TRANSFORM);
+    Object* cube = new Cube(transformConstantBuffer, cubeMesh);
 
+    cube->GetTransform()->SetScale(1, 1, 1);
 
     testTask->AddObjectToDraw(cube);
-
 
     // GAMELOOP
     while (!window->ExitWindow())

@@ -20,9 +20,9 @@ Renderer::~Renderer()
 
 	delete this->rootSignature;
 
-	for (ConstantBuffer* CB : constantBuffers)
+	for (auto it : constantBuffers)
 	{
-		delete CB;
+		delete it.second;
 	}
 
 	for (auto rts1 : this->renderTargetsHolder)
@@ -65,11 +65,20 @@ void Renderer::InitD3D12(HWND *hwnd)
 	{
 		OutputDebugStringA("Error: Failed to create RenderTarget!\n");
 	}
+
+	// Create constantBuffers
+	
+
+	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_Translate", 1000, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+	if (transformBuffer == nullptr)
+	{
+		OutputDebugStringA("Error: Failed to create TransformBuffer!\n");
+	}
+	
 }
 
-ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type)
+ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
 {
-	// TODO: Skapar heap properties efter vi har skapat heapen???????????????????
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -95,21 +104,25 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYP
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	ConstantBuffer* CB = new ConstantBuffer(name, size, entrySize);
-	this->constantBuffers.push_back(CB);
 
-	ID3D12Resource1* constantBufferResource = CB->GetResource();
+	ID3D12Resource1** constantBufferResource = CB->GetResource();
 
-	device5->CreateCommittedResource(
+	HRESULT hr = device5->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&constantBufferResource)
+		IID_PPV_ARGS(constantBufferResource)
 	);
 
+	if (FAILED(hr))
+		return nullptr;
+
+	constantBuffers[ConstantBufferIndex::CB_TRANSFORM] = CB;
+
 	// TODO: Fix name
-	constantBufferResource->SetName(name.c_str());
+	(*constantBufferResource)->SetName(name.c_str());
 
 	return CB;
 }
@@ -133,13 +146,17 @@ void Renderer::CreateVertexBuffer(Mesh* mesh)
 	rd.SampleDesc.Count = 1;
 	rd.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
+
+	ID3D12Resource1** resource = mesh->GetVBResource();
 	this->device5->CreateCommittedResource(
 		&hp,
 		D3D12_HEAP_FLAG_NONE,
 		&rd,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(mesh->GetVBResource()));
+		IID_PPV_ARGS(resource));
+
+	(*resource)->SetName(L"VB_Mesh");
 
 	mesh->SetData();
 }
@@ -169,6 +186,11 @@ void Renderer::Execute()
 RenderTarget* Renderer::GetRenderTarget(RenderTargetTypes rtt, int index)
 {
 	return this->renderTargetsHolder[rtt].at(index);
+}
+
+ConstantBuffer* Renderer::GetConstantBuffer(ConstantBufferIndex index)
+{
+	return this->constantBuffers[index];
 }
 
 // -----------------------  Private Functions  ----------------------- //

@@ -45,12 +45,18 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	// Draw
 	size_t num_vertices = 0;
 	ID3D12Resource1* vbResource;
+	Transform* transform;
 	for (auto object : this->objects)
 	{
+		transform = object->GetTransform();
 		vbResource = *object->GetMesh()->GetVBResource();
+
 		// TODO: Change when we have setup the rootsignature correctly
 		commandList5->SetGraphicsRootShaderResourceView(RS::POSITION,
 			vbResource->GetGPUVirtualAddress());
+
+		commandList5->SetGraphicsRootConstantBufferView(RS::TRANSFORM,
+			transform->GetGPUAddress());
 
 		num_vertices = object->GetMesh()->GetNumVertices();
 		commandList5->DrawInstanced(num_vertices, 1, 0, 0);

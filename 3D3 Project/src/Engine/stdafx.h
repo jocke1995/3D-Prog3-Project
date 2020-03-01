@@ -26,7 +26,9 @@
 // TODO: Fyll upp senare när vi vet vad vi ska ha för saker.
 enum RS
 {
-	POSITION
+	POSITION,
+	TRANSFORM,
+	NUM_PARAMS
 };
 
 union float4

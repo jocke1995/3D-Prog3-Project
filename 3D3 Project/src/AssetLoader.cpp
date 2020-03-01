@@ -147,7 +147,7 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 		newMesh->SetSize(vertexIndices.size() * sizeof(Mesh::Vertex));
 
 		// TODO: Add mesh in loadedMeshes with name
-		this->loadedMeshes[L"Bläää, (tempname)"] = newMesh;
+		this->loadedMeshes[path] = newMesh;
 
 		return newMesh;
 	}

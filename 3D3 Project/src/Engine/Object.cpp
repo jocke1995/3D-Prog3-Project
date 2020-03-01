@@ -1,8 +1,8 @@
 #include "Object.h"
 
-Object::Object(ConstantBuffer* constantBuffer, Mesh* mesh)
+Object::Object(ConstantBuffer* transformBuffer, Mesh* mesh)
 {
-	this->transform = new Transform(constantBuffer);
+	this->transform = new Transform(transformBuffer);
 	this->mesh = mesh;
 }
 

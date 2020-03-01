@@ -26,11 +26,15 @@ ID3DBlob* RootSignature::GetBlob()
 
 bool RootSignature::CreateRootSignatureStructure()
 {
-	D3D12_ROOT_PARAMETER rootParam[1]{};
+	D3D12_ROOT_PARAMETER rootParam[RS::NUM_PARAMS]{};
 
 	rootParam[RS::POSITION].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
 	rootParam[RS::POSITION].Descriptor.ShaderRegister = 0;
 	rootParam[RS::POSITION].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	rootParam[RS::TRANSFORM].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam[RS::TRANSFORM].Descriptor.ShaderRegister = 0;
+	rootParam[RS::TRANSFORM].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 

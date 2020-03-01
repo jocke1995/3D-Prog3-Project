@@ -27,12 +27,14 @@ public:
 
 
 	ConstantBuffer* GetConstantBuffer();
-private:
-	XMMATRIX position;
-	XMMATRIX rotation;
-	XMMATRIX scale;
+	D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
 
-	XMMATRIX worldMatrix;
+private:
+	XMFLOAT3 position;
+	XMFLOAT4X4 rotationMat;
+	XMFLOAT3 scale;
+
+	XMFLOAT4X4 worldMat;
 
 	ConstantBuffer* constantBuffer;
 	void* constantBufferOffset;
