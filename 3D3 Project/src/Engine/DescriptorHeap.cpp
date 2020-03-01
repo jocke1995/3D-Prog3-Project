@@ -1,8 +1,8 @@
 #include "DescriptorHeap.h"
 
-DescriptorHeap::DescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT HandleIncrementSize)
+DescriptorHeap::DescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT handleIncrementSize)
 {
-	this->Init(type, HandleIncrementSize);
+	this->Init(type, handleIncrementSize);
 }
 
 DescriptorHeap::~DescriptorHeap()
@@ -22,19 +22,19 @@ ID3D12DescriptorHeap** DescriptorHeap::GetID3D12DescriptorHeap()
 
 D3D12_CPU_DESCRIPTOR_HANDLE* DescriptorHeap::GetCPUHeapAt(UINT backBufferIndex)
 {
-	CPUHeapAt.ptr = CPUHeapStart.ptr + this->HandleIncrementSize * backBufferIndex;
+	CPUHeapAt.ptr = CPUHeapStart.ptr + this->handleIncrementSize * backBufferIndex;
 	return &CPUHeapAt;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE* DescriptorHeap::GetGPUHeapAt(UINT backBufferIndex)
 {
-	GPUHeapAt.ptr = GPUHeapStart.ptr + this->HandleIncrementSize * backBufferIndex;
+	GPUHeapAt.ptr = GPUHeapStart.ptr + this->handleIncrementSize * backBufferIndex;
 	return &GPUHeapAt;
 }
 
 UINT DescriptorHeap::GetHandleIncrementSize()
 {
-	return this->HandleIncrementSize;
+	return this->handleIncrementSize;
 }
 
 void DescriptorHeap::SetCPUGPUHeapStart()
@@ -43,7 +43,7 @@ void DescriptorHeap::SetCPUGPUHeapStart()
 	this->GPUHeapStart = this->descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 }
 
-void DescriptorHeap::Init(DESCRIPTOR_HEAP_TYPES type, UINT HandleIncrementSize)
+void DescriptorHeap::Init(DESCRIPTOR_HEAP_TYPES type, UINT handleIncrementSize)
 {
 	this->desc.NumDescriptors = NUM_SWAP_BUFFERS;
 
@@ -60,5 +60,5 @@ void DescriptorHeap::Init(DESCRIPTOR_HEAP_TYPES type, UINT HandleIncrementSize)
 		break;
 	}
 
-	this->HandleIncrementSize = HandleIncrementSize;
+	this->handleIncrementSize = handleIncrementSize;
 }

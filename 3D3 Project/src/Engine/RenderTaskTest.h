@@ -3,7 +3,6 @@
 
 #include "RenderTask.h"
 
-
 class RenderTaskTest : public RenderTask
 {
 public:

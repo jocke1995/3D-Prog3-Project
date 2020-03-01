@@ -3,12 +3,6 @@
 
 #include "stdafx.h"
 
-// TODO: Fyll upp senare när vi vet vad vi ska ha för saker.
-enum RS
-{
-	POSITION
-};
-
 class RootSignature
 {
 public:

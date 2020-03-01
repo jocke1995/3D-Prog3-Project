@@ -11,16 +11,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
     Renderer* renderer = new Renderer();
- 
     renderer->InitD3D12(window->GetHwnd());
 
     RenderTask* testTask = new RenderTaskTest();
     testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
-
     renderer->AddRenderTask(testTask);
 
-    // Test
-    Mesh* a = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
+
+    // Test Mesh, kan användas till flera av "samma typ" objekt senare.
+    Mesh* cubeMesh = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
+    renderer->CreateVertexBuffer(cubeMesh);
+
+    // Unique For each object
+    D3D12_HEAP_TYPE hp = {};
+    ConstantBuffer* constantBuffer1 = renderer->CreateConstantBuffer(L"tempCB", hp, 4, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+    Object* cube = new Cube(constantBuffer1, cubeMesh);
+
+
+    testTask->AddObjectToDraw(cube);
+
 
     // GAMELOOP
     while (!window->ExitWindow())
@@ -29,6 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         renderer->Execute();
     }   
 
+    delete cube;
     delete window;
     delete testTask;
     delete renderer;

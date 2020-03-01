@@ -1,8 +1,6 @@
 #include "AssetLoader.h"
 #include <iostream>
 
-
-
 AssetLoader::~AssetLoader()
 {
 	for (auto pair : loadedMeshes)
@@ -138,13 +136,16 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 
 			// Store the values in the vectors we recieve in the function
 			tempVertex.pos = DirectX::XMFLOAT4(vertex.x, vertex.y, vertex.z, 1.0);
-			tempVertex.uv = DirectX::XMFLOAT4(uv.x, uv.y, 0.0, 0.0);
-			tempVertex.nor = DirectX::XMFLOAT4(normal.x, normal.y, normal.z, 0.0);
+			//tempVertex.uv = DirectX::XMFLOAT4(uv.x, uv.y, 0.0, 0.0);
+			//tempVertex.nor = DirectX::XMFLOAT4(normal.x, normal.y, normal.z, 0.0);
 
 			// Push to Mesh
 			newMesh->vertices.push_back(tempVertex);
 		}
 		
+		// Set Size:
+		newMesh->SetSize(vertexIndices.size() * sizeof(Mesh::Vertex));
+
 		// TODO: Add mesh in loadedMeshes with name
 		this->loadedMeshes[L"Bl‰‰‰, (tempname)"] = newMesh;
 

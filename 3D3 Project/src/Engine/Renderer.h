@@ -24,8 +24,10 @@ public:
 
 	void InitD3D12(HWND *hwnd);
 
-	// TODO: Stefan vilka inparametrar �r smart att ha med? Hela Heap Properties?
+	// Create Constant Buffer
 	ConstantBuffer* CreateConstantBuffer(std::wstring name, D3D12_HEAP_TYPE heapType, unsigned int size, CONSTANT_BUFFER_TYPE type);
+	// Create Vertex Buffer
+	void CreateVertexBuffer(Mesh* mesh);
 
 	void AddRenderTask(RenderTask * renderTask);
 
@@ -39,11 +41,6 @@ private:
 	ID3D12Device5* device5 = nullptr;
 
 	std::vector<ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
-
-
-
-
-
 
 	bool CreateDevice();
 
@@ -75,6 +72,8 @@ private:
 		RT_SwapChain
 	};
 	bool CreateRenderTarget(RenderTargetTypes rtt);
+
+	
 
 
 	// Fences

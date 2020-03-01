@@ -13,7 +13,7 @@ enum class DESCRIPTOR_HEAP_TYPES
 class DescriptorHeap
 {
 public:
-	DescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT HandleIncrementSize);
+	DescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT handleIncrementSize);
 	~DescriptorHeap();
 
 	D3D12_DESCRIPTOR_HEAP_DESC* GetDesc();
@@ -36,7 +36,7 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE GPUHeapAt;
 
 
-	UINT HandleIncrementSize;
+	UINT handleIncrementSize;
 
 	void Init(DESCRIPTOR_HEAP_TYPES type, UINT HandleIncrementSize);
 };
