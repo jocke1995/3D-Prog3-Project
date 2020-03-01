@@ -46,7 +46,7 @@ private:
 	// Device
 	ID3D12Device5* device5 = nullptr;
 
-	std::map<unsigned int, ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
+	std::map<ConstantBufferIndex, ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
 
 	bool CreateDevice();
 

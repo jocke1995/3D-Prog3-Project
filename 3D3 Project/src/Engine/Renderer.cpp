@@ -67,8 +67,6 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Create constantBuffers
-	
-
 	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_Translate", 1000, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
 	if (transformBuffer == nullptr)
 	{
