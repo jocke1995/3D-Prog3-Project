@@ -68,7 +68,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 		OutputDebugStringA("Error: Failed to create TransformBuffer!\n");
 	}
 
-	
+	AssetLoader::Get().SetDevice(this->device5);
 }
 
 void Renderer::InitRenderTasks()
@@ -118,35 +118,7 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int s
 // TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
 void Renderer::CreateVertexBuffer(Mesh* mesh)
 {
-	// TODO: Use default heap aswell?
-	D3D12_HEAP_PROPERTIES hp = {};
-	hp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	hp.CreationNodeMask = 1;
-	hp.VisibleNodeMask = 1;
-
-	size_t size = mesh->GetSize();
-	D3D12_RESOURCE_DESC rd = {};
-	rd.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	rd.Width = size; // numVertices * Sizeof(vertices)
-	rd.Height = 1;
-	rd.DepthOrArraySize = 1;
-	rd.MipLevels = 1;
-	rd.SampleDesc.Count = 1;
-	rd.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-
-	ID3D12Resource1** resource = mesh->GetVBResource();
-	this->device5->CreateCommittedResource(
-		&hp,
-		D3D12_HEAP_FLAG_NONE,
-		&rd,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(resource));
-
-	(*resource)->SetName(L"VB_Mesh");
-
-	mesh->SetData();
+	
 }
 
 void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)

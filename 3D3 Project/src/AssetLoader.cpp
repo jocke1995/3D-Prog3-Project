@@ -17,6 +17,11 @@ AssetLoader& AssetLoader::Get()
 	return instance;
 }
 
+void AssetLoader::SetDevice(ID3D12Device5* device)
+{
+	this->device = device;
+}
+
 Mesh* AssetLoader::LoadMesh(std::wstring path)
 {
 	bool meshLoaded = false;
@@ -119,7 +124,8 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 		DirectX::XMFLOAT3 normal;
 
 		Mesh::Vertex tempVertex;
-		Mesh* newMesh = new Mesh();
+		std::vector<Mesh::Vertex> vvertices;
+
 
 		// Now we store the attributes in the i
 		for (unsigned int i = 0; i < vertexIndices.size(); i++)
@@ -140,11 +146,11 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 			//tempVertex.nor = DirectX::XMFLOAT4(normal.x, normal.y, normal.z, 0.0);
 
 			// Push to Mesh
-			newMesh->vertices.push_back(tempVertex);
+			vvertices.push_back(tempVertex);
 		}
-		
-		// Set Size:
-		newMesh->SetSize(vertexIndices.size() * sizeof(Mesh::Vertex));
+
+		UINT size = vertexIndices.size() * sizeof(Mesh::Vertex);
+		Mesh* newMesh = new Mesh(this->device, vvertices, size);
 
 		// TODO: Add mesh in loadedMeshes with name
 		this->loadedMeshes[path] = newMesh;

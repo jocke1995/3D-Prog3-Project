@@ -47,7 +47,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	for (auto object : *this->objects)
 	{
 		transform = object->GetTransform();
-		vbResource = *object->GetMesh()->GetVBResource();
+		vbResource = object->GetMesh()->GetVBResource();
 
 		// TODO: Change when we have setup the rootsignature correctly
 		commandList5->SetGraphicsRootShaderResourceView(RS::POSITION,

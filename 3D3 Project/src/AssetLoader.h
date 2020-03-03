@@ -24,6 +24,8 @@ public:
 
     static AssetLoader& Get();
 
+    void SetDevice(ID3D12Device5* device);
+
     /* Load Functions */
     // Mesh ---------------
     Mesh* LoadMesh(std::wstring path);
@@ -45,6 +47,8 @@ private:
     AssetLoader() {};
     AssetLoader(AssetLoader const&) = delete;
     void operator=(AssetLoader const&) = delete;
+
+    ID3D12Device5* device;
 
     std::map<std::wstring, Mesh*> loadedMeshes;
     //std::map<std::wstring, Mesh*> loadedTextures;
