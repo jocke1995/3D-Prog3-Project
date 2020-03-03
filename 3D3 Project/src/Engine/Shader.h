@@ -8,15 +8,17 @@ enum class ShaderType { VS = 0, PS = 1 };
 class Shader
 {
 public:
-	Shader(LPCTSTR fileName, ShaderType type);
+	Shader(LPCTSTR path, ShaderType type);
 	~Shader();
 
-	ID3DBlob** GetBlob();
+	ID3DBlob* GetBlob();
 
 private:
 	ID3DBlob* blob;
 	ShaderType type;
-	LPCTSTR fileName;	// Ex: vertexShader1
+	LPCTSTR path;	// Ex: vertexShader1
+
+	void CompileShader();
 };
 
 #endif

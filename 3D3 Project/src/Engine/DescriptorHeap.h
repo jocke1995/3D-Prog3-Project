@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-enum class DESCRIPTOR_HEAP_TYPES
+enum class DESCRIPTOR_HEAP_TYPE
 {
 	RTV,
 	DSV,
@@ -13,14 +13,14 @@ enum class DESCRIPTOR_HEAP_TYPES
 class DescriptorHeap
 {
 public:
-	DescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT handleIncrementSize);
+	DescriptorHeap(ID3D12Device5* device, DESCRIPTOR_HEAP_TYPE type);
 	~DescriptorHeap();
 
 	D3D12_DESCRIPTOR_HEAP_DESC* GetDesc();
-	ID3D12DescriptorHeap** GetID3D12DescriptorHeap();
+	ID3D12DescriptorHeap* GetID3D12DescriptorHeap();
 
-	D3D12_CPU_DESCRIPTOR_HANDLE* GetCPUHeapAt(UINT backBufferIndex);
-	D3D12_GPU_DESCRIPTOR_HANDLE* GetGPUHeapAt(UINT backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHeapAt(UINT descriptorIndex);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHeapAt(UINT descriptorIndex);
 	UINT GetHandleIncrementSize();
 
 	void SetCPUGPUHeapStart();
@@ -37,8 +37,6 @@ private:
 
 
 	UINT handleIncrementSize;
-
-	void Init(DESCRIPTOR_HEAP_TYPES type, UINT HandleIncrementSize);
 };
 
 #endif

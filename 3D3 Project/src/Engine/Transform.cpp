@@ -62,7 +62,7 @@ ConstantBuffer* Transform::GetConstantBuffer()
 
 D3D12_GPU_VIRTUAL_ADDRESS Transform::GetGPUAddress()
 {
-	ID3D12Resource1* resource = *this->constantBuffer->GetResource();
+	ID3D12Resource1* resource = this->constantBuffer->GetResource();
 	D3D12_GPU_VIRTUAL_ADDRESS address = resource->GetGPUVirtualAddress();
 	address += (char)this->constantBufferOffset;
 	return address;

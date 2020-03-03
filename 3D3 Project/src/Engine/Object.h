@@ -7,6 +7,15 @@
 class Object
 {
 public:
+    struct SlotInfo
+    {
+        UINT vertexDataIndex = 0;
+        // MaterialIndex
+        // Texture_Diffuse;
+        // TextureNormal:
+        // Texture Specular;
+    };
+
     Object(ConstantBuffer* constantBuffer, Mesh* mesh);
     virtual ~Object();
 
@@ -17,6 +26,8 @@ public:
     virtual void Update() = 0;
 
 protected:
+    SlotInfo info;
+
     Mesh* mesh;
     // TODO: Material*
     Transform* transform;

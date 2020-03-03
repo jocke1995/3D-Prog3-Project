@@ -7,9 +7,6 @@
 class Mesh
 {
 public:
-    Mesh();
-    ~Mesh();
-
     struct Vertex
     {
         DirectX::XMFLOAT4 pos;
@@ -17,13 +14,18 @@ public:
         //DirectX::XMFLOAT4 nor;
     };
 
+    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT vertexDataIndex);
+    ~Mesh();
+
+
     std::vector<Vertex> vertices;
 
-    ID3D12Resource1** GetVBResource();
+    ID3D12Resource1* GetVBResource();
 
     void SetSize(size_t size);
     size_t GetSize();
     size_t GetNumVertices();
+    UINT GetVertexDataIndex();
 
     void SetData();
 
@@ -32,6 +34,8 @@ public:
     // TODO: SRV
 
 private:
+    UINT vertexDataIndex;
+
     ID3D12Resource1* vertexBufferResource = nullptr;
 
     size_t sizeOfVertexBuffer;

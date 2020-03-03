@@ -1,10 +1,18 @@
 #include "RootSignature.h"
 
-RootSignature::RootSignature()
+RootSignature::RootSignature(ID3D12Device5* device)
 {
-	if(!this->CreateRootSignatureStructure())
+	this->CreateRootSignatureStructure();
+
+	HRESULT hr = device->CreateRootSignature(
+		0,
+		this->sBlob->GetBufferPointer(),
+		this->sBlob->GetBufferSize(),
+		IID_PPV_ARGS(&this->rootSig));
+
+	if (hr != S_OK)
 	{
-		OutputDebugStringA("Error: Something went wrong when creating RootSignature\n");
+		OutputDebugStringA("Error: Failed to create RootSignature!\n");
 	}
 }
 
@@ -14,9 +22,9 @@ RootSignature::~RootSignature()
 	SAFE_RELEASE(&this->sBlob);
 }
 
-ID3D12RootSignature** RootSignature::GetRootSig()
+ID3D12RootSignature* RootSignature::GetRootSig()
 {
-	return &this->rootSig;
+	return this->rootSig;
 }
 
 ID3DBlob* RootSignature::GetBlob()
@@ -24,17 +32,28 @@ ID3DBlob* RootSignature::GetBlob()
 	return this->sBlob;
 }
 
-bool RootSignature::CreateRootSignatureStructure()
+void RootSignature::CreateRootSignatureStructure()
 {
+	D3D12_DESCRIPTOR_RANGE dtRangesSRV[1]{};
+	dtRangesSRV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	dtRangesSRV[0].NumDescriptors = -1; // Bindless
+	dtRangesSRV[0].BaseShaderRegister = 0;
+	dtRangesSRV[0].RegisterSpace = 0; // t0
+
+	D3D12_ROOT_DESCRIPTOR_TABLE dtSRV = {};
+	dtSRV.NumDescriptorRanges = ARRAYSIZE(dtRangesSRV);
+	dtSRV.pDescriptorRanges = dtRangesSRV;
+
+
 	D3D12_ROOT_PARAMETER rootParam[RS::NUM_PARAMS]{};
 
-	rootParam[RS::POSITION].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
-	rootParam[RS::POSITION].Descriptor.ShaderRegister = 0;
-	rootParam[RS::POSITION].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam[RS::dtSRV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParam[RS::dtSRV].DescriptorTable = dtSRV;
+	rootParam[RS::dtSRV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	rootParam[RS::TRANSFORM].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParam[RS::TRANSFORM].Descriptor.ShaderRegister = 0;
-	rootParam[RS::TRANSFORM].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam[RS::CBV_PER_OBJECT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam[RS::CBV_PER_OBJECT].Descriptor.ShaderRegister = 0;
+	rootParam[RS::CBV_PER_OBJECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 
@@ -62,7 +81,5 @@ bool RootSignature::CreateRootSignatureStructure()
 	if (hr != S_OK)
 	{
 		OutputDebugStringA("Error: Failed to Serialize RootSignature!\n");
-		return false;
 	}
-	return true;
 }

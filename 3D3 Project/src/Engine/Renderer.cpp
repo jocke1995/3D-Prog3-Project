@@ -11,7 +11,7 @@ Renderer::~Renderer()
 	SAFE_RELEASE(&this->fence);
 
 	SAFE_RELEASE(&this->device5);
-	SAFE_RELEASE(&this->swapChain4);
+	
 
 	SAFE_RELEASE(&this->commandQueue);
 	// TEMP
@@ -20,14 +20,17 @@ Renderer::~Renderer()
 
 	delete this->rootSignature;
 
+	delete swapChain;
+
 	for (auto it : constantBuffers)
 	{
 		delete it.second;
 	}
 
-	for (auto rts1 : this->renderTargetsHolder)
-		for (auto rts2 : rts1.second)
-			delete rts2;
+	delete this->descriptorHeap;
+
+	for (auto renderTask : this->renderTasks)
+		delete renderTask.second;
 }
 
 void Renderer::InitD3D12(HWND *hwnd)
@@ -60,67 +63,60 @@ void Renderer::InitD3D12(HWND *hwnd)
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
 
-	// Create RenderTasks (SPECIFIC FOR KIND OF GAME LATER ON)
-	if (!this->CreateRenderTarget(RenderTargetTypes::SWAPCHAIN))
-	{
-		OutputDebugStringA("Error: Failed to create RenderTarget!\n");
-	}
-
 	// Create constantBuffers
 	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_Translate", 1000, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
 	if (transformBuffer == nullptr)
 	{
 		OutputDebugStringA("Error: Failed to create TransformBuffer!\n");
 	}
-	
+
+	// Create DescriptorHeap
+	this->InitDescriptorHeap();
+
+	AssetLoader::Get().SetDevice(this->device5);
+}
+
+void Renderer::InitRenderTasks()
+{
+	// :-----------------------------TASK TEST:-----------------------------
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdTest = {};
+	gpsdTest.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdTest.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdTest.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdTest.SampleDesc.Count = 1;
+	gpsdTest.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdTest.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdTest.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
+	// Specify Blend descriptions
+	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {
+		false, false,
+		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+		D3D12_LOGIC_OP_NOOP, D3D12_COLOR_WRITE_ENABLE_ALL };
+	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdTest.BlendState.RenderTarget[i] = defaultRTdesc;
+
+
+	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
+	testTask->AddRenderTarget(this->swapChain);
+	testTask->SetDescriptorHeap(this->descriptorHeap);
+
+	this->renderTasks[RenderTaskType::TEST] = testTask;
+
+	// :-----------------------------TASK 2:-----------------------------
 }
 
 ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
 {
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.CreationNodeMask = 1; //used when multi-gpu
-	heapProperties.VisibleNodeMask = 1; //used when multi-gpu
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 
-	D3D12_RESOURCE_DESC resourceDesc = {};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-
-	unsigned int entrySize;
-	switch (type)
-	{
-	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT:
-		entrySize = sizeof(CB_PER_OBJECT); // 16 float
-	}
-
-	resourceDesc.Width = size * entrySize;
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	ConstantBuffer* CB = new ConstantBuffer(name, size, entrySize);
-
-	ID3D12Resource1** constantBufferResource = CB->GetResource();
-
-	HRESULT hr = device5->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(constantBufferResource)
-	);
-
-	if (FAILED(hr))
-		return nullptr;
+	ConstantBuffer* CB = new ConstantBuffer(this->device5, name, size, type);
 
 	constantBuffers[ConstantBufferIndex::CB_TRANSFORM] = CB;
-
-	// TODO: Fix name
-	(*constantBufferResource)->SetName(name.c_str());
 
 	return CB;
 }
@@ -128,49 +124,33 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int s
 // TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
 void Renderer::CreateVertexBuffer(Mesh* mesh)
 {
-	// TODO: Use default heap aswell?
-	D3D12_HEAP_PROPERTIES hp = {};
-	hp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	hp.CreationNodeMask = 1;
-	hp.VisibleNodeMask = 1;
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
 
-	size_t size = mesh->GetSize();
-	D3D12_RESOURCE_DESC rd = {};
-	rd.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	rd.Width = size; // numVertices * Sizeof(vertices)
-	rd.Height = 1;
-	rd.DepthOrArraySize = 1;
-	rd.MipLevels = 1;
-	rd.SampleDesc.Count = 1;
-	rd.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 
+	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = mesh->GetNumVertices();
+	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
-	ID3D12Resource1** resource = mesh->GetVBResource();
-	this->device5->CreateCommittedResource(
-		&hp,
-		D3D12_HEAP_FLAG_NONE,
-		&rd,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(resource));
-
-	(*resource)->SetName(L"VB_Mesh");
-
-	mesh->SetData();
+	this->device5->CreateShaderResourceView(mesh->GetVBResource(), &desc, cdh);
 }
 
-void Renderer::AddRenderTask(RenderTask* renderTask)
+void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)
 {
-	this->CreatePSO(renderTask);
-	this->renderTasks.push_back(renderTask);
+	this->renderTasks[type]->SetObjectsToDraw(objects);
 }
 
 void Renderer::Execute()
 {
-	int backBufferIndex = this->swapChain4->GetCurrentBackBufferIndex();
+	// TODO: STEFAN
+	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
+	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	for (auto tasks : this->renderTasks)
 	{
-		tasks->Execute(this->commandAllocator, this->commandList5, *this->rootSignature->GetRootSig(), backBufferIndex);
+		tasks.second->Execute(this->commandAllocator, this->commandList5, this->rootSignature->GetRootSig(), backBufferIndex);
 	}
 
 	ID3D12CommandList* listsToExecute[] = { this->commandList5 };
@@ -178,12 +158,7 @@ void Renderer::Execute()
 
 	WaitForGPU();
 
-	this->swapChain4->Present(0, 0);
-}
-
-RenderTarget* Renderer::GetRenderTarget(RenderTargetTypes rtt, int index)
-{
-	return this->renderTargetsHolder[rtt].at(index);
+	dx12SwapChain->Present(0, 0);
 }
 
 ConstantBuffer* Renderer::GetConstantBuffer(ConstantBufferIndex index)
@@ -296,143 +271,23 @@ void Renderer::CreateAllocatorAndListTemporary()
 
 bool Renderer::CreateSwapChain(HWND *hwnd)
 {
-	bool swapChainCreated = false;
+	// TODO: Detta
+	swapChain = new SwapChain(device5, hwnd, this->commandQueue);
 
-	IDXGIFactory4* factory = nullptr;
-	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&factory));
-
-	if (hr != S_OK)
-	{
-		// TODO: Errorbox or no? G�ra en klass f�r debugstr�ngar?
-		OutputDebugStringA("Error: Failed to create DXGIFactory!\n");
-		return false;
-	}
-
-	//Create descriptor
-	DXGI_SWAP_CHAIN_DESC1 scDesc = {};
-	scDesc.Width = 0;
-	scDesc.Height = 0;
-	scDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scDesc.Stereo = FALSE;
-	scDesc.SampleDesc.Count = 1;
-	scDesc.SampleDesc.Quality = 0;
-	scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scDesc.BufferCount = NUM_SWAP_BUFFERS;
-	scDesc.Scaling = DXGI_SCALING_NONE;
-	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	scDesc.Flags = 0;
-	scDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-
-	IDXGISwapChain1* swapChain1 = nullptr;
-	if (SUCCEEDED(factory->CreateSwapChainForHwnd(
-		this->commandQueue,
-		*hwnd,
-		&scDesc,
-		nullptr,
-		nullptr,
-		&swapChain1)))
-	{
-		swapChainCreated = true;
-		if (SUCCEEDED(swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain4))))
-		{
-			swapChain4->Release();
-		}
-	}
-
-	SAFE_RELEASE(&factory);
-
-	return swapChainCreated;
+	return true;
 }
 
 bool Renderer::CreateRootSignature()
 {
-	this->rootSignature = new RootSignature();
+	this->rootSignature = new RootSignature(this->device5);
 
-	HRESULT hr = device5->CreateRootSignature(
-		0,
-		this->rootSignature->GetBlob()->GetBufferPointer(),
-		this->rootSignature->GetBlob()->GetBufferSize(),
-		IID_PPV_ARGS(this->rootSignature->GetRootSig()));
-
-	if (hr != S_OK)
-	{
-		OutputDebugStringA("Error: Failed to create RootSignature!\n");
-		return false;
-	}
+	
 	return true;
 }
 
-bool Renderer::CreatePSO(RenderTask* renderTask)
+void Renderer::InitDescriptorHeap()
 {
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsd = *renderTask->GetGpsd();
-
-	// Set the rootSignature in the pipeline state object descriptor
-	renderTask->GetGpsd()->pRootSignature = *this->rootSignature->GetRootSig();
-
-	// Create pipelineStateObject
-	HRESULT hr = device5->CreateGraphicsPipelineState(renderTask->GetGpsd(), IID_PPV_ARGS(renderTask->GetPipelineState()->GetPSO()));
-	if (!SUCCEEDED(hr))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool Renderer::CreateRenderTarget(RenderTargetTypes rtt)
-{
-	if (rtt == RenderTargetTypes::SWAPCHAIN)
-	{
-		RenderTarget* renderTarget = new RenderTarget();
-
-		UINT size = this->device5->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-		renderTarget->CreateDescriptorHeap(DESCRIPTOR_HEAP_TYPES::RTV, size);
-
-		// Create descriptorHeap for the renderTarget
-		D3D12_DESCRIPTOR_HEAP_DESC *dhd = renderTarget->GetDescriptorHeap()->GetDesc();
-		ID3D12DescriptorHeap** descriptorHeap = renderTarget->GetDescriptorHeap()->GetID3D12DescriptorHeap();
-		HRESULT hr = this->device5->CreateDescriptorHeap(dhd, IID_PPV_ARGS(descriptorHeap));
-		if (hr != S_OK)
-		{
-			OutputDebugStringA("Error: Failed to create DescriptorHeap For SwapChainRenderTarget!\n");
-			return false;
-		}
-
-		renderTarget->GetDescriptorHeap()->SetCPUGPUHeapStart();
-
-		D3D12_CPU_DESCRIPTOR_HANDLE cdh = *renderTarget->GetDescriptorHeap()->GetCPUHeapAt(0);
-
-		// Connect the renderTargets to the swapchain, so that the swapchain can easily swap between these two renderTargets
-		for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
-		{
-			hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(renderTarget->GetRenderTarget(i)));
-			if (hr != S_OK)
-			{
-				OutputDebugStringA("Error: Failed to GetBuffer from RenderTarget to Swapchain!\n");
-				return false;
-			}
-
-			device5->CreateRenderTargetView(*renderTarget->GetRenderTarget(i), nullptr, cdh);
-			cdh.ptr += renderTarget->GetDescriptorHeap()->GetHandleIncrementSize();
-		}
-
-		renderTarget->CreateViewport();
-		renderTarget->CreateScissorRect();
-
-		this->renderTargetsHolder[rtt].push_back(renderTarget);
-		return true;
-	}
-	else if (rtt == RenderTargetTypes::RENDERTARGET)
-	{
-		//this->renderTargets.push_back(new DetachedRenderTarget());
-	}
-	else if (rtt == RenderTargetTypes::DEPTH)
-	{
-		//this->renderTargets.push_back(new DepthRenderTarget());
-	}
-
-	return false;
+	this->descriptorHeap = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
 }
 
 void Renderer::TempCreateFence()

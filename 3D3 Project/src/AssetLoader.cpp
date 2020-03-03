@@ -17,8 +17,19 @@ AssetLoader& AssetLoader::Get()
 	return instance;
 }
 
+void AssetLoader::SetDevice(ID3D12Device5* device)
+{
+	this->device = device;
+}
+
 Mesh* AssetLoader::LoadMesh(std::wstring path)
 {
+	// Check if the shader allready exists
+	if (loadedMeshes.count(path) != 0)
+	{
+		return loadedMeshes[path];
+	}
+
 	bool meshLoaded = false;
 	bool endOfFile = false;
 
@@ -119,7 +130,8 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 		DirectX::XMFLOAT3 normal;
 
 		Mesh::Vertex tempVertex;
-		Mesh* newMesh = new Mesh();
+		std::vector<Mesh::Vertex> vvertices;
+
 
 		// Now we store the attributes in the i
 		for (unsigned int i = 0; i < vertexIndices.size(); i++)
@@ -140,11 +152,11 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 			//tempVertex.nor = DirectX::XMFLOAT4(normal.x, normal.y, normal.z, 0.0);
 
 			// Push to Mesh
-			newMesh->vertices.push_back(tempVertex);
+			vvertices.push_back(tempVertex);
 		}
-		
-		// Set Size:
-		newMesh->SetSize(vertexIndices.size() * sizeof(Mesh::Vertex));
+
+		UINT size = vertexIndices.size() * sizeof(Mesh::Vertex);
+		Mesh* newMesh = new Mesh(this->device, vvertices, size, this->slotCounter++);
 
 		// TODO: Add mesh in loadedMeshes with name
 		this->loadedMeshes[path] = newMesh;
@@ -164,57 +176,14 @@ Shader* AssetLoader::LoadShader(std::wstring fileName, ShaderType type)
 	}
 	// else, create a new shader and compile it
 
-	Shader* tempShader = new Shader(fileName.c_str(), type);
-
 	std::wstring entireFilePath = filePathShaders + fileName;
+	Shader* tempShader = new Shader(entireFilePath.c_str(), type);
 
-	this->CompileShader(type, entireFilePath.c_str(), tempShader->GetBlob());
+	
+
+	
 
 	loadedShaders[fileName] = tempShader;
 	return loadedShaders[fileName];
 }
 
-void AssetLoader::CompileShader(ShaderType type, LPCWSTR entireFilePath, ID3DBlob ** blob)
-{
-	std::string entryPoint;
-	std::string shaderModelTarget;
-
-	if (type == ShaderType::VS)
-	{
-		entryPoint = "VS_main";
-		shaderModelTarget = "vs_5_0";
-	}
-	else if (type == ShaderType::PS)
-	{
-		entryPoint = "PS_main";
-		shaderModelTarget = "ps_5_0";
-	}
-
-	ID3DBlob* errorMessages = nullptr;
-
-	HRESULT hr = D3DCompileFromFile(
-		entireFilePath, // filePath + filename
-		nullptr,		// optional macros
-		nullptr,		// optional include files
-		entryPoint.c_str(),		// entry point
-		shaderModelTarget.c_str(),		// shader model (target)
-		0,				// shader compile options			// here DEBUGGING OPTIONS
-		0,				// effect compile options
-		blob,	// double pointer to ID3DBlob		
-		&errorMessages			// pointer for Error Blob messages.
-						// how to use the Error blob, see here
-						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
-	);
-
-	if (blob == nullptr)
-	{
-		OutputDebugStringA("Error: Blob is nullptr when loading shader");
-	}
-
-	if (FAILED(hr) && errorMessages)
-	{
-		const char* errorMsg = (const char*)errorMessages->GetBufferPointer();
-		// Printa i output
-		OutputDebugStringA(errorMsg);
-	}
-}

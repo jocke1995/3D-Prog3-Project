@@ -5,15 +5,13 @@
 #include "RootSignature.h"
 #include "RenderTask.h"
 #include "ConstantBuffer.h"
+#include "SwapChain.h"
 
 #include "RenderTaskTest.h"
 
-// Create a different class for each type of renderTarget, then specify which type to use when creating one
-enum RenderTargetTypes
+enum RenderTaskType
 {
-	SWAPCHAIN,
-	RENDERTARGET,	// Rendertargets which allocates their own memory.. Ex: Deferred Rendering - Position,Normal..   TODO: NAMN
-	DEPTH
+	TEST
 };
 
 enum ConstantBufferIndex
@@ -28,17 +26,17 @@ public:
 	~Renderer();
 
 	void InitD3D12(HWND *hwnd);
+	void InitRenderTasks();
 
 	// Create Constant Buffer
 	ConstantBuffer* CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type);
 	// Create Vertex Buffer
 	void CreateVertexBuffer(Mesh* mesh);
 
-	void AddRenderTask(RenderTask * renderTask);
+	void SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects);
 
 	void Execute();
 
-	RenderTarget* GetRenderTarget(RenderTargetTypes rtt, int index);
 	ConstantBuffer* GetConstantBuffer(ConstantBufferIndex index);
 
 private:
@@ -60,26 +58,21 @@ private:
 	void CreateAllocatorAndListTemporary();
 
 	// Swapchain
-	IDXGISwapChain4* swapChain4 = nullptr;
 	bool CreateSwapChain(HWND *hwnd);
+	RenderTarget* swapChain = nullptr;
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;
 	bool CreateRootSignature();
 
 	// RenderTasks
-	std::vector<RenderTask*> renderTasks;
-	bool CreatePSO(RenderTask* renderTask);
+	std::map<RenderTaskType, RenderTask*> renderTasks;
 
-	std::map<RenderTargetTypes, std::vector<RenderTarget*>> renderTargetsHolder;
 	// The order of the renderTargets in the vector
-	enum RenderTargets
-	{
-		RT_SwapChain
-	};
-	bool CreateRenderTarget(RenderTargetTypes rtt);
 
-	
+	// DescriptorHeap
+	DescriptorHeap* descriptorHeap;
+	void InitDescriptorHeap();
 
 
 	// Fences
