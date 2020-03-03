@@ -18,15 +18,15 @@ struct CB_PER_OBJECT
 class ConstantBuffer
 {
 public:
-	ConstantBuffer(std::wstring name, unsigned int size, unsigned int entrySize);
+	ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type);
 	~ConstantBuffer();
 
 	bool SetData(void* location, const void* data, size_t entrySize);
 	void* GetValidLocation();
-	ID3D12Resource1** GetResource();
+	ID3D12Resource1* GetResource();
 
 private:
-	std::wstring name = nullptr;
+	std::wstring name;
 	unsigned int size = 0;
 	unsigned int entrySize = 0;
 

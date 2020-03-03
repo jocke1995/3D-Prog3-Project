@@ -107,50 +107,10 @@ void Renderer::InitRenderTasks()
 
 ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
 {
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.CreationNodeMask = 1; //used when multi-gpu
-	heapProperties.VisibleNodeMask = 1; //used when multi-gpu
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 
-	D3D12_RESOURCE_DESC resourceDesc = {};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-
-	unsigned int entrySize;
-	switch (type)
-	{
-	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT:
-		entrySize = sizeof(CB_PER_OBJECT); // 16 float
-	}
-
-	resourceDesc.Width = size * entrySize;
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	ConstantBuffer* CB = new ConstantBuffer(name, size, entrySize);
-
-	ID3D12Resource1** constantBufferResource = CB->GetResource();
-
-	HRESULT hr = device5->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(constantBufferResource)
-	);
-
-	if (FAILED(hr))
-		return nullptr;
+	ConstantBuffer* CB = new ConstantBuffer(this->device5, name, size, type);
 
 	constantBuffers[ConstantBufferIndex::CB_TRANSFORM] = CB;
-
-	// TODO: Fix name
-	(*constantBufferResource)->SetName(name.c_str());
 
 	return CB;
 }
