@@ -2,6 +2,7 @@
 
 Object::Object(ConstantBuffer* transformBuffer, Mesh* mesh)
 {
+	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
 	this->transform = new Transform(transformBuffer);
 	this->mesh = mesh;
 }

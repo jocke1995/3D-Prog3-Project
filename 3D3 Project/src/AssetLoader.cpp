@@ -24,6 +24,12 @@ void AssetLoader::SetDevice(ID3D12Device5* device)
 
 Mesh* AssetLoader::LoadMesh(std::wstring path)
 {
+	// Check if the shader allready exists
+	if (loadedMeshes.count(path) != 0)
+	{
+		return loadedMeshes[path];
+	}
+
 	bool meshLoaded = false;
 	bool endOfFile = false;
 
@@ -150,7 +156,7 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 		}
 
 		UINT size = vertexIndices.size() * sizeof(Mesh::Vertex);
-		Mesh* newMesh = new Mesh(this->device, vvertices, size);
+		Mesh* newMesh = new Mesh(this->device, vvertices, size, this->slotCounter++);
 
 		// TODO: Add mesh in loadedMeshes with name
 		this->loadedMeshes[path] = newMesh;

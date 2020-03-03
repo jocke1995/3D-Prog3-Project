@@ -19,8 +19,8 @@ public:
 	D3D12_DESCRIPTOR_HEAP_DESC* GetDesc();
 	ID3D12DescriptorHeap* GetID3D12DescriptorHeap();
 
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHeapAt(UINT backBufferIndex);
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHeapAt(UINT backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHeapAt(UINT descriptorIndex);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHeapAt(UINT descriptorIndex);
 	UINT GetHandleIncrementSize();
 
 	void SetCPUGPUHeapStart();

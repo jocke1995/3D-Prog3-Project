@@ -26,12 +26,12 @@ void Shader::CompileShader()
 	if (type == ShaderType::VS)
 	{
 		entryPoint = "VS_main";
-		shaderModelTarget = "vs_5_0";
+		shaderModelTarget = "vs_5_1";
 	}
 	else if (type == ShaderType::PS)
 	{
 		entryPoint = "PS_main";
-		shaderModelTarget = "ps_5_0";
+		shaderModelTarget = "ps_5_1";
 	}
 
 	ID3DBlob* errorMessages = nullptr;
@@ -42,7 +42,7 @@ void Shader::CompileShader()
 		nullptr,		// optional include files
 		entryPoint.c_str(),		// entry point
 		shaderModelTarget.c_str(),		// shader model (target)
-		0,				// shader compile options			// here DEBUGGING OPTIONS
+		D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES,	// shader compile options			// here DEBUGGING OPTIONS
 		0,				// effect compile options
 		&this->blob,	// double pointer to ID3DBlob		
 		&errorMessages			// pointer for Error Blob messages.

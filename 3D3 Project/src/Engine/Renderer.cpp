@@ -20,12 +20,14 @@ Renderer::~Renderer()
 
 	delete this->rootSignature;
 
+	delete swapChain;
+
 	for (auto it : constantBuffers)
 	{
 		delete it.second;
 	}
 
-	delete swapChain;
+	delete this->descriptorHeap;
 
 	for (auto renderTask : this->renderTasks)
 		delete renderTask.second;
@@ -68,6 +70,9 @@ void Renderer::InitD3D12(HWND *hwnd)
 		OutputDebugStringA("Error: Failed to create TransformBuffer!\n");
 	}
 
+	// Create DescriptorHeap
+	this->InitDescriptorHeap();
+
 	AssetLoader::Get().SetDevice(this->device5);
 }
 
@@ -99,6 +104,7 @@ void Renderer::InitRenderTasks()
 
 	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
 	testTask->AddRenderTarget(this->swapChain);
+	testTask->SetDescriptorHeap(this->descriptorHeap);
 
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
@@ -118,7 +124,18 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int s
 // TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
 void Renderer::CreateVertexBuffer(Mesh* mesh)
 {
-	
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+
+	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = mesh->GetNumVertices();
+	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+	this->device5->CreateShaderResourceView(mesh->GetVBResource(), &desc, cdh);
 }
 
 void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)
@@ -266,6 +283,11 @@ bool Renderer::CreateRootSignature()
 
 	
 	return true;
+}
+
+void Renderer::InitDescriptorHeap()
+{
+	this->descriptorHeap = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
 }
 
 void Renderer::TempCreateFence()

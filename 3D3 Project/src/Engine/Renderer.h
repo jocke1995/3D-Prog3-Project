@@ -9,14 +9,6 @@
 
 #include "RenderTaskTest.h"
 
-// Create a different class for each type of renderTarget, then specify which type to use when creating one
-enum RenderTargetTypes
-{
-	SWAPCHAIN,
-	RENDERTARGET,	// Rendertargets which allocates their own memory.. Ex: Deferred Rendering - Position,Normal..   TODO: NAMN
-	DEPTH
-};
-
 enum RenderTaskType
 {
 	TEST
@@ -79,7 +71,8 @@ private:
 	// The order of the renderTargets in the vector
 
 	// DescriptorHeap
-	
+	DescriptorHeap* descriptorHeap;
+	void InitDescriptorHeap();
 
 
 	// Fences

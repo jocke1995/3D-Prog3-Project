@@ -34,15 +34,26 @@ ID3DBlob* RootSignature::GetBlob()
 
 void RootSignature::CreateRootSignatureStructure()
 {
+	D3D12_DESCRIPTOR_RANGE dtRangesSRV[1]{};
+	dtRangesSRV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	dtRangesSRV[0].NumDescriptors = -1; // Bindless
+	dtRangesSRV[0].BaseShaderRegister = 0;
+	dtRangesSRV[0].RegisterSpace = 0; // t0
+
+	D3D12_ROOT_DESCRIPTOR_TABLE dtSRV = {};
+	dtSRV.NumDescriptorRanges = ARRAYSIZE(dtRangesSRV);
+	dtSRV.pDescriptorRanges = dtRangesSRV;
+
+
 	D3D12_ROOT_PARAMETER rootParam[RS::NUM_PARAMS]{};
 
-	rootParam[RS::POSITION].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
-	rootParam[RS::POSITION].Descriptor.ShaderRegister = 0;
-	rootParam[RS::POSITION].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam[RS::dtSRV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParam[RS::dtSRV].DescriptorTable = dtSRV;
+	rootParam[RS::dtSRV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	rootParam[RS::TRANSFORM].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParam[RS::TRANSFORM].Descriptor.ShaderRegister = 0;
-	rootParam[RS::TRANSFORM].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam[RS::CBV_PER_OBJECT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam[RS::CBV_PER_OBJECT].Descriptor.ShaderRegister = 0;
+	rootParam[RS::CBV_PER_OBJECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 

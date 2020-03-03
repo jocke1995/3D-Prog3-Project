@@ -1,7 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size)
+Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT vertexDataIndex)
 {
+	this->vertexDataIndex = vertexDataIndex;
 	this->sizeOfVertexBuffer = size;
 	this->vertices = vertices;
 
@@ -62,6 +63,11 @@ size_t Mesh::GetSize()
 size_t Mesh::GetNumVertices()
 {
 	return this->sizeOfVertexBuffer / sizeof(Vertex);
+}
+
+UINT Mesh::GetVertexDataIndex()
+{
+	return this->vertexDataIndex;
 }
 
 void Mesh::SetData()

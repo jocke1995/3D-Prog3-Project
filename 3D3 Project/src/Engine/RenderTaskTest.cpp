@@ -16,6 +16,12 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	commandList5->Reset(commandAllocator, NULL);
 
 	commandList5->SetGraphicsRootSignature(rootSig);
+	
+	auto a = this->descriptorHeap->GetID3D12DescriptorHeap();
+	commandList5->SetDescriptorHeaps(1, &a);
+
+	commandList5->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap->GetGPUHeapAt(0));
+
 
 	// Change state on front/backbuffer
 	commandList5->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
@@ -24,12 +30,13 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	DescriptorHeap* dHeap = this->renderTargets[0]->GetDescriptorHeap();
+
 	
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = dHeap->GetCPUHeapAt(backBufferIndex);
 
 	commandList5->OMSetRenderTargets(1, &cdh, true, NULL);
 
-	float clearColor[] = { 0.0f, 0.1f, 0.1f, 1.0f };
+	float clearColor[] = { 0.0f, 0.5f, 0.1f, 1.0f };
 	commandList5->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
 
 	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
@@ -50,10 +57,8 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		vbResource = object->GetMesh()->GetVBResource();
 
 		// TODO: Change when we have setup the rootsignature correctly
-		commandList5->SetGraphicsRootShaderResourceView(RS::POSITION,
-			vbResource->GetGPUVirtualAddress());
 
-		commandList5->SetGraphicsRootConstantBufferView(RS::TRANSFORM,
+		commandList5->SetGraphicsRootConstantBufferView(RS::CBV_PER_OBJECT,
 			transform->GetGPUAddress());
 
 		num_vertices = object->GetMesh()->GetNumVertices();

@@ -13,6 +13,7 @@ enum CONSTANT_BUFFER_TYPE
 struct CB_PER_OBJECT
 {
 	DirectX::XMFLOAT4X4 worldMatrix;
+	DirectX::XMFLOAT4X4 WVP;
 };
 
 class ConstantBuffer

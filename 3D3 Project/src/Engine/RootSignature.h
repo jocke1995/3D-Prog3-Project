@@ -3,6 +3,14 @@
 
 #include "stdafx.h"
 
+// TODO: Fyll upp senare när vi vet vad vi ska ha för saker.
+enum RS
+{
+	dtSRV,
+	CBV_PER_OBJECT,
+	NUM_PARAMS
+};
+
 class RootSignature
 {
 public:

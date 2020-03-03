@@ -55,6 +55,8 @@ private:
     //std::map<std::wstring, Mesh*> loadedMaterials;
     std::map<std::wstring, Shader*> loadedShaders;
 
+    unsigned int slotCounter = 0;
+
     std::wstring filePathShaders = L"src/Engine/HLSL/";
 };
 

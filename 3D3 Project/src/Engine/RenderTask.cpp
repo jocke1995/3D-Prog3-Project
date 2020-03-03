@@ -25,3 +25,8 @@ void RenderTask::SetObjectsToDraw(std::vector<Object*> *objects)
 	this->objects = objects;
 }
 
+void RenderTask::SetDescriptorHeap(DescriptorHeap* dh)
+{
+	this->descriptorHeap = dh;
+}
+
