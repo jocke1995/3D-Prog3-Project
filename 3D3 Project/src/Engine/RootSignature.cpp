@@ -1,10 +1,18 @@
 #include "RootSignature.h"
 
-RootSignature::RootSignature()
+RootSignature::RootSignature(ID3D12Device5* device)
 {
-	if(!this->CreateRootSignatureStructure())
+	this->CreateRootSignatureStructure();
+
+	HRESULT hr = device->CreateRootSignature(
+		0,
+		this->sBlob->GetBufferPointer(),
+		this->sBlob->GetBufferSize(),
+		IID_PPV_ARGS(&this->rootSig));
+
+	if (hr != S_OK)
 	{
-		OutputDebugStringA("Error: Something went wrong when creating RootSignature\n");
+		OutputDebugStringA("Error: Failed to create RootSignature!\n");
 	}
 }
 
@@ -14,9 +22,9 @@ RootSignature::~RootSignature()
 	SAFE_RELEASE(&this->sBlob);
 }
 
-ID3D12RootSignature** RootSignature::GetRootSig()
+ID3D12RootSignature* RootSignature::GetRootSig()
 {
-	return &this->rootSig;
+	return this->rootSig;
 }
 
 ID3DBlob* RootSignature::GetBlob()
@@ -24,7 +32,7 @@ ID3DBlob* RootSignature::GetBlob()
 	return this->sBlob;
 }
 
-bool RootSignature::CreateRootSignatureStructure()
+void RootSignature::CreateRootSignatureStructure()
 {
 	D3D12_ROOT_PARAMETER rootParam[RS::NUM_PARAMS]{};
 
@@ -62,7 +70,5 @@ bool RootSignature::CreateRootSignatureStructure()
 	if (hr != S_OK)
 	{
 		OutputDebugStringA("Error: Failed to Serialize RootSignature!\n");
-		return false;
 	}
-	return true;
 }

@@ -1,7 +1,11 @@
 #include "RenderTarget.h"
 
-RenderTarget::RenderTarget()
+RenderTarget::RenderTarget(ID3D12Device5* device)
 {
+	this->descriptorHeap = new DescriptorHeap(device, DESCRIPTOR_HEAP_TYPE::RTV);
+
+	this->CreateViewport();
+	this->CreateScissorRect();
 }
 
 RenderTarget::~RenderTarget()
@@ -19,9 +23,9 @@ DescriptorHeap* RenderTarget::GetDescriptorHeap()
 	return this->descriptorHeap;
 }
 
-ID3D12Resource1** RenderTarget::GetRenderTarget(UINT index)
+ID3D12Resource1* RenderTarget::GetRenderTarget(UINT index)
 {
-	return &this->renderTargets[index];
+	return this->renderTargets[index];
 }
 
 void RenderTarget::CreateViewport(unsigned int width, unsigned int height)
@@ -41,11 +45,6 @@ void RenderTarget::CreateScissorRect(unsigned int width, unsigned int height)
 	scissorRect.right = (long)width;
 	scissorRect.top = (long)0;
 	scissorRect.bottom = (long)height;
-}
-
-void RenderTarget::CreateDescriptorHeap(DESCRIPTOR_HEAP_TYPES type, UINT size)
-{
-	this->descriptorHeap = new DescriptorHeap(type, size);
 }
 
 D3D12_VIEWPORT* RenderTarget::GetViewPort()

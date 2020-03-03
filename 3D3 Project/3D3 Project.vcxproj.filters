@@ -89,6 +89,9 @@
     <ClCompile Include="src\Engine\Mesh.cpp">
       <Filter>Objects\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\SwapChain.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\DescriptorHeap.h">
@@ -144,6 +147,9 @@
     </ClInclude>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\SwapChain.h">
+      <Filter>Engine\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

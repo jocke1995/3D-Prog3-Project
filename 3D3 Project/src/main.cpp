@@ -12,10 +12,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd());
-
-    RenderTask* testTask = new RenderTaskTest();
-    testTask->AddRenderTarget(renderer->GetRenderTarget(RenderTargetTypes::SWAPCHAIN, 0));
-    renderer->AddRenderTask(testTask);
+    renderer->InitRenderTasks();
 
     // Test Mesh, kan användas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
@@ -27,7 +24,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     cube->GetTransform()->SetScale(1, 1, 1);
 
-    testTask->AddObjectToDraw(cube);
+    std::vector<Object*> objects;
+    objects.push_back(cube);
+
+    renderer->SetObjectsToDraw(RenderTaskType::TEST, &objects);
 
     // GAMELOOP
     while (!window->ExitWindow())
@@ -38,7 +38,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     delete cube;
     delete window;
-    delete testTask;
     delete renderer;
     return 0;
 }

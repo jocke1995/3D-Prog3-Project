@@ -51,7 +51,6 @@ private:
     //std::map<std::wstring, Mesh*> loadedMaterials;
     std::map<std::wstring, Shader*> loadedShaders;
 
-    void CompileShader(ShaderType type, LPCWSTR entireFilePath, ID3DBlob** blob);
     std::wstring filePathShaders = L"src/Engine/HLSL/";
 };
 
