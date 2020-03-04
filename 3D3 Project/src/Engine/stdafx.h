@@ -11,6 +11,8 @@
 #include <DirectXColors.h>
 #include "d3dx12.h"
 
+#include "structs.h"
+
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
 #define SAFE_RELEASE(p)			\
 {								\
@@ -22,8 +24,6 @@
 }
 
 #define NUM_SWAP_BUFFERS 2
-
-
 
 union float4
 {
@@ -42,3 +42,4 @@ union float2
 	struct { float u; float v; };
 	struct { float x; float y; };
 };
+

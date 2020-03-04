@@ -92,6 +92,9 @@
     <ClCompile Include="src\Engine\SwapChain.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\DescriptorHeap.h">
@@ -149,6 +152,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\SwapChain.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\structs.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

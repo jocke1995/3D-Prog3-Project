@@ -1,9 +1,11 @@
 #include "ConstantBuffer.h"
 
-ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
+ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int nrEntries, CONSTANT_BUFFER_TYPE type)
 {
 	this->name = name;
-	this->size = size;
+	this->nrEntries = nrEntries;
+
+	UINT cbSizeAligned = (sizeof(CB_PER_OBJECT)* nrEntries + 255) & ~255;	// 256-byte aligned CB.
 
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -21,7 +23,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 		this->entrySize = sizeof(CB_PER_OBJECT); // 16 float
 	}
 
-	resourceDesc.Width = size * entrySize;
+	resourceDesc.Width = cbSizeAligned;
 	resourceDesc.Height = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.MipLevels = 1;
@@ -45,8 +47,9 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 
 	this->constantBufferResource->SetName(name.c_str());
 
+
 	// Fill validLocations
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < nrEntries; i++)
 	{
 		validLocations.insert(i);
 	}
@@ -59,16 +62,16 @@ ConstantBuffer::~ConstantBuffer()
 	SAFE_RELEASE(&constantBufferResource);
 }
 
-bool ConstantBuffer::SetData(void* location, const void* data, size_t entrySize)
+bool ConstantBuffer::SetData(void* beginLocation, const void* data)
 {
 	// TODO: return false if fail
-	void* dataBegin = location;
+	void* dataBegin = beginLocation;
 
 	// Set up the heap data
 	D3D12_RANGE range = { 0, 0 }; // We do not intend to read this resource on the CPU.
 
 	constantBufferResource->Map(0, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
-	memcpy(dataBegin, data, entrySize);
+	memcpy(dataBegin, data, this->entrySize);
 	constantBufferResource->Unmap(0, nullptr);
 
 	return true;

@@ -80,5 +80,5 @@ void Transform::UpdateWorldMatrix()
 
 	XMStoreFloat4x4(&this->worldMat, tmpWorldMat);
 
-	this->constantBuffer->SetData(this->constantBufferOffset, &this->worldMat, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+	this->constantBuffer->SetData(this->constantBufferOffset, &this->worldMat);
 }

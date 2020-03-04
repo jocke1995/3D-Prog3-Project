@@ -178,6 +178,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AssetLoader.cpp" />
+    <ClCompile Include="src\Engine\Camera.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
     <ClCompile Include="src\Engine\Cube.cpp" />
     <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="src\Engine\RootSignature.h" />
     <ClInclude Include="src\Engine\Shader.h" />
     <ClInclude Include="src\Engine\stdafx.h" />
+    <ClInclude Include="src\Engine\structs.h" />
     <ClInclude Include="src\Engine\SwapChain.h" />
     <ClInclude Include="src\Engine\Transform.h" />
     <ClInclude Include="src\Window.h" />

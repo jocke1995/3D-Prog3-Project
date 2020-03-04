@@ -39,6 +39,8 @@ private:
 	ConstantBuffer* constantBuffer;
 	void* constantBufferOffset;
 
+
+
 	void UpdateWorldMatrix();
 
 };

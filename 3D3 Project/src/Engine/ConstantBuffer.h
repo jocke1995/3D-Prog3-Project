@@ -7,28 +7,25 @@
 
 enum CONSTANT_BUFFER_TYPE
 {
-	CB_PER_OBJECT
+	CB_PER_OBJECT,
+	CB_CAMERA
 };
 
-struct CB_PER_OBJECT
-{
-	DirectX::XMFLOAT4X4 worldMatrix;
-	DirectX::XMFLOAT4X4 WVP;
-};
+
 
 class ConstantBuffer
 {
 public:
-	ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type);
+	ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int nrEntries, CONSTANT_BUFFER_TYPE type);
 	~ConstantBuffer();
 
-	bool SetData(void* location, const void* data, size_t entrySize);
+	bool SetData(void* beginLocation, const void* data);
 	void* GetValidLocation();
 	ID3D12Resource1* GetResource();
 
 private:
 	std::wstring name;
-	unsigned int size = 0;
+	unsigned int nrEntries = 0;
 	unsigned int entrySize = 0;
 
 	ID3D12Resource1* constantBufferResource;

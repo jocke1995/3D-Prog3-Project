@@ -14,11 +14,6 @@ enum RenderTaskType
 	TEST
 };
 
-enum ConstantBufferIndex
-{
-	CB_TRANSFORM
-};
-
 class Renderer
 {
 public:
@@ -37,14 +32,14 @@ public:
 
 	void Execute();
 
-	ConstantBuffer* GetConstantBuffer(ConstantBufferIndex index);
+	ConstantBuffer* GetConstantBuffer(CONSTANT_BUFFER_TYPE type);
 
 private:
 
 	// Device
 	ID3D12Device5* device5 = nullptr;
 
-	std::map<ConstantBufferIndex, ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
+	std::map<CONSTANT_BUFFER_TYPE, ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
 
 	bool CreateDevice();
 

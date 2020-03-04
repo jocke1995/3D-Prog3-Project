@@ -1,21 +1,39 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "Transform.h"
 #include "stdafx.h"
+#include "Transform.h"
+#include "ConstantBuffer.h"
 
 class Camera
 {
 public:
-    Camera(std::wstring name);
+    Camera(std::wstring name, ConstantBuffer* cb);
 	~Camera();
 
-    D3D12Resource1*& GetConstantBuffer();
+    void SetPosition(float x, float y, float z);
+    void SetPosition(XMFLOAT3 pos);
+
+    void SetRotation(XMFLOAT3 axis, float angle);
+    void RotateX(float angle);
+    void RotateY(float angle);
+    void RotateZ(float angle);
+
+    D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
 
 private:
     std::wstring name;
-    ConstantBuffer& cameraConstantBufferResource;
+    ConstantBuffer* constantBuffer;
 
+    XMFLOAT3 position;
+    XMFLOAT4X4 rotationMat;
+
+    XMFLOAT4X4 viewMat;
+    XMFLOAT4X4 projMat;
+    XMFLOAT4X4 vp;
+
+
+    void UpdateViewProjMatrix();
 
     // TODO: STEFAN
 

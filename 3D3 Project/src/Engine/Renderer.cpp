@@ -64,10 +64,16 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Create constantBuffers
-	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_Translate", 1000, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 1000, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
 	if (transformBuffer == nullptr)
 	{
-		OutputDebugStringA("Error: Failed to create TransformBuffer!\n");
+		OutputDebugStringA("Error: Failed to create CB_PER_OBJECT!\n");
+	}
+
+	ConstantBuffer* cameraBuffer = this->CreateConstantBuffer(L"CB_CAMERA", 1, CONSTANT_BUFFER_TYPE::CB_CAMERA);
+	if (transformBuffer == nullptr)
+	{
+		OutputDebugStringA("Error: Failed to create CB_CAMERA!\n");
 	}
 
 	// Create DescriptorHeap
@@ -113,10 +119,9 @@ void Renderer::InitRenderTasks()
 
 ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
 {
-
 	ConstantBuffer* CB = new ConstantBuffer(this->device5, name, size, type);
 
-	constantBuffers[ConstantBufferIndex::CB_TRANSFORM] = CB;
+	constantBuffers[type] = CB;
 
 	return CB;
 }
@@ -161,7 +166,7 @@ void Renderer::Execute()
 	dx12SwapChain->Present(0, 0);
 }
 
-ConstantBuffer* Renderer::GetConstantBuffer(ConstantBufferIndex index)
+ConstantBuffer* Renderer::GetConstantBuffer(CONSTANT_BUFFER_TYPE index)
 {
 	return this->constantBuffers[index];
 }

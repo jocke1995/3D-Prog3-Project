@@ -4,6 +4,7 @@
 
 #include "Engine/Transform.h"
 #include "Engine/Cube.h"
+#include "Engine/Camera.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
@@ -14,12 +15,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->InitD3D12(window->GetHwnd());
     renderer->InitRenderTasks();
 
+    // Camera
+    ConstantBuffer* cameraConstantBuffer = renderer->GetConstantBuffer(CONSTANT_BUFFER_TYPE::CB_CAMERA);
+    Camera* camera = new Camera(L"default_cam", cameraConstantBuffer);
+
     // Test Mesh, kan användas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
     renderer->CreateVertexBuffer(cubeMesh);
 
     // Unique For each object
-    ConstantBuffer* transformConstantBuffer = renderer->GetConstantBuffer(ConstantBufferIndex::CB_TRANSFORM);
+    ConstantBuffer* transformConstantBuffer = renderer->GetConstantBuffer(CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
     Object* cube = new Cube(transformConstantBuffer, cubeMesh);
 
     cube->GetTransform()->SetScale(1, 1, 1);
@@ -37,6 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     }   
 
     delete cube;
+    delete camera;
     delete window;
     delete renderer;
     return 0;
