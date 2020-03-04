@@ -29,6 +29,7 @@ public:
 	void CreateVertexBuffer(Mesh* mesh);
 
 	void SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects);
+	void SetCamera(RenderTaskType type, Camera* camera);
 
 	void Execute();
 

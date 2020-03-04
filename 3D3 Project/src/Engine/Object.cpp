@@ -1,9 +1,9 @@
 #include "Object.h"
 
-Object::Object(ConstantBuffer* transformBuffer, Mesh* mesh)
+Object::Object(Mesh* mesh)
 {
 	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
-	this->transform = new Transform(transformBuffer);
+	this->transform = new Transform();
 	this->mesh = mesh;
 }
 
@@ -20,4 +20,11 @@ Transform* Object::GetTransform()
 Mesh* Object::GetMesh()
 {
 	return this->mesh;
+}
+
+void Object::Update()
+{
+	this->transform->UpdateWorldMatrix();
+
+	this->UpdateSpecific();
 }

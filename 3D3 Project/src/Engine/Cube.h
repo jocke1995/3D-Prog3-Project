@@ -7,12 +7,12 @@
 class Cube : public Object
 {
 public:
-    Cube(ConstantBuffer* constantBuffer, Mesh* mesh);
+    Cube(Mesh* mesh);
     ~Cube();
 
 private:
     void Init();
-    void Update();
+    void UpdateSpecific();
 
 
 };

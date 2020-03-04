@@ -49,17 +49,29 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 
 	// Draw
 	size_t num_vertices = 0;
-	ID3D12Resource1* vbResource;
 	Transform* transform;
+	ConstantBuffer* cbPerObj = this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT];
 	for (auto object : *this->objects)
 	{
 		transform = object->GetTransform();
-		vbResource = object->GetMesh()->GetVBResource();
+
+		XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+		XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
+		XMFLOAT4X4 WVP;
+
+		XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
+		XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
+		XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
+		XMStoreFloat4x4(&WVP, tmpWVP);
+
+		struct CB_PER_OBJECT perObject = { *worldMat, WVP };
+
+		cbPerObj->SetData(nullptr, &perObject);
 
 		// TODO: Change when we have setup the rootsignature correctly
-
+		
 		commandList5->SetGraphicsRootConstantBufferView(RS::CBV_PER_OBJECT,
-			transform->GetGPUAddress());
+			cbPerObj->GetResource()->GetGPUVirtualAddress());
 
 		num_vertices = object->GetMesh()->GetNumVertices();
 		commandList5->DrawInstanced(num_vertices, 1, 0, 0);

@@ -10,7 +10,7 @@ using namespace DirectX;
 class Transform
 {
 public:
-	Transform(ConstantBuffer* constantBufferPosition);
+	Transform();
 	~Transform();
 
 	void SetPosition(float x, float y, float z);
@@ -21,13 +21,12 @@ public:
 	void RotateY(float angle);
 	void RotateZ(float angle);
 
-
 	void SetScale(float x, float y, float z);
 	void SetScale(XMFLOAT3 scale);
 
+	void UpdateWorldMatrix();
 
-	ConstantBuffer* GetConstantBuffer();
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
+	XMFLOAT4X4* GetWorldMatrix();
 
 private:
 	XMFLOAT3 position;
@@ -36,12 +35,7 @@ private:
 
 	XMFLOAT4X4 worldMat;
 
-	ConstantBuffer* constantBuffer;
-	void* constantBufferOffset;
-
-
-
-	void UpdateWorldMatrix();
+	
 
 };
 

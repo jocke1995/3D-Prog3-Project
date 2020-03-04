@@ -16,28 +16,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->InitRenderTasks();
 
     // Camera
-    ConstantBuffer* cameraConstantBuffer = renderer->GetConstantBuffer(CONSTANT_BUFFER_TYPE::CB_CAMERA);
-    Camera* camera = new Camera(L"default_cam", cameraConstantBuffer);
+    Camera* camera = new Camera(L"default_cam");
 
     // Test Mesh, kan användas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = AssetLoader::Get().LoadMesh(L"Resources/Models/cube3.obj");
     renderer->CreateVertexBuffer(cubeMesh);
 
     // Unique For each object
-    ConstantBuffer* transformConstantBuffer = renderer->GetConstantBuffer(CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
-    Object* cube = new Cube(transformConstantBuffer, cubeMesh);
+    Object* cube = new Cube(cubeMesh);
 
-    cube->GetTransform()->SetScale(1, 1, 1);
+    
 
     std::vector<Object*> objects;
     objects.push_back(cube);
 
     renderer->SetObjectsToDraw(RenderTaskType::TEST, &objects);
+    renderer->SetCamera(RenderTaskType::TEST, camera);
 
     // GAMELOOP
+    // TODO : Add dt here
     while (!window->ExitWindow())
     {
         // Fill allocators etc...
+        camera->Update(); // TODO: add dt
+        cube->Update();   // TODO: add dt
+
         renderer->Execute();
     }   
 

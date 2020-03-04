@@ -64,7 +64,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Create constantBuffers
-	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 1000, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 1, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
 	if (transformBuffer == nullptr)
 	{
 		OutputDebugStringA("Error: Failed to create CB_PER_OBJECT!\n");
@@ -111,6 +111,7 @@ void Renderer::InitRenderTasks()
 	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
+	testTask->AddConstantBuffer(this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT]);
 
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
@@ -146,6 +147,11 @@ void Renderer::CreateVertexBuffer(Mesh* mesh)
 void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)
 {
 	this->renderTasks[type]->SetObjectsToDraw(objects);
+}
+
+void Renderer::SetCamera(RenderTaskType type, Camera* camera)
+{
+	this->renderTasks[type]->SetCamera(camera);
 }
 
 void Renderer::Execute()

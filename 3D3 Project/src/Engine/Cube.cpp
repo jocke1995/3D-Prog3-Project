@@ -1,6 +1,6 @@
 #include "Cube.h"
 
-Cube::Cube(ConstantBuffer* transformBuffer, Mesh* mesh) : Object(transformBuffer, mesh)
+Cube::Cube(Mesh* mesh) : Object(mesh)
 {
 }
 
@@ -13,6 +13,7 @@ void Cube::Init()
 	
 }
 
-void Cube::Update()
+void Cube::UpdateSpecific()
 {
+	this->transform->SetScale(1, 1, 1);
 }

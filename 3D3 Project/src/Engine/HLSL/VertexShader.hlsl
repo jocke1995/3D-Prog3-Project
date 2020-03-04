@@ -19,7 +19,8 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 	// 0:ar output
 	VS_OUT output = (VS_OUT)0;
 	output.pos = float4(meshes[0][vID].pos.xyz, 1.0);
-	//output.pos = float4(transform.worldMatrix[0]);
+	//output.pos = transform.WVP[0];
+	//output.pos = output.pos * transform.WVP;
 
 	return output;
 }

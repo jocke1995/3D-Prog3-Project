@@ -1,10 +1,8 @@
 #include "Camera.h"
 
-Camera::Camera(std::wstring name, ConstantBuffer* cb)
+Camera::Camera(std::wstring name)
 {
 	this->name = name;
-	this->constantBuffer = cb;
-
 
 	// Create Projection Matrix
 	float fovAngleY = 45.0f * XM_PI / 180.0f;
@@ -27,6 +25,10 @@ Camera::Camera(std::wstring name, ConstantBuffer* cb)
 }
 
 Camera::~Camera()
+{
+}
+
+void Camera::Update()
 {
 }
 
@@ -56,12 +58,9 @@ void Camera::RotateZ(float angle)
 {
 }
 
-D3D12_GPU_VIRTUAL_ADDRESS Camera::GetGPUAddress()
+XMFLOAT4X4* Camera::GetViewProjMatrix()
 {
-	ID3D12Resource1* resource = this->constantBuffer->GetResource();
-	D3D12_GPU_VIRTUAL_ADDRESS address = resource->GetGPUVirtualAddress();
-	//address += (char)this->constantBufferOffset;
-	return address;
+	return &this->viewProjMat;
 }
 
 void Camera::UpdateViewProjMatrix()
@@ -71,5 +70,5 @@ void Camera::UpdateViewProjMatrix()
 
 	XMMATRIX tempVP = tempView * tempProj;
 
-	XMStoreFloat4x4(&this->vp, tempVP);
+	XMStoreFloat4x4(&this->viewProjMat, tempVP);
 }

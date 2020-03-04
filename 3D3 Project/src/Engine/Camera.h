@@ -8,8 +8,10 @@
 class Camera
 {
 public:
-    Camera(std::wstring name, ConstantBuffer* cb);
+    Camera(std::wstring name);
 	~Camera();
+
+    void Update();
 
     void SetPosition(float x, float y, float z);
     void SetPosition(XMFLOAT3 pos);
@@ -19,18 +21,17 @@ public:
     void RotateY(float angle);
     void RotateZ(float angle);
 
-    D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
+    XMFLOAT4X4* GetViewProjMatrix();
 
 private:
     std::wstring name;
-    ConstantBuffer* constantBuffer;
 
     XMFLOAT3 position;
     XMFLOAT4X4 rotationMat;
 
     XMFLOAT4X4 viewMat;
     XMFLOAT4X4 projMat;
-    XMFLOAT4X4 vp;
+    XMFLOAT4X4 viewProjMat;
 
 
     void UpdateViewProjMatrix();

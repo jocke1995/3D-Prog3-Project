@@ -3,6 +3,7 @@
 ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int nrEntries, CONSTANT_BUFFER_TYPE type)
 {
 	this->name = name;
+	this->type = type;
 	this->nrEntries = nrEntries;
 
 	UINT cbSizeAligned = (sizeof(CB_PER_OBJECT)* nrEntries + 255) & ~255;	// 256-byte aligned CB.
@@ -20,7 +21,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 	switch (type)
 	{
 	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT:
-		this->entrySize = sizeof(CB_PER_OBJECT); // 16 float
+		this->entrySize = sizeof(CB_PER_OBJECT);
 	}
 
 	resourceDesc.Width = cbSizeAligned;
@@ -75,6 +76,11 @@ bool ConstantBuffer::SetData(void* beginLocation, const void* data)
 	constantBufferResource->Unmap(0, nullptr);
 
 	return true;
+}
+
+CONSTANT_BUFFER_TYPE ConstantBuffer::GetType()
+{
+	return this->type;
 }
 
 void* ConstantBuffer::GetValidLocation()

@@ -1,11 +1,7 @@
 #include "Transform.h"
 
-Transform::Transform(ConstantBuffer* constantBuffer)
+Transform::Transform()
 {
-	this->constantBuffer = constantBuffer;
-	// Get a constantbufferlocation
-	this->constantBufferOffset = constantBuffer->GetValidLocation();
-
 	this->position = XMFLOAT3(0.0, 0.0, 0.0);
 	XMStoreFloat4x4(&this->rotationMat, XMMatrixIdentity());
 	this->scale = XMFLOAT3(1.0, 1.0, 1.0);
@@ -53,19 +49,9 @@ void Transform::SetScale(XMFLOAT3 scale)
 	this->scale = scale;
 }
 
-ConstantBuffer* Transform::GetConstantBuffer()
+XMFLOAT4X4* Transform::GetWorldMatrix()
 {
-	// TODO: insert return statement here
-
-	return this->constantBuffer;
-}
-
-D3D12_GPU_VIRTUAL_ADDRESS Transform::GetGPUAddress()
-{
-	ID3D12Resource1* resource = this->constantBuffer->GetResource();
-	D3D12_GPU_VIRTUAL_ADDRESS address = resource->GetGPUVirtualAddress();
-	address += (char)this->constantBufferOffset;
-	return address;
+	return &this->worldMat;
 }
 
 void Transform::UpdateWorldMatrix()
@@ -79,6 +65,4 @@ void Transform::UpdateWorldMatrix()
 	tmpWorldMat = rotMat * sclMat * posMat;
 
 	XMStoreFloat4x4(&this->worldMat, tmpWorldMat);
-
-	this->constantBuffer->SetData(this->constantBufferOffset, &this->worldMat);
 }

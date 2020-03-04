@@ -9,16 +9,15 @@
 class Object
 {
 public:
-    
-
-    Object(ConstantBuffer* constantBuffer, Mesh* mesh);
+    Object(Mesh* mesh);
     virtual ~Object();
 
     Transform* GetTransform();
     Mesh* GetMesh();
 
     virtual void Init() = 0;
-    virtual void Update() = 0;
+    void Update();
+    virtual void UpdateSpecific() = 0;
 
 protected:
     SlotInfo info;

@@ -20,11 +20,14 @@ public:
 	~ConstantBuffer();
 
 	bool SetData(void* beginLocation, const void* data);
+	CONSTANT_BUFFER_TYPE GetType();
 	void* GetValidLocation();
 	ID3D12Resource1* GetResource();
 
 private:
 	std::wstring name;
+	CONSTANT_BUFFER_TYPE type;
+
 	unsigned int nrEntries = 0;
 	unsigned int entrySize = 0;
 
