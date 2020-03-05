@@ -73,7 +73,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		*object->GetSlotInfo();
 
 		SlotInfo a = { 0 };
-		CB_PER_OBJECT perObject = { wTransposed, WVP };
+		CB_PER_OBJECT perObject = { a, wTransposed, WVP };
 
 		cbPerObj->SetData(nullptr, &perObject);
 
