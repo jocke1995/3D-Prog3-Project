@@ -7,7 +7,7 @@
 class Cube : public Object
 {
 public:
-    Cube(Mesh* mesh);
+    Cube(Mesh* mesh, UINT index);
     ~Cube();
 
 private:

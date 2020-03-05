@@ -7,11 +7,12 @@
 class Object
 {
 public:
-    Object(Mesh* mesh);
+    Object(Mesh* mesh, UINT index);
     virtual ~Object();
 
     Transform* GetTransform();
     Mesh* GetMesh();
+    UINT GetIndex();
 
     virtual void Init() = 0;
     void Update();
@@ -21,6 +22,7 @@ public:
 
 protected:
     SlotInfo info;
+    UINT index;
 
     Mesh* mesh;
     // TODO: Material*

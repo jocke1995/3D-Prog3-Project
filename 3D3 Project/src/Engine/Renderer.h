@@ -26,7 +26,8 @@ public:
 	// Create Constant Buffer
 	ConstantBuffer* CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type);
 	// Create Vertex Buffer
-	void CreateVertexBuffer(Mesh* mesh);
+	void CreateShaderResourceView(Mesh* mesh);
+	Mesh* CreateMesh(std::wstring path);
 
 	void SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects);
 	void SetCamera(RenderTaskType type, Camera* camera);

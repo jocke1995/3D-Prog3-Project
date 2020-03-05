@@ -1,7 +1,8 @@
 #include "Object.h"
 
-Object::Object(Mesh* mesh)
+Object::Object(Mesh* mesh, UINT index)
 {
+	this->index = index;
 	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
 	this->transform = new Transform();
 	this->mesh = mesh;
@@ -22,12 +23,13 @@ Mesh* Object::GetMesh()
 	return this->mesh;
 }
 
+UINT Object::GetIndex()
+{
+	return this->index;
+}
+
 void Object::Update()
 {
-	static float s = 1;
-	s += 0.01f;
-	this->transform->SetScale(abs(sinf(s)), 1, 1);
-
 	this->transform->UpdateWorldMatrix();
 
 	this->UpdateSpecific();

@@ -64,7 +64,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Create constantBuffers
-	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 1, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE);
+	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 10, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE);
 	if (transformBuffer == nullptr)
 	{
 		OutputDebugStringA("Error: Failed to create CB_PER_OBJECT!\n");
@@ -128,7 +128,7 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int s
 }
 
 // TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
-void Renderer::CreateVertexBuffer(Mesh* mesh)
+void Renderer::CreateShaderResourceView(Mesh* mesh)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
 
@@ -142,6 +142,15 @@ void Renderer::CreateVertexBuffer(Mesh* mesh)
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
 	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
+}
+
+Mesh* Renderer::CreateMesh(std::wstring path)
+{
+	Mesh* mesh = AssetLoader::Get().LoadMesh(path);
+
+	this->CreateShaderResourceView(mesh);
+
+	return mesh;
 }
 
 void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)

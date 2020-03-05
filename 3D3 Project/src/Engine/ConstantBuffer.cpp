@@ -76,6 +76,19 @@ bool ConstantBuffer::SetData(void* beginLocation, const void* data)
 	return true;
 }
 
+D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGPUAt(UINT index)
+{
+	if (index > this->entrySize)
+	{
+		OutputDebugStringW(L"ERROR: Constant Buffer Memory Out of Range");
+		return 0;
+	}
+
+	D3D12_GPU_VIRTUAL_ADDRESS address = this->resource->GetGPUVirtualAddress();
+	address = (index * 256) + address;
+	return address;
+}
+
 CONSTANT_BUFFER_TYPE ConstantBuffer::GetType()
 {
 	return this->type;

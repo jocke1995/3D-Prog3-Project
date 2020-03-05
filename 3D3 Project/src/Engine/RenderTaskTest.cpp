@@ -22,7 +22,6 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 
 	commandList5->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap->GetGPUHeapAt(0));
 
-
 	// Change state on front/backbuffer
 	commandList5->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 		this->renderTargets[0]->GetRenderTarget(backBufferIndex),
@@ -70,21 +69,20 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
 
-		*object->GetSlotInfo();
+		
 
-		SlotInfo a = { 0 };
-		CB_PER_OBJECT perObject = { a, wTransposed, WVP };
+		SlotInfo* info = object->GetSlotInfo();
+		CB_PER_OBJECT perObject = { *info, wTransposed, WVP };
 
-		cbPerObj->SetData(nullptr, &perObject);
+		cbPerObj->SetData((void*)(256 * object->GetIndex()), &perObject);
 
 		// TODO: Change when we have setup the rootsignature correctly
 		
 		commandList5->SetGraphicsRootConstantBufferView(RS::CBV_PER_OBJECT,
-			cbPerObj->GetID3D12Resource1()->GetGPUVirtualAddress());
+			cbPerObj->GetGPUAt(object->GetIndex()));
 
 		num_vertices = object->GetMesh()->GetNumVertices();
 		commandList5->DrawInstanced(num_vertices, 1, 0, 0);
-
 	}
 	
 
