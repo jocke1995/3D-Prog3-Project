@@ -11,8 +11,6 @@ enum CONSTANT_BUFFER_TYPE
 	CB_CAMERA_TYPE
 };
 
-
-
 class ConstantBuffer
 {
 public:

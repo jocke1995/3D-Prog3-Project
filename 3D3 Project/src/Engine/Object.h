@@ -4,8 +4,6 @@
 #include "Transform.h"
 #include "Mesh.h"
 
-
-
 class Object
 {
 public:

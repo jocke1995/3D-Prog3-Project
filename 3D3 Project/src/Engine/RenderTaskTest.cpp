@@ -84,6 +84,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 
 		num_vertices = object->GetMesh()->GetNumVertices();
 		commandList5->DrawInstanced(num_vertices, 1, 0, 0);
+
 	}
 	
 

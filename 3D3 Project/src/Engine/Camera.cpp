@@ -12,7 +12,6 @@ Camera::Camera(std::wstring name)
 	XMMATRIX tempProj = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, zNear, zFar);
 	XMStoreFloat4x4(&this->projMat, tempProj);
 
-
 	// Create View Matrix
 	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
