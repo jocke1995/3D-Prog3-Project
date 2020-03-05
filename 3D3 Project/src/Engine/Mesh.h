@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "stdafx.h"
+#include "Resource.h"
 #include <vector>
 
 class Mesh
@@ -17,10 +18,9 @@ public:
     Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT vertexDataIndex);
     ~Mesh();
 
-
     std::vector<Vertex> vertices;
 
-    ID3D12Resource1* GetVBResource();
+    Resource* GetResource();
 
     void SetSize(size_t size);
     size_t GetSize();
@@ -31,18 +31,10 @@ public:
 
     // Indici buffer
 
-    // TODO: SRV
-
 private:
     UINT vertexDataIndex;
 
-    ID3D12Resource1* vertexBufferResource = nullptr;
-
-    size_t sizeOfVertexBuffer;
-
-    // TODO: Används ej just nu, kanske ska göra det senare
-    D3D12_HEAP_PROPERTIES hp = {};
-    D3D12_RESOURCE_DESC rd = {};
+    Resource* resource = nullptr;
 };
 
 #endif

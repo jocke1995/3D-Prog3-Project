@@ -80,7 +80,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		// TODO: Change when we have setup the rootsignature correctly
 		
 		commandList5->SetGraphicsRootConstantBufferView(RS::CBV_PER_OBJECT,
-			cbPerObj->GetResource()->GetGPUVirtualAddress());
+			cbPerObj->GetID3D12Resource1()->GetGPUVirtualAddress());
 
 		num_vertices = object->GetMesh()->GetNumVertices();
 		commandList5->DrawInstanced(num_vertices, 1, 0, 0);

@@ -1,8 +1,8 @@
 #include "ConstantBuffer.h"
 
-ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigned int nrEntries, CONSTANT_BUFFER_TYPE type)
+ConstantBuffer::ConstantBuffer(ID3D12Device5* device, unsigned int nrEntries, CONSTANT_BUFFER_TYPE type, std::wstring name)
+	: Resource(name) 
 {
-	this->name = name;
 	this->type = type;
 	this->nrEntries = nrEntries;
 
@@ -38,7 +38,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 		&resourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&this->constantBufferResource)
+		IID_PPV_ARGS(&this->resource)
 	);
 
 	if (FAILED(hr))
@@ -46,8 +46,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 		OutputDebugStringW(L"ERROR: Failed to create Constant Buffer");
 	}
 
-	this->constantBufferResource->SetName(name.c_str());
-
+	this->resource->SetName(name.c_str());
 
 	// Fill validLocations
 	for (int i = 0; i < nrEntries; i++)
@@ -59,8 +58,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 
 ConstantBuffer::~ConstantBuffer()
 {
-	// Make sure to not destory if still used on GPU
-	SAFE_RELEASE(&constantBufferResource);
+	
 }
 
 bool ConstantBuffer::SetData(void* beginLocation, const void* data)
@@ -71,9 +69,9 @@ bool ConstantBuffer::SetData(void* beginLocation, const void* data)
 	// Set up the heap data
 	D3D12_RANGE range = { 0, 0 }; // We do not intend to read this resource on the CPU.
 
-	constantBufferResource->Map(0, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
+	this->resource->Map(0, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
 	memcpy(dataBegin, data, this->entrySize);
-	constantBufferResource->Unmap(0, nullptr);
+	this->resource->Unmap(0, nullptr);
 
 	return true;
 }
@@ -101,9 +99,4 @@ void* ConstantBuffer::GetValidLocation()
 	}
 
 	return location;
-}
-
-ID3D12Resource1* ConstantBuffer::GetResource()
-{
-	return this->constantBufferResource;
 }

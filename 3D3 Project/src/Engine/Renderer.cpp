@@ -120,7 +120,7 @@ void Renderer::InitRenderTasks()
 
 ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
 {
-	ConstantBuffer* CB = new ConstantBuffer(this->device5, name, size, type);
+	ConstantBuffer* CB = new ConstantBuffer(this->device5, size, type, name);
 
 	constantBuffers[type] = CB;
 
@@ -141,7 +141,7 @@ void Renderer::CreateVertexBuffer(Mesh* mesh)
 	desc.Format = DXGI_FORMAT_UNKNOWN;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
-	this->device5->CreateShaderResourceView(mesh->GetVBResource(), &desc, cdh);
+	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
 }
 
 void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)
