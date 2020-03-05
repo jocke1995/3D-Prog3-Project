@@ -19,6 +19,8 @@ public:
     void Update();
     virtual void UpdateSpecific() = 0;
 
+    SlotInfo* GetSlotInfo();
+
 protected:
     SlotInfo info;
 

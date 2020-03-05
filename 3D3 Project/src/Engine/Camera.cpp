@@ -9,15 +9,15 @@ Camera::Camera(std::wstring name)
 	float aspectRatio = 16.0f/9.0f;
 	float zNear = 0.1f;
 	float zFar = 1000.0f;
-	XMMATRIX tempProj = XMMatrixPerspectiveFovRH(fovAngleY, aspectRatio, zNear, zFar);
+	XMMATRIX tempProj = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, zNear, zFar);
 	XMStoreFloat4x4(&this->projMat, tempProj);
 
 
 	// Create View Matrix
-	XMVECTOR Eye = XMVectorSet(1.5f, 1.5f, 1.5f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX tempView = XMMatrixLookAtRH(Eye, At, Up);
+	XMMATRIX tempView = XMMatrixLookAtLH(Eye, At, Up);
 
 	XMStoreFloat4x4(&this->viewMat, tempView);
 
@@ -70,5 +70,5 @@ void Camera::UpdateViewProjMatrix()
 
 	XMMATRIX tempVP = tempView * tempProj;
 
-	XMStoreFloat4x4(&this->viewProjMat, tempVP);
+	XMStoreFloat4x4(&this->viewProjMat, (tempVP));
 }

@@ -64,13 +64,13 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Create constantBuffers
-	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 1, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT);
+	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 1, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE);
 	if (transformBuffer == nullptr)
 	{
 		OutputDebugStringA("Error: Failed to create CB_PER_OBJECT!\n");
 	}
 
-	ConstantBuffer* cameraBuffer = this->CreateConstantBuffer(L"CB_CAMERA", 1, CONSTANT_BUFFER_TYPE::CB_CAMERA);
+	ConstantBuffer* cameraBuffer = this->CreateConstantBuffer(L"CB_CAMERA", 1, CONSTANT_BUFFER_TYPE::CB_CAMERA_TYPE);
 	if (transformBuffer == nullptr)
 	{
 		OutputDebugStringA("Error: Failed to create CB_CAMERA!\n");
@@ -111,7 +111,7 @@ void Renderer::InitRenderTasks()
 	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
-	testTask->AddConstantBuffer(this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT]);
+	testTask->AddConstantBuffer(this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE]);
 
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 

@@ -20,7 +20,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, std::wstring name, unsigne
 
 	switch (type)
 	{
-	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT:
+	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE:
 		this->entrySize = sizeof(CB_PER_OBJECT);
 	}
 

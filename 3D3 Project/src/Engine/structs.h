@@ -4,6 +4,11 @@
 
 #ifdef IS_SHADER
 
+	struct SlotInfo
+	{
+		unsigned int vertexDataIndex;
+	};
+
 	struct CB_PER_OBJECT
 	{
 		//SlotInfo info;
@@ -11,19 +16,7 @@
 		float4x4 WVP;
 	};
 
-	struct SlotInfo
-	{
-		unsigned int vertexDataIndex;
-	};
-
 #else
-
-	struct CB_PER_OBJECT
-	{
-		//SlotInfo info;
-		DirectX::XMFLOAT4X4 worldMatrix;
-		DirectX::XMFLOAT4X4 WVP;
-	};
 
 	struct SlotInfo
 	{
@@ -32,6 +25,13 @@
 		// Texture_Diffuse;
 		// TextureNormal:
 		// Texture Specular;
+	};
+
+	struct CB_PER_OBJECT
+	{
+		//SlotInfo info;
+		DirectX::XMFLOAT4X4 worldMatrix;
+		DirectX::XMFLOAT4X4 WVP;
 	};
 
 	typedef union

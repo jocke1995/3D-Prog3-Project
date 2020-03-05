@@ -24,6 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // Unique For each object
     Object* cube = new Cube(cubeMesh);
+    cube->GetTransform()->SetPosition(0, 0, 10);
 
     
 

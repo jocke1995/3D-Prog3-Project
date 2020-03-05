@@ -24,7 +24,16 @@ Mesh* Object::GetMesh()
 
 void Object::Update()
 {
+	static float s = 1;
+	s += 0.01f;
+	this->transform->SetScale(abs(sinf(s)), 1, 1);
+
 	this->transform->UpdateWorldMatrix();
 
 	this->UpdateSpecific();
+}
+
+SlotInfo* Object::GetSlotInfo()
+{
+	return &this->info;
 }

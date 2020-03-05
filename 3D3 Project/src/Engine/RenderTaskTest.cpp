@@ -50,21 +50,30 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	// Draw
 	size_t num_vertices = 0;
 	Transform* transform;
-	ConstantBuffer* cbPerObj = this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT];
+	ConstantBuffer* cbPerObj = this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE];
+
+	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
+	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
+
 	for (auto object : *this->objects)
 	{
 		transform = object->GetTransform();
 
 		XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-		XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 		XMFLOAT4X4 WVP;
 
 		XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
-		XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 		XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
-		XMStoreFloat4x4(&WVP, tmpWVP);
+		XMStoreFloat4x4(&WVP, XMMatrixTranspose(tmpWVP));
 
-		struct CB_PER_OBJECT perObject = { *worldMat, WVP };
+		XMFLOAT4X4 wTransposed;
+		XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
+
+
+		*object->GetSlotInfo();
+
+		SlotInfo a = { 0 };
+		CB_PER_OBJECT perObject = { wTransposed, WVP };
 
 		cbPerObj->SetData(nullptr, &perObject);
 
