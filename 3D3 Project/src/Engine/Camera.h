@@ -2,8 +2,6 @@
 #define CAMERA_H
 
 #include "stdafx.h"
-#include "Transform.h"
-#include "ConstantBuffer.h"
 
 class Camera
 {

@@ -20,11 +20,6 @@ void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 	this->renderTargets.push_back(renderTarget);
 }
 
-void RenderTask::AddConstantBuffer(ConstantBuffer* cb)
-{
-	this->constantBuffers[cb->GetType()] = cb;
-}
-
 void RenderTask::SetObjectsToDraw(std::vector<Object*> *objects)
 {
 	this->objects = objects;

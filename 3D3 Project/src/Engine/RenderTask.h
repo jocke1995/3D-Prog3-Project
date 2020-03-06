@@ -16,7 +16,6 @@ public:
 	PipelineState* GetPipelineState();
 
 	void AddRenderTarget(RenderTarget* renderTarget);
-	void AddConstantBuffer(ConstantBuffer* cb);
 
 	void SetObjectsToDraw(std::vector<Object*> *objects);
 	void SetCamera(Camera* camera);
@@ -27,7 +26,6 @@ private:
 
 protected:
 	DescriptorHeap* descriptorHeap = nullptr;
-	std::map<CONSTANT_BUFFER_TYPE, ConstantBuffer*> constantBuffers;
 
 	std::vector<RenderTarget*> renderTargets;
 	PipelineState* pipelineState = nullptr;

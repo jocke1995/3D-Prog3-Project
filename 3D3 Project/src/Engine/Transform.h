@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include "ConstantBuffer.h"
-
 using namespace DirectX;
 
 class Transform

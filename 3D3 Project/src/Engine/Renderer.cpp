@@ -22,11 +22,6 @@ Renderer::~Renderer()
 
 	delete swapChain;
 
-	for (auto it : constantBuffers)
-	{
-		delete it.second;
-	}
-
 	delete this->descriptorHeap;
 
 	for (auto renderTask : this->renderTasks)
@@ -61,19 +56,6 @@ void Renderer::InitD3D12(HWND *hwnd)
 	if (!this->CreateRootSignature())
 	{
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
-	}
-
-	// Create constantBuffers
-	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 10, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE);
-	if (transformBuffer == nullptr)
-	{
-		OutputDebugStringA("Error: Failed to create CB_PER_OBJECT!\n");
-	}
-
-	ConstantBuffer* cameraBuffer = this->CreateConstantBuffer(L"CB_CAMERA", 1, CONSTANT_BUFFER_TYPE::CB_CAMERA_TYPE);
-	if (transformBuffer == nullptr)
-	{
-		OutputDebugStringA("Error: Failed to create CB_CAMERA!\n");
 	}
 
 	// Create DescriptorHeap
@@ -111,20 +93,10 @@ void Renderer::InitRenderTasks()
 	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
-	testTask->AddConstantBuffer(this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE]);
 
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
 	// :-----------------------------TASK 2:-----------------------------
-}
-
-ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
-{
-	ConstantBuffer* CB = new ConstantBuffer(this->device5, size, type, name);
-
-	constantBuffers[type] = CB;
-
-	return CB;
 }
 
 // TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
@@ -179,11 +151,6 @@ void Renderer::Execute()
 	WaitForGPU();
 
 	dx12SwapChain->Present(0, 0);
-}
-
-ConstantBuffer* Renderer::GetConstantBuffer(CONSTANT_BUFFER_TYPE index)
-{
-	return this->constantBuffers[index];
 }
 
 // -----------------------  Private Functions  ----------------------- //

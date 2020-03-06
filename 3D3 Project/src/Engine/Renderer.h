@@ -4,7 +4,6 @@
 #include <map>
 #include "RootSignature.h"
 #include "RenderTask.h"
-#include "ConstantBuffer.h"
 #include "SwapChain.h"
 
 #include "RenderTaskTest.h"
@@ -23,8 +22,6 @@ public:
 	void InitD3D12(HWND *hwnd);
 	void InitRenderTasks();
 
-	// Create Constant Buffer
-	ConstantBuffer* CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type);
 	// Create Vertex Buffer
 	void CreateShaderResourceView(Mesh* mesh);
 	Mesh* CreateMesh(std::wstring path);
@@ -34,14 +31,10 @@ public:
 
 	void Execute();
 
-	ConstantBuffer* GetConstantBuffer(CONSTANT_BUFFER_TYPE type);
-
 private:
 
 	// Device
 	ID3D12Device5* device5 = nullptr;
-
-	std::map<CONSTANT_BUFFER_TYPE, ConstantBuffer*> constantBuffers; // TODO:: NUM_BUFFERS Buffering
 
 	bool CreateDevice();
 
