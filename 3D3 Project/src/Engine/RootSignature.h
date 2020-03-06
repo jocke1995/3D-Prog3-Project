@@ -7,7 +7,7 @@
 enum RS
 {
 	dtSRV,
-	CBV_PER_OBJECT,
+	CB_PER_OBJECT_CONSTANTS,
 	NUM_PARAMS
 };
 

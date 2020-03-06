@@ -21,7 +21,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Test Mesh, kan användas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
     
-
     std::vector<Object*> objects;
 
     // Unique For each object

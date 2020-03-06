@@ -9,9 +9,9 @@
 
 	struct CB_PER_OBJECT
 	{
-		SlotInfo info;
 		float4x4 worldMatrix;
 		float4x4 WVP;
+		SlotInfo info;
 	};
 
 #else
@@ -45,9 +45,9 @@
 
 	struct CB_PER_OBJECT
 	{
-		SlotInfo info;
 		DirectX::XMFLOAT4X4 worldMatrix;
 		DirectX::XMFLOAT4X4 WVP;
+		SlotInfo info;
 	};
 
 	
