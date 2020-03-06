@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "stdafx.h"
+#include "Transform.h"
 
 class Camera
 {
