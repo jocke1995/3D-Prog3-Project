@@ -35,7 +35,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 
 	commandList5->OMSetRenderTargets(1, &cdh, true, NULL);
 
-	float clearColor[] = { 0.0f, 0.5f, 0.1f, 1.0f };
+	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	commandList5->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
 
 	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();

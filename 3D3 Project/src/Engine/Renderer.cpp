@@ -96,7 +96,7 @@ void Renderer::InitRenderTasks()
 	gpsdTest.SampleMask = UINT_MAX;
 	// Rasterizer behaviour
 	gpsdTest.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdTest.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	gpsdTest.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 
 	// Specify Blend descriptions
 	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {
