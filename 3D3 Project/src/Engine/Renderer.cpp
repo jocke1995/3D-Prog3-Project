@@ -127,7 +127,6 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int s
 	return CB;
 }
 
-// TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
 void Renderer::CreateShaderResourceView(Mesh* mesh)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());

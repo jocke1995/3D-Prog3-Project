@@ -31,7 +31,7 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 	output.worldPos = mul(vertexPosition, transform.worldMatrix);
 
 	output.uv = float4(mesh.uv);
-	output.norm = float4(mesh.norm);
+	output.norm = mul(float4(mesh.norm), transform.worldMatrix);
 
 	return output;
 }

@@ -13,6 +13,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(hWnd);
 			}
 		}
+
 		return 0;
 
 	case WM_DESTROY:

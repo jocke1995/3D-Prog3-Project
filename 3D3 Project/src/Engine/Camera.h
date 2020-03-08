@@ -1,6 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+// TEMP
+#pragma comment (lib, "dinput8.lib")
+#pragma comment (lib, "dxguid.lib")
+#include <dinput.h>
+
 #include "stdafx.h"
 #include "Transform.h"
 #include "ConstantBuffer.h"
@@ -8,13 +13,12 @@
 class Camera
 {
 public:
-    Camera(std::wstring name);
+    Camera(std::wstring name, HINSTANCE hInstance, HWND hwnd);
 	~Camera();
 
-    void Update();
+    void Update(float dt);
 
     void SetPosition(float x, float y, float z);
-    void SetPosition(XMFLOAT3 pos);
 
     void SetRotation(XMFLOAT3 axis, float angle);
     void RotateX(float angle);
@@ -25,15 +29,30 @@ public:
 
 private:
     std::wstring name;
+    float movementSpeed = 0.002f;
 
-    XMFLOAT3 position;
-    XMFLOAT4X4 rotationMat;
+    XMVECTOR rotateAroundVector;
+    XMVECTOR eyeVector;
+    XMVECTOR atVector;
+    XMVECTOR upVector;
+
+    // INPUT
+    IDirectInputDevice8* keyboard;
+    IDirectInputDevice8* mouse;
+    DIMOUSESTATE mouseLastState;
+    LPDIRECTINPUT8 DirectInput;
 
     XMFLOAT4X4 viewMat;
     XMFLOAT4X4 projMat;
     XMFLOAT4X4 viewProjMat;
 
+    void MoveForward(float dt);
+    void MoveBackward(float dt);
+    void MoveRight(float dt);
+    void MoveLeft(float dt);
 
+    void InitDirectInput(HINSTANCE hInstance, HWND hwnd);
+    void DetectInput(float dt);
     void UpdateViewProjMatrix();
 
     // TODO: STEFAN
