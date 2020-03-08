@@ -20,12 +20,8 @@ Renderer::~Renderer()
 
 	delete this->rootSignature;
 
-	delete swapChain;
-
-	for (auto it : constantBuffers)
-	{
-		delete it.second;
-	}
+	delete this->swapChain;
+	delete this->depthBuffer;
 
 	delete this->descriptorHeap;
 
@@ -57,27 +53,22 @@ void Renderer::InitD3D12(HWND *hwnd)
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
 
+	// Create Main DepthBuffer
+	if (!this->CreateDepthBuffer())
+	{
+		OutputDebugStringA("Error: Failed to create DepthBuffer!\n");
+	}
+	
 	// Create Rootsignature
 	if (!this->CreateRootSignature())
 	{
-		OutputDebugStringA("Error: Failed to create SwapChain!\n");
-	}
-
-	// Create constantBuffers
-	ConstantBuffer* transformBuffer = this->CreateConstantBuffer(L"CB_PER_OBJECT", 10, CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE);
-	if (transformBuffer == nullptr)
-	{
-		OutputDebugStringA("Error: Failed to create CB_PER_OBJECT!\n");
-	}
-
-	ConstantBuffer* cameraBuffer = this->CreateConstantBuffer(L"CB_CAMERA", 1, CONSTANT_BUFFER_TYPE::CB_CAMERA_TYPE);
-	if (transformBuffer == nullptr)
-	{
-		OutputDebugStringA("Error: Failed to create CB_CAMERA!\n");
+		OutputDebugStringA("Error: Failed to create RootSignature!\n");
 	}
 
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
+
+	
 
 	AssetLoader::Get().SetDevice(this->device5);
 }
@@ -107,26 +98,34 @@ void Renderer::InitRenderTasks()
 	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
 		gpsdTest.BlendState.RenderTarget[i] = defaultRTdesc;
 
+	// DepthStencil
+	// Depth descriptor
+	D3D12_DEPTH_STENCIL_DESC dsd = {};
+	dsd.DepthEnable = true;
+	dsd.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+
+	dsd.StencilEnable = false;
+	dsd.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	dsd.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	const D3D12_DEPTH_STENCILOP_DESC defaultStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	dsd.FrontFace = defaultStencilOP;
+	dsd.BackFace = defaultStencilOP;
+
+	gpsdTest.DepthStencilState = dsd;
+	gpsdTest.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
 	testTask->AddRenderTarget(this->swapChain);
+	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
-	testTask->AddConstantBuffer(this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE]);
-
+	
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
 	// :-----------------------------TASK 2:-----------------------------
 }
 
-ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int size, CONSTANT_BUFFER_TYPE type)
-{
-	ConstantBuffer* CB = new ConstantBuffer(this->device5, size, type, name);
-
-	constantBuffers[type] = CB;
-
-	return CB;
-}
-
+// TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
 void Renderer::CreateShaderResourceView(Mesh* mesh)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
@@ -178,11 +177,6 @@ void Renderer::Execute()
 	WaitForGPU();
 
 	dx12SwapChain->Present(0, 0);
-}
-
-ConstantBuffer* Renderer::GetConstantBuffer(CONSTANT_BUFFER_TYPE index)
-{
-	return this->constantBuffers[index];
 }
 
 // -----------------------  Private Functions  ----------------------- //
@@ -293,6 +287,12 @@ bool Renderer::CreateSwapChain(HWND *hwnd)
 	// TODO: Detta
 	swapChain = new SwapChain(device5, hwnd, this->commandQueue);
 
+	return true;
+}
+
+bool Renderer::CreateDepthBuffer()
+{
+	this->depthBuffer = new DepthBuffer(this->device5, 800, 600);
 	return true;
 }
 

@@ -28,11 +28,11 @@ UINT Object::GetIndex()
 	return this->index;
 }
 
-void Object::Update()
+void Object::Update(double dt)
 {
 	this->transform->UpdateWorldMatrix();
 
-	this->UpdateSpecific();
+	this->UpdateSpecific(dt);
 }
 
 SlotInfo* Object::GetSlotInfo()

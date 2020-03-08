@@ -15,8 +15,8 @@ public:
     UINT GetIndex();
 
     virtual void Init() = 0;
-    void Update();
-    virtual void UpdateSpecific() = 0;
+    void Update(double dt);
+    virtual void UpdateSpecific(double dt) = 0;
 
     SlotInfo* GetSlotInfo();
 

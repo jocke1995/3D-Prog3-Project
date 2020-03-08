@@ -51,9 +51,11 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::dtSRV].DescriptorTable = dtSRV;
 	rootParam[RS::dtSRV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	rootParam[RS::CBV_PER_OBJECT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParam[RS::CBV_PER_OBJECT].Descriptor.ShaderRegister = 0;
-	rootParam[RS::CBV_PER_OBJECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.ShaderRegister = 0;
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.RegisterSpace = 0;
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_OBJECT) / sizeof(UINT);
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 

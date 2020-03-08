@@ -37,11 +37,9 @@ void Shader::CompileShader()
 	ID3DBlob* errorMessages = nullptr;
 
 
-	D3D_SHADER_MACRO Shader_Macros[] = { "IS_SHADER", "1", NULL, NULL };
-
 	HRESULT hr = D3DCompileFromFile(
 		this->path, // filePath + filename
-		Shader_Macros,		// optional macros
+		nullptr,		// optional macros
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,		// optional include files
 		entryPoint.c_str(),		// entry point
 		shaderModelTarget.c_str(),		// shader model (target)

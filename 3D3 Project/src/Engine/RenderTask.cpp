@@ -20,11 +20,6 @@ void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 	this->renderTargets.push_back(renderTarget);
 }
 
-void RenderTask::AddConstantBuffer(ConstantBuffer* cb)
-{
-	this->constantBuffers[cb->GetType()] = cb;
-}
-
 void RenderTask::SetObjectsToDraw(std::vector<Object*> *objects)
 {
 	this->objects = objects;
@@ -38,5 +33,10 @@ void RenderTask::SetCamera(Camera* camera)
 void RenderTask::SetDescriptorHeap(DescriptorHeap* dh)
 {
 	this->descriptorHeap = dh;
+}
+
+void RenderTask::SetDepthBuffer(DepthBuffer* depthBuffer)
+{
+	this->depthBuffer = depthBuffer;
 }
 

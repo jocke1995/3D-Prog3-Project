@@ -28,15 +28,18 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	DescriptorHeap* dHeap = this->renderTargets[0]->GetDescriptorHeap();
+	DescriptorHeap* renderTargetHeap = this->renderTargets[0]->GetDescriptorHeap();
+	DescriptorHeap* depthBufferHeap = this->depthBuffer->GetDescriptorHeap();
 
 	
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = dHeap->GetCPUHeapAt(backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = renderTargetHeap->GetCPUHeapAt(backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsh = depthBufferHeap->GetCPUHeapAt(0);
 
-	commandList5->OMSetRenderTargets(1, &cdh, true, NULL);
+	commandList5->OMSetRenderTargets(1, &cdh, true, &dsh);
 
 	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	commandList5->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
+	commandList5->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
 	D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
@@ -47,41 +50,35 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	commandList5->SetPipelineState(this->pipelineState->GetPSO());
 
 	// Draw
-	size_t num_vertices = 0;
-	Transform* transform;
-	ConstantBuffer* cbPerObj = this->constantBuffers[CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE];
+	
+	
 
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	for (auto object : *this->objects)
 	{
-		transform = object->GetTransform();
+		size_t num_vertices = object->GetMesh()->GetNumVertices();
+		Transform* transform = object->GetTransform();
 
 		XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-		XMFLOAT4X4 WVP;
+		XMFLOAT4X4 WVPTransposed;
+		XMFLOAT4X4 wTransposed;
 
 		XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
 		XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
-		XMStoreFloat4x4(&WVP, XMMatrixTranspose(tmpWVP));
 
-		XMFLOAT4X4 wTransposed;
+		// Store and transpose the matrices for shader
+		XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
 		XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-
-		
-
 		SlotInfo* info = object->GetSlotInfo();
-		CB_PER_OBJECT perObject = { *info, wTransposed, WVP };
 
-		cbPerObj->SetData((void*)(256 * object->GetIndex()), &perObject);
+		// Create a CB_PER_OBJECT struct
+		CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
 
-		// TODO: Change when we have setup the rootsignature correctly
-		
-		commandList5->SetGraphicsRootConstantBufferView(RS::CBV_PER_OBJECT,
-			cbPerObj->GetGPUAt(object->GetIndex()));
+		commandList5->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
-		num_vertices = object->GetMesh()->GetNumVertices();
 		commandList5->DrawInstanced(num_vertices, 1, 0, 0);
 	}
 	
