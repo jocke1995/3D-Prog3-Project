@@ -96,7 +96,7 @@ void Renderer::InitRenderTasks()
 	gpsdTest.SampleMask = UINT_MAX;
 	// Rasterizer behaviour
 	gpsdTest.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdTest.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	gpsdTest.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 
 	// Specify Blend descriptions
 	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {
@@ -127,7 +127,6 @@ ConstantBuffer* Renderer::CreateConstantBuffer(std::wstring name, unsigned int s
 	return CB;
 }
 
-// TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
 void Renderer::CreateShaderResourceView(Mesh* mesh)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());

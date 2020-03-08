@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(std::wstring name)
+Camera::Camera(std::wstring name, HINSTANCE hInstance, HWND hwnd)
 {
 	this->name = name;
 
@@ -13,32 +13,37 @@ Camera::Camera(std::wstring name)
 	XMStoreFloat4x4(&this->projMat, tempProj);
 
 	// Create View Matrix
-	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX tempView = XMMatrixLookAtLH(Eye, At, Up);
+	this->eyeVector = XMVectorSet(0.0, 0.0, 0.0, 1.0f);
+	this->atVector = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	this->upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMMATRIX tempView = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
 
 	XMStoreFloat4x4(&this->viewMat, tempView);
 
-	this->UpdateViewProjMatrix();
+	this->rightVector = XMVector3Cross(this->atVector, this->upVector);
+
+	this->camRotationMatrix = XMMatrixIdentity();
+	this->viewMatMatrix = XMMatrixIdentity();
+	this->InitDirectInput(hInstance, hwnd);
 }
 
 Camera::~Camera()
 {
+	this->keyboard->Unacquire();
+	this->mouse->Unacquire();
+
+	this->DirectInput->Release();
 }
 
-void Camera::Update()
+void Camera::Update(float dt)
 {
+	this->DetectInput(dt);
+	this->UpdateViewProjMatrix();
 }
 
 void Camera::SetPosition(float x, float y, float z)
 {
-	this->position = XMFLOAT3(x, y, z);
-}
-
-void Camera::SetPosition(XMFLOAT3 pos)
-{
-	this->position = pos;
+	this->eyeVector = XMVectorSet(x, y, z, 1.0f);
 }
 
 void Camera::SetRotation(XMFLOAT3 axis, float angle)
@@ -62,12 +67,116 @@ XMFLOAT4X4* Camera::GetViewProjMatrix()
 	return &this->viewProjMat;
 }
 
+void Camera::UpdateCamera()
+{
+	// Update the lookAt Vector depending on the mouse pitch/yaw.... WE DONT HAVE ROLL (hence '0' as the last parameter)
+	this->camRotationMatrix = XMMatrixRotationRollPitchYaw(this->camPitch, this->camYaw, 0);
+	XMVECTOR defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	this->atVector = XMVector3TransformCoord(defaultForward, this->camRotationMatrix);
+	this->atVector = XMVector3Normalize(this->atVector);
+
+	// Update cameras forward,up and right vectors
+	XMMATRIX RotateYTempMatrix;
+	RotateYTempMatrix = XMMatrixRotationY(camYaw);
+
+	XMVECTOR defaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
+	this->upVector = XMVector3TransformCoord(this->upVector, RotateYTempMatrix);
+	this->atVector = XMVector3TransformCoord(this->atVector, RotateYTempMatrix);
+
+	this->rightVector = XMVector3Cross(this->atVector, this->upVector);
+
+	this->eyeVector += this->rightVector * this->moveLeftRight;
+	this->eyeVector += this->atVector * this->moveForwardBackward;
+
+	this->moveForwardBackward = 0.0f;
+	this->moveLeftRight = 0.0f;
+
+	this->viewMatMatrix = XMMatrixLookAtLH(this->eyeVector, this->eyeVector + this->atVector, this->upVector);
+}
+
+void Camera::InitDirectInput(HINSTANCE hInstance, HWND hwnd)
+{
+	// Init DirectInput
+	HRESULT hr = DirectInput8Create(hInstance,
+		DIRECTINPUT_VERSION,
+		IID_IDirectInput8,
+		(void**)&DirectInput,
+		NULL);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to Create DirectInput\n");
+
+	// Create Device for Keyboard
+	hr = DirectInput->CreateDevice(GUID_SysKeyboard,
+		&this->keyboard,
+		NULL);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to Create Device for keyboard\n");
+
+	// Create Device for Mouse
+	hr = DirectInput->CreateDevice(GUID_SysMouse,
+		&this->mouse,
+		NULL);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to Create Device for mouse\n");
+
+	// Init Keyboard
+	hr = this->keyboard->SetDataFormat(&c_dfDIKeyboard);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to SetDataFormat for keyboard\n");
+	hr = this->keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to SetCooperativeLevel for keyboard\n");
+
+	// Init Mouse
+	hr = this->mouse->SetDataFormat(&c_dfDIMouse);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to SetDataFormat for mouse\n");
+	hr = this->mouse->SetCooperativeLevel(hwnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
+	if (FAILED(hr))
+		OutputDebugStringW(L"ERROR: Failed to SetCooperativeLevel for mouse\n");
+}
+
+void Camera::DetectInput(float dt)
+{
+	DIMOUSESTATE mouseCurrState;
+
+	// Array of possible keys to be pressed
+	unsigned char keyboardState[256];
+
+	this->keyboard->Acquire();
+	this->mouse->Acquire();	// Takes control over the mouse
+
+	this->mouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState);
+	this->keyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
+
+	if (keyboardState[DIK_W] & 0x80)
+		this->moveForwardBackward += this->movementSpeed * dt;
+
+	if (keyboardState[DIK_S] & 0x80)
+		this->moveForwardBackward -= this->movementSpeed * dt;
+
+	if (keyboardState[DIK_A] & 0x80)
+		this->moveLeftRight += this->movementSpeed * dt;
+
+	if (keyboardState[DIK_D] & 0x80)
+		this->moveLeftRight -= this->movementSpeed * dt;
+
+	if ((mouseCurrState.lX != this->mouseLastState.lX) || (mouseCurrState.lY != this->mouseLastState.lY))
+	{
+		this->camYaw += this->mouseLastState.lX * 0.001f;
+
+		this->camPitch += mouseCurrState.lY * 0.001f;
+
+		this->mouseLastState = mouseCurrState;
+	}
+	this->UpdateCamera();
+
+}
+
 void Camera::UpdateViewProjMatrix()
 {
-	XMMATRIX tempView = XMLoadFloat4x4(&this->viewMat);
 	XMMATRIX tempProj = XMLoadFloat4x4(&this->projMat);
-
-	XMMATRIX tempVP = tempView * tempProj;
+	XMMATRIX tempVP = this->viewMatMatrix * tempProj;
 
 	XMStoreFloat4x4(&this->viewProjMat, (tempVP));
 }

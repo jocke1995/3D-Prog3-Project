@@ -27,6 +27,7 @@ public:
 	void UpdateWorldMatrix();
 
 	XMFLOAT4X4* GetWorldMatrix();
+	XMFLOAT3 GetPosition();
 
 private:
 	XMFLOAT3 position;
@@ -35,7 +36,9 @@ private:
 
 	XMFLOAT4X4 worldMat;
 
-	
+	XMMATRIX rotXMat;
+	XMMATRIX rotYMat;
+	XMMATRIX rotZMat;
 
 };
 

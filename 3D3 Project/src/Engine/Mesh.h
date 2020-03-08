@@ -11,8 +11,8 @@ public:
     struct Vertex
     {
         DirectX::XMFLOAT4 pos;
-        //DirectX::XMFLOAT4 uv;
-        //DirectX::XMFLOAT4 nor;
+        DirectX::XMFLOAT4 uv;
+        DirectX::XMFLOAT4 nor;
     };
 
     Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT vertexDataIndex);

@@ -2,14 +2,17 @@
 
 struct VS_OUT
 {
-	float4 pos : SV_Position;
+	float4 pos      : SV_Position;
+	float4 worldPos : WPos;
+	float4 uv       : UV;
+	float4 norm     : NORMAL;
 };
 
 struct vertex
 {
 	float4 pos;
-	//float4 uv;
-	//float4 norm;
+	float4 uv;
+	float4 norm;
 };
 
 StructuredBuffer<vertex> meshes[] : register(t0);
@@ -21,9 +24,14 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 	// 0:ar output
 	VS_OUT output = (VS_OUT)0;
 
-	output.pos = float4(meshes[transform.info.vertexDataIndex][vID].pos.xyz, 1.0);
-	// output.pos = transform.WVP[0];
-	output.pos = mul(output.pos, transform.WVP);
+	vertex mesh = meshes[transform.info.vertexDataIndex][vID];
+	float4 vertexPosition = float4(mesh.pos.xyz, 1.0f);
+
+	output.pos = mul(vertexPosition, transform.WVP);
+	output.worldPos = mul(vertexPosition, transform.worldMatrix);
+
+	output.uv = float4(mesh.uv);
+	output.norm = mul(float4(mesh.norm), transform.worldMatrix);
 
 	return output;
 }
