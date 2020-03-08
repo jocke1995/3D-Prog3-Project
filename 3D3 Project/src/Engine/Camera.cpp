@@ -20,13 +20,19 @@ Camera::Camera(std::wstring name, HINSTANCE hInstance, HWND hwnd)
 
 	XMStoreFloat4x4(&this->viewMat, tempView);
 
-	this->rotateAroundVector = XMVector3Cross(this->atVector, this->upVector);
+	this->rightVector = XMVector3Cross(this->atVector, this->upVector);
 
+	this->camRotationMatrix = XMMatrixIdentity();
+	this->viewMatMatrix = XMMatrixIdentity();
 	this->InitDirectInput(hInstance, hwnd);
 }
 
 Camera::~Camera()
 {
+	this->keyboard->Unacquire();
+	this->mouse->Unacquire();
+
+	this->DirectInput->Release();
 }
 
 void Camera::Update(float dt)
@@ -61,36 +67,31 @@ XMFLOAT4X4* Camera::GetViewProjMatrix()
 	return &this->viewProjMat;
 }
 
-void Camera::MoveForward(float dt)
+void Camera::UpdateCamera()
 {
-	for (int i = 0; i < 3; i++)
-	{
-		this->eyeVector.m128_f32[i] += this->movementSpeed * this->atVector.m128_f32[i] * dt;
-	}
-}
+	// Update the lookAt Vector depending on the mouse pitch/yaw.... WE DONT HAVE ROLL (hence '0' as the last parameter)
+	this->camRotationMatrix = XMMatrixRotationRollPitchYaw(this->camPitch, this->camYaw, 0);
+	XMVECTOR defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	this->atVector = XMVector3TransformCoord(defaultForward, this->camRotationMatrix);
+	this->atVector = XMVector3Normalize(this->atVector);
 
-void Camera::MoveBackward(float dt)
-{
-	for (int i = 0; i < 3; i++)
-	{
-		this->eyeVector.m128_f32[i] -= this->movementSpeed * this->atVector.m128_f32[i] * dt;
-	}
-}
+	// Update cameras forward,up and right vectors
+	XMMATRIX RotateYTempMatrix;
+	RotateYTempMatrix = XMMatrixRotationY(camYaw);
 
-void Camera::MoveRight(float dt)
-{
-	for (int i = 0; i < 3; i++)
-	{
-		this->eyeVector.m128_f32[i] -= this->movementSpeed * this->rotateAroundVector.m128_f32[i] * dt;
-	}
-}
+	XMVECTOR defaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
+	this->upVector = XMVector3TransformCoord(this->upVector, RotateYTempMatrix);
+	this->atVector = XMVector3TransformCoord(this->atVector, RotateYTempMatrix);
 
-void Camera::MoveLeft(float dt)
-{
-	for (int i = 0; i < 3; i++)
-	{
-		this->eyeVector.m128_f32[i] += this->movementSpeed * this->rotateAroundVector.m128_f32[i] * dt;
-	}
+	this->rightVector = XMVector3Cross(this->atVector, this->upVector);
+
+	this->eyeVector += this->rightVector * this->moveLeftRight;
+	this->eyeVector += this->atVector * this->moveForwardBackward;
+
+	this->moveForwardBackward = 0.0f;
+	this->moveLeftRight = 0.0f;
+
+	this->viewMatMatrix = XMMatrixLookAtLH(this->eyeVector, this->eyeVector + this->atVector, this->upVector);
 }
 
 void Camera::InitDirectInput(HINSTANCE hInstance, HWND hwnd)
@@ -148,29 +149,34 @@ void Camera::DetectInput(float dt)
 	this->mouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState);
 	this->keyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
 
-	if(keyboardState[DIK_W] & 0x80)
-		this->MoveForward(dt);
+	if (keyboardState[DIK_W] & 0x80)
+		this->moveForwardBackward += this->movementSpeed * dt;
 
 	if (keyboardState[DIK_S] & 0x80)
-		this->MoveBackward(dt);
+		this->moveForwardBackward -= this->movementSpeed * dt;
 
 	if (keyboardState[DIK_A] & 0x80)
-		this->MoveLeft(dt);
+		this->moveLeftRight += this->movementSpeed * dt;
 
 	if (keyboardState[DIK_D] & 0x80)
-		this->MoveRight(dt);
+		this->moveLeftRight -= this->movementSpeed * dt;
+
+	if ((mouseCurrState.lX != this->mouseLastState.lX) || (mouseCurrState.lY != this->mouseLastState.lY))
+	{
+		this->camYaw += this->mouseLastState.lX * 0.001f;
+
+		this->camPitch += mouseCurrState.lY * 0.001f;
+
+		this->mouseLastState = mouseCurrState;
+	}
+	this->UpdateCamera();
+
 }
 
 void Camera::UpdateViewProjMatrix()
 {
-	// Update viewMatrix position
-	XMMATRIX newView = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
-	XMStoreFloat4x4(&this->viewMat, newView);
-
-	//XMMATRIX tempView = XMLoadFloat4x4(&this->viewMat);
 	XMMATRIX tempProj = XMLoadFloat4x4(&this->projMat);
-
-	XMMATRIX tempVP = newView * tempProj;
+	XMMATRIX tempVP = this->viewMatMatrix * tempProj;
 
 	XMStoreFloat4x4(&this->viewProjMat, (tempVP));
 }

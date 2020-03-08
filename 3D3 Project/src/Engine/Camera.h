@@ -29,9 +29,12 @@ public:
 
 private:
     std::wstring name;
-    float movementSpeed = 0.002f;
 
-    XMVECTOR rotateAroundVector;
+    float movementSpeed = 0.003f;
+    float moveLeftRight = 0.0f;
+    float moveForwardBackward = 0.0f;
+
+    XMVECTOR rightVector;
     XMVECTOR eyeVector;
     XMVECTOR atVector;
     XMVECTOR upVector;
@@ -46,10 +49,11 @@ private:
     XMFLOAT4X4 projMat;
     XMFLOAT4X4 viewProjMat;
 
-    void MoveForward(float dt);
-    void MoveBackward(float dt);
-    void MoveRight(float dt);
-    void MoveLeft(float dt);
+    float camYaw = 0.0f;
+    float camPitch = 0.0f;
+    XMMATRIX camRotationMatrix;
+    XMMATRIX viewMatMatrix;
+    void UpdateCamera();
 
     void InitDirectInput(HINSTANCE hInstance, HWND hwnd);
     void DetectInput(float dt);

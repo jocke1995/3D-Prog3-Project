@@ -16,11 +16,11 @@ void Cube::Init()
 void Cube::UpdateSpecific()
 {
 	// Test Rotation
-	static float r = 1;
-	r += 0.0002f;
-	this->transform->RotateX(r);
-	this->transform->RotateY(r);
-	this->transform->RotateZ(r);
+	//static float r = 1;
+	//r += 0.0002f;
+	//this->transform->RotateX(r);
+	//this->transform->RotateY(r);
+	//this->transform->RotateZ(r);
 
 	//// Test Translation
 	//XMFLOAT3 pos = this->transform->GetPosition();
