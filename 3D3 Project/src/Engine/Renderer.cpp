@@ -98,13 +98,13 @@ void Renderer::InitRenderTasks()
 	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
 		gpsdTest.BlendState.RenderTarget[i] = defaultRTdesc;
 
-	// DepthStencil
 	// Depth descriptor
 	D3D12_DEPTH_STENCIL_DESC dsd = {};
 	dsd.DepthEnable = true;
 	dsd.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
 
+	// DepthStencil
 	dsd.StencilEnable = false;
 	dsd.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
 	dsd.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
@@ -123,23 +123,6 @@ void Renderer::InitRenderTasks()
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
 	// :-----------------------------TASK 2:-----------------------------
-}
-
-// TODO: Skall vi göra "olika sorters" vertex buffers, sedan skapa dom direkt här? eller ska man få välja parametrar?
-void Renderer::CreateShaderResourceView(Mesh* mesh)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-
-	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	desc.Buffer.FirstElement = 0;
-	desc.Buffer.NumElements = mesh->GetNumVertices();
-	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
-	desc.Format = DXGI_FORMAT_UNKNOWN;
-	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-
-	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)
@@ -300,13 +283,28 @@ bool Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
 
-	
 	return true;
 }
 
 void Renderer::InitDescriptorHeap()
 {
 	this->descriptorHeap = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
+}
+
+void Renderer::CreateShaderResourceView(Mesh* mesh)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+
+	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = mesh->GetNumVertices();
+	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
 }
 
 void Renderer::TempCreateFence()

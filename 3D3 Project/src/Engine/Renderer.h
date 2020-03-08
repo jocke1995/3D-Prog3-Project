@@ -22,8 +22,6 @@ public:
 	void InitD3D12(HWND *hwnd);
 	void InitRenderTasks();
 
-	// Create Vertex Buffer
-	void CreateShaderResourceView(Mesh* mesh);
 	Mesh* CreateMesh(std::wstring path);
 
 	void SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects);
@@ -32,7 +30,6 @@ public:
 	void Execute();
 
 private:
-
 	// Device
 	ID3D12Device5* device5 = nullptr;
 
@@ -62,12 +59,12 @@ private:
 	// RenderTasks
 	std::map<RenderTaskType, RenderTask*> renderTasks;
 
-	// The order of the renderTargets in the vector
-
 	// DescriptorHeap
 	DescriptorHeap* descriptorHeap;
 	void InitDescriptorHeap();
 
+	// ShaderResourceView
+	void CreateShaderResourceView(Mesh* mesh);
 
 	// Fences
 	ID3D12Fence1* fence = nullptr;

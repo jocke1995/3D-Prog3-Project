@@ -12,12 +12,6 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{92b7fb5c-53d1-45ff-af0e-3e47d5421f89}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Header Files">
-      <UniqueIdentifier>{afc19691-705b-418c-9168-b323ec404a03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Source Files">
-      <UniqueIdentifier>{5f11e721-38ed-4bf4-9221-2348103f7da7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
     </Filter>
@@ -27,147 +21,135 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{4952c56a-9998-41d8-a97e-354c192c83e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects\Header Files">
-      <UniqueIdentifier>{5968d8ec-0680-46fa-8dc7-5df08adeddb6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Objects\Source Files">
-      <UniqueIdentifier>{6451b5fc-5735-4db4-b18a-130f400065df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\RenderTasks\Header Files">
-      <UniqueIdentifier>{c0f97b82-66ea-4857-9914-96ee8eb41672}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\RenderTasks\Source Files">
-      <UniqueIdentifier>{e2d59325-4250-4975-b3d7-318e5780dfcb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AssetLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\RenderTask.cpp">
-      <Filter>Engine\RenderTasks\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\RenderTaskTest.cpp">
-      <Filter>Engine\RenderTasks\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\DescriptorHeap.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\PipelineState.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Renderer.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\RenderTarget.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\RootSignature.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Shader.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Transform.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Cube.cpp">
-      <Filter>Objects\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Object.cpp">
-      <Filter>Objects\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Mesh.cpp">
-      <Filter>Objects\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\SwapChain.cpp">
-      <Filter>Engine\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Resource.cpp">
-      <Filter>Engine\Source Files</Filter>
+    <ClCompile Include="src\Engine\RenderTask.cpp">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTaskTest.cpp">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Cube.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Mesh.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Object.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\DepthBuffer.cpp">
-      <Filter>Engine\Source Files</Filter>
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DescriptorHeap.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\PipelineState.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTarget.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Resource.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RootSignature.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Shader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\SwapChain.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Transform.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssetLoader.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Engine\DescriptorHeap.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\ConstantBuffer.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Camera.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\d3dx12.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\PipelineState.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Renderer.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\RenderTarget.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\RootSignature.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Shader.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\stdafx.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Transform.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\RenderTask.h">
-      <Filter>Engine\RenderTasks\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\RenderTaskTest.h">
-      <Filter>Engine\RenderTasks\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Cube.h">
-      <Filter>Objects\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Object.h">
-      <Filter>Objects\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Mesh.h">
-      <Filter>Objects\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AssetLoader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\SwapChain.h">
-      <Filter>Engine\Header Files</Filter>
+    <ClInclude Include="src\Engine\RenderTask.h">
+      <Filter>Engine\RenderTasks</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\structs.h">
-      <Filter>Engine\Header Files</Filter>
+    <ClInclude Include="src\Engine\RenderTaskTest.h">
+      <Filter>Engine\RenderTasks</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Resource.h">
-      <Filter>Engine\Header Files</Filter>
+    <ClInclude Include="src\Engine\Cube.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Mesh.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Object.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ConstantBuffer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\d3dx12.h">
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\DepthBuffer.h">
-      <Filter>Engine\Header Files</Filter>
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DescriptorHeap.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\PipelineState.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTarget.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Resource.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RootSignature.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Shader.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\stdafx.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\structs.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\SwapChain.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Transform.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AssetLoader.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

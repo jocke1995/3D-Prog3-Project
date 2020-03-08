@@ -1,10 +1,8 @@
 #include "Engine/Renderer.h"
-#include "AssetLoader.h"
 #include "Window.h"
 #include <chrono>
 #include <ctime>
 
-#include "Engine/Transform.h"
 #include "Engine/Cube.h"
 #include "Engine/Camera.h"
 
@@ -55,16 +53,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         //OutputDebugStringW(std::to_wstring(dt.count()).c_str());
 
         /* ------ Update ------ */
-        cube->Update(dt);   // TODO: add dt
-        cube2->Update(dt);   // TODO: add dt
+        cube->Update(dt);
+        cube2->Update(dt);
         
         /* ------ Draw   ------ */
-        camera->Update(dt); // TODO: add dt
+        camera->Update(dt);
         renderer->Execute();
     }   
 
-    delete cube;
-    delete cube2;
+    for (Object* object : objects)
+        delete object;
+
     delete camera;
     delete window;
     delete renderer;

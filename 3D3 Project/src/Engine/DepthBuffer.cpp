@@ -9,7 +9,6 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 	depthStencilDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-	// TODO: Skapar heap properties efter vi har skapat heapen???????????????????
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
