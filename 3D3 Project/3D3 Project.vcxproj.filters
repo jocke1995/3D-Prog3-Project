@@ -98,6 +98,9 @@
     <ClCompile Include="src\Engine\Resource.cpp">
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\DepthBuffer.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\DescriptorHeap.h">
@@ -161,6 +164,9 @@
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Resource.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DepthBuffer.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

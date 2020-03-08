@@ -45,7 +45,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     auto time_now = start;
     while (!window->ExitWindow())
     {
-        // Timer
+        /* ------ Timer  ------ */
+        // TODO: Create Timer Class
         auto time_last = time_now;
         time_now = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_time = time_now - time_last;
@@ -53,11 +54,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         
         //OutputDebugStringW(std::to_wstring(dt.count()).c_str());
 
-        // Fill allocators etc...
+        /* ------ Update ------ */
         camera->Update(); // TODO: add dt
         cube->Update(dt);   // TODO: add dt
         cube2->Update(dt);   // TODO: add dt
-
+        
+        /* ------ Draw   ------ */
         renderer->Execute();
     }   
 

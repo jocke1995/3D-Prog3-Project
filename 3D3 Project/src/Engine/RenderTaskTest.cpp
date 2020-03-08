@@ -28,15 +28,18 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	DescriptorHeap* dHeap = this->renderTargets[0]->GetDescriptorHeap();
+	DescriptorHeap* renderTargetHeap = this->renderTargets[0]->GetDescriptorHeap();
+	DescriptorHeap* depthBufferHeap = this->depthBuffer->GetDescriptorHeap();
 
 	
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = dHeap->GetCPUHeapAt(backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = renderTargetHeap->GetCPUHeapAt(backBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsh = depthBufferHeap->GetCPUHeapAt(0);
 
-	commandList5->OMSetRenderTargets(1, &cdh, true, NULL);
+	commandList5->OMSetRenderTargets(1, &cdh, true, &dsh);
 
 	float clearColor[] = { 0.0f, 0.5f, 0.1f, 1.0f };
 	commandList5->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
+	commandList5->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
 	D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();

@@ -30,21 +30,21 @@ ID3D12Resource1* RenderTarget::GetRenderTarget(UINT index)
 
 void RenderTarget::CreateViewport(unsigned int width, unsigned int height)
 {
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.Width = (float)width;
-	viewport.Height = (float)height;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
+	this->viewport.TopLeftX = 0.0f;
+	this->viewport.TopLeftY = 0.0f;
+	this->viewport.Width = (float)width;
+	this->viewport.Height = (float)height;
+	this->viewport.MinDepth = 0.0f;
+	this->viewport.MaxDepth = 1.0f;
 }
 
 // TODO: Fler inparametrar sedan om man vill kunna customizea scizzorRecten
 void RenderTarget::CreateScissorRect(unsigned int width, unsigned int height)
 {
-	scissorRect.left = (long)0;
-	scissorRect.right = (long)width;
-	scissorRect.top = (long)0;
-	scissorRect.bottom = (long)height;
+	this->scissorRect.left = (long)0;
+	this->scissorRect.right = (long)width;
+	this->scissorRect.top = (long)0;
+	this->scissorRect.bottom = (long)height;
 }
 
 D3D12_VIEWPORT* RenderTarget::GetViewPort()

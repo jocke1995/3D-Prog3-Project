@@ -20,7 +20,8 @@ Renderer::~Renderer()
 
 	delete this->rootSignature;
 
-	delete swapChain;
+	delete this->swapChain;
+	delete this->depthBuffer;
 
 	delete this->descriptorHeap;
 
@@ -52,14 +53,22 @@ void Renderer::InitD3D12(HWND *hwnd)
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
 
+	// Create Main DepthBuffer
+	if (!this->CreateDepthBuffer())
+	{
+		OutputDebugStringA("Error: Failed to create DepthBuffer!\n");
+	}
+	
 	// Create Rootsignature
 	if (!this->CreateRootSignature())
 	{
-		OutputDebugStringA("Error: Failed to create SwapChain!\n");
+		OutputDebugStringA("Error: Failed to create RootSignature!\n");
 	}
 
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
+
+	
 
 	AssetLoader::Get().SetDevice(this->device5);
 }
@@ -89,11 +98,28 @@ void Renderer::InitRenderTasks()
 	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
 		gpsdTest.BlendState.RenderTarget[i] = defaultRTdesc;
 
+	// DepthStencil
+	// Depth descriptor
+	D3D12_DEPTH_STENCIL_DESC dsd = {};
+	dsd.DepthEnable = true;
+	dsd.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+
+	dsd.StencilEnable = false;
+	dsd.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	dsd.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	const D3D12_DEPTH_STENCILOP_DESC defaultStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	dsd.FrontFace = defaultStencilOP;
+	dsd.BackFace = defaultStencilOP;
+
+	gpsdTest.DepthStencilState = dsd;
+	gpsdTest.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
 	testTask->AddRenderTarget(this->swapChain);
+	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
-
+	
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
 	// :-----------------------------TASK 2:-----------------------------
@@ -261,6 +287,12 @@ bool Renderer::CreateSwapChain(HWND *hwnd)
 	// TODO: Detta
 	swapChain = new SwapChain(device5, hwnd, this->commandQueue);
 
+	return true;
+}
+
+bool Renderer::CreateDepthBuffer()
+{
+	this->depthBuffer = new DepthBuffer(this->device5, 800, 600);
 	return true;
 }
 

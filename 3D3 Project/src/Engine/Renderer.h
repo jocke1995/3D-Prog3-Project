@@ -48,8 +48,12 @@ private:
 	void CreateAllocatorAndListTemporary();
 
 	// Swapchain
-	bool CreateSwapChain(HWND *hwnd);
 	RenderTarget* swapChain = nullptr;
+	bool CreateSwapChain(HWND *hwnd);
+
+	// Depthbuffer
+	DepthBuffer* depthBuffer = nullptr;
+	bool CreateDepthBuffer();
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;

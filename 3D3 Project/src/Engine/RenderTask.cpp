@@ -35,3 +35,8 @@ void RenderTask::SetDescriptorHeap(DescriptorHeap* dh)
 	this->descriptorHeap = dh;
 }
 
+void RenderTask::SetDepthBuffer(DepthBuffer* depthBuffer)
+{
+	this->depthBuffer = depthBuffer;
+}
+
