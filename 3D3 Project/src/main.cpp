@@ -1,6 +1,8 @@
 #include "Engine/Renderer.h"
 #include "AssetLoader.h"
 #include "Window.h"
+#include <chrono>
+#include <ctime>
 
 #include "Engine/Transform.h"
 #include "Engine/Cube.h"
@@ -9,6 +11,9 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+    // Setup timer
+    auto start = std::chrono::system_clock::now();
 
     Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
     Renderer* renderer = new Renderer();
@@ -25,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // Unique For each object
     Object* cube = new Cube(cubeMesh, 0);
-    cube->GetTransform()->SetPosition(0, 0, 10);
+    cube->GetTransform()->SetPosition(-2, 0, 10);
 
     Object* cube2 = new Cube(cubeMesh, 1);
     cube2->GetTransform()->SetPosition(2, 0, 10);
@@ -37,13 +42,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->SetCamera(RenderTaskType::TEST, camera);
 
     // GAMELOOP
-    // TODO : Add dt here
+    auto time_now = start;
     while (!window->ExitWindow())
     {
+        // Timer
+        auto time_last = time_now;
+        time_now = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_time = time_now - time_last;
+        double dt = elapsed_time.count(); // dt.count() to get ms time
+        
+        //OutputDebugStringW(std::to_wstring(dt.count()).c_str());
+
         // Fill allocators etc...
         camera->Update(); // TODO: add dt
-        cube->Update();   // TODO: add dt
-        cube2->Update();   // TODO: add dt
+        cube->Update(dt);   // TODO: add dt
+        cube2->Update(dt);   // TODO: add dt
 
         renderer->Execute();
     }   

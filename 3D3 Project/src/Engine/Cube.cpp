@@ -13,9 +13,9 @@ void Cube::Init()
 	
 }
 
-void Cube::UpdateSpecific()
+void Cube::UpdateSpecific(double dt)
 {
 	static float s = 1;
-	s += 0.01f;
+	s += 1.0f * dt;
 	this->transform->SetScale(abs(sinf(s)), 1, 1);
 }

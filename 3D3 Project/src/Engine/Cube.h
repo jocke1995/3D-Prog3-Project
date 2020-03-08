@@ -12,7 +12,7 @@ public:
 
 private:
     void Init();
-    void UpdateSpecific();
+    void UpdateSpecific(double dt);
 
 
 };
