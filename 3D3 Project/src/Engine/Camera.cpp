@@ -35,7 +35,7 @@ Camera::~Camera()
 	this->DirectInput->Release();
 }
 
-void Camera::Update(float dt)
+void Camera::Update(double dt)
 {
 	this->DetectInput(dt);
 	this->UpdateViewProjMatrix();
@@ -136,7 +136,7 @@ void Camera::InitDirectInput(HINSTANCE hInstance, HWND hwnd)
 		OutputDebugStringW(L"ERROR: Failed to SetCooperativeLevel for mouse\n");
 }
 
-void Camera::DetectInput(float dt)
+void Camera::DetectInput(double dt)
 {
 	DIMOUSESTATE mouseCurrState;
 

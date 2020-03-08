@@ -15,7 +15,7 @@ public:
     Camera(std::wstring name, HINSTANCE hInstance, HWND hwnd);
 	~Camera();
 
-    void Update(float dt);
+    void Update(double dt);
 
     void SetPosition(float x, float y, float z);
 
@@ -29,7 +29,7 @@ public:
 private:
     std::wstring name;
 
-    float movementSpeed = 0.003f;
+    float movementSpeed = 10.0f;
     float moveLeftRight = 0.0f;
     float moveForwardBackward = 0.0f;
 
@@ -55,7 +55,7 @@ private:
     void UpdateCamera();
 
     void InitDirectInput(HINSTANCE hInstance, HWND hwnd);
-    void DetectInput(float dt);
+    void DetectInput(double dt);
     void UpdateViewProjMatrix();
 
     // TODO: STEFAN

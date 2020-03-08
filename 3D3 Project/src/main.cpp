@@ -59,7 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         cube2->Update(dt);   // TODO: add dt
         
         /* ------ Draw   ------ */
-        camera->Update(); // TODO: add dt
+        camera->Update(dt); // TODO: add dt
         renderer->Execute();
     }   
 
