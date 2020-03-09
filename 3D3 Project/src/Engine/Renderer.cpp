@@ -68,8 +68,6 @@ void Renderer::InitD3D12(HWND *hwnd)
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
 
-	
-
 	AssetLoader::Get().SetDevice(this->device5);
 }
 

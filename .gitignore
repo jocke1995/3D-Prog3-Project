@@ -1,4 +1,5 @@
-3D3\ Project/x64/Debug/*.obj
+3D3\ Project/x64/
+
 *.tlog
 *.log
 *.idb
@@ -11,3 +12,4 @@
 \.git
 *.opendb
 testbench-master/uml.png
+

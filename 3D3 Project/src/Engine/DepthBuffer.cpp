@@ -3,11 +3,8 @@
 DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int height)
 {
 	this->descriptorHeap = new DescriptorHeap(device, DESCRIPTOR_HEAP_TYPE::DSV);
-
-	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilDesc = {};
-	depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	depthStencilDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	depthStencilDesc.Flags = D3D12_DSV_FLAG_NONE;
+	this->width = width;
+	this->height = height;
 
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -32,7 +29,10 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 	clearValue.DepthStencil.Depth = 1;
 	clearValue.Format = DXGI_FORMAT_D32_FLOAT;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(0);
+	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilDesc = {};
+	depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	depthStencilDesc.Flags = D3D12_DSV_FLAG_NONE;
 
 	device->CreateCommittedResource(
 		&heapProperties,
@@ -42,6 +42,8 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 		&clearValue,
 		IID_PPV_ARGS(&this->resource)
 	);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(0);
 	device->CreateDepthStencilView(this->resource, &depthStencilDesc, cdh);
 
 	this->CreateViewport(width, height);

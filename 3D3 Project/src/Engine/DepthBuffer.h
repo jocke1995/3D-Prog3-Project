@@ -16,11 +16,14 @@ public:
 	D3D12_RECT* GetScissorRect();
 
 protected:
-	void CreateViewport(unsigned int width = 800, unsigned int height = 600);
-	void CreateScissorRect(unsigned int width = 800, unsigned int height = 600);
+	void CreateViewport(unsigned int width, unsigned int height);
+	void CreateScissorRect(unsigned int width, unsigned int height);
 
 	DescriptorHeap* descriptorHeap = nullptr;
 	ID3D12Resource1* resource = nullptr;
+	unsigned int width = 0;
+	unsigned int height = 0;
+
 
 	D3D12_VIEWPORT viewport = {};
 	D3D12_RECT scissorRect = {};

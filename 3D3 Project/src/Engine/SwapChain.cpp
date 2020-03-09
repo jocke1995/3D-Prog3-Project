@@ -1,8 +1,16 @@
 #include "SwapChain.h"
 
 SwapChain::SwapChain(ID3D12Device5* device, HWND* hwnd, ID3D12CommandQueue* commandQueue)
-	: RenderTarget(device)
 {
+	this->descriptorHeap = new DescriptorHeap(device, DESCRIPTOR_HEAP_TYPE::RTV);
+	this->resources.resize(NUM_SWAP_BUFFERS);
+
+	RECT rect;
+	if (GetWindowRect(*hwnd, &rect))
+	{
+		this->width = rect.right - rect.left;
+		this->height = rect.bottom - rect.top;
+	}
 
 	IDXGIFactory4* factory = nullptr;
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&factory));
@@ -42,24 +50,24 @@ SwapChain::SwapChain(ID3D12Device5* device, HWND* hwnd, ID3D12CommandQueue* comm
 		}
 	}
 
-
-
 	SAFE_RELEASE(&factory);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(0);
 
 	// Connect the renderTargets to the swapchain, so that the swapchain can easily swap between these two renderTargets
 	for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
 	{
-		HRESULT hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(&this->renderTargets[i]));
+		HRESULT hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(&this->resources[i]));
 		if (hr != S_OK)
 		{
 			OutputDebugStringA("Error: Failed to GetBuffer from RenderTarget to Swapchain!\n");
 		}
 
-		device->CreateRenderTargetView(this->renderTargets[i], nullptr, cdh);
-		cdh.ptr += this->descriptorHeap->GetHandleIncrementSize();
+		D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(i);
+		device->CreateRenderTargetView(this->resources[i], nullptr, cdh);
 	}
+
+	
+	this->CreateViewport(this->width, this->height);
+	this->CreateScissorRect(this->width, this->height);
 }
 
 SwapChain::~SwapChain()
