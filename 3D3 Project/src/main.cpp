@@ -13,7 +13,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Setup timer
     auto start = std::chrono::system_clock::now();
 
-    Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
+    Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle"); // TODO: kanske fel
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd());
     renderer->InitRenderTasks();
@@ -27,10 +27,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     std::vector<Object*> objects;
 
     // Unique For each object
-    Object* cube = new Cube(cubeMesh, 0);
+    Object* cube = new Cube(cubeMesh);
     cube->GetTransform()->SetPosition(-2, 0, 10);
 
-    Object* cube2 = new Cube(cubeMesh, 1);
+    Object* cube2 = new Cube(cubeMesh);
     cube2->GetTransform()->SetPosition(2, 0, 10);
 
     objects.push_back(cube);

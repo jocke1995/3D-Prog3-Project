@@ -7,7 +7,7 @@
 class Object
 {
 public:
-    Object(Mesh* mesh, UINT index);
+    Object(Mesh* mesh);
     virtual ~Object();
 
     Transform* GetTransform();

@@ -8,6 +8,8 @@
 #include "Camera.h"
 #include "DepthBuffer.h"
 
+class DescriptorHeap;
+
 class RenderTask
 {
 public:

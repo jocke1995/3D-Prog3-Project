@@ -14,9 +14,6 @@
 #include <locale>
 #include <codecvt>
 
-
-
-
 class AssetLoader
 {
 public:

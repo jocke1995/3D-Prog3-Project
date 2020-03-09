@@ -11,7 +11,6 @@ public:
 
 	IDXGISwapChain4* GetDX12SwapChain();
 
-
 private:
 	IDXGISwapChain4* swapChain4 = nullptr;
 };

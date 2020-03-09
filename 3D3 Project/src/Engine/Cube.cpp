@@ -1,6 +1,6 @@
 #include "Cube.h"
 
-Cube::Cube(Mesh* mesh, UINT index) : Object(mesh, index)
+Cube::Cube(Mesh* mesh) : Object(mesh)
 {
 }
 

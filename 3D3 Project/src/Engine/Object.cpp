@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(Mesh* mesh, UINT index)
+Object::Object(Mesh* mesh)
 {
 	this->index = index;
 	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
