@@ -87,9 +87,11 @@ void Camera::UpdateCamera()
 
 	this->eyeVector += this->rightVector * this->moveLeftRight;
 	this->eyeVector += this->atVector * this->moveForwardBackward;
+	this->eyeVector += this->upVector * this->moveUpDown;
 
 	this->moveForwardBackward = 0.0f;
 	this->moveLeftRight = 0.0f;
+	this->moveUpDown = 0.0f;
 
 	this->viewMatMatrix = XMMatrixLookAtLH(this->eyeVector, this->eyeVector + this->atVector, this->upVector);
 }
@@ -160,6 +162,12 @@ void Camera::DetectInput(double dt)
 
 	if (keyboardState[DIK_D] & 0x80)
 		this->moveLeftRight -= this->movementSpeed * dt;
+
+	if (keyboardState[DIK_R] & 0x80)
+		this->moveUpDown += this->movementSpeed * dt;
+
+	if (keyboardState[DIK_F] & 0x80)
+		this->moveUpDown -= this->movementSpeed * dt;
 
 	if ((mouseCurrState.lX != this->mouseLastState.lX) || (mouseCurrState.lY != this->mouseLastState.lY))
 	{

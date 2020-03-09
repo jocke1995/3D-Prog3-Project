@@ -38,7 +38,7 @@ void RootSignature::CreateRootSignatureStructure()
 	dtRangesSRV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	dtRangesSRV[0].NumDescriptors = -1; // Bindless
 	dtRangesSRV[0].BaseShaderRegister = 0;
-	dtRangesSRV[0].RegisterSpace = 0; // t0
+	dtRangesSRV[0].RegisterSpace = 0; // space0
 
 	D3D12_ROOT_DESCRIPTOR_TABLE dtSRV = {};
 	dtSRV.NumDescriptorRanges = ARRAYSIZE(dtRangesSRV);
@@ -52,8 +52,8 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::dtSRV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.ShaderRegister = 0;
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.RegisterSpace = 0;
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.ShaderRegister = 0; // b0
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.RegisterSpace = 0; // space0
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_OBJECT) / sizeof(UINT);
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 

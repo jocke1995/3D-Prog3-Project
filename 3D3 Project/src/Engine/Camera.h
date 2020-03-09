@@ -32,6 +32,7 @@ private:
     float movementSpeed = 10.0f;
     float moveLeftRight = 0.0f;
     float moveForwardBackward = 0.0f;
+    float moveUpDown = 0.0f;
 
     XMVECTOR rightVector;
     XMVECTOR eyeVector;
