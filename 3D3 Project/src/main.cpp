@@ -24,7 +24,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Test Mesh, kan anv�ndas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
     
-    std::vector<Object*> objects;
+    std::vector<Object*> objectsTest;
+    std::vector<Object*> objectsBlend;
 
     // Unique For each object
     Object* cube = new Cube(cubeMesh);
@@ -33,11 +34,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Object* cube2 = new Cube(cubeMesh);
     cube2->GetTransform()->SetPosition(2, 0, 10);
 
-    objects.push_back(cube);
-    objects.push_back(cube2);
+    objectsTest.push_back(cube);
+    objectsBlend.push_back(cube2);
 
-    renderer->SetObjectsToDraw(RenderTaskType::TEST, &objects);
+    renderer->SetObjectsToDraw(RenderTaskType::TEST, &objectsTest);
     renderer->SetCamera(RenderTaskType::TEST, camera);
+
+    renderer->SetObjectsToDraw(RenderTaskType::BLEND, &objectsBlend);
+    renderer->SetCamera(RenderTaskType::BLEND, camera);
 
     // GAMELOOP
     auto time_now = start;
@@ -61,7 +65,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         renderer->Execute();
     }   
 
-    for (Object* object : objects)
+    for (Object* object : objectsTest)
+        delete object;
+
+    for (Object* object : objectsBlend)
         delete object;
 
     delete camera;

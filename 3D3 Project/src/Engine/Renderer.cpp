@@ -120,7 +120,60 @@ void Renderer::InitRenderTasks()
 	
 	this->renderTasks[RenderTaskType::TEST] = testTask;
 
-	// :-----------------------------TASK 2:-----------------------------
+	// :-----------------------------TASK 2:----------------------------- BLEND
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlend = {};
+	gpsdBlend.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdBlend.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdBlend.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdBlend.SampleDesc.Count = 1;
+	gpsdBlend.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdBlend.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdBlend.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+
+	// Specify Blend descriptions
+	D3D12_RENDER_TARGET_BLEND_DESC blendRTdesc{};
+	blendRTdesc.BlendEnable = true;
+	blendRTdesc.SrcBlend = D3D12_BLEND_SRC_COLOR;
+	blendRTdesc.DestBlend = D3D12_BLEND_BLEND_FACTOR;
+	blendRTdesc.BlendOp = D3D12_BLEND_OP_ADD;
+	blendRTdesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendRTdesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendRTdesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendRTdesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	
+
+	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdBlend.BlendState.RenderTarget[i] = blendRTdesc;
+
+
+	// Depth descriptor
+	D3D12_DEPTH_STENCIL_DESC dsdBlend = {};
+	dsdBlend.DepthEnable = true;
+	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsdBlend.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+
+	// DepthStencil
+	dsdBlend.StencilEnable = false;
+	dsdBlend.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	dsdBlend.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	const D3D12_DEPTH_STENCILOP_DESC blendStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	dsdBlend.FrontFace = blendStencilOP;
+	dsdBlend.BackFace = blendStencilOP;
+
+	gpsdBlend.DepthStencilState = dsdBlend;
+	gpsdBlend.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
+	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlend);
+	blendTask->AddRenderTarget(this->swapChain);
+	blendTask->SetDepthBuffer(this->depthBuffer);
+	blendTask->SetDescriptorHeap(this->descriptorHeap);
+
+	this->renderTasks[RenderTaskType::BLEND] = blendTask;
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)

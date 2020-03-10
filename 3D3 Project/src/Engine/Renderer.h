@@ -7,10 +7,12 @@
 #include "SwapChain.h"
 
 #include "RenderTaskTest.h"
+#include "RenderTaskBlend.h"
 
 enum RenderTaskType
 {
-	TEST
+	TEST,
+	BLEND
 };
 
 class Renderer

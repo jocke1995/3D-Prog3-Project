@@ -21,7 +21,7 @@ PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature
 	// Create pipelineStateObject
 	HRESULT hr = device->CreateGraphicsPipelineState(&this->gpsd, IID_PPV_ARGS(&this->PSO));
 
-	this->PSO->SetName(L"PSOTEST");
+	this->PSO->SetName(L"PSO");
 	if (!SUCCEEDED(hr))
 	{
 		OutputDebugStringW(L"Failed to create PSO");

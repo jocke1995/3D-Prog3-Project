@@ -189,6 +189,7 @@
     <ClCompile Include="src\Engine\Renderer.cpp" />
     <ClCompile Include="src\Engine\RenderTarget.cpp" />
     <ClCompile Include="src\Engine\RenderTask.cpp" />
+    <ClCompile Include="src\Engine\RenderTaskBlend.cpp" />
     <ClCompile Include="src\Engine\RenderTaskTest.cpp" />
     <ClCompile Include="src\Engine\Resource.cpp" />
     <ClCompile Include="src\Engine\RootSignature.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="src\Engine\Renderer.h" />
     <ClInclude Include="src\Engine\RenderTarget.h" />
     <ClInclude Include="src\Engine\RenderTask.h" />
+    <ClInclude Include="src\Engine\RenderTaskBlend.h" />
     <ClInclude Include="src\Engine\RenderTaskTest.h" />
     <ClInclude Include="src\Engine\Resource.h" />
     <ClInclude Include="src\Engine\RootSignature.h" />
@@ -223,6 +225,14 @@
     <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
