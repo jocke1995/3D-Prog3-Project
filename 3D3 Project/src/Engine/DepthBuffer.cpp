@@ -63,12 +63,12 @@ DescriptorHeap* DepthBuffer::GetDescriptorHeap()
 
 D3D12_VIEWPORT* DepthBuffer::GetViewPort()
 {
-	return nullptr;
+	return &this->viewport;
 }
 
 D3D12_RECT* DepthBuffer::GetScissorRect()
 {
-	return nullptr;
+	return &this->scissorRect;
 }
 
 void DepthBuffer::CreateViewport(unsigned int width, unsigned int height)

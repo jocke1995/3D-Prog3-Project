@@ -53,7 +53,7 @@ void RenderTaskBlend::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gr
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
-	for (auto object : *this->objects)
+	for (auto object : this->objects)
 	{
 		size_t num_vertices = object->GetMesh()->GetNumVertices();
 		Transform* transform = object->GetTransform();

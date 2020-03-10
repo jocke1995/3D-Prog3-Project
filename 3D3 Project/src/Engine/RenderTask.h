@@ -19,8 +19,8 @@ public:
 	PipelineState* GetPipelineState();
 
 	void AddRenderTarget(RenderTarget* renderTarget);
+	void AddObject(Object* object);
 
-	void SetObjectsToDraw(std::vector<Object*> *objects);
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
@@ -34,7 +34,7 @@ protected:
 	std::vector<RenderTarget*> renderTargets;
 	DepthBuffer* depthBuffer = nullptr;
 	PipelineState* pipelineState = nullptr;
-	std::vector<Object*> *objects = nullptr;
+	std::vector<Object*> objects;
 	Camera* camera = nullptr;
 };
 

@@ -9,12 +9,6 @@
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
 
-enum RenderTaskType
-{
-	TEST,
-	BLEND
-};
-
 class Renderer
 {
 public:
@@ -26,7 +20,8 @@ public:
 
 	Mesh* CreateMesh(std::wstring path);
 
-	void SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects);
+	void AddObjectToTasks(Object* object);
+
 	void SetCamera(RenderTaskType type, Camera* camera);
 
 	void Execute();

@@ -7,7 +7,7 @@
 class Cube : public Object
 {
 public:
-    Cube(Mesh* mesh);
+    Cube(Mesh* mesh, DrawOptions* drawOptions);
     ~Cube();
 
 private:

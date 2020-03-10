@@ -189,9 +189,16 @@ Mesh* Renderer::CreateMesh(std::wstring path)
 	return mesh;
 }
 
-void Renderer::SetObjectsToDraw(RenderTaskType type, std::vector<Object*> *objects)
+// Add the object to each rendertask desired for the object.
+void Renderer::AddObjectToTasks(Object* object)
 {
-	this->renderTasks[type]->SetObjectsToDraw(objects);
+	DrawOptions* drawOptions = object->GetDrawOptions();
+
+	if (drawOptions->test == true)
+		this->renderTasks[RenderTaskType::TEST]->AddObject(object);
+
+	if (drawOptions->blend == true)
+		this->renderTasks[RenderTaskType::BLEND]->AddObject(object);
 }
 
 void Renderer::SetCamera(RenderTaskType type, Camera* camera)

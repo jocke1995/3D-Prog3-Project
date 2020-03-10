@@ -13,7 +13,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Setup timer
     auto start = std::chrono::system_clock::now();
 
-    Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle"); // TODO: kanske fel
+    Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
+
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd());
     renderer->InitRenderTasks();
@@ -23,27 +24,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->SetCamera(RenderTaskType::TEST, camera);
     renderer->SetCamera(RenderTaskType::BLEND, camera);
 
-    // Test Mesh, kan anv�ndas till flera av "samma typ" objekt senare.
+    // The same mesh can be used for multiple objects
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
-    
-    std::vector<Object*> objectsTest;
-    std::vector<Object*> objectsBlend;
+
+    // TODO: STEFAN, måsvingar?
+    DrawOptions drawOptionsTest;
+    drawOptionsTest.test = true;
+    DrawOptions drawOptionsBlend{};
+    drawOptionsBlend.blend = true;
 
     // Unique For each object
-    Object* cube = new Cube(cubeMesh);
+    Object* cube = new Cube(cubeMesh, &drawOptionsTest);
     cube->GetTransform()->SetPosition(-2, 0, 10);
 
-    Object* cube2 = new Cube(cubeMesh);
+    Object* cube2 = new Cube(cubeMesh, &drawOptionsBlend);
     cube2->GetTransform()->SetPosition(2, 0, 10);
 
-    // Renderer->AddObjectToTasks(cube, true, false, true);
-    // Renderer->AddCameraToTasks(camera, RenderTaskType::TEST, RenderTaskType::BLEND)
-
-    objectsTest.push_back(cube);
-    objectsBlend.push_back(cube2);
-
-    renderer->SetObjectsToDraw(RenderTaskType::TEST, &objectsTest);
-    renderer->SetObjectsToDraw(RenderTaskType::BLEND, &objectsBlend);
+    renderer->AddObjectToTasks(cube);
+    renderer->AddObjectToTasks(cube2);
 
     // GAMELOOP
     auto time_now = start;
@@ -62,16 +60,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         cube->Update(dt);
         cube2->Update(dt);
         
-        /* ------ Draw   ------ */
         camera->Update(dt);
+
+        /* ------ Draw   ------ */
         renderer->Execute();
     }   
 
-    for (Object* object : objectsTest)
-        delete object;
-
-    for (Object* object : objectsBlend)
-        delete object;
+    delete cube;
+    delete cube2;
 
     delete camera;
     delete window;

@@ -43,9 +43,12 @@ typedef union
 	}							\
 }
 
-
-
-
+enum RenderTaskType
+{
+	TEST,
+	BLEND,
+	NR_OF_RENDERTASKS
+};
 
 #define NUM_SWAP_BUFFERS 2
 

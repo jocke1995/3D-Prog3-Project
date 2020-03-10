@@ -1,11 +1,13 @@
 #include "Object.h"
 
-Object::Object(Mesh* mesh)
+Object::Object(Mesh* mesh, DrawOptions* drawOptions)
 {
 	this->index = index;
 	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
 	this->transform = new Transform();
 	this->mesh = mesh;
+
+	this->drawOptions = drawOptions;
 }
 
 Object::~Object()
@@ -38,4 +40,9 @@ void Object::Update(double dt)
 SlotInfo* Object::GetSlotInfo()
 {
 	return &this->info;
+}
+
+DrawOptions* Object::GetDrawOptions()
+{
+	return this->drawOptions;
 }
