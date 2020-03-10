@@ -12,6 +12,7 @@ public:
 	void Execute(ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList5* commandList5, ID3D12RootSignature* rootSig, int backBufferIndex);
 
 private:
+
 };
 
 #endif

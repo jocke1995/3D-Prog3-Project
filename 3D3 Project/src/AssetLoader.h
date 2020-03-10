@@ -25,7 +25,7 @@ public:
 
     /* Load Functions */
     // Mesh ---------------
-    Mesh* LoadMesh(std::wstring path);
+    Mesh* LoadMesh(std::wstring path, bool* loadedBefore);
 
     // Texture ------------
     //Texture& LoadTexture(std::wstring path);

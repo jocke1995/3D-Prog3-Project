@@ -178,9 +178,13 @@ void Renderer::InitRenderTasks()
 
 Mesh* Renderer::CreateMesh(std::wstring path)
 {
-	Mesh* mesh = AssetLoader::Get().LoadMesh(path);
+	// TODO: Är detta en dålig lösning?
+	bool loadedBefore = false;
+	Mesh* mesh = AssetLoader::Get().LoadMesh(path, &loadedBefore);
 
-	this->CreateShaderResourceView(mesh);
+	// Only Create the SRV if its the first time the mesh is loaded
+	if(!loadedBefore)
+		this->CreateShaderResourceView(mesh);
 
 	return mesh;
 }

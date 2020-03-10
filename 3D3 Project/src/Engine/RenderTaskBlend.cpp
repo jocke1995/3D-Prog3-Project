@@ -3,6 +3,7 @@
 RenderTaskBlend::RenderTaskBlend(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsd)
 	:RenderTask(device, rootSignature, VSName, PSName, gpsd)
 {
+	
 }
 
 RenderTaskBlend::~RenderTaskBlend()
@@ -43,7 +44,7 @@ void RenderTaskBlend::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gr
 	commandList5->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// TODO: fixa inparameter på denna?
-	float blendFactor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	float blendFactor[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	commandList5->OMSetBlendFactor(blendFactor);
 
 	commandList5->SetPipelineState(this->pipelineState->GetPSO());

@@ -20,6 +20,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // Camera
     Camera* camera = new Camera(L"default_cam", hInstance, *window->GetHwnd());
+    renderer->SetCamera(RenderTaskType::TEST, camera);
+    renderer->SetCamera(RenderTaskType::BLEND, camera);
 
     // Test Mesh, kan anv�ndas till flera av "samma typ" objekt senare.
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
@@ -34,14 +36,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Object* cube2 = new Cube(cubeMesh);
     cube2->GetTransform()->SetPosition(2, 0, 10);
 
+    // Renderer->AddObjectToTasks(cube, true, false, true);
+    // Renderer->AddCameraToTasks(camera, RenderTaskType::TEST, RenderTaskType::BLEND)
+
     objectsTest.push_back(cube);
     objectsBlend.push_back(cube2);
 
     renderer->SetObjectsToDraw(RenderTaskType::TEST, &objectsTest);
-    renderer->SetCamera(RenderTaskType::TEST, camera);
-
     renderer->SetObjectsToDraw(RenderTaskType::BLEND, &objectsBlend);
-    renderer->SetCamera(RenderTaskType::BLEND, camera);
 
     // GAMELOOP
     auto time_now = start;

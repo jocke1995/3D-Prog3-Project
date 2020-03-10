@@ -22,12 +22,13 @@ void AssetLoader::SetDevice(ID3D12Device5* device)
 	this->device = device;
 }
 
-Mesh* AssetLoader::LoadMesh(std::wstring path)
+Mesh* AssetLoader::LoadMesh(std::wstring path, bool* loadedBefore)
 {
-	// Check if the shader allready exists
-	if (loadedMeshes.count(path) != 0)
+	// Check if the mesh allready exists
+	if (this->loadedMeshes.count(path) != 0)
 	{
-		return loadedMeshes[path];
+		*loadedBefore = true;
+		return this->loadedMeshes[path];
 	}
 
 	bool meshLoaded = false;
@@ -161,6 +162,7 @@ Mesh* AssetLoader::LoadMesh(std::wstring path)
 		// TODO: Add mesh in loadedMeshes with name
 		this->loadedMeshes[path] = newMesh;
 
+		*loadedBefore = false;
 		return newMesh;
 	}
 
