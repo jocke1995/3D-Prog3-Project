@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // TODO: STEFAN, måsvingar?
     DrawOptions drawOptionsTest;
     drawOptionsTest.test = true;
-    DrawOptions drawOptionsBlend{};
+    DrawOptions drawOptionsBlend;
     drawOptionsBlend.blend = true;
 
     // Unique For each object

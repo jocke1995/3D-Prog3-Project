@@ -1,7 +1,7 @@
 #include "RenderTaskBlend.h"
 
-RenderTaskBlend::RenderTaskBlend(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsd)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsd)
+RenderTaskBlend::RenderTaskBlend(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds)
 {
 	
 }
@@ -43,18 +43,13 @@ void RenderTaskBlend::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gr
 	commandList5->RSSetScissorRects(1, rect);
 	commandList5->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// TODO: fixa inparameter på denna?
-	float blendFactor[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	commandList5->OMSetBlendFactor(blendFactor);
-
-	commandList5->SetPipelineState(this->pipelineState->GetPSO());
-
 	// Draw
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	for (auto object : this->objects)
 	{
+
 		size_t num_vertices = object->GetMesh()->GetNumVertices();
 		Transform* transform = object->GetTransform();
 
@@ -76,7 +71,12 @@ void RenderTaskBlend::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gr
 
 		commandList5->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
-		commandList5->DrawInstanced(num_vertices, 1, 0, 0);
+		// Draw each object twice with different PSO 
+		for (int i = 0; i < 2; i++)
+		{
+			commandList5->SetPipelineState(this->pipelineStates[i]->GetPSO());
+			commandList5->DrawInstanced(num_vertices, 1, 0, 0);
+		}
 	}
 	
 	// Ändra state på front/backbuffer

@@ -1,18 +1,20 @@
 #include "RenderTask.h"
 
-RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsdTest)
+RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds)
 {
-	this->pipelineState = new PipelineState(device, rootSignature, VSName, PSName, gpsdTest);
+	for (auto gpsd : *gpsds)
+		this->pipelineStates.push_back(new PipelineState(device, rootSignature, VSName, PSName, gpsd));
 }
 
 RenderTask::~RenderTask()
 {
-	delete this->pipelineState;
+	for (auto pipelineState : this->pipelineStates)
+		delete pipelineState;
 }
 
-PipelineState* RenderTask::GetPipelineState()
+PipelineState* RenderTask::GetPipelineState(unsigned int index)
 {
-	return this->pipelineState;
+	return this->pipelineStates[index];
 }
 
 void RenderTask::AddRenderTarget(RenderTarget* renderTarget)

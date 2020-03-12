@@ -113,7 +113,10 @@ void Renderer::InitRenderTasks()
 	gpsdTest.DepthStencilState = dsd;
 	gpsdTest.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
-	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTest);
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdTestVector;
+	gpsdTestVector.push_back(&gpsdTest);
+	
+	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector);
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
@@ -122,24 +125,27 @@ void Renderer::InitRenderTasks()
 
 	// :-----------------------------TASK 2:----------------------------- BLEND
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlend = {};
-	gpsdBlend.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendFrontCull = {};
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendBackCull = {};
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdBlendVector;
+
+	gpsdBlendFrontCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	// RenderTarget
-	gpsdBlend.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	gpsdBlend.NumRenderTargets = 1;
+	gpsdBlendFrontCull.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdBlendFrontCull.NumRenderTargets = 1;
 	// Depthstencil usage
-	gpsdBlend.SampleDesc.Count = 1;
-	gpsdBlend.SampleMask = UINT_MAX;
+	gpsdBlendFrontCull.SampleDesc.Count = 1;
+	gpsdBlendFrontCull.SampleMask = UINT_MAX;
 	// Rasterizer behaviour
-	gpsdBlend.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdBlend.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+	gpsdBlendFrontCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdBlendFrontCull.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
 
 	// Specify Blend descriptions
 	D3D12_RENDER_TARGET_BLEND_DESC blendRTdesc{};
 	blendRTdesc.BlendEnable = true;
-	blendRTdesc.SrcBlend = D3D12_BLEND_SRC_COLOR;
-	blendRTdesc.DestBlend = D3D12_BLEND_BLEND_FACTOR;
+	blendRTdesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendRTdesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	blendRTdesc.BlendOp = D3D12_BLEND_OP_ADD;
 	blendRTdesc.SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendRTdesc.DestBlendAlpha = D3D12_BLEND_ZERO;
@@ -148,7 +154,7 @@ void Renderer::InitRenderTasks()
 	
 
 	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-		gpsdBlend.BlendState.RenderTarget[i] = blendRTdesc;
+		gpsdBlendFrontCull.BlendState.RenderTarget[i] = blendRTdesc;
 
 
 	// Depth descriptor
@@ -165,10 +171,36 @@ void Renderer::InitRenderTasks()
 	dsdBlend.FrontFace = blendStencilOP;
 	dsdBlend.BackFace = blendStencilOP;
 
-	gpsdBlend.DepthStencilState = dsdBlend;
-	gpsdBlend.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	gpsdBlendFrontCull.DepthStencilState = dsdBlend;
+	gpsdBlendFrontCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
-	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlend);
+	// ------------------------ TEST 2 BACKCULL ----------------------------
+
+	gpsdBlendBackCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdBlendBackCull.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdBlendBackCull.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdBlendBackCull.SampleDesc.Count = 1;
+	gpsdBlendBackCull.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdBlendBackCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdBlendBackCull.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+
+	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdBlendBackCull.BlendState.RenderTarget[i] = blendRTdesc;
+
+	// DepthStencil
+	dsdBlend.StencilEnable = false;
+
+	gpsdBlendBackCull.DepthStencilState = dsdBlend;
+	gpsdBlendBackCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	
+	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
+	gpsdBlendVector.push_back(&gpsdBlendBackCull);
+
+	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlendVector);
 	blendTask->AddRenderTarget(this->swapChain);
 	blendTask->SetDepthBuffer(this->depthBuffer);
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
@@ -374,6 +406,13 @@ void Renderer::TempCreateFence()
 	device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 
 	fenceValue = 1;
+
+	int options = D3D12_FENCE_FLAG_SHARED | D3D12_FENCE_FLAG_SHARED_CROSS_ADAPTER;
+
+	if (options & D3D12_FENCE_FLAG_SHARED_CROSS_ADAPTER)
+	{
+
+	}
 
 	// Event handle to use for GPU synchronization
 	eventHandle = CreateEvent(0, false, false, 0);

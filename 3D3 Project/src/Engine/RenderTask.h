@@ -13,10 +13,10 @@ class DescriptorHeap;
 class RenderTask
 {
 public:
-	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsdTest);
+	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest);
 	virtual ~RenderTask();
 
-	PipelineState* GetPipelineState();
+	PipelineState* GetPipelineState(unsigned int index);
 
 	void AddRenderTarget(RenderTarget* renderTarget);
 	void AddObject(Object* object);
@@ -33,7 +33,8 @@ protected:
 
 	std::vector<RenderTarget*> renderTargets;
 	DepthBuffer* depthBuffer = nullptr;
-	PipelineState* pipelineState = nullptr;
+	
+	std::vector<PipelineState*> pipelineStates;
 	std::vector<Object*> objects;
 	Camera* camera = nullptr;
 };

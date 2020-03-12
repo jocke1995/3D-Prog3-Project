@@ -21,7 +21,7 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 	float4 diffuse = materialColor * lightColor * alpha;
 
 	// FinalColor
-	float4 finalColor = float4(ambient.rgb + diffuse.rgb, 1.0f);
+	float4 finalColor = float4(ambient.rgb + diffuse.rgb, 0.7f);
 
 	return finalColor;
 }

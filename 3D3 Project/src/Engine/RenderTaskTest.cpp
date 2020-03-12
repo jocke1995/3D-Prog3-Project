@@ -1,7 +1,7 @@
 #include "RenderTaskTest.h"
 
-RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsdTest)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsdTest)
+RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds)
 {
 	
 }
@@ -47,7 +47,7 @@ void RenderTaskTest::Execute(ID3D12CommandAllocator* commandAllocator, ID3D12Gra
 	commandList5->RSSetScissorRects(1, rect);
 	commandList5->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	commandList5->SetPipelineState(this->pipelineState->GetPSO());
+	commandList5->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
 	// Draw
 	
