@@ -45,6 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // GAMELOOP
     auto time_now = start;
+
     while (!window->ExitWindow())
     {
         /* ------ Timer  ------ */

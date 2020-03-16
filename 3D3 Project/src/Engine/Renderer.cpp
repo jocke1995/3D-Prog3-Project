@@ -240,6 +240,18 @@ void Renderer::SetCamera(RenderTaskType type, Camera* camera)
 
 void Renderer::Execute()
 {
+	static UINT64 cpuBefore = 0;
+	static UINT64 gpuBefore = 0;
+
+	static UINT64 cpuAfter = 0;
+	static UINT64 gpuAfter = 0;
+
+	static UINT64 frequency = 0;
+
+	this->commandQueue->GetTimestampFrequency(&frequency);
+
+	this->commandQueue->GetClockCalibration(&gpuBefore, &cpuBefore);
+
 	// TODO: STEFAN
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
@@ -254,6 +266,28 @@ void Renderer::Execute()
 	WaitForGPU();
 
 	dx12SwapChain->Present(0, 0);
+
+	this->commandQueue->GetClockCalibration(&gpuAfter, &cpuAfter);
+
+	UINT64 diffTicksCPU = cpuAfter - cpuBefore;
+	UINT64 diffTicksGPU = gpuAfter - gpuBefore;
+
+	// Get to (ms)
+	double diffCPU = (double)(diffTicksCPU * 1000)/ (double)frequency;
+	double diffGPU = (double)(diffTicksGPU * 1000)/ (double)frequency;
+
+	
+	
+
+	char buf[500] = "";
+
+	sprintf_s(buf, "DiffCPU: %f\n", diffCPU);
+
+	OutputDebugStringA(buf);
+
+	sprintf_s(buf, "DiffGPU: %f\n\n\n", diffGPU);
+
+	OutputDebugStringA(buf);
 }
 
 // -----------------------  Private Functions  ----------------------- //
