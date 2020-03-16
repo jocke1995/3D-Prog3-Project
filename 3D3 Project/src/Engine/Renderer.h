@@ -22,7 +22,7 @@ public:
 
 	void AddObjectToTasks(Object* object);
 
-	void SetCamera(RenderTaskType type, Camera* camera);
+	void SetCamera(Camera* camera);
 
 	void Execute();
 
@@ -35,11 +35,6 @@ private:
 	// CommandQueue
 	ID3D12CommandQueue* commandQueue = nullptr;
 	bool CreateCommandQueue();
-
-	// TEMPORARY, JUST TO GET IT TO WORK WITH 1 THREAD:
-	ID3D12CommandAllocator* commandAllocator = nullptr;
-	ID3D12GraphicsCommandList5* commandList5 = nullptr;
-	void CreateAllocatorAndListTemporary();
 
 	// Swapchain
 	RenderTarget* swapChain = nullptr;
@@ -54,7 +49,8 @@ private:
 	bool CreateRootSignature();
 
 	// RenderTasks
-	std::map<RenderTaskType, RenderTask*> renderTasks;
+	std::vector<RenderTask*> renderTasks;
+	std::vector<ID3D12CommandList*>ListsToExecute[NUM_SWAP_BUFFERS];
 
 	// DescriptorHeap
 	DescriptorHeap* descriptorHeap;
@@ -68,7 +64,7 @@ private:
 	HANDLE eventHandle = nullptr;
 	UINT64 fenceValue = 0;
 	void TempCreateFence();
-	void WaitForGPU();
+	void WaitForFrame();
 };
 
 #endif

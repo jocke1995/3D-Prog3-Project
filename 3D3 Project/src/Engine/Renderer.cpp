@@ -12,11 +12,7 @@ Renderer::~Renderer()
 
 	SAFE_RELEASE(&this->device5);
 	
-
 	SAFE_RELEASE(&this->commandQueue);
-	// TEMP
-	SAFE_RELEASE(&this->commandList5);
-	SAFE_RELEASE(&this->commandAllocator);
 
 	delete this->rootSignature;
 
@@ -26,7 +22,7 @@ Renderer::~Renderer()
 	delete this->descriptorHeap;
 
 	for (auto renderTask : this->renderTasks)
-		delete renderTask.second;
+		delete renderTask;
 }
 
 void Renderer::InitD3D12(HWND *hwnd)
@@ -44,7 +40,6 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// TEMP
-	this->CreateAllocatorAndListTemporary();
 	this->TempCreateFence();
 
 	// Create SwapChain
@@ -121,7 +116,9 @@ void Renderer::InitRenderTasks()
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
 	
-	this->renderTasks[RenderTaskType::TEST] = testTask;
+	this->renderTasks.push_back(testTask);
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->ListsToExecute[i].push_back(testTask->GetCommandList(i));
 
 	// :-----------------------------TASK 2:----------------------------- BLEND
 
@@ -205,7 +202,9 @@ void Renderer::InitRenderTasks()
 	blendTask->SetDepthBuffer(this->depthBuffer);
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
 
-	this->renderTasks[RenderTaskType::BLEND] = blendTask;
+	this->renderTasks.push_back(blendTask);
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->ListsToExecute[i].push_back(blendTask->GetCommandList(i));
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)
@@ -233,9 +232,10 @@ void Renderer::AddObjectToTasks(Object* object)
 		this->renderTasks[RenderTaskType::BLEND]->AddObject(object);
 }
 
-void Renderer::SetCamera(RenderTaskType type, Camera* camera)
+void Renderer::SetCamera(Camera* camera)
 {
-	this->renderTasks[type]->SetCamera(camera);
+	for (auto renderTask : this->renderTasks)
+		renderTask->SetCamera(camera);
 }
 
 void Renderer::Execute()
@@ -252,18 +252,17 @@ void Renderer::Execute()
 
 	this->commandQueue->GetClockCalibration(&gpuBefore, &cpuBefore);
 
-	// TODO: STEFAN
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
-	for (auto tasks : this->renderTasks)
-	{
-		tasks.second->Execute(this->commandAllocator, this->commandList5, this->rootSignature->GetRootSig(), backBufferIndex);
-	}
+	for (auto task : this->renderTasks)
+		task->Execute(this->rootSignature->GetRootSig(), backBufferIndex);
 
-	ID3D12CommandList* listsToExecute[] = { this->commandList5 };
-	this->commandQueue->ExecuteCommandLists(ARRAYSIZE(listsToExecute), listsToExecute);
+	this->commandQueue->ExecuteCommandLists(
+		this->ListsToExecute[backBufferIndex].size(), 
+		this->ListsToExecute[backBufferIndex].data()
+	);
 
-	WaitForGPU();
+	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
 
@@ -276,18 +275,14 @@ void Renderer::Execute()
 	double diffCPU = (double)(diffTicksCPU * 1000)/ (double)frequency;
 	double diffGPU = (double)(diffTicksGPU * 1000)/ (double)frequency;
 
-	
-	
-
 	char buf[500] = "";
 
+	/*
 	sprintf_s(buf, "DiffCPU: %f\n", diffCPU);
-
 	OutputDebugStringA(buf);
-
 	sprintf_s(buf, "DiffGPU: %f\n\n\n", diffGPU);
-
 	OutputDebugStringA(buf);
+	*/
 }
 
 // -----------------------  Private Functions  ----------------------- //
@@ -379,20 +374,6 @@ bool Renderer::CreateCommandQueue()
 	return commandQueueCreated;
 }
 
-void Renderer::CreateAllocatorAndListTemporary()
-{
-	device5->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-
-	device5->CreateCommandList(
-		0,
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		commandAllocator,
-		nullptr,
-		IID_PPV_ARGS(&commandList5));
-
-	commandList5->Close();
-}
-
 bool Renderer::CreateSwapChain(HWND *hwnd)
 {
 	// TODO: Detta
@@ -452,7 +433,7 @@ void Renderer::TempCreateFence()
 	eventHandle = CreateEvent(0, false, false, 0);
 }
 
-void Renderer::WaitForGPU()
+void Renderer::WaitForFrame()
 {
 	const UINT64 oldFence = fenceValue;
 	commandQueue->Signal(fence, oldFence);

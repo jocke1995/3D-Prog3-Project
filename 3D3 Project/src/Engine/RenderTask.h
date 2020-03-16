@@ -17,6 +17,7 @@ public:
 	virtual ~RenderTask();
 
 	PipelineState* GetPipelineState(unsigned int index);
+	ID3D12GraphicsCommandList* GetCommandList(unsigned int index);
 
 	void AddRenderTarget(RenderTarget* renderTarget);
 	void AddObject(Object* object);
@@ -25,14 +26,18 @@ public:
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
 
-	virtual void Execute(ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList5* commandList5, ID3D12RootSignature* rootSig, int backBufferIndex) = 0;
+	virtual void Execute(ID3D12RootSignature* rootSig, int backBufferIndex) = 0;
 private:
+	void CreateCommandInterfaces(ID3D12Device5* device);
 
 protected:
 	DescriptorHeap* descriptorHeap = nullptr;
 
 	std::vector<RenderTarget*> renderTargets;
 	DepthBuffer* depthBuffer = nullptr;
+
+	ID3D12GraphicsCommandList5* commandLists[NUM_SWAP_BUFFERS];
+	ID3D12CommandAllocator* commandAllocators[NUM_SWAP_BUFFERS];
 	
 	std::vector<PipelineState*> pipelineStates;
 	std::vector<Object*> objects;

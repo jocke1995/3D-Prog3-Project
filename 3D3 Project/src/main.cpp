@@ -21,8 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // Camera
     Camera* camera = new Camera(L"default_cam", hInstance, *window->GetHwnd());
-    renderer->SetCamera(RenderTaskType::TEST, camera);
-    renderer->SetCamera(RenderTaskType::BLEND, camera);
+    renderer->SetCamera(camera);
 
     // The same mesh can be used for multiple objects
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
