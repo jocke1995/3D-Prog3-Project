@@ -3,11 +3,11 @@
 
 AssetLoader::~AssetLoader()
 {
-	for (auto pair : loadedMeshes)
-	{
-		// delete the mesh*
+	for (auto pair : this->loadedMeshes)
 		delete pair.second;
-	}
+
+	for (auto shader : this->loadedShaders)
+		delete shader.second;
 }
 
 AssetLoader& AssetLoader::Get()
