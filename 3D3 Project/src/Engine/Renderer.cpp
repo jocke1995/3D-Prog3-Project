@@ -8,7 +8,7 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 	CloseHandle(this->eventHandle);
-	SAFE_RELEASE(&this->fence);
+	SAFE_RELEASE(&this->fenceFrame);
 
 	SAFE_RELEASE(&this->device5);
 	
@@ -40,7 +40,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// TEMP
-	this->TempCreateFence();
+	this->CreateFences();
 
 	// Create SwapChain
 	if (!this->CreateSwapChain(hwnd))
@@ -240,6 +240,13 @@ void Renderer::SetCamera(Camera* camera)
 
 void Renderer::Execute()
 {
+	const unsigned int num_results = 200;
+	static std::vector<double> RESULSTSCPU(num_results + 1);
+	static std::vector<double> RESULSTSGPU(num_results + 1);
+	static double sumCPU = 0;
+	static double sumGPU = 0;
+	static unsigned int counter = 0;
+
 	static UINT64 cpuBefore = 0;
 	static UINT64 gpuBefore = 0;
 
@@ -247,8 +254,10 @@ void Renderer::Execute()
 	static UINT64 gpuAfter = 0;
 
 	static UINT64 frequency = 0;
+	static double timestampToMs;
 
 	this->commandQueue->GetTimestampFrequency(&frequency);
+	timestampToMs =  1000.0 / frequency; // to ms
 
 	this->commandQueue->GetClockCalibration(&gpuBefore, &cpuBefore);
 
@@ -272,17 +281,30 @@ void Renderer::Execute()
 	UINT64 diffTicksGPU = gpuAfter - gpuBefore;
 
 	// Get to (ms)
-	double diffCPU = (double)(diffTicksCPU * 1000)/ (double)frequency;
-	double diffGPU = (double)(diffTicksGPU * 1000)/ (double)frequency;
+	double diffCPU = diffTicksCPU * timestampToMs;
+	double diffGPU = diffTicksGPU * timestampToMs;
 
-	char buf[500] = "";
+	sumCPU += diffCPU;
+	sumGPU += diffGPU;
+	RESULSTSCPU[counter] = diffCPU;
+	RESULSTSGPU[counter] = diffGPU;
 
-	/*
-	sprintf_s(buf, "DiffCPU: %f\n", diffCPU);
-	OutputDebugStringA(buf);
-	sprintf_s(buf, "DiffGPU: %f\n\n\n", diffGPU);
-	OutputDebugStringA(buf);
-	*/
+
+
+	if (counter == num_results)
+	{
+		char buf[500] = "";
+
+		sprintf_s(buf, "DiffCPU: %f\n", sumCPU / num_results);
+		OutputDebugStringA(buf);
+		sprintf_s(buf, "DiffGPU: %f\n\n\n", sumGPU / num_results);
+		OutputDebugStringA(buf);
+
+		system("pause");
+	}
+
+	counter++;
+	
 }
 
 // -----------------------  Private Functions  ----------------------- //
@@ -416,34 +438,27 @@ void Renderer::CreateShaderResourceView(Mesh* mesh)
 	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
 }
 
-void Renderer::TempCreateFence()
+void Renderer::CreateFences()
 {
-	device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fenceFrame));
 
-	fenceValue = 1;
-
-	int options = D3D12_FENCE_FLAG_SHARED | D3D12_FENCE_FLAG_SHARED_CROSS_ADAPTER;
-
-	if (options & D3D12_FENCE_FLAG_SHARED_CROSS_ADAPTER)
-	{
-
-	}
+	this->fenceFrameValue = 1;
 
 	// Event handle to use for GPU synchronization
-	eventHandle = CreateEvent(0, false, false, 0);
+	this->eventHandle = CreateEvent(0, false, false, 0);
 }
 
 void Renderer::WaitForFrame()
 {
-	const UINT64 oldFence = fenceValue;
-	commandQueue->Signal(fence, oldFence);
-	fenceValue++;
+	const UINT64 oldFence = this->fenceFrameValue;
+	commandQueue->Signal(this->fenceFrame, oldFence);
+	this->fenceFrameValue++;
 
 	//Wait until command queue is done.
-	if (fence->GetCompletedValue() < oldFence)
+	if (this->fenceFrame->GetCompletedValue() < oldFence - 1)
 	{
-		fence->SetEventOnCompletion(oldFence, eventHandle);
-		WaitForSingleObject(eventHandle, INFINITE);
+		this->fenceFrame->SetEventOnCompletion(oldFence, this->eventHandle);
+		WaitForSingleObject(this->eventHandle, INFINITE);
 	}
 }
 

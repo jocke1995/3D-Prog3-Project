@@ -60,10 +60,10 @@ private:
 	void CreateShaderResourceView(Mesh* mesh);
 
 	// Fences
-	ID3D12Fence1* fence = nullptr;
 	HANDLE eventHandle = nullptr;
-	UINT64 fenceValue = 0;
-	void TempCreateFence();
+	ID3D12Fence1* fenceFrame = nullptr;
+	UINT64 fenceFrameValue = 0;
+	void CreateFences();
 	void WaitForFrame();
 };
 
