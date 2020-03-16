@@ -30,11 +30,6 @@ PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature
 
 PipelineState::~PipelineState()
 {
-	if (this->VS != nullptr)
-		delete this->VS;
-	if (this->PS != nullptr)
-		delete this->PS;
-
 	SAFE_RELEASE(&this->PSO);
 }
 
