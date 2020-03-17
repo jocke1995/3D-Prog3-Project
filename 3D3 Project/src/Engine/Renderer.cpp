@@ -280,18 +280,34 @@ void Renderer::Execute()
 	D3D12::GPUTimestampPair drawTimeTest = timer.getTimestampPair(0);
 	D3D12::GPUTimestampPair drawTimeBlend = timer.getTimestampPair(1);
 
+	// **Temporary test variables**
+	static unsigned int counter = 0;
+	static double SUM_TEST = 0;
+	static double SUM_BLEND = 0;
+
+	counter++;
+
+	const unsigned int limit = 200;
 	UINT64 dt = drawTimeTest.Stop - drawTimeTest.Start;
 	double timeInMs = dt * timestampToMs;
+	SUM_TEST += timeInMs;
 	
-	char buf[100];
-	sprintf_s(buf, "GPU TEST TASK  : %fms\n", timeInMs);
-	OutputDebugStringA(buf);
-
+	
 	dt = drawTimeBlend.Stop - drawTimeBlend.Start;
 	timeInMs = dt * timestampToMs;
+	SUM_BLEND += timeInMs;
 
-	sprintf_s(buf, "GPU BLEND TASK : %fms\n\n", timeInMs);
-	OutputDebugStringA(buf);
+	// Stop when at limit
+	if (counter == limit)
+	{
+		char buf[100];
+		sprintf_s(buf, "GPU TEST  TASK : %fms\n", SUM_TEST/ counter);
+		OutputDebugStringA(buf);
+
+		sprintf_s(buf, "GPU BLEND TASK : %fms\n\n", SUM_BLEND/ counter);
+		OutputDebugStringA(buf);
+	}
+
 }
 
 // -----------------------  Private Functions  ----------------------- //
