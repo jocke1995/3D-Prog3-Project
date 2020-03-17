@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd());
     renderer->InitRenderTasks();
-
+    
     // Camera
     Camera* camera = new Camera(L"default_cam", hInstance, *window->GetHwnd());
     renderer->SetCamera(camera);
@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // The same mesh can be used for multiple objects
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
 
-    // TODO: STEFAN, måsvingar?
+    // DrawFlags
     DrawOptions drawOptionsTest;
     drawOptionsTest.test = true;
     DrawOptions drawOptionsBlend;

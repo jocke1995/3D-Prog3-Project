@@ -11,7 +11,7 @@ RenderTaskTest::~RenderTaskTest()
 }
 
 extern D3D12::D3D12Timer timer;
-void RenderTaskTest::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
+void RenderTaskTest::Execute(int backBufferIndex)
 {
 	this->commandAllocators[backBufferIndex]->Reset();
 	this->commandLists[backBufferIndex]->Reset(this->commandAllocators[backBufferIndex], NULL);
@@ -20,7 +20,7 @@ void RenderTaskTest::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
 	UINT timer_index = 0;
 	timer.start(this->commandLists[backBufferIndex], timer_index);
 
-	this->commandLists[backBufferIndex]->SetGraphicsRootSignature(rootSig);
+	this->commandLists[backBufferIndex]->SetGraphicsRootSignature(this->rootSig);
 	
 	ID3D12DescriptorHeap* bindlessHeap = this->descriptorHeap->GetID3D12DescriptorHeap();
 	this->commandLists[backBufferIndex]->SetDescriptorHeaps(1, &bindlessHeap);

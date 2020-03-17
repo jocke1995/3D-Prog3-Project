@@ -255,8 +255,13 @@ void Renderer::Execute()
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 
+	// Fill queue with tasks
 	for (auto task : this->renderTasks)
-		task->Execute(this->rootSignature->GetRootSig(), backBufferIndex);
+	{
+		task->SetBackBufferIndex(backBufferIndex);
+		task->Execute(backBufferIndex);
+
+	}
 
 	// Wait for CPU
 

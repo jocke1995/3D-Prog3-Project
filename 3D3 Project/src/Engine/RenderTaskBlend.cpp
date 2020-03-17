@@ -11,7 +11,7 @@ RenderTaskBlend::~RenderTaskBlend()
 }
 
 extern D3D12::D3D12Timer timer;
-void RenderTaskBlend::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
+void RenderTaskBlend::Execute(int backBufferIndex)
 {
 	this->commandAllocators[backBufferIndex]->Reset();
 	this->commandLists[backBufferIndex]->Reset(this->commandAllocators[backBufferIndex], NULL);
@@ -20,7 +20,7 @@ void RenderTaskBlend::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
 	UINT timer_index = 1;
 	timer.start(this->commandLists[backBufferIndex], timer_index);
 
-	this->commandLists[backBufferIndex]->SetGraphicsRootSignature(rootSig);
+	this->commandLists[backBufferIndex]->SetGraphicsRootSignature(this->rootSig);
 	
 	ID3D12DescriptorHeap* bindlessHeap = this->descriptorHeap->GetID3D12DescriptorHeap();
 	this->commandLists[backBufferIndex]->SetDescriptorHeaps(1, &bindlessHeap);
