@@ -240,27 +240,6 @@ void Renderer::SetCamera(Camera* camera)
 
 void Renderer::Execute()
 {
-	const unsigned int num_results = 200;
-	static std::vector<double> RESULSTSCPU(num_results + 1);
-	static std::vector<double> RESULSTSGPU(num_results + 1);
-	static double sumCPU = 0;
-	static double sumGPU = 0;
-	static unsigned int counter = 0;
-
-	static UINT64 cpuBefore = 0;
-	static UINT64 gpuBefore = 0;
-
-	static UINT64 cpuAfter = 0;
-	static UINT64 gpuAfter = 0;
-
-	static UINT64 frequency = 0;
-	static double timestampToMs;
-
-	this->commandQueue->GetTimestampFrequency(&frequency);
-	timestampToMs =  1000.0 / frequency; // to ms
-
-	this->commandQueue->GetClockCalibration(&gpuBefore, &cpuBefore);
-
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	for (auto task : this->renderTasks)
@@ -274,37 +253,6 @@ void Renderer::Execute()
 	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
-
-	this->commandQueue->GetClockCalibration(&gpuAfter, &cpuAfter);
-
-	UINT64 diffTicksCPU = cpuAfter - cpuBefore;
-	UINT64 diffTicksGPU = gpuAfter - gpuBefore;
-
-	// Get to (ms)
-	double diffCPU = diffTicksCPU * timestampToMs;
-	double diffGPU = diffTicksGPU * timestampToMs;
-
-	sumCPU += diffCPU;
-	sumGPU += diffGPU;
-	RESULSTSCPU[counter] = diffCPU;
-	RESULSTSGPU[counter] = diffGPU;
-
-
-
-	if (counter == num_results)
-	{
-		char buf[500] = "";
-
-		sprintf_s(buf, "DiffCPU: %f\n", sumCPU / num_results);
-		OutputDebugStringA(buf);
-		sprintf_s(buf, "DiffGPU: %f\n\n\n", sumGPU / num_results);
-		OutputDebugStringA(buf);
-
-		system("pause");
-	}
-
-	counter++;
-	
 }
 
 // -----------------------  Private Functions  ----------------------- //
