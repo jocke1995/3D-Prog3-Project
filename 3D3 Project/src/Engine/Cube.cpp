@@ -18,9 +18,11 @@ void Cube::UpdateSpecific(double dt)
 	// Test Rotation
 	static float r = 1;
 	r += 1.0f * dt;
-	this->transform->RotateX(r);
+	//this->transform->RotateX(r);
 	this->transform->RotateY(r);
-	this->transform->RotateZ(r);
+	//this->transform->RotateZ(r);
+
+	this->transform->SetScale(0.07);
 
 	//// Test Translation
 	//XMFLOAT3 pos = this->transform->GetPosition();

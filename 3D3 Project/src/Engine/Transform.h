@@ -19,6 +19,7 @@ public:
 	void RotateY(float angle);
 	void RotateZ(float angle);
 
+	void SetScale(float scale);
 	void SetScale(float x, float y, float z);
 	void SetScale(XMFLOAT3 scale);
 

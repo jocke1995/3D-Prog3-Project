@@ -287,7 +287,7 @@ void Renderer::Execute()
 
 	counter++;
 
-	const unsigned int limit = 200;
+	const unsigned int limit = 1000;
 	UINT64 dt = drawTimeTest.Stop - drawTimeTest.Start;
 	double timeInMs = dt * timestampToMs;
 	SUM_TEST += timeInMs;

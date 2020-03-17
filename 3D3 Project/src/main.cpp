@@ -24,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer->SetCamera(camera);
 
     // The same mesh can be used for multiple objects
-    Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
+    Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
 
     // TODO: STEFAN, måsvingar?
     DrawOptions drawOptionsTest;

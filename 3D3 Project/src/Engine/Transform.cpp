@@ -46,6 +46,11 @@ void Transform::RotateZ(float angle)
 	this->rotZMat = XMMatrixRotationZ(angle);
 }
 
+void Transform::SetScale(float scale)
+{
+	this->scale = XMFLOAT3(scale, scale, scale);
+}
+
 void Transform::SetScale(float x, float y, float z)
 {
 	this->scale = XMFLOAT3(x, y, z);
