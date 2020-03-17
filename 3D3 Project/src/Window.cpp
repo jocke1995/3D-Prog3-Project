@@ -39,6 +39,11 @@ Window::~Window()
 
 }
 
+void Window::SetWindowTitle(std::wstring newTitle)
+{
+	SetWindowTextW(this->hwnd, newTitle.c_str());
+}
+
 bool Window::ExitWindow()
 {
 	bool closeWindow = false;

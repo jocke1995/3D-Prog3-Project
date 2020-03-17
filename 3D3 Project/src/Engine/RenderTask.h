@@ -7,6 +7,7 @@
 #include "RootSignature.h"
 #include "Camera.h"
 #include "DepthBuffer.h"
+#include "D3D12Timer.h"
 
 class DescriptorHeap;
 

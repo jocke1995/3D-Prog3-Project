@@ -5,6 +5,7 @@
 #include "RootSignature.h"
 #include "RenderTask.h"
 #include "SwapChain.h"
+#include "D3D12Timer.h"
 
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
@@ -50,10 +51,10 @@ private:
 
 	// RenderTasks
 	std::vector<RenderTask*> renderTasks;
-	std::vector<ID3D12CommandList*>ListsToExecute[NUM_SWAP_BUFFERS];
+	std::vector<ID3D12CommandList*>listsToExecute[NUM_SWAP_BUFFERS];
 
 	// DescriptorHeap
-	DescriptorHeap* descriptorHeap;
+	DescriptorHeap* descriptorHeap = nullptr;
 	void InitDescriptorHeap();
 
 	// ShaderResourceView

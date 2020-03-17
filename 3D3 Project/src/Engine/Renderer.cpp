@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+D3D12::D3D12Timer timer;
+
 Renderer::Renderer()
 {
 	// Nothing here yet
@@ -32,6 +34,9 @@ void Renderer::InitD3D12(HWND *hwnd)
 	{
 		OutputDebugStringA("Error: Failed to create Device!\n");
 	}
+
+	// Timer
+	timer.init(this->device5, RenderTaskType::NR_OF_RENDERTASKS);
 
 	// Create CommandQueue
 	if (!this->CreateCommandQueue())
@@ -118,7 +123,7 @@ void Renderer::InitRenderTasks()
 	
 	this->renderTasks.push_back(testTask);
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->ListsToExecute[i].push_back(testTask->GetCommandList(i));
+		this->listsToExecute[i].push_back(testTask->GetCommandList(i));
 
 	// :-----------------------------TASK 2:----------------------------- BLEND
 
@@ -204,7 +209,7 @@ void Renderer::InitRenderTasks()
 
 	this->renderTasks.push_back(blendTask);
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->ListsToExecute[i].push_back(blendTask->GetCommandList(i));
+		this->listsToExecute[i].push_back(blendTask->GetCommandList(i));
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)
@@ -242,17 +247,44 @@ void Renderer::Execute()
 {
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
+
 	for (auto task : this->renderTasks)
 		task->Execute(this->rootSignature->GetRootSig(), backBufferIndex);
 
-	this->commandQueue->ExecuteCommandLists(
-		this->ListsToExecute[backBufferIndex].size(), 
-		this->ListsToExecute[backBufferIndex].data()
-	);
+	// Wait for CPU
 
+	UINT64 queueFreq;
+	this->commandQueue->GetTimestampFrequency(&queueFreq);
+
+	this->commandQueue->ExecuteCommandLists(
+		this->listsToExecute[backBufferIndex].size(), 
+		this->listsToExecute[backBufferIndex].data()
+	);
+	
+	// Wait for GPU
 	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
+
+	//get time in ms
+	double timestampToMs = (1.0 / queueFreq) * 1000.0;
+
+	// 0 = TEST, 1 = BLEND
+	D3D12::GPUTimestampPair drawTimeTest = timer.getTimestampPair(0);
+	D3D12::GPUTimestampPair drawTimeBlend = timer.getTimestampPair(1);
+
+	UINT64 dt = drawTimeTest.Stop - drawTimeTest.Start;
+	double timeInMs = dt * timestampToMs;
+	
+	char buf[100];
+	sprintf_s(buf, "GPU TEST TASK  : %fms\n", timeInMs);
+	OutputDebugStringA(buf);
+
+	dt = drawTimeBlend.Stop - drawTimeBlend.Start;
+	timeInMs = dt * timestampToMs;
+
+	sprintf_s(buf, "GPU BLEND TASK : %fms\n\n", timeInMs);
+	OutputDebugStringA(buf);
 }
 
 // -----------------------  Private Functions  ----------------------- //

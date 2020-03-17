@@ -10,15 +10,20 @@ RenderTaskTest::~RenderTaskTest()
 {
 }
 
+extern D3D12::D3D12Timer timer;
 void RenderTaskTest::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
 {
 	this->commandAllocators[backBufferIndex]->Reset();
 	this->commandLists[backBufferIndex]->Reset(this->commandAllocators[backBufferIndex], NULL);
 
+	// Start timestamp
+	UINT timer_index = 0;
+	timer.start(this->commandLists[backBufferIndex], timer_index);
+
 	this->commandLists[backBufferIndex]->SetGraphicsRootSignature(rootSig);
 	
-	auto a = this->descriptorHeap->GetID3D12DescriptorHeap();
-	this->commandLists[backBufferIndex]->SetDescriptorHeaps(1, &a);
+	ID3D12DescriptorHeap* bindlessHeap = this->descriptorHeap->GetID3D12DescriptorHeap();
+	this->commandLists[backBufferIndex]->SetDescriptorHeaps(1, &bindlessHeap);
 
 	this->commandLists[backBufferIndex]->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap->GetGPUHeapAt(0));
 
@@ -50,9 +55,6 @@ void RenderTaskTest::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
 	this->commandLists[backBufferIndex]->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
 	// Draw
-	
-	
-
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
@@ -88,6 +90,10 @@ void RenderTaskTest::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
 		this->renderTargets[0]->GetRenderTarget(backBufferIndex),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT));
+
+	// End timestamp
+	timer.stop(this->commandLists[backBufferIndex], timer_index);
+	timer.resolveQueryToCPU(this->commandLists[backBufferIndex], timer_index);
 
 	this->commandLists[backBufferIndex]->Close();
 }

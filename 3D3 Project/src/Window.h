@@ -9,6 +9,8 @@ public:
 	Window(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle);
 	~Window();
 
+	void SetWindowTitle(std::wstring newTitle);
+
 	bool ExitWindow();
 	bool IsFullScreen();
 	int GetScreenWidth();

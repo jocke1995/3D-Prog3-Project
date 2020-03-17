@@ -44,6 +44,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // GAMELOOP
     auto time_now = start;
+    auto time_lastFps = start;
+    double fpsInterval = 0.5;
 
     while (!window->ExitWindow())
     {
@@ -54,7 +56,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         std::chrono::duration<double> elapsed_time = time_now - time_last;
         double dt = elapsed_time.count(); // dt.count() to get ms time
         
-        //OutputDebugStringW(std::to_wstring(dt.count()).c_str());
+        std::chrono::duration<double> elapsed_timeFps = time_now - time_lastFps;
+        if (elapsed_timeFps.count() >= fpsInterval)
+        {
+            std::string fpsString = std::to_string(int(1.0 / dt));
+            std::wstring tmp = std::wstring(fpsString.begin(), fpsString.end());
+            window->SetWindowTitle(tmp);
+            time_lastFps = time_now;
+        }
 
         /* ------ Update ------ */
         cube->Update(dt);

@@ -86,6 +86,9 @@
     <ClCompile Include="src\Engine\RenderTaskBlend.cpp">
       <Filter>Engine\RenderTasks</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\D3D12Timer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -156,6 +159,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\RenderTaskBlend.h">
       <Filter>Engine\RenderTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\D3D12Timer.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
