@@ -42,6 +42,7 @@ void RenderTaskBlend::Execute(ID3D12RootSignature* rootSig, int backBufferIndex)
 
 	this->commandLists[backBufferIndex]->OMSetRenderTargets(1, &cdh, true, &dsh);
 
+
 	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
 	D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
 	this->commandLists[backBufferIndex]->RSSetViewports(1, viewPort);

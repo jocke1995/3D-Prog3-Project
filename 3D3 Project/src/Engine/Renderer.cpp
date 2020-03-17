@@ -5,6 +5,7 @@ D3D12::D3D12Timer timer;
 Renderer::Renderer()
 {
 	// Nothing here yet
+	this->renderTasks.resize(RenderTaskType::NR_OF_RENDERTASKS);
 }
 
 Renderer::~Renderer()
@@ -121,9 +122,7 @@ void Renderer::InitRenderTasks()
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
 	
-	this->renderTasks.push_back(testTask);
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->listsToExecute[i].push_back(testTask->GetCommandList(i));
+	
 
 	// :-----------------------------TASK 2:----------------------------- BLEND
 
@@ -207,7 +206,15 @@ void Renderer::InitRenderTasks()
 	blendTask->SetDepthBuffer(this->depthBuffer);
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
 
-	this->renderTasks.push_back(blendTask);
+	/* -------------------------------------------------------------- */
+	
+	this->renderTasks[RenderTaskType::TEST] = testTask;
+	this->renderTasks[RenderTaskType::BLEND] = blendTask;
+
+	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->listsToExecute[i].push_back(testTask->GetCommandList(i));
+
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 		this->listsToExecute[i].push_back(blendTask->GetCommandList(i));
 }
