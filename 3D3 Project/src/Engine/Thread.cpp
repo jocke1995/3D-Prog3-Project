@@ -8,8 +8,8 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 	while (true)
 	{
 		// ------------------- Critical region -------------------
-		// Lock
-		WaitForSingleObject(threadInstance->mutex, INFINITE);
+		//WaitForSingleObject(threadInstance->mutex, INFINITE);
+		threadInstance->mutex->lock();
 
 		if (!threadInstance->taskQueue->empty())
 		{
@@ -19,8 +19,8 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 			threadInstance->taskQueue->pop();
 		}
 
-		// Unlock
-		ReleaseMutex(threadInstance->mutex);
+		threadInstance->mutex->unlock();
+		//ReleaseMutex(threadInstance->mutex);
 		// ------------------ - Critical region -------------------
 
 		// Check if the thread has a task assigned
@@ -33,12 +33,11 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 	return 0;
 }
 
-Thread::Thread(std::queue<Task*>* taskQueue, HANDLE* mutex)
+Thread::Thread(std::queue<Task*>* taskQueue, std::mutex* mutex)
 {
 	this->taskQueue = taskQueue;
-
 	this->mutex = mutex;
-	
+
 	this->thread = (HANDLE)_beginthreadex(0, 0, this->threadFunc, this, 0, 0);
 }
 

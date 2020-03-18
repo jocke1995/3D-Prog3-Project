@@ -12,7 +12,7 @@
 
 class DescriptorHeap;
 
-class RenderTask // : public Task
+class RenderTask : public Task
 {
 public:
 	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest);
@@ -28,8 +28,6 @@ public:
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
 	void SetBackBufferIndex(int backBufferIndex);
-
-	virtual void Execute(int backBufferIndex) = 0;
 private:
 	void CreateCommandInterfaces(ID3D12Device5* device);
 

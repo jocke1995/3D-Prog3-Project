@@ -5,6 +5,8 @@
 #include "RootSignature.h"
 #include "RenderTask.h"
 #include "SwapChain.h"
+
+#include "ThreadPool.h"
 #include "D3D12Timer.h"
 
 #include "RenderTaskTest.h"
@@ -40,6 +42,9 @@ private:
 	// Swapchain
 	RenderTarget* swapChain = nullptr;
 	bool CreateSwapChain(HWND *hwnd);
+
+	// ThreadPool
+	ThreadPool* threadpool = nullptr;
 
 	// Depthbuffer
 	DepthBuffer* depthBuffer = nullptr;

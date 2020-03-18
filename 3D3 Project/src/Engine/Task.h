@@ -1,8 +1,5 @@
 #pragma once
 
-#include <Windows.h>
-#include <process.h>	// _beginThreadex
-
 class Task
 {
 public:

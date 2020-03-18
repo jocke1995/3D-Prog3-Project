@@ -20,6 +20,7 @@ Renderer::~Renderer()
 	delete this->rootSignature;
 
 	delete this->swapChain;
+	delete this->threadpool;
 	delete this->depthBuffer;
 
 	delete this->descriptorHeap;
@@ -53,6 +54,10 @@ void Renderer::InitD3D12(HWND *hwnd)
 	{
 		OutputDebugStringA("Error: Failed to create SwapChain!\n");
 	}
+
+	// ThreadPool
+	this->threadpool = new ThreadPool(5);
+	this->threadpool->CreateThreads();
 
 	// Create Main DepthBuffer
 	if (!this->CreateDepthBuffer())
@@ -255,15 +260,15 @@ void Renderer::Execute()
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 
-	// Fill queue with tasks
-	for (auto task : this->renderTasks)
+	// Fill queue with tasks and execute them in parallell
+	for (RenderTask* renderTask : this->renderTasks)
 	{
-		task->SetBackBufferIndex(backBufferIndex);
-		task->Execute(backBufferIndex);
-
+		renderTask->SetBackBufferIndex(backBufferIndex);
+		this->threadpool->AddTask(renderTask);
 	}
 
-	// Wait for CPU
+	// Wait for Threads to complete
+	this->threadpool->WaitForThreads();
 
 	UINT64 queueFreq;
 	this->commandQueue->GetTimestampFrequency(&queueFreq);
@@ -273,7 +278,7 @@ void Renderer::Execute()
 		this->listsToExecute[backBufferIndex].data()
 	);
 	
-	// Wait for GPU
+	// Wait if the CPU is to far ahead of the gpu
 	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
