@@ -29,6 +29,7 @@ public:
 
 	void Execute();
 
+	ThreadPool* GetThreadPool();
 private:
 	// Device
 	ID3D12Device5* device5 = nullptr;

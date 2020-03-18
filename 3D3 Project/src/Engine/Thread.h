@@ -14,6 +14,7 @@ public:
 	~Thread();
 
 	bool IsTaskNullptr();
+	void Running(bool running);
 private:
 	HANDLE thread;
 
@@ -24,5 +25,7 @@ private:
 	Task* task= nullptr;
 	//HANDLE* mutex = nullptr;
 	std::mutex* mutex = nullptr;
+
+	bool isRunning = true;
 };
 

@@ -5,7 +5,7 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 {
 	Thread* threadInstance = (Thread*)lpParameter;
 
-	while (true)
+	while (threadInstance->isRunning)
 	{
 		// ------------------- Critical region -------------------
 		//WaitForSingleObject(threadInstance->mutex, INFINITE);
@@ -36,6 +36,7 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 Thread::Thread(std::queue<Task*>* taskQueue, std::mutex* mutex)
 {
 	this->taskQueue = taskQueue;
+
 	this->mutex = mutex;
 
 	this->thread = (HANDLE)_beginthreadex(0, 0, this->threadFunc, this, 0, 0);
@@ -52,4 +53,9 @@ bool Thread::IsTaskNullptr()
 		return true;
 	else
 		return false;
+}
+
+void Thread::Running(bool running)
+{
+	this->isRunning = running;
 }

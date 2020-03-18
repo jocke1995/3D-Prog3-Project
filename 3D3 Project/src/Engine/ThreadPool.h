@@ -13,6 +13,8 @@ public:
 	void WaitForThreads();
 
 	void AddTask(Task* task);
+
+	void ExitThreads();
 private:
 	int nrOfThreads;
 	std::vector<Thread*> threads;

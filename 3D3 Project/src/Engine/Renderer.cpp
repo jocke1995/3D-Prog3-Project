@@ -317,7 +317,11 @@ void Renderer::Execute()
 		sprintf_s(buf, "GPU BLEND TASK : %fms\n\n", SUM_BLEND/ counter);
 		OutputDebugStringA(buf);
 	}
+}
 
+ThreadPool* Renderer::GetThreadPool()
+{
+	return this->threadpool;
 }
 
 // -----------------------  Private Functions  ----------------------- //

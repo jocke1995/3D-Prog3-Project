@@ -11,6 +11,8 @@ ThreadPool::~ThreadPool()
 {
 	for (Thread* thread : this->threads)
 		delete thread;
+
+	//CloseHandle(this->mutex);
 }
 
 void ThreadPool::CreateThreads()
@@ -33,7 +35,9 @@ void ThreadPool::WaitForThreads()
 	while (true)
 	{
 		this->mutex.lock();
+		//WaitForSingleObject(this->mutex, INFINITE);
 		taskEmpty = this->taskQueue.empty();
+		//ReleaseMutex(this->mutex);
 		this->mutex.unlock();
 		
 		if (taskEmpty && this->IsAllFinished())
@@ -56,11 +60,23 @@ void ThreadPool::AddTask(Task* task)
 	// ------------------- Critical region -------------------
 }
 
+void ThreadPool::ExitThreads()
+{
+	for (auto thread : this->threads)
+	{
+		thread->Running(false);
+	}
+}
+
 bool ThreadPool::IsAllFinished()
 {
 	for (Thread* thread : this->threads)
+	{
 		if (thread->IsTaskNullptr() == false)
+		{
 			return false;
+		}
+	}
 
 	return true;
 }

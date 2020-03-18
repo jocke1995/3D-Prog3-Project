@@ -18,6 +18,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd());
     renderer->InitRenderTasks();
+
+    // Get threadpool so other tasks (physics, gameupdates etc..) can use it 
+    ThreadPool* threadPool = renderer->GetThreadPool();
     
     // Camera
     Camera* camera = new Camera(L"default_cam", hInstance, *window->GetHwnd());
@@ -74,6 +77,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         /* ------ Draw   ------ */
         renderer->Execute();
     }   
+
+    // ---------------------------- SafeExit the program ----------------------------
+    threadPool->ExitThreads();
 
     delete cube;
     delete cube2;
