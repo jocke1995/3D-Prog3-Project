@@ -46,7 +46,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 		OutputDebugStringA("Error: Failed to create CommandQueue!\n");
 	}
 
-	// TEMP
+	// Fence for WaitForFrame();
 	this->CreateFences();
 
 	// Create SwapChain
@@ -56,7 +56,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// ThreadPool
-	this->threadpool = new ThreadPool(5);
+	this->threadpool = new ThreadPool(2);
 	this->threadpool->CreateThreads();
 
 	// Create Main DepthBuffer
