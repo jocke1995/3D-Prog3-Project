@@ -33,7 +33,6 @@ public:
 private:
 	// Device
 	ID3D12Device5* device5 = nullptr;
-
 	bool CreateDevice();
 
 	// CommandQueue

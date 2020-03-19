@@ -57,7 +57,6 @@ void Renderer::InitD3D12(HWND *hwnd)
 
 	// ThreadPool
 	this->threadpool = new ThreadPool(2);
-	this->threadpool->CreateThreads();
 
 	// Create Main DepthBuffer
 	if (!this->CreateDepthBuffer())

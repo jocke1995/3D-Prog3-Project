@@ -8,22 +8,20 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 	while (threadInstance->isRunning)
 	{
 		// ------------------- Critical region -------------------
-		//WaitForSingleObject(threadInstance->mutex, INFINITE);
-		threadInstance->mutex->lock();
+		threadInstance->mutex.lock();
 
-		if (!threadInstance->taskQueue->empty())
+		if (!threadInstance->taskQueue.empty())
 		{
 			// Get a task from the queue
-			threadInstance->task = threadInstance->taskQueue->front();
+			threadInstance->task = threadInstance->taskQueue.front();
 			// Remove the task from the queue
-			threadInstance->taskQueue->pop();
+			threadInstance->taskQueue.pop();
 		}
 
-		threadInstance->mutex->unlock();
-		//ReleaseMutex(threadInstance->mutex);
+		threadInstance->mutex.unlock();
 		// ------------------ - Critical region -------------------
 
-		// Check if the thread has a task assigned
+		// Safetycheck if the thread has a task assigned
 		if (threadInstance->task != nullptr)
 		{
 			threadInstance->task->Execute();
@@ -33,12 +31,9 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 	return 0;
 }
 
-Thread::Thread(std::queue<Task*>* taskQueue, std::mutex* mutex)
+Thread::Thread()
+	: mutex()
 {
-	this->taskQueue = taskQueue;
-
-	this->mutex = mutex;
-
 	this->thread = (HANDLE)_beginthreadex(0, 0, this->threadFunc, this, 0, 0);
 }
 
@@ -50,12 +45,28 @@ Thread::~Thread()
 bool Thread::IsTaskNullptr()
 {
 	if (this->task == nullptr)
+	{
 		return true;
+	}
 	else
+	{
 		return false;
+	}
 }
 
-void Thread::Running(bool running)
+void Thread::ExitThread()
 {
-	this->isRunning = running;
+	this->isRunning = false;
+}
+
+void Thread::AddTask(Task* task)
+{
+	this->mutex.lock();
+	this->taskQueue.push(task);
+	this->mutex.unlock();
+}
+
+bool Thread::IsQueueEmpty()
+{
+	return this->taskQueue.empty();
 }

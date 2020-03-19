@@ -10,21 +10,24 @@
 class Thread
 {
 public:
-	Thread(std::queue<Task*> *taskQueue, std::mutex* mutex);
+	Thread();
 	~Thread();
 
 	bool IsTaskNullptr();
-	void Running(bool running);
+
+	void AddTask(Task* task);
+	void ExitThread();
+
+	bool IsQueueEmpty();
 private:
 	HANDLE thread;
 
 	static unsigned int __stdcall threadFunc(LPVOID lpParameter);
 
-	std::queue<Task*> *taskQueue;
+	std::queue<Task*> taskQueue;
+	std::mutex mutex;
 
 	Task* task= nullptr;
-	//HANDLE* mutex = nullptr;
-	std::mutex* mutex = nullptr;
 
 	bool isRunning = true;
 };
