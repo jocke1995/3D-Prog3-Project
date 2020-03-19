@@ -21,6 +21,9 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{4952c56a-9998-41d8-a97e-354c192c83e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Threads">
+      <UniqueIdentifier>{287876e3-3183-4335-abb8-5c2455dcecdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -88,6 +91,15 @@
     </ClCompile>
     <ClCompile Include="src\Engine\D3D12Timer.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Thread.cpp">
+      <Filter>Engine\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ThreadPool.cpp">
+      <Filter>Engine\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Task.cpp">
+      <Filter>Engine\RenderTasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +174,15 @@
     </ClInclude>
     <ClInclude Include="src\Engine\D3D12Timer.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Thread.h">
+      <Filter>Engine\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ThreadPool.h">
+      <Filter>Engine\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Task.h">
+      <Filter>Engine\RenderTasks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

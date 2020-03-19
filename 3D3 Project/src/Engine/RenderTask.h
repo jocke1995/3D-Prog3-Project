@@ -8,10 +8,11 @@
 #include "Camera.h"
 #include "DepthBuffer.h"
 #include "D3D12Timer.h"
+#include "Task.h"
 
 class DescriptorHeap;
 
-class RenderTask
+class RenderTask : public Task
 {
 public:
 	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest);
@@ -26,8 +27,7 @@ public:
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
-
-	virtual void Execute(ID3D12RootSignature* rootSig, int backBufferIndex) = 0;
+	void SetBackBufferIndex(int backBufferIndex);
 private:
 	void CreateCommandInterfaces(ID3D12Device5* device);
 
@@ -36,6 +36,8 @@ protected:
 
 	std::vector<RenderTarget*> renderTargets;
 	DepthBuffer* depthBuffer = nullptr;
+	int backBufferIndex = -1;
+	ID3D12RootSignature* rootSig = nullptr;
 
 	ID3D12GraphicsCommandList5* commandLists[NUM_SWAP_BUFFERS];
 	ID3D12CommandAllocator* commandAllocators[NUM_SWAP_BUFFERS];

@@ -6,6 +6,8 @@ RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCW
 
 	for (auto gpsd : *gpsds)
 		this->pipelineStates.push_back(new PipelineState(device, rootSignature, VSName, PSName, gpsd));
+
+	this->rootSig = rootSignature->GetRootSig();
 }
 
 RenderTask::~RenderTask()
@@ -54,6 +56,11 @@ void RenderTask::SetDescriptorHeap(DescriptorHeap* dh)
 void RenderTask::SetDepthBuffer(DepthBuffer* depthBuffer)
 {
 	this->depthBuffer = depthBuffer;
+}
+
+void RenderTask::SetBackBufferIndex(int backBufferIndex)
+{
+	this->backBufferIndex = backBufferIndex;
 }
 
 void RenderTask::CreateCommandInterfaces(ID3D12Device5* device)
