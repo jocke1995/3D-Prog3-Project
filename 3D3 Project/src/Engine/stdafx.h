@@ -43,7 +43,7 @@ typedef union
 	}							\
 }
 
-enum RenderTaskType
+enum RENDER_TASK_TYPE
 {
 	TEST,
 	BLEND,

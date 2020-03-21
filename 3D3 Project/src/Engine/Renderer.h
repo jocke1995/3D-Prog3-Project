@@ -12,6 +12,14 @@
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
 
+enum COMMAND_QUEUE_TYPE
+{
+	CQ_DIRECT,
+	CQ_COPY,
+	CQ_COMPUTE,
+	NUM_COMMAND_QUEUES
+};
+
 class Renderer
 {
 public:
@@ -35,9 +43,9 @@ private:
 	ID3D12Device5* device5 = nullptr;
 	bool CreateDevice();
 
-	// CommandQueue
-	ID3D12CommandQueue* commandQueue = nullptr;
-	bool CreateCommandQueue();
+	// CommandQueues
+	std::map<COMMAND_QUEUE_TYPE, ID3D12CommandQueue*> commandQueues;
+	void CreateCommandQueues();
 
 	// Swapchain
 	RenderTarget* swapChain = nullptr;

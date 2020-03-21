@@ -7,6 +7,9 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 
 	while (threadInstance->isRunning)
 	{
+		// TODO: Ska ej vara här... omstrukturering av trådpool?
+		Sleep(1);
+
 		// ------------------- Critical region -------------------
 		threadInstance->mutex.lock();
 

@@ -5,7 +5,7 @@ D3D12::D3D12Timer timer;
 Renderer::Renderer()
 {
 	// Nothing here yet
-	this->renderTasks.resize(RenderTaskType::NR_OF_RENDERTASKS);
+	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
 }
 
 Renderer::~Renderer()
@@ -15,7 +15,8 @@ Renderer::~Renderer()
 
 	SAFE_RELEASE(&this->device5);
 	
-	SAFE_RELEASE(&this->commandQueue);
+	SAFE_RELEASE(&this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]);
+	SAFE_RELEASE(&this->commandQueues[COMMAND_QUEUE_TYPE::CQ_COPY]);
 
 	delete this->rootSignature;
 
@@ -38,13 +39,10 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Timer
-	timer.init(this->device5, RenderTaskType::NR_OF_RENDERTASKS);
+	timer.init(this->device5, RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
 
-	// Create CommandQueue
-	if (!this->CreateCommandQueue())
-	{
-		OutputDebugStringA("Error: Failed to create CommandQueue!\n");
-	}
+	// Create CommandQueues (direct and copy)
+	this->CreateCommandQueues();
 
 	// Fence for WaitForFrame();
 	this->CreateFences();
@@ -56,7 +54,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// ThreadPool
-	this->threadpool = new ThreadPool(2);
+	this->threadpool = new ThreadPool(5);
 
 	// Create Main DepthBuffer
 	if (!this->CreateDepthBuffer())
@@ -212,8 +210,8 @@ void Renderer::InitRenderTasks()
 
 	/* -------------------------------------------------------------- */
 	
-	this->renderTasks[RenderTaskType::TEST] = testTask;
-	this->renderTasks[RenderTaskType::BLEND] = blendTask;
+	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;
+	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendTask;
 
 	// Pushback in the order of execution
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
@@ -242,10 +240,10 @@ void Renderer::AddObjectToTasks(Object* object)
 	DrawOptions* drawOptions = object->GetDrawOptions();
 
 	if (drawOptions->test == true)
-		this->renderTasks[RenderTaskType::TEST]->AddObject(object);
+		this->renderTasks[RENDER_TASK_TYPE::TEST]->AddObject(object);
 
 	if (drawOptions->blend == true)
-		this->renderTasks[RenderTaskType::BLEND]->AddObject(object);
+		this->renderTasks[RENDER_TASK_TYPE::BLEND]->AddObject(object);
 }
 
 void Renderer::SetCamera(Camera* camera)
@@ -270,9 +268,9 @@ void Renderer::Execute()
 	this->threadpool->WaitForThreads();
 
 	UINT64 queueFreq;
-	this->commandQueue->GetTimestampFrequency(&queueFreq);
+	this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]->GetTimestampFrequency(&queueFreq);
 
-	this->commandQueue->ExecuteCommandLists(
+	this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]->ExecuteCommandLists(
 		this->listsToExecute[backBufferIndex].size(), 
 		this->listsToExecute[backBufferIndex].data()
 	);
@@ -397,25 +395,31 @@ bool Renderer::CreateDevice()
 	return deviceCreated;
 }
 
-bool Renderer::CreateCommandQueue()
+void Renderer::CreateCommandQueues()
 {
-	bool commandQueueCreated = true;
-
-	D3D12_COMMAND_QUEUE_DESC cqd = {};
-	HRESULT hr = device5->CreateCommandQueue(&cqd, IID_PPV_ARGS(&this->commandQueue));
-
-	if (hr != S_OK)
+	// Direct
+	D3D12_COMMAND_QUEUE_DESC cqdDirect = {};
+	cqdDirect.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	HRESULT hr;
+	hr = device5->CreateCommandQueue(&cqdDirect, IID_PPV_ARGS(&this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]));
+	if (FAILED(hr))
 	{
-		commandQueueCreated = false;
+		OutputDebugStringW(L"ERROR: Failed to create Direct CommandQueue");
 	}
 
-	return commandQueueCreated;
+	// Copy
+	D3D12_COMMAND_QUEUE_DESC cqdCopy = {};
+	cqdCopy.Type = D3D12_COMMAND_LIST_TYPE_COPY;
+	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_QUEUE_TYPE::CQ_COPY]));
+	if (FAILED(hr))
+	{
+		OutputDebugStringW(L"ERROR: Failed to create Copy CommandQueue");
+	}
 }
 
 bool Renderer::CreateSwapChain(HWND *hwnd)
 {
-	// TODO: Detta
-	swapChain = new SwapChain(device5, hwnd, this->commandQueue);
+	swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]);
 
 	return true;
 }
@@ -467,7 +471,7 @@ void Renderer::CreateFences()
 void Renderer::WaitForFrame()
 {
 	const UINT64 oldFence = this->fenceFrameValue;
-	commandQueue->Signal(this->fenceFrame, oldFence);
+	this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]->Signal(this->fenceFrame, oldFence);
 	this->fenceFrameValue++;
 
 	//Wait until command queue is done.
