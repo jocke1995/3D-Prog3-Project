@@ -1,7 +1,7 @@
 #include "RenderTaskTest.h"
 #include <stdlib.h>
-RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsds)
+RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_QUEUE_TYPE cqType)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds, cqType)
 {
 	
 }

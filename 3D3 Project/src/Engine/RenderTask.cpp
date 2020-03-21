@@ -1,8 +1,8 @@
 #include "RenderTask.h"
 
-RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds)
+RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds, COMMAND_QUEUE_TYPE cqType)
 {
-	this->CreateCommandInterfaces(device);
+	this->CreateCommandInterfaces(device, cqType);
 
 	for (auto gpsd : *gpsds)
 		this->pipelineStates.push_back(new PipelineState(device, rootSignature, VSName, PSName, gpsd));
@@ -28,7 +28,7 @@ PipelineState* RenderTask::GetPipelineState(unsigned int index)
 	return this->pipelineStates[index];
 }
 
-ID3D12GraphicsCommandList* RenderTask::GetCommandList(unsigned int index)
+ID3D12GraphicsCommandList5* RenderTask::GetCommandList(unsigned int index)
 {
 	return this->commandLists[index];
 }
@@ -63,14 +63,31 @@ void RenderTask::SetBackBufferIndex(int backBufferIndex)
 	this->backBufferIndex = backBufferIndex;
 }
 
-void RenderTask::CreateCommandInterfaces(ID3D12Device5* device)
+void RenderTask::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_QUEUE_TYPE cqType)
 {
+	D3D12_COMMAND_LIST_TYPE D3D12type;
+	switch (cqType)
+	{
+	case COMMAND_QUEUE_TYPE::CQ_DIRECT:
+		D3D12type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+		break;
+	case COMMAND_QUEUE_TYPE::CQ_COPY:
+		D3D12type = D3D12_COMMAND_LIST_TYPE_COPY;
+		break;
+	case COMMAND_QUEUE_TYPE::CQ_COMPUTE:
+		D3D12type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
+		break;
+	default:
+		D3D12type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+		break;
+	}
+
 	for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
 	{
-		device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&this->commandAllocators[i]));
+		device->CreateCommandAllocator(D3D12type, IID_PPV_ARGS(&this->commandAllocators[i]));
 
 		device->CreateCommandList(0, 
-			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			D3D12type,
 			this->commandAllocators[i],
 			nullptr,
 			IID_PPV_ARGS(&this->commandLists[i]));

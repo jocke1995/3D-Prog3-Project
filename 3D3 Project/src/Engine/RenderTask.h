@@ -15,11 +15,11 @@ class DescriptorHeap;
 class RenderTask : public Task
 {
 public:
-	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest);
+	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest, COMMAND_QUEUE_TYPE cqType);
 	virtual ~RenderTask();
 
 	PipelineState* GetPipelineState(unsigned int index);
-	ID3D12GraphicsCommandList* GetCommandList(unsigned int index);
+	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index);
 
 	void AddRenderTarget(RenderTarget* renderTarget);
 	void AddObject(Object* object);
@@ -29,7 +29,7 @@ public:
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
 	void SetBackBufferIndex(int backBufferIndex);
 private:
-	void CreateCommandInterfaces(ID3D12Device5* device);
+	void CreateCommandInterfaces(ID3D12Device5* device, COMMAND_QUEUE_TYPE type);
 
 protected:
 	DescriptorHeap* descriptorHeap = nullptr;

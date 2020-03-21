@@ -119,14 +119,14 @@ void Renderer::InitRenderTasks()
 	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdTestVector;
 	gpsdTestVector.push_back(&gpsdTest);
 	
-	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector);
+	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector, COMMAND_QUEUE_TYPE::CQ_DIRECT);
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
 	
 	
 
-	// :-----------------------------TASK 2:----------------------------- BLEND
+	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendFrontCull = {};
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendBackCull = {};
@@ -164,7 +164,7 @@ void Renderer::InitRenderTasks()
 	D3D12_DEPTH_STENCIL_DESC dsdBlend = {};
 	dsdBlend.DepthEnable = true;
 	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	dsdBlend.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+	dsdBlend.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 
 	// DepthStencil
 	dsdBlend.StencilEnable = false;
@@ -177,7 +177,7 @@ void Renderer::InitRenderTasks()
 	gpsdBlendFrontCull.DepthStencilState = dsdBlend;
 	gpsdBlendFrontCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
-	// ------------------------ TEST 2 BACKCULL ----------------------------
+	// ------------------------ TASK 2: BLEND ---------------------------- BACKCULL
 
 	gpsdBlendBackCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
@@ -203,11 +203,12 @@ void Renderer::InitRenderTasks()
 	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
 	gpsdBlendVector.push_back(&gpsdBlendBackCull);
 
-	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlendVector);
+	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlendVector, COMMAND_QUEUE_TYPE::CQ_DIRECT);
 	blendTask->AddRenderTarget(this->swapChain);
 	blendTask->SetDepthBuffer(this->depthBuffer);
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
 
+	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
 	
 	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;
@@ -215,10 +216,10 @@ void Renderer::InitRenderTasks()
 
 	// Pushback in the order of execution
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->listsToExecute[i].push_back(testTask->GetCommandList(i));
+		this->directCommandLists[i].push_back(testTask->GetCommandList(i));
 
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->listsToExecute[i].push_back(blendTask->GetCommandList(i));
+		this->directCommandLists[i].push_back(blendTask->GetCommandList(i));
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)
@@ -271,8 +272,8 @@ void Renderer::Execute()
 	this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]->GetTimestampFrequency(&queueFreq);
 
 	this->commandQueues[COMMAND_QUEUE_TYPE::CQ_DIRECT]->ExecuteCommandLists(
-		this->listsToExecute[backBufferIndex].size(), 
-		this->listsToExecute[backBufferIndex].data()
+		this->directCommandLists[backBufferIndex].size(), 
+		this->directCommandLists[backBufferIndex].data()
 	);
 	
 	// Wait if the CPU is to far ahead of the gpu

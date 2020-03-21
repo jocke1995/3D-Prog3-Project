@@ -12,14 +12,6 @@
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
 
-enum COMMAND_QUEUE_TYPE
-{
-	CQ_DIRECT,
-	CQ_COPY,
-	CQ_COMPUTE,
-	NUM_COMMAND_QUEUES
-};
-
 class Renderer
 {
 public:
@@ -64,7 +56,10 @@ private:
 
 	// RenderTasks
 	std::vector<RenderTask*> renderTasks;
-	std::vector<ID3D12CommandList*>listsToExecute[NUM_SWAP_BUFFERS];
+
+	// Commandlists holders
+	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
+	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
 
 	// DescriptorHeap
 	DescriptorHeap* descriptorHeap = nullptr;
