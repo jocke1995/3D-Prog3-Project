@@ -44,7 +44,6 @@ void RootSignature::CreateRootSignatureStructure()
 	dtSRV.NumDescriptorRanges = ARRAYSIZE(dtRangesSRV);
 	dtSRV.pDescriptorRanges = dtRangesSRV;
 
-
 	D3D12_ROOT_PARAMETER rootParam[RS::NUM_PARAMS]{};
 
 	rootParam[RS::dtSRV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
@@ -56,6 +55,12 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.RegisterSpace = 0; // space0
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_OBJECT) / sizeof(UINT);
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	rootParam[RS::Color].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam[RS::Color].Constants.ShaderRegister = 1; // b0
+	rootParam[RS::Color].Constants.RegisterSpace = 0; // space0
+	rootParam[RS::Color].Constants.Num32BitValues = 4;
+	rootParam[RS::Color].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 

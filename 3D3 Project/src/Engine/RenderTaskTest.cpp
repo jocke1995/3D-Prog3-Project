@@ -1,7 +1,7 @@
 #include "RenderTaskTest.h"
 #include <stdlib.h>
-RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_QUEUE_TYPE cqType)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsds, cqType)
+RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
 {
 	
 }
@@ -95,9 +95,11 @@ void RenderTaskTest::Execute()
 
 		this->commandLists[this->backBufferIndex]->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
+		// Resource from the CopyQueue
+		this->commandLists[this->backBufferIndex]->SetGraphicsRootConstantBufferView(RS::Color, this->resource->GetGPUVirtualAdress());
+
 		this->commandLists[this->backBufferIndex]->DrawInstanced(num_vertices, 1, 0, 0);
 	}
-	
 
 	// Ändra state på front/backbuffer
 	this->commandLists[this->backBufferIndex]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(

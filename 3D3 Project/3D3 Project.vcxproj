@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\CopyColorTask.cpp" />
     <ClCompile Include="src\Engine\D3D12Timer.cpp" />
     <ClCompile Include="src\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\Camera.cpp" />
@@ -204,6 +205,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\CopyColorTask.h" />
     <ClInclude Include="src\Engine\D3D12Timer.h" />
     <ClInclude Include="src\AssetLoader.h" />
     <ClInclude Include="src\Engine\Camera.h" />

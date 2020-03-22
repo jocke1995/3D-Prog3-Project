@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-// TODO: Fyll upp senare när vi vet vad vi ska ha för saker.
 enum RS
 {
 	dtSRV,
 	CB_PER_OBJECT_CONSTANTS,
+	Color,
 	NUM_PARAMS
 };
 

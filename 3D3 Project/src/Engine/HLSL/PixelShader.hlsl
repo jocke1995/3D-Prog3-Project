@@ -6,11 +6,13 @@ struct VS_OUT
 	float4 norm     : NORMAL;
 };
 
+// ConstantBuffer<float4> color : register(b1);
+
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
 	float4 lightPos = float4(0.5f, 2.0f, 0.0f, 1.0f);
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-	float4 materialColor = float4(0.0f, 0.7f, 0.0f, 1.0f);
+	float4 materialColor = float4(0.0f, 1.0f, 0.0f, 1.0f); //color.rgba;
 
 	// Ambient
 	float4 ambient = materialColor * float4(0.2f, 0.2f, 0.2f, 0.2f);

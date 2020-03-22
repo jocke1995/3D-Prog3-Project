@@ -101,6 +101,9 @@
     <ClCompile Include="src\Engine\Task.cpp">
       <Filter>Engine\RenderTasks</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\CopyColorTask.cpp">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -182,6 +185,9 @@
       <Filter>Engine\Threads</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Task.h">
+      <Filter>Engine\RenderTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CopyColorTask.h">
       <Filter>Engine\RenderTasks</Filter>
     </ClInclude>
   </ItemGroup>

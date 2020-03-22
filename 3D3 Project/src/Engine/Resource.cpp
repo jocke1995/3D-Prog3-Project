@@ -59,7 +59,7 @@ void Resource::SetData(const void* data)
 
 	this->resource->Map(0, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
 	memcpy(dataBegin, data, this->entrySize);
-	resource->Unmap(0, nullptr);
+	this->resource->Unmap(0, nullptr);
 }
 
 size_t Resource::GetSize()
@@ -70,4 +70,9 @@ size_t Resource::GetSize()
 ID3D12Resource1* Resource::GetID3D12Resource1()
 {
 	return this->resource;
+}
+
+D3D12_GPU_VIRTUAL_ADDRESS Resource::GetGPUVirtualAdress()
+{
+	return this->resource->GetGPUVirtualAddress();
 }

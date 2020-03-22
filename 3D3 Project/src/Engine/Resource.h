@@ -14,6 +14,7 @@ public:
     size_t GetSize();
 
     ID3D12Resource1* GetID3D12Resource1();
+    D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAdress();
 
 protected:
     std::wstring name;

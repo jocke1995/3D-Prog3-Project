@@ -1,8 +1,8 @@
 #include "RenderTask.h"
 
-RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds, COMMAND_QUEUE_TYPE cqType)
+RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 {
-	this->CreateCommandInterfaces(device, cqType);
+	this->CreateCommandInterfaces(device, interfaceType);
 
 	for (auto gpsd : *gpsds)
 		this->pipelineStates.push_back(new PipelineState(device, rootSignature, VSName, PSName, gpsd));
@@ -63,18 +63,23 @@ void RenderTask::SetBackBufferIndex(int backBufferIndex)
 	this->backBufferIndex = backBufferIndex;
 }
 
-void RenderTask::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_QUEUE_TYPE cqType)
+void RenderTask::SetResource(Resource* resource)
+{
+	this->resource = resource;
+}
+
+void RenderTask::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
 {
 	D3D12_COMMAND_LIST_TYPE D3D12type;
-	switch (cqType)
+	switch (interfaceType)
 	{
-	case COMMAND_QUEUE_TYPE::CQ_DIRECT:
+	case COMMAND_INTERFACE_TYPE::DIRECT:
 		D3D12type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		break;
-	case COMMAND_QUEUE_TYPE::CQ_COPY:
+	case COMMAND_INTERFACE_TYPE::COPY:
 		D3D12type = D3D12_COMMAND_LIST_TYPE_COPY;
 		break;
-	case COMMAND_QUEUE_TYPE::CQ_COMPUTE:
+	case COMMAND_INTERFACE_TYPE::COMPUTE:
 		D3D12type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
 		break;
 	default:
@@ -95,4 +100,3 @@ void RenderTask::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_QUEUE_TY
 		this->commandLists[i]->Close();
 	}
 }
-

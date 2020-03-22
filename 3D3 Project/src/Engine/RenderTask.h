@@ -15,7 +15,7 @@ class DescriptorHeap;
 class RenderTask : public Task
 {
 public:
-	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest, COMMAND_QUEUE_TYPE cqType);
+	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest, COMMAND_INTERFACE_TYPE interfaceType);
 	virtual ~RenderTask();
 
 	PipelineState* GetPipelineState(unsigned int index);
@@ -28,8 +28,9 @@ public:
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
 	void SetBackBufferIndex(int backBufferIndex);
+	void SetResource(Resource* resource);
 private:
-	void CreateCommandInterfaces(ID3D12Device5* device, COMMAND_QUEUE_TYPE type);
+	void CreateCommandInterfaces(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType);
 
 protected:
 	DescriptorHeap* descriptorHeap = nullptr;
@@ -45,6 +46,9 @@ protected:
 	std::vector<PipelineState*> pipelineStates;
 	std::vector<Object*> objects;
 	Camera* camera = nullptr;
+
+	// To be able to use copyqueue
+	Resource* resource = nullptr;
 };
 
 #endif
