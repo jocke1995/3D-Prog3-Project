@@ -15,14 +15,14 @@
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\RenderTasks">
-      <UniqueIdentifier>{a5e3d336-3a5d-4d14-b602-f4d8412b751d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Objects">
       <UniqueIdentifier>{4952c56a-9998-41d8-a97e-354c192c83e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Threads">
       <UniqueIdentifier>{287876e3-3183-4335-abb8-5c2455dcecdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks">
+      <UniqueIdentifier>{a5e3d336-3a5d-4d14-b602-f4d8412b751d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,10 +36,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\RenderTask.cpp">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\RenderTaskTest.cpp">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Cube.cpp">
       <Filter>Objects</Filter>
@@ -87,7 +87,7 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\RenderTaskBlend.cpp">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\D3D12Timer.cpp">
       <Filter>Engine</Filter>
@@ -99,10 +99,10 @@
       <Filter>Engine\Threads</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Task.cpp">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\CopyColorTask.cpp">
-      <Filter>Engine\RenderTasks</Filter>
+    <ClCompile Include="src\Engine\CopyTask.cpp">
+      <Filter>Engine\Tasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,10 +110,10 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\RenderTask.h">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\RenderTaskTest.h">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Cube.h">
       <Filter>Objects</Filter>
@@ -173,7 +173,7 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\RenderTaskBlend.h">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\D3D12Timer.h">
       <Filter>Engine</Filter>
@@ -185,10 +185,10 @@
       <Filter>Engine\Threads</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Task.h">
-      <Filter>Engine\RenderTasks</Filter>
+      <Filter>Engine\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\CopyColorTask.h">
-      <Filter>Engine\RenderTasks</Filter>
+    <ClInclude Include="src\Engine\CopyTask.h">
+      <Filter>Engine\Tasks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

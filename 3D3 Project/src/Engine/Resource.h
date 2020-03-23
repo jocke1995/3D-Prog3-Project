@@ -2,10 +2,17 @@
 
 #include "stdafx.h"
 
+enum RESOURCE_TYPE
+{
+    UPLOAD,
+    DEFAULT,
+    COPY_TO_DEFAULT
+};
+
 class Resource
 {
 public:
-    Resource(ID3D12Device* device, unsigned long long entrySize, std::wstring name = L"RESOURCE_NONAME");
+    Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_TYPE type, std::wstring name = L"RESOURCE_NONAME");
     Resource(std::wstring name = L"RESOURCE_NONAME"); // Just set default variables
     virtual ~Resource();
 

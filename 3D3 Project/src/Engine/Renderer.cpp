@@ -6,6 +6,7 @@ Renderer::Renderer()
 {
 	// Nothing here yet
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
+	this->copyTasks.resize(COPY_TASK_TYPE::NR_OF_COPYTASKS);
 }
 
 Renderer::~Renderer()
@@ -15,8 +16,8 @@ Renderer::~Renderer()
 
 	SAFE_RELEASE(&this->device5);
 	
-	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT]);
-	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY]);
+	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_DIRECT]);
+	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_COPY]);
 
 	delete this->rootSignature;
 	delete this->copyResource;
@@ -26,6 +27,9 @@ Renderer::~Renderer()
 	delete this->depthBuffer;
 
 	delete this->descriptorHeap;
+
+	for (auto copyTask : this->copyTasks)
+		delete copyTask;
 
 	for (auto renderTask : this->renderTasks)
 		delete renderTask;
@@ -124,7 +128,7 @@ void Renderer::InitRenderTasks()
 	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdTestVector;
 	gpsdTestVector.push_back(&gpsdTest);
 	
-	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector, COMMAND_INTERFACE_TYPE::DIRECT);
+	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector, COMMAND_INTERFACE_TYPE::TYPE_DIRECT);
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
@@ -209,26 +213,29 @@ void Renderer::InitRenderTasks()
 	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
 	gpsdBlendVector.push_back(&gpsdBlendBackCull);
 
-	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlendVector, COMMAND_INTERFACE_TYPE::DIRECT);
+	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlendVector, COMMAND_INTERFACE_TYPE::TYPE_DIRECT);
 	blendTask->AddRenderTarget(this->swapChain);
 	blendTask->SetDepthBuffer(this->depthBuffer);
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
 
 	// :-----------------------------TASK CopyColor:-----------------------------
-	// D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdCopyColor = {};
-	// gpsdCopyColor.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	// 
-	// std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdCopyColorVector;
-	// gpsdCopyColorVector.push_back(&gpsdCopyColor);
-
-	// RenderTask* copyColorTask = new CopyColorTask(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector, COMMAND_QUEUE_TYPE::CQ_COPY);
+	RenderTask* copyTask = new CopyTask(this->device5, COMMAND_INTERFACE_TYPE::TYPE_COPY);
 
 	// To be able to use the resource the copyQueue sent from CPU->GPU
-	// copyColorTask->SetResource(this->copyResource);
+	// copyTask->SetResource(this->copyResource);
 
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
 	
+
+	/* ------------------------- CopyQueue Tasks ------------------------ */
+	this->copyTasks[COPY_TASK_TYPE::COPY_COLOR] = copyTask;
+	
+	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
+
+	/* ------------------------- DirectQueue Tasks ---------------------- */
 	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;
 	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendTask;
 
@@ -276,12 +283,16 @@ void Renderer::Execute()
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 
-	// copy task
+	// Fill queue with copytasks and execute them in parallell
+	for (RenderTask* copyTask : this->copyTasks)
+	{
+		//this->threadpool->AddTask(copyTask);
+	}
 
 	// Wait
 
 
-	// Fill queue with tasks and execute them in parallell
+	// Fill queue with rendertasks and execute them in parallell
 	for (RenderTask* renderTask : this->renderTasks)
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
@@ -292,9 +303,9 @@ void Renderer::Execute()
 	this->threadpool->WaitForThreads();
 
 	UINT64 queueFreq;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT]->GetTimestampFrequency(&queueFreq);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_DIRECT]->GetTimestampFrequency(&queueFreq);
 
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT]->ExecuteCommandLists(
+	this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_DIRECT]->ExecuteCommandLists(
 		this->directCommandLists[backBufferIndex].size(), 
 		this->directCommandLists[backBufferIndex].data()
 	);
@@ -425,7 +436,7 @@ void Renderer::CreateCommandQueues()
 	D3D12_COMMAND_QUEUE_DESC cqdDirect = {};
 	cqdDirect.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	HRESULT hr;
-	hr = device5->CreateCommandQueue(&cqdDirect, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT]));
+	hr = device5->CreateCommandQueue(&cqdDirect, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_DIRECT]));
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"ERROR: Failed to create Direct CommandQueue");
@@ -434,7 +445,7 @@ void Renderer::CreateCommandQueues()
 	// Copy
 	D3D12_COMMAND_QUEUE_DESC cqdCopy = {};
 	cqdCopy.Type = D3D12_COMMAND_LIST_TYPE_COPY;
-	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY]));
+	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_COPY]));
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"ERROR: Failed to create Copy CommandQueue");
@@ -443,7 +454,7 @@ void Renderer::CreateCommandQueues()
 
 bool Renderer::CreateSwapChain(HWND *hwnd)
 {
-	swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT]);
+	swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_DIRECT]);
 
 	return true;
 }
@@ -464,7 +475,7 @@ bool Renderer::CreateRootSignature()
 // fixa type som inparamterer i resource. 3 olika (upload, default, båda)
 void Renderer::CreateResource(int sizeOfData)
 {
-	this->copyResource = new Resource(this->device5, sizeOfData, L"CopyResource");
+	this->copyResource = new Resource(this->device5, sizeOfData, RESOURCE_TYPE::UPLOAD, L"CopyResource");
 }
 
 void Renderer::InitDescriptorHeap()
@@ -513,7 +524,7 @@ void Renderer::CreateFences()
 void Renderer::WaitForFrame()
 {
 	const UINT64 oldFence = this->fenceFrameValue;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT]->Signal(this->fenceFrame, oldFence);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_DIRECT]->Signal(this->fenceFrame, oldFence);
 	this->fenceFrameValue++;
 
 	//Wait until command queue is done.
@@ -523,8 +534,3 @@ void Renderer::WaitForFrame()
 		WaitForSingleObject(this->eventHandle, INFINITE);
 	}
 }
-
-
-	// TODO: Ska vi g�ra detta p� alla "objekt"? Vad g�r det f�r skillnad?
-	// ID3D12PipelineState* pso = (*renderTask->GetPipelineState()->GetPSO());
-	// pso->SetName(L"PSO?");

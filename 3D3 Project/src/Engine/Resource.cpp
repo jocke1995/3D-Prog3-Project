@@ -1,12 +1,23 @@
 #include "Resource.h"
 
-Resource::Resource(ID3D12Device* device, unsigned long long entrySize, std::wstring name)
+Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_TYPE type, std::wstring name)
 {
 	this->name = name;
 	this->entrySize = entrySize;
 
+	D3D12_HEAP_TYPE d3d12HeapType;
+	switch (type)
+	{
+	case RESOURCE_TYPE::UPLOAD:
+		d3d12HeapType = D3D12_HEAP_TYPE_UPLOAD;
+		break;
+	case RESOURCE_TYPE::DEFAULT:
+		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
+		break;
+	}
+
 	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProperties.Type = d3d12HeapType;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 	heapProperties.CreationNodeMask = 1; //used when multi-gpu
 	heapProperties.VisibleNodeMask = 1; //used when multi-gpu

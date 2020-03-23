@@ -15,7 +15,13 @@ class DescriptorHeap;
 class RenderTask : public Task
 {
 public:
-	RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest, COMMAND_INTERFACE_TYPE interfaceType);
+	RenderTask(ID3D12Device5* device, 
+		RootSignature* rootSignature, 
+		LPCWSTR VSName, LPCWSTR PSName, 
+		std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsdTest, 
+		COMMAND_INTERFACE_TYPE interfaceType);
+	
+	RenderTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE cqType);	
 	virtual ~RenderTask();
 
 	PipelineState* GetPipelineState(unsigned int index);

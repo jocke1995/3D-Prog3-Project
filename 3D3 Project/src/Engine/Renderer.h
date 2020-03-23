@@ -11,7 +11,7 @@
 
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
-#include "CopyColorTask.h"
+#include "CopyTask.h"
 
 class Renderer
 {
@@ -61,6 +61,7 @@ private:
 
 	// RenderTasks
 	std::vector<RenderTask*> renderTasks;
+	std::vector<RenderTask*> copyTasks;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];

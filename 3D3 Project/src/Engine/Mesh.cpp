@@ -5,7 +5,7 @@ Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT 
 	this->vertices = vertices;
 	this->vertexDataIndex = vertexDataIndex;
 
-	this->resource = new Resource(device, size, L"MESH_NONAME");
+	this->resource = new Resource(device, size, RESOURCE_TYPE::UPLOAD, L"MESH_NONAME");
 
 	this->resource->SetData(this->vertices.data());
 }

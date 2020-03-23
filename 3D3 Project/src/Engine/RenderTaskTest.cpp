@@ -56,7 +56,7 @@ void RenderTaskTest::Execute()
 	//float testg = abs(sinf(g));
 	//float testb = abs(sinf(b));
 
-	float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	this->commandLists[this->backBufferIndex]->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
 	this->commandLists[this->backBufferIndex]->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 

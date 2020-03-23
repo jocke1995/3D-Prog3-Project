@@ -1,17 +1,17 @@
-#include "CopyColorTask.h"
+#include "CopyTask.h"
 
-CopyColorTask::CopyColorTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE cqType)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsds, cqType)
+CopyTask::CopyTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
+	:RenderTask(device, interfaceType)
 {
 
 }
 
-CopyColorTask::~CopyColorTask()
+CopyTask::~CopyTask()
 {
 }
 
 //extern D3D12::D3D12Timer timer;
-void CopyColorTask::Execute()
+void CopyTask::Execute()
 {
 	this->commandAllocators[this->backBufferIndex]->Reset();
 	this->commandLists[this->backBufferIndex]->Reset(this->commandAllocators[this->backBufferIndex], NULL);

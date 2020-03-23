@@ -10,6 +10,11 @@ RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCW
 	this->rootSig = rootSignature->GetRootSig();
 }
 
+RenderTask::RenderTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
+{
+	this->CreateCommandInterfaces(device, interfaceType);
+}
+
 RenderTask::~RenderTask()
 {
 	for (unsigned int i = 0; i < NUM_SWAP_BUFFERS; i++)
@@ -73,13 +78,13 @@ void RenderTask::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_INTERFAC
 	D3D12_COMMAND_LIST_TYPE D3D12type;
 	switch (interfaceType)
 	{
-	case COMMAND_INTERFACE_TYPE::DIRECT:
+	case COMMAND_INTERFACE_TYPE::TYPE_DIRECT:
 		D3D12type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		break;
-	case COMMAND_INTERFACE_TYPE::COPY:
+	case COMMAND_INTERFACE_TYPE::TYPE_COPY:
 		D3D12type = D3D12_COMMAND_LIST_TYPE_COPY;
 		break;
-	case COMMAND_INTERFACE_TYPE::COMPUTE:
+	case COMMAND_INTERFACE_TYPE::TYPE_COMPUTE:
 		D3D12type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
 		break;
 	default:
