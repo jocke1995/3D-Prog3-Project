@@ -1,18 +1,20 @@
 #ifndef COPYTASK_H
 #define COPYTASK_H
 
-#include "RenderTask.h"
+#include "DX12Task.h"
 
-class CopyTask : public RenderTask
+#include "stdafx.h"
+
+class Resource;
+
+class CopyTask : public DX12Task
 {
 public:
-	CopyTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType);
+	CopyTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType, Resource *sourceResource, Resource* destinationResource);
 	~CopyTask();
 
-	void Execute();
-
 private:
-	Resource* destination;
+	Resource* sourceResource;
+	Resource* destinationResource;
 };
-
 #endif

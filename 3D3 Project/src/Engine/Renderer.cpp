@@ -20,7 +20,8 @@ Renderer::~Renderer()
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::TYPE_COPY]);
 
 	delete this->rootSignature;
-	delete this->copyResource;
+	delete this->copySourceResource;
+	delete this->copyDestResource;
 
 	delete this->swapChain;
 	delete this->threadpool;
@@ -75,7 +76,8 @@ void Renderer::InitD3D12(HWND *hwnd)
 
 	// Create resource for the copy queue (a float4 vector with color)
 	float4 red = { 1.0f, 0.0f, 0.0f, 1.0f };
-	this->CreateResource(sizeof(float4));
+	this->copySourceResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::UPLOAD, L"copySourceResource");
+	this->copyDestResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::DEFAULT, L"copyDestResource");
 
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
@@ -132,9 +134,6 @@ void Renderer::InitRenderTasks()
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
-
-	// To be able to use the resource the copyQueue sent from CPU->GPU
-	testTask->SetResource(this->copyResource);
 	
 	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
 
@@ -219,10 +218,7 @@ void Renderer::InitRenderTasks()
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
 
 	// :-----------------------------TASK CopyColor:-----------------------------
-	RenderTask* copyTask = new CopyTask(this->device5, COMMAND_INTERFACE_TYPE::TYPE_COPY);
-
-	// To be able to use the resource the copyQueue sent from CPU->GPU
-	// copyTask->SetResource(this->copyResource);
+	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::TYPE_COPY, this->copySourceResource, this->copyDestResource);
 
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
@@ -232,8 +228,8 @@ void Renderer::InitRenderTasks()
 	this->copyTasks[COPY_TASK_TYPE::COPY_COLOR] = copyTask;
 	
 	// Pushback in the order of execution
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
+	// for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+	// 	this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
 	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;
@@ -284,10 +280,11 @@ void Renderer::Execute()
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 
 	// Fill queue with copytasks and execute them in parallell
-	for (RenderTask* copyTask : this->copyTasks)
-	{
-		//this->threadpool->AddTask(copyTask);
-	}
+	//for (CopyTask* copyTask : this->copyTasks)
+	//{
+	//	copyTask->SetBackBufferIndex(backBufferIndex);
+	//	this->threadpool->AddTask(copyTask);
+	//}
 
 	// Wait
 
@@ -472,12 +469,6 @@ bool Renderer::CreateRootSignature()
 	return true;
 }
 
-// fixa type som inparamterer i resource. 3 olika (upload, default, båda)
-void Renderer::CreateResource(int sizeOfData)
-{
-	this->copyResource = new Resource(this->device5, sizeOfData, RESOURCE_TYPE::UPLOAD, L"CopyResource");
-}
-
 void Renderer::InitDescriptorHeap()
 {
 	this->descriptorHeap = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
@@ -497,18 +488,6 @@ void Renderer::CreateShaderResourceView(Mesh* mesh)
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
 	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
-}
-
-void Renderer::CreateConstantBufferView(int sizeInBytes)
-{
-	// D3D12_CONSTANT_BUFFER_VIEW_DESC cbv = {};
-	// cbv.SizeInBytes = sizeInBytes;
-	// // cbv.BufferLocation =  ??? Ligger inte i en descriptor heap
-	// 
-	// D3D12_CPU_DESCRIPTOR_HANDLE cdh = {};
-	// // cdh.ptr = ??? Ingen descriptor heap 
-	// 
-	// this->device5->CreateConstantBufferView(&cbv, cdh);
 }
 
 void Renderer::CreateFences()

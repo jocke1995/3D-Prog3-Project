@@ -24,6 +24,12 @@
     <Filter Include="Engine\Tasks">
       <UniqueIdentifier>{a5e3d336-3a5d-4d14-b602-f4d8412b751d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tasks\Copy">
+      <UniqueIdentifier>{6068a1ae-ae4c-4a4c-b5f7-d1f8dee4cb5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks\Render">
+      <UniqueIdentifier>{c1028742-f59c-48d8-9ac6-9214956979f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -34,12 +40,6 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Camera.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\RenderTask.cpp">
-      <Filter>Engine\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\RenderTaskTest.cpp">
-      <Filter>Engine\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Cube.cpp">
       <Filter>Objects</Filter>
@@ -86,9 +86,6 @@
     <ClCompile Include="src\AssetLoader.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\RenderTaskBlend.cpp">
-      <Filter>Engine\Tasks</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\D3D12Timer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -101,19 +98,31 @@
     <ClCompile Include="src\Engine\Task.cpp">
       <Filter>Engine\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\CopyTask.cpp">
+    <ClCompile Include="src\Engine\CommandInterface.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DX12Task.cpp">
       <Filter>Engine\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\CopyTask.cpp">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTaskBlend.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTaskTest.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\CopyColorTask.cpp">
+      <Filter>Engine\Tasks\Copy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\RenderTask.h">
-      <Filter>Engine\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\RenderTaskTest.h">
-      <Filter>Engine\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Cube.h">
       <Filter>Objects</Filter>
@@ -172,9 +181,6 @@
     <ClInclude Include="src\AssetLoader.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\RenderTaskBlend.h">
-      <Filter>Engine\Tasks</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\D3D12Timer.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -187,8 +193,26 @@
     <ClInclude Include="src\Engine\Task.h">
       <Filter>Engine\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\CopyTask.h">
+    <ClInclude Include="src\Engine\CommandInterface.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DX12Task.h">
       <Filter>Engine\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CopyTask.h">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTaskBlend.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTaskTest.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CopyColorTask.h">
+      <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

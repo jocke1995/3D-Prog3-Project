@@ -11,7 +11,7 @@
 
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
-#include "CopyTask.h"
+#include "CopyColorTask.h"
 
 class Renderer
 {
@@ -56,12 +56,12 @@ private:
 	bool CreateRootSignature();
 
 	// Resource for the copyQueue
-	Resource* copyResource;
-	void CreateResource(int sizeOfData);
+	Resource* copySourceResource;
+	Resource* copyDestResource;
 
 	// RenderTasks
 	std::vector<RenderTask*> renderTasks;
-	std::vector<RenderTask*> copyTasks;
+	std::vector<CopyTask*> copyTasks;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
@@ -73,8 +73,6 @@ private:
 
 	// ShaderResourceView
 	void CreateShaderResourceView(Mesh* mesh);
-	// ConstantBufferViews
-	void CreateConstantBufferView(int sizeInBytes);
 
 	// Fences
 	HANDLE eventHandle = nullptr;
