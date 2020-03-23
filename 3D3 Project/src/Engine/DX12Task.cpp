@@ -1,4 +1,5 @@
 #include "DX12Task.h"
+#include "Resource.h"
 
 DX12Task::DX12Task(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
 {
@@ -7,7 +8,19 @@ DX12Task::DX12Task(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
 
 DX12Task::~DX12Task()
 {
+	for (auto resource : this->resources)
+	{
+		ID3D12Resource* res = resource->GetID3D12Resource1();
+		SAFE_RELEASE(&res);
+	}
+
 	delete this->commandInterface;
+}
+
+void DX12Task::AddResource(Resource* resource)
+{
+	this->resources.push_back(resource);
+	resource->GetID3D12Resource1()->AddRef();
 }
 
 void DX12Task::SetBackBufferIndex(int backBufferIndex)

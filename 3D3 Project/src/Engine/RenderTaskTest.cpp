@@ -45,19 +45,7 @@ void RenderTaskTest::Execute()
 
 	commandList->OMSetRenderTargets(1, &cdh, true, &dsh);
 
-	static float r = 0.0f;
-	static float g = 0.0f;
-	static float b = 0.0f;
-
-
-	// For fun blinking background
-	//r += 0.0005f;
-	//g += 0.005f;
-	//b += 0.2f;
-	//
-	//float testr = abs(sinf(r));
-	//float testg = abs(sinf(g));
-	//float testb = abs(sinf(b));
+	
 
 	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	commandList->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
@@ -99,7 +87,7 @@ void RenderTaskTest::Execute()
 		commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
 		// Resource from the CopyQueue
-		commandList->SetGraphicsRootConstantBufferView(RS::Color, this->resource->GetGPUVirtualAdress());
+		commandList->SetGraphicsRootConstantBufferView(RS::Color, this->resources[0]->GetGPUVirtualAdress());
 
 		commandList->DrawInstanced(num_vertices, 1, 0, 0);
 	}

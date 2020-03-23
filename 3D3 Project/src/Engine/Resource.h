@@ -6,7 +6,7 @@ enum RESOURCE_TYPE
 {
     UPLOAD,
     DEFAULT,
-    COPY_TO_DEFAULT
+    RESOURCE_COPY,
 };
 
 class Resource

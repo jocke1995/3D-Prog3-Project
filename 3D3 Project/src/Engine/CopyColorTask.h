@@ -6,7 +6,7 @@
 class CopyColorTask : public CopyTask
 {
 public:
-	CopyColorTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType, Resource* sourceResource, Resource* destResource);
+	CopyColorTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType);
 	~CopyColorTask();
 
 	void Execute();

@@ -6,6 +6,7 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 	this->entrySize = entrySize;
 
 	D3D12_HEAP_TYPE d3d12HeapType;
+	D3D12_RESOURCE_STATES startState = D3D12_RESOURCE_STATE_GENERIC_READ;
 	switch (type)
 	{
 	case RESOURCE_TYPE::UPLOAD:
@@ -13,6 +14,10 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 		break;
 	case RESOURCE_TYPE::DEFAULT:
 		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
+		break;
+	case RESOURCE_TYPE::RESOURCE_COPY:
+		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
+		startState = D3D12_RESOURCE_STATE_COMMON;
 		break;
 	}
 
@@ -37,7 +42,7 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		startState,
 		nullptr,
 		IID_PPV_ARGS(&this->resource)
 	);

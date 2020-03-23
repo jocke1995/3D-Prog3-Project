@@ -32,7 +32,7 @@ public:
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
-	void SetDestinationResource(Resource* resource);
+
 protected:
 	DescriptorHeap* descriptorHeap = nullptr;
 
@@ -43,8 +43,6 @@ protected:
 	std::vector<PipelineState*> pipelineStates;
 	std::vector<Object*> objects;
 	Camera* camera = nullptr;
-
-	Resource* resource = nullptr;
 };
 
 #endif

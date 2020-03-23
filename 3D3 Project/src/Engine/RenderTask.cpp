@@ -44,9 +44,3 @@ void RenderTask::SetDepthBuffer(DepthBuffer* depthBuffer)
 {
 	this->depthBuffer = depthBuffer;
 }
-
-void RenderTask::SetDestinationResource(Resource* resource)
-{
-	this->resource = resource;
-}
-

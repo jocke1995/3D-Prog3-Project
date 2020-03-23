@@ -11,20 +11,20 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	this->threadpool->ExitThreads();
+
+	
+
 	CloseHandle(this->eventHandle);
 	SAFE_RELEASE(&this->fenceFrame);
-
-	SAFE_RELEASE(&this->device5);
 	
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]);
 
 	delete this->rootSignature;
-	delete this->copySourceResource;
-	delete this->copyDestResource;
 
 	delete this->swapChain;
-	delete this->threadpool;
+	
 	delete this->depthBuffer;
 
 	delete this->descriptorHeap;
@@ -34,6 +34,15 @@ Renderer::~Renderer()
 
 	for (auto renderTask : this->renderTasks)
 		delete renderTask;
+
+	// Resources -------------
+	delete this->copySourceResource;
+	delete this->copyDestResource;
+	// -----------------------
+
+	SAFE_RELEASE(&this->device5);
+
+	delete this->threadpool;
 }
 
 void Renderer::InitD3D12(HWND *hwnd)
@@ -76,7 +85,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 
 	// Create resource for the copy queue (a float4 vector with color)
 	this->copySourceResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::UPLOAD,  L"copySourceResource");
-	this->copyDestResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::DEFAULT, L"copyDestResource");
+	this->copyDestResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::RESOURCE_COPY, L"copyDestResource");
 
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
@@ -133,7 +142,9 @@ void Renderer::InitRenderTasks()
 	testTask->AddRenderTarget(this->swapChain);
 	testTask->SetDepthBuffer(this->depthBuffer);
 	testTask->SetDescriptorHeap(this->descriptorHeap);
-	testTask->SetDestinationResource(this->copyDestResource);
+
+	// Resources ------------
+	testTask->AddResource(this->copyDestResource);
 	
 	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
 
@@ -218,7 +229,11 @@ void Renderer::InitRenderTasks()
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
 
 	// :-----------------------------TASK CopyColor:-----------------------------
-	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE, this->copySourceResource, this->copyDestResource);
+	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE);
+	
+	copyTask->AddResource(this->copySourceResource);
+	copyTask->AddResource(this->copyDestResource);
+	
 
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
