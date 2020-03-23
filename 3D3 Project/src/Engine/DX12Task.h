@@ -12,6 +12,7 @@ public:
 
 	void SetBackBufferIndex(int backBufferIndex);
 
+	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index);
 protected:
 	CommandInterface* commandInterface = nullptr;
 	int backBufferIndex = -1;

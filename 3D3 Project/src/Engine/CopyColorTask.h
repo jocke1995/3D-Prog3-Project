@@ -11,8 +11,6 @@ public:
 
 	void Execute();
 
-private:
-
 };
 
 #endif

@@ -1,9 +1,10 @@
 #include "CopyColorTask.h"
+#include "Resource.h"
 
 CopyColorTask::CopyColorTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType, Resource* sourceResource, Resource* destinationResource)
 	:CopyTask(device, interfaceType, sourceResource, destinationResource)
 {
-
+	
 }
 
 CopyColorTask::~CopyColorTask()
@@ -24,9 +25,23 @@ void CopyColorTask::Execute()
 	//UINT timer_index = 1;
 	//timer.start(commandList, timer_index);
 
+	//D3D12_RESOURCE_BARRIER rb;
 
-	//source.SetData();
-	//commandList.CopyResource(source, dest);
+	float4 red = { 1.0f, 0.0f, 0.0f, 1.0f };
+	this->sourceResource->SetData(&red);
+
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		this->destinationResource->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COMMON));
+
+	commandList->CopyResource(this->destinationResource->GetID3D12Resource1(),
+							  this->sourceResource->GetID3D12Resource1());
+
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		this->destinationResource->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COMMON,
+		D3D12_RESOURCE_STATE_GENERIC_READ));
 
 	// End timestamp
 	//timer.stop(commandList, timer_index);

@@ -57,9 +57,8 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	rootParam[RS::Color].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParam[RS::Color].Constants.ShaderRegister = 1; // b0
-	rootParam[RS::Color].Constants.RegisterSpace = 0; // space0
-	rootParam[RS::Color].Constants.Num32BitValues = 4;
+	rootParam[RS::Color].Descriptor.ShaderRegister = 1; // b1
+	rootParam[RS::Color].Descriptor.RegisterSpace = 0; // space0
 	rootParam[RS::Color].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;

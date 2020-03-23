@@ -20,11 +20,6 @@ PipelineState* RenderTask::GetPipelineState(unsigned int index)
 	return this->pipelineStates[index];
 }
 
-ID3D12GraphicsCommandList5* RenderTask::GetCommandList(unsigned int index)
-{
-	return this->commandInterface->GetCommandList(index);
-}
-
 void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 {
 	this->renderTargets.push_back(renderTarget);
@@ -48,5 +43,10 @@ void RenderTask::SetDescriptorHeap(DescriptorHeap* dh)
 void RenderTask::SetDepthBuffer(DepthBuffer* depthBuffer)
 {
 	this->depthBuffer = depthBuffer;
+}
+
+void RenderTask::SetDestinationResource(Resource* resource)
+{
+	this->resource = resource;
 }
 

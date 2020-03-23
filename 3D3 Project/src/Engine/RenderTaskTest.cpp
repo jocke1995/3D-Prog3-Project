@@ -99,7 +99,7 @@ void RenderTaskTest::Execute()
 		commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
 		// Resource from the CopyQueue
-		// commandList->SetGraphicsRootConstantBufferView(RS::Color, this->resource->GetGPUVirtualAdress());
+		commandList->SetGraphicsRootConstantBufferView(RS::Color, this->resource->GetGPUVirtualAdress());
 
 		commandList->DrawInstanced(num_vertices, 1, 0, 0);
 	}

@@ -2,7 +2,6 @@
 #define COPYTASK_H
 
 #include "DX12Task.h"
-
 #include "stdafx.h"
 
 class Resource;
@@ -13,8 +12,8 @@ public:
 	CopyTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType, Resource *sourceResource, Resource* destinationResource);
 	~CopyTask();
 
-private:
-	Resource* sourceResource;
-	Resource* destinationResource;
+protected:
+	Resource* sourceResource = nullptr;
+	Resource* destinationResource = nullptr;
 };
 #endif

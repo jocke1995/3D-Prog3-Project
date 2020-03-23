@@ -25,7 +25,6 @@ public:
 	virtual ~RenderTask();
 
 	PipelineState* GetPipelineState(unsigned int index);
-	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index);
 
 	void AddRenderTarget(RenderTarget* renderTarget);
 	void AddObject(Object* object);
@@ -33,6 +32,7 @@ public:
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
+	void SetDestinationResource(Resource* resource);
 protected:
 	DescriptorHeap* descriptorHeap = nullptr;
 
@@ -43,6 +43,8 @@ protected:
 	std::vector<PipelineState*> pipelineStates;
 	std::vector<Object*> objects;
 	Camera* camera = nullptr;
+
+	Resource* resource = nullptr;
 };
 
 #endif
