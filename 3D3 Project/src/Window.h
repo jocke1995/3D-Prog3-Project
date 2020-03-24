@@ -1,8 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "Engine/stdafx.h"
-
 class Window
 {
 public:

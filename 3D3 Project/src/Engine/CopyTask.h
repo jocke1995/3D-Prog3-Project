@@ -2,7 +2,6 @@
 #define COPYTASK_H
 
 #include "DX12Task.h"
-#include "stdafx.h"
 
 class Resource;
 

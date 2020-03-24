@@ -1,6 +1,11 @@
 #pragma once
 
-#include "stdafx.h"
+enum COMMAND_INTERFACE_TYPE
+{
+	DIRECT_TYPE,
+	COPY_TYPE,
+	COMPUTE_TYPE
+};
 
 class CommandInterface
 {

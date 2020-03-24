@@ -1,7 +1,6 @@
 #ifndef ROOTSIGNATURE_H
 #define ROOTSIGNATURE_H
 
-#include "stdafx.h"
 
 enum RS
 {

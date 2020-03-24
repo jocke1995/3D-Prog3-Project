@@ -13,6 +13,8 @@
 
 class DescriptorHeap;
 
+
+
 class RenderTask : public DX12Task
 {
 public:

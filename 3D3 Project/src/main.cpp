@@ -1,7 +1,5 @@
 #include "Engine/Renderer.h"
 #include "Window.h"
-#include <chrono>
-#include <ctime>
 
 #include "Engine/Cube.h"
 #include "Engine/Camera.h"

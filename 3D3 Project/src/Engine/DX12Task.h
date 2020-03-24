@@ -1,10 +1,22 @@
 #pragma once
 
-#include "stdafx.h"
 #include "Task.h"
 #include "CommandInterface.h"
 
 class Resource;
+
+enum RENDER_TASK_TYPE
+{
+	TEST,
+	BLEND,
+	NR_OF_RENDERTASKS
+};
+
+enum COPY_TASK_TYPE
+{
+	COPY_COLOR,
+	NR_OF_COPYTASKS
+};
 
 class DX12Task : public Task
 {

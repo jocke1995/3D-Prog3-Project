@@ -1,7 +1,6 @@
 #ifndef PIPELINESTATE_H
 #define PIPELINESTATE_H
 
-#include "stdafx.h"
 #include "Shader.h"
 #include "RootSignature.h"
 #include "../AssetLoader.h"

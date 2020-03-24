@@ -1,11 +1,6 @@
 #pragma once
 
 #include "Task.h"
-#include <queue>
-#include <mutex>
-
-#include <Windows.h>
-#include <process.h>	// _beginThreadex
 
 class Thread
 {

@@ -3,7 +3,6 @@
 
 #include "DescriptorHeap.h"
 #include "Resource.h"
-#include <vector>
 
 class RenderTarget
 {

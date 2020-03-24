@@ -6,7 +6,6 @@
 #pragma comment (lib, "dxguid.lib")
 #include <dinput.h>
 
-#include "stdafx.h"
 #include "Transform.h"
 
 class Camera

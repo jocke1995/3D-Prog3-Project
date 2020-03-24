@@ -1,9 +1,7 @@
 #ifndef CONSTANTBUFFER_H
 #define CONSTANTBUFFER_H
 
-#include "stdafx.h"
 #include "Resource.h"
-#include <set>
 
 enum CONSTANT_BUFFER_TYPE
 {

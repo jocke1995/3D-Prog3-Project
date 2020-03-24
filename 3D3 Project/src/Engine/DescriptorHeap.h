@@ -1,8 +1,6 @@
 #ifndef DESCRIPTORHEAP_H
 #define DESCRIPTORHEAP_H
 
-#include "stdafx.h"
-
 enum class DESCRIPTOR_HEAP_TYPE
 {
 	RTV,

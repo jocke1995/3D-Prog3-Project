@@ -1,7 +1,6 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <map>
 #include "RootSignature.h"
 #include "RenderTask.h"
 #include "SwapChain.h"

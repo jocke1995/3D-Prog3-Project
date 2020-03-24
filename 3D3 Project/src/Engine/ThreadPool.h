@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Thread.h"
 
 class ThreadPool

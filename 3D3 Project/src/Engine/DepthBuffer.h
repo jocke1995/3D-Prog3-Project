@@ -1,7 +1,6 @@
 #ifndef DEPTHBUFFER_H
 #define DEPTHBUFFER_H
 
-#include "stdafx.h"
 #include "DescriptorHeap.h"
 
 class DepthBuffer

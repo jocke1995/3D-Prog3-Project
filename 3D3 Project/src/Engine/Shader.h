@@ -1,8 +1,6 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "stdafx.h"
-
 enum class ShaderType { VS = 0, PS = 1 };
 
 class Shader

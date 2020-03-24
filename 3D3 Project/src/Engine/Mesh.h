@@ -1,9 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "stdafx.h"
 #include "Resource.h"
-#include <vector>
 
 class Mesh
 {

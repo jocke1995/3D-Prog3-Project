@@ -1,8 +1,6 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "stdafx.h"
-
 using namespace DirectX;
 
 class Transform
