@@ -1,5 +1,3 @@
-#include "CopyColorTask.h"
-#include "Resource.h"
 #include "ComputeTestTask.h"
 
 ComputeTestTask::ComputeTestTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, COMMAND_INTERFACE_TYPE interfaceType)
@@ -23,8 +21,12 @@ void ComputeTestTask::Execute()
 	// Start timestamp
 	//UINT timer_index = 1;
 	//timer.start(commandList, timer_index);
+	
+	commandList->SetComputeRootSignature(this->rootSig);
 
-	commandList->Dispatch(3, 1, 1);
+	commandList->SetPipelineState(this->pipelineState->GetPSO());
+
+	commandList->Dispatch(1, 1, 1);
 
 	// End timestamp
 	//timer.stop(commandList, timer_index);

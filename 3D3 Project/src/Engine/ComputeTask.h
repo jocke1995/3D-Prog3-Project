@@ -13,7 +13,7 @@ public:
 		COMMAND_INTERFACE_TYPE interfaceType);
 	~ComputeTask();
 
-private:
+protected:
 	ID3D12RootSignature* rootSig = nullptr;
 
 	PipelineState* pipelineState = nullptr;
