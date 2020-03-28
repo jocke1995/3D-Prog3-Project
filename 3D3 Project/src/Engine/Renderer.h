@@ -8,9 +8,15 @@
 #include "ThreadPool.h"
 #include "D3D12Timer.h"
 
+// Graphics
 #include "RenderTaskTest.h"
 #include "RenderTaskBlend.h"
+
+// Copy
 #include "CopyColorTask.h"
+
+// Compute
+#include "ComputeTestTask.h"
 
 class Renderer
 {
@@ -61,10 +67,12 @@ private:
 	// RenderTasks
 	std::vector<RenderTask*> renderTasks;
 	std::vector<CopyTask*> copyTasks;
+	std::vector<ComputeTask*> computeTasks;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
+	std::vector<ID3D12CommandList*> computeCommandLists[NUM_SWAP_BUFFERS];
 
 	// DescriptorHeap
 	DescriptorHeap* descriptorHeap = nullptr;

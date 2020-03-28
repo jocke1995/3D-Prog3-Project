@@ -4,9 +4,9 @@ D3D12::D3D12Timer timer;
 
 Renderer::Renderer()
 {
-	// Nothing here yet
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
 	this->copyTasks.resize(COPY_TASK_TYPE::NR_OF_COPYTASKS);
+	this->computeTasks.resize(COMPUTE_TASK_TYPE::NR_OF_COMPUTETASKS);
 }
 
 Renderer::~Renderer()
@@ -18,6 +18,7 @@ Renderer::~Renderer()
 	SAFE_RELEASE(&this->fenceFrame);
 	
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]);
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]);
 
 	delete this->rootSignature;
@@ -27,6 +28,9 @@ Renderer::~Renderer()
 	delete this->depthBuffer;
 
 	delete this->descriptorHeap;
+
+	for (auto computeTask : this->computeTasks)
+		delete computeTask;
 
 	for (auto copyTask : this->copyTasks)
 		delete copyTask;
@@ -222,7 +226,13 @@ void Renderer::InitRenderTasks()
 	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
 	gpsdBlendVector.push_back(&gpsdBlendBackCull);
 
-	RenderTask* blendTask = new RenderTaskBlend(this->device5, this->rootSignature, L"BlendVertex.hlsl", L"BlendPixel.hlsl", &gpsdBlendVector, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+	RenderTask* blendTask = new RenderTaskBlend(this->device5, 
+		this->rootSignature, 
+		L"BlendVertex.hlsl", 
+		L"BlendPixel.hlsl", 
+		&gpsdBlendVector, 
+		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+
 	blendTask->AddRenderTarget(this->swapChain);
 	blendTask->SetDepthBuffer(this->depthBuffer);
 	blendTask->SetDescriptorHeap(this->descriptorHeap);
@@ -233,6 +243,12 @@ void Renderer::InitRenderTasks()
 	copyTask->AddResource(this->copySourceResource);
 	copyTask->AddResource(this->copyDestResource);
 	
+	// :-----------------------------TASK ComputeTest:-----------------------------
+	//ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
+	//	this->rootSignature,
+	//	L"ComputeTest.hlsl",
+	//	COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
+
 
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
@@ -244,6 +260,13 @@ void Renderer::InitRenderTasks()
 	// Pushback in the order of execution
 	 for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 	 	this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
+
+	/* ------------------------- ComputeQueue Tasks ------------------------ */
+	//this->computeTasks[COMPUTE_TASK_TYPE::COMPUTE_TEST] = computeTestTask;
+	//
+	//// Pushback in the order of execution
+	//for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+	//	this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
 	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;
@@ -472,6 +495,15 @@ void Renderer::CreateCommandQueues()
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"ERROR: Failed to create Copy CommandQueue");
+	}
+
+	// Compute
+	D3D12_COMMAND_QUEUE_DESC cqdCompute = {};
+	cqdCompute.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
+	hr = device5->CreateCommandQueue(&cqdCompute, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]));
+	if (FAILED(hr))
+	{
+		OutputDebugStringW(L"ERROR: Failed to create Compute CommandQueue");
 	}
 }
 

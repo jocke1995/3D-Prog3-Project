@@ -28,11 +28,8 @@ PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature
 	}
 }
 
-PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, D3D12_COMPUTE_PIPELINE_STATE_DESC* cpsd)
+PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName)
 {
-	// Set the rootSignature in the pipeline state object descriptor
-	this->cpsd = *cpsd;
-
 	this->cpsd.pRootSignature = rootSignature->GetRootSig();
 
 	this->CreateShader(CSName, ShaderType::CS);

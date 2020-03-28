@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
     <ClCompile Include="src\Engine\ComputeTask.cpp" />
+    <ClCompile Include="src\Engine\ComputeTestTask.cpp" />
     <ClCompile Include="src\Engine\CopyColorTask.cpp" />
     <ClCompile Include="src\Engine\CopyTask.cpp" />
     <ClCompile Include="src\Engine\D3D12Timer.cpp" />
@@ -217,6 +218,7 @@
   <ItemGroup>
     <ClInclude Include="src\Engine\CommandInterface.h" />
     <ClInclude Include="src\Engine\ComputeTask.h" />
+    <ClInclude Include="src\Engine\ComputeTestTask.h" />
     <ClInclude Include="src\Engine\CopyColorTask.h" />
     <ClInclude Include="src\Engine\CopyTask.h" />
     <ClInclude Include="src\Engine\D3D12Timer.h" />

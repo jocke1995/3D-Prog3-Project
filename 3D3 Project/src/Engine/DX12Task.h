@@ -18,6 +18,12 @@ enum COPY_TASK_TYPE
 	NR_OF_COPYTASKS
 };
 
+enum COMPUTE_TASK_TYPE
+{
+	COMPUTE_TEST,
+	NR_OF_COMPUTETASKS
+};
+
 class DX12Task : public Task
 {
 public:

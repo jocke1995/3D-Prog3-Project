@@ -128,6 +128,9 @@
     <ClCompile Include="src\Engine\ComputeTask.cpp">
       <Filter>Engine\Tasks\Compute</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\ComputeTestTask.cpp">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -224,6 +227,9 @@
       <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ComputeTask.h">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ComputeTestTask.h">
       <Filter>Engine\Tasks\Compute</Filter>
     </ClInclude>
   </ItemGroup>
