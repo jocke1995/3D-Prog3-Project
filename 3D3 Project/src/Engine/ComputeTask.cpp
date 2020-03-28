@@ -10,4 +10,5 @@ ComputeTask::ComputeTask(ID3D12Device5* device, RootSignature* rootSignature, LP
 
 ComputeTask::~ComputeTask()
 {
+	delete this->pipelineState;
 }

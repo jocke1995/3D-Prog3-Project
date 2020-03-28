@@ -244,10 +244,10 @@ void Renderer::InitRenderTasks()
 	copyTask->AddResource(this->copyDestResource);
 	
 	// :-----------------------------TASK ComputeTest:-----------------------------
-	//ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
-	//	this->rootSignature,
-	//	L"ComputeTest.hlsl",
-	//	COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
+	ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
+		this->rootSignature,
+		L"ComputeTest.hlsl",
+		COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
 
 
 	// Add the tasks to desired vectors so they can be used in renderer
@@ -262,11 +262,11 @@ void Renderer::InitRenderTasks()
 	 	this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
 
 	/* ------------------------- ComputeQueue Tasks ------------------------ */
-	//this->computeTasks[COMPUTE_TASK_TYPE::COMPUTE_TEST] = computeTestTask;
-	//
-	//// Pushback in the order of execution
-	//for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-	//	this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
+	this->computeTasks[COMPUTE_TASK_TYPE::COMPUTE_TEST] = computeTestTask;
+	
+	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
 	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;

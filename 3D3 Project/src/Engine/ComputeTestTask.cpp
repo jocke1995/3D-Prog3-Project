@@ -24,7 +24,7 @@ void ComputeTestTask::Execute()
 	//UINT timer_index = 1;
 	//timer.start(commandList, timer_index);
 
-	// Dispatch
+	commandList->Dispatch(3, 1, 1);
 
 	// End timestamp
 	//timer.stop(commandList, timer_index);
