@@ -33,6 +33,11 @@ void Shader::CompileShader()
 		entryPoint = "PS_main";
 		shaderModelTarget = "ps_5_1";
 	}
+	else if (type == ShaderType::CS)
+	{
+		entryPoint = "CS_main";
+		shaderModelTarget = "cs_5_1";
+	}
 
 	ID3DBlob* errorMessages = nullptr;
 

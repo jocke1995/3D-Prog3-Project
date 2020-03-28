@@ -30,6 +30,9 @@
     <Filter Include="Engine\Tasks\Render">
       <UniqueIdentifier>{c1028742-f59c-48d8-9ac6-9214956979f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tasks\Compute">
+      <UniqueIdentifier>{88f51c30-f521-43e8-9045-f427c090d28d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ComputeTask.cpp">
+      <Filter>Engine\Tasks\Compute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +223,9 @@
     <ClInclude Include="src\Engine\CopyColorTask.h">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\ComputeTask.h">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
@@ -229,6 +238,9 @@
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ComputeTest.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

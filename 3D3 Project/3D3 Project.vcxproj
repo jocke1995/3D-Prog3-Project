@@ -178,6 +178,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
+    <ClCompile Include="src\Engine\ComputeTask.cpp" />
     <ClCompile Include="src\Engine\CopyColorTask.cpp" />
     <ClCompile Include="src\Engine\CopyTask.cpp" />
     <ClCompile Include="src\Engine\D3D12Timer.cpp" />
@@ -215,6 +216,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\CommandInterface.h" />
+    <ClInclude Include="src\Engine\ComputeTask.h" />
     <ClInclude Include="src\Engine\CopyColorTask.h" />
     <ClInclude Include="src\Engine\CopyTask.h" />
     <ClInclude Include="src\Engine\D3D12Timer.h" />
@@ -254,6 +256,14 @@
     <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ComputeTest.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

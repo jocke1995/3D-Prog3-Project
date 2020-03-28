@@ -181,10 +181,6 @@ Shader* AssetLoader::LoadShader(std::wstring fileName, ShaderType type)
 	std::wstring entireFilePath = filePathShaders + fileName;
 	Shader* tempShader = new Shader(entireFilePath.c_str(), type);
 
-	
-
-	
-
 	loadedShaders[fileName] = tempShader;
 	return loadedShaders[fileName];
 }

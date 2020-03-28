@@ -1,9 +1,9 @@
 #include "PipelineState.h"
 
-PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsdTest)
+PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, D3D12_GRAPHICS_PIPELINE_STATE_DESC* gpsd)
 {
 	// Set the rootSignature in the pipeline state object descriptor
-	this->gpsd = *gpsdTest;
+	this->gpsd = *gpsd;
 
 	this->gpsd.pRootSignature = rootSignature->GetRootSig();
 
@@ -21,10 +21,34 @@ PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature
 	// Create pipelineStateObject
 	HRESULT hr = device->CreateGraphicsPipelineState(&this->gpsd, IID_PPV_ARGS(&this->PSO));
 
-	this->PSO->SetName(L"PSO");
+	this->PSO->SetName(L"GraphicsPSO");
 	if (!SUCCEEDED(hr))
 	{
-		OutputDebugStringW(L"Failed to create PSO");
+		OutputDebugStringW(L"Failed to create GraphicsPSO");
+	}
+}
+
+PipelineState::PipelineState(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, D3D12_COMPUTE_PIPELINE_STATE_DESC* cpsd)
+{
+	// Set the rootSignature in the pipeline state object descriptor
+	this->cpsd = *cpsd;
+
+	this->cpsd.pRootSignature = rootSignature->GetRootSig();
+
+	this->CreateShader(CSName, ShaderType::CS);
+
+	ID3DBlob* csBlob = this->CS->GetBlob();
+
+	this->cpsd.CS.pShaderBytecode = csBlob->GetBufferPointer();
+	this->cpsd.CS.BytecodeLength = csBlob->GetBufferSize();
+
+	// Create pipelineStateObject
+	HRESULT hr = device->CreateComputePipelineState(&this->cpsd, IID_PPV_ARGS(&this->PSO));
+
+	this->PSO->SetName(L"ComputePSO");
+	if (!SUCCEEDED(hr))
+	{
+		OutputDebugStringW(L"Failed to create ComputePSO");
 	}
 }
 
@@ -35,10 +59,18 @@ PipelineState::~PipelineState()
 
 void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
 {
-	if(type == ShaderType::VS)
+	if (type == ShaderType::VS)
+	{
 		this->VS = AssetLoader::Get().LoadShader(fileName, type);
-	else if(type == ShaderType::PS)
+	}
+	else if (type == ShaderType::PS)
+	{
 		this->PS = AssetLoader::Get().LoadShader(fileName, type);
+	}
+	else if (type == ShaderType::CS)
+	{
+		this->CS = AssetLoader::Get().LoadShader(fileName, type);
+	}
 }
 
 ID3D12PipelineState* PipelineState::GetPSO()
@@ -51,12 +83,25 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC* PipelineState::GetGpsd()
 	return &this->gpsd;
 }
 
+D3D12_COMPUTE_PIPELINE_STATE_DESC* PipelineState::GetCpsd()
+{
+	return &this->cpsd;
+}
+
 Shader* PipelineState::GetShader(ShaderType type)
 {
 	if (type == ShaderType::VS)
+	{
 		return this->VS;
+	}
 	else if (type == ShaderType::PS)
+	{
 		return this->PS;
+	}
+	else if (type == ShaderType::CS)
+	{
+		return this->CS;
+	}
 
 	return nullptr;
 }

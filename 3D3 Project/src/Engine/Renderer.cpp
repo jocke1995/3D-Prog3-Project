@@ -11,9 +11,8 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	this->WaitForFrame();
 	this->threadpool->ExitThreads();
-
-	
 
 	CloseHandle(this->eventHandle);
 	SAFE_RELEASE(&this->fenceFrame);
