@@ -39,9 +39,9 @@ void CopyColorTask::Execute()
 	float testb = abs(sinf(b));
 
 
-	float4 red = { testr, testg, testb, 1.0 };
+	float4 color = { testr, testg, testb, 1.0 };
 
-	this->resources[0]->SetData(&red);
+	this->resources[0]->SetData(&color);
 
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 		this->resources[1]->GetID3D12Resource1(),

@@ -86,10 +86,8 @@ void RenderTaskTest::Execute()
 
 		commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
-		// Resource from the CopyQueue
-		commandList->SetGraphicsRootUnorderedAccessView(RS::Color, this->resources[0]->GetGPUVirtualAdress());
-
-		//commandList->SetGraphicsRootConstantBufferView(RS::Color, this->resources[0]->GetGPUVirtualAdress());
+		// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
+		commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
 
 		commandList->DrawInstanced(num_vertices, 1, 0, 0);
 	}

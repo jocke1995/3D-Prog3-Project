@@ -249,6 +249,7 @@ void Renderer::InitRenderTasks()
 		L"ComputeTest.hlsl",
 		COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
 
+	computeTestTask->AddResource(this->copyDestResource);
 
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
@@ -509,15 +510,6 @@ void Renderer::CreateCommandQueues()
 		OutputDebugStringW(L"ERROR: Failed to create Direct CommandQueue");
 	}
 
-	// Copy
-	D3D12_COMMAND_QUEUE_DESC cqdCopy = {};
-	cqdCopy.Type = D3D12_COMMAND_LIST_TYPE_COPY;
-	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]));
-	if (FAILED(hr))
-	{
-		OutputDebugStringW(L"ERROR: Failed to create Copy CommandQueue");
-	}
-
 	// Compute
 	D3D12_COMMAND_QUEUE_DESC cqdCompute = {};
 	cqdCompute.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
@@ -525,6 +517,15 @@ void Renderer::CreateCommandQueues()
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"ERROR: Failed to create Compute CommandQueue");
+	}
+
+	// Copy
+	D3D12_COMMAND_QUEUE_DESC cqdCopy = {};
+	cqdCopy.Type = D3D12_COMMAND_LIST_TYPE_COPY;
+	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]));
+	if (FAILED(hr))
+	{
+		OutputDebugStringW(L"ERROR: Failed to create Copy CommandQueue");
 	}
 }
 

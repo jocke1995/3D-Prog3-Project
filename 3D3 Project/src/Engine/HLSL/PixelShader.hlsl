@@ -11,7 +11,7 @@ struct color
 	float4 rgba;
 };
 
-RWStructuredBuffer<color> materialColor0 : register(u0);
+ConstantBuffer<color> materialColor0 : register(b1);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {

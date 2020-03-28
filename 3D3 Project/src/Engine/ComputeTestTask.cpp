@@ -26,7 +26,11 @@ void ComputeTestTask::Execute()
 
 	commandList->SetPipelineState(this->pipelineState->GetPSO());
 
-	commandList->Dispatch(1, 1, 1);
+	// Resource with color from the copyQueue -> this ComputeQueue -> DirectQueue
+	commandList->SetComputeRootUnorderedAccessView(RS::ColorUAV, 
+		this->resources[0]->GetGPUVirtualAdress());
+
+	commandList->Dispatch(3, 1, 1);
 
 	// End timestamp
 	//timer.stop(commandList, timer_index);

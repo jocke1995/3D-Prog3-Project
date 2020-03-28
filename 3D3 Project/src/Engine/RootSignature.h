@@ -6,7 +6,8 @@ enum RS
 {
 	dtSRV,
 	CB_PER_OBJECT_CONSTANTS,
-	Color,
+	ColorCBV,
+	ColorUAV,
 	NUM_PARAMS
 };
 
