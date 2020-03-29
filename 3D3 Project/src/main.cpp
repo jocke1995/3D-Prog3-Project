@@ -1,8 +1,9 @@
 #include "Engine/Renderer.h"
+#include "Engine/Camera.h"
 #include "Window.h"
 
+// Objects
 #include "Minotaur.h"
-#include "Engine/Camera.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
@@ -32,14 +33,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     UINT drawOptionsBlend = DrawOptions::Blend;
 
     // Unique For each object
-    Object* cube = new Minotaur(cubeMesh, drawOptionsFR);
-    cube->GetTransform()->SetPosition(-2, 0, 10);
+    Object* mino1 = new Minotaur(cubeMesh, drawOptionsFR);
+    mino1->GetTransform()->SetPosition(-2, 0, 10);
 
-    Object* cube2 = new Minotaur(cubeMesh, drawOptionsBlend);
-    cube2->GetTransform()->SetPosition(2, 0, 10);
+    Object* mino2 = new Minotaur(cubeMesh, drawOptionsBlend);
+    mino2->GetTransform()->SetPosition(2, 0, 10);
 
-    renderer->AddObjectToTasks(cube);
-    renderer->AddObjectToTasks(cube2);
+    renderer->AddObjectToTasks(mino1);
+    renderer->AddObjectToTasks(mino2);
 
     // GAMELOOP
     auto time_now = start;
@@ -65,8 +66,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         }
 
         /* ------ Update ------ */
-        cube->Update(dt);
-        cube2->Update(dt);
+        mino1->Update(dt);
+        mino2->Update(dt);
         
         camera->Update(dt);
 
@@ -75,11 +76,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     }   
 
     // ---------------------------- SafeExit the program ----------------------------
-    // I renderer destruktor
-    
-
-    delete cube;
-    delete cube2;
+    delete mino1;
+    delete mino2;
 
     delete camera;
     delete window;

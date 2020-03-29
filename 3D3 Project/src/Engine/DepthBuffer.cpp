@@ -34,7 +34,7 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 	depthStencilDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-	device->CreateCommittedResource(
+	HRESULT hr = device->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
@@ -42,6 +42,11 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 		&clearValue,
 		IID_PPV_ARGS(&this->resource)
 	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Error: Failed to create DepthBuffer!\n");
+	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(0);
 	device->CreateDepthStencilView(this->resource, &depthStencilDesc, cdh);

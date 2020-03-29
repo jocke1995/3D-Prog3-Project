@@ -10,7 +10,7 @@ RootSignature::RootSignature(ID3D12Device5* device)
 		this->sBlob->GetBufferSize(),
 		IID_PPV_ARGS(&this->rootSig));
 
-	if (hr != S_OK)
+	if(FAILED(hr))
 	{
 		OutputDebugStringA("Error: Failed to create RootSignature!\n");
 	}

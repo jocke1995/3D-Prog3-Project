@@ -49,6 +49,10 @@ SwapChain::SwapChain(ID3D12Device5* device, HWND* hwnd, ID3D12CommandQueue* comm
 			swapChain4->Release();
 		}
 	}
+	else
+	{
+		OutputDebugStringA("Error: Failed to create SwapChain!\n");
+	}
 
 	SAFE_RELEASE(&factory);
 

@@ -66,25 +66,16 @@ void Renderer::InitD3D12(HWND *hwnd)
 	this->CreateFences();
 
 	// Create SwapChain
-	if (!this->CreateSwapChain(hwnd))
-	{
-		OutputDebugStringA("Error: Failed to create SwapChain!\n");
-	}
+	this->CreateSwapChain(hwnd);
 
 	// ThreadPool
 	this->threadpool = new ThreadPool(5);
 
 	// Create Main DepthBuffer
-	if (!this->CreateDepthBuffer())
-	{
-		OutputDebugStringA("Error: Failed to create DepthBuffer!\n");
-	}
+	this->CreateDepthBuffer();
 	
 	// Create Rootsignature
-	if (!this->CreateRootSignature())
-	{
-		OutputDebugStringA("Error: Failed to create RootSignature!\n");
-	}
+	this->CreateRootSignature();
 
 	// Create resource for the copy queue (a float4 vector with color)
 	this->copySourceResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::UPLOAD,  L"copySourceResource");
@@ -529,24 +520,19 @@ void Renderer::CreateCommandQueues()
 	}
 }
 
-bool Renderer::CreateSwapChain(HWND *hwnd)
+void Renderer::CreateSwapChain(HWND *hwnd)
 {
 	swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
-
-	return true;
 }
 
-bool Renderer::CreateDepthBuffer()
+void Renderer::CreateDepthBuffer()
 {
 	this->depthBuffer = new DepthBuffer(this->device5, 800, 600);
-	return true;
 }
 
-bool Renderer::CreateRootSignature()
+void Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
-
-	return true;
 }
 
 void Renderer::InitDescriptorHeap()

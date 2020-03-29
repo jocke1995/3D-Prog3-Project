@@ -47,26 +47,26 @@ private:
 
 	// Swapchain
 	RenderTarget* swapChain = nullptr;
-	bool CreateSwapChain(HWND *hwnd);
-
-	// ThreadPool
-	ThreadPool* threadpool = nullptr;
+	void CreateSwapChain(HWND *hwnd);
 
 	// Depthbuffer
 	DepthBuffer* depthBuffer = nullptr;
-	bool CreateDepthBuffer();
+	void CreateDepthBuffer();
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;
-	bool CreateRootSignature();
+	void CreateRootSignature();
+
+	// ThreadPool
+	ThreadPool* threadpool = nullptr;
 
 	// Resource for the copyQueue
 	Resource* copySourceResource;
 	Resource* copyDestResource;
 
 	// RenderTasks
-	std::vector<RenderTask*> renderTasks;
-	std::vector<CopyTask*> copyTasks;
+	std::vector<RenderTask*>  renderTasks;
+	std::vector<CopyTask*>    copyTasks;
 	std::vector<ComputeTask*> computeTasks;
 
 	// Commandlists holders
