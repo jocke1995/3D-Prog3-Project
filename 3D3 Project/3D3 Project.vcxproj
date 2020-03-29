@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Minotaur.cpp" />
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
     <ClCompile Include="src\Engine\ComputeTask.cpp" />
     <ClCompile Include="src\Engine\ComputeTestTask.cpp" />
@@ -186,7 +187,6 @@
     <ClCompile Include="src\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\Camera.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
-    <ClCompile Include="src\Engine\Cube.cpp" />
     <ClCompile Include="src\Engine\DepthBuffer.cpp" />
     <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
     <ClCompile Include="src\Engine\DX12Task.cpp" />
@@ -216,6 +216,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Minotaur.h" />
     <ClInclude Include="src\Engine\CommandInterface.h" />
     <ClInclude Include="src\Engine\ComputeTask.h" />
     <ClInclude Include="src\Engine\ComputeTestTask.h" />
@@ -225,7 +226,6 @@
     <ClInclude Include="src\AssetLoader.h" />
     <ClInclude Include="src\Engine\Camera.h" />
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
-    <ClInclude Include="src\Engine\Cube.h" />
     <ClInclude Include="src\Engine\d3dx12.h" />
     <ClInclude Include="src\Engine\DepthBuffer.h" />
     <ClInclude Include="src\Engine\DescriptorHeap.h" />

@@ -33,6 +33,12 @@
     <Filter Include="Engine\Tasks\Compute">
       <UniqueIdentifier>{88f51c30-f521-43e8-9045-f427c090d28d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\Engine">
+      <UniqueIdentifier>{ed7bca7c-117b-4a58-930f-d2d9f236bf99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Game">
+      <UniqueIdentifier>{abe19655-faaa-426a-aa5d-ed53cae43d99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -43,15 +49,6 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Camera.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Cube.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Mesh.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Object.cpp">
-      <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\ConstantBuffer.cpp">
       <Filter>Engine</Filter>
@@ -131,19 +128,19 @@
     <ClCompile Include="src\Engine\BlendRenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Mesh.cpp">
+      <Filter>Objects\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Object.cpp">
+      <Filter>Objects\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Minotaur.cpp">
+      <Filter>Objects\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Cube.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Mesh.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Object.h">
-      <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ConstantBuffer.h">
       <Filter>Engine</Filter>
@@ -231,6 +228,15 @@
     </ClInclude>
     <ClInclude Include="src\Engine\BlendRenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Mesh.h">
+      <Filter>Objects\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Object.h">
+      <Filter>Objects\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Minotaur.h">
+      <Filter>Objects\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

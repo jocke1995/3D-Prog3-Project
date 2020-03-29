@@ -1,7 +1,7 @@
 #include "Engine/Renderer.h"
 #include "Window.h"
 
-#include "Engine/Cube.h"
+#include "Minotaur.h"
 #include "Engine/Camera.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
@@ -32,10 +32,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     UINT drawOptionsBlend = DrawOptions::Blend;
 
     // Unique For each object
-    Object* cube = new Cube(cubeMesh, drawOptionsFR);
+    Object* cube = new Minotaur(cubeMesh, drawOptionsFR);
     cube->GetTransform()->SetPosition(-2, 0, 10);
 
-    Object* cube2 = new Cube(cubeMesh, drawOptionsBlend);
+    Object* cube2 = new Minotaur(cubeMesh, drawOptionsBlend);
     cube2->GetTransform()->SetPosition(2, 0, 10);
 
     renderer->AddObjectToTasks(cube);

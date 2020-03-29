@@ -1,19 +1,19 @@
-#include "Cube.h"
+#include "Minotaur.h"
 
-Cube::Cube(Mesh* mesh, UINT drawFlag) : Object(mesh, drawFlag)
+Minotaur::Minotaur(Mesh* mesh, unsigned int drawFlag) : Object(mesh, drawFlag)
 {
 }
 
-Cube::~Cube()
+Minotaur::~Minotaur()
 {
 }
 
-void Cube::Init()
+void Minotaur::Init()
 {
 	
 }
 
-void Cube::UpdateSpecific(double dt)
+void Minotaur::UpdateSpecific(double dt)
 {
 	// Test Rotation
 	static float r = 1;
