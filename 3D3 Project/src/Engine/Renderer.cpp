@@ -226,16 +226,16 @@ void Renderer::InitRenderTasks()
 	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
 	gpsdBlendVector.push_back(&gpsdBlendBackCull);
 
-	RenderTask* blendTask = new RenderTaskBlend(this->device5, 
+	RenderTask* blendRenderTask = new BlendRenderTask(this->device5, 
 		this->rootSignature, 
 		L"BlendVertex.hlsl", 
 		L"BlendPixel.hlsl", 
 		&gpsdBlendVector, 
 		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
 
-	blendTask->AddRenderTarget(this->swapChain);
-	blendTask->SetDepthBuffer(this->depthBuffer);
-	blendTask->SetDescriptorHeap(this->descriptorHeap);
+	blendRenderTask->AddRenderTarget(this->swapChain);
+	blendRenderTask->SetDepthBuffer(this->depthBuffer);
+	blendRenderTask->SetDescriptorHeap(this->descriptorHeap);
 
 	// :-----------------------------TASK CopyColor:-----------------------------
 	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE);
@@ -271,14 +271,14 @@ void Renderer::InitRenderTasks()
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
 	this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER] = forwardRenderTask;
-	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendTask;
+	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendRenderTask;
 
 	// Pushback in the order of execution
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 		this->directCommandLists[i].push_back(forwardRenderTask->GetCommandList(i));
 
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->directCommandLists[i].push_back(blendTask->GetCommandList(i));
+		this->directCommandLists[i].push_back(blendRenderTask->GetCommandList(i));
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)

@@ -1,17 +1,17 @@
-#include "RenderTaskBlend.h"
+#include "BlendRenderTask.h"
 
-RenderTaskBlend::RenderTaskBlend(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
+BlendRenderTask::BlendRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
 {
 	
 }
 
-RenderTaskBlend::~RenderTaskBlend()
+BlendRenderTask::~BlendRenderTask()
 {
 }
 
 extern D3D12::D3D12Timer timer;
-void RenderTaskBlend::Execute()
+void BlendRenderTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->backBufferIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->backBufferIndex);

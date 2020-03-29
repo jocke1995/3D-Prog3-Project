@@ -10,7 +10,7 @@
 
 // Graphics
 #include "ForwardRenderTask.h"
-#include "RenderTaskBlend.h"
+#include "BlendRenderTask.h"
 
 // Copy
 #include "CopyColorTask.h"

@@ -110,9 +110,6 @@
     <ClCompile Include="src\Engine\CopyTask.cpp">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\RenderTaskBlend.cpp">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\RenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
       <Filter>Engine\Tasks\Compute</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\ForwardRenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\BlendRenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
   </ItemGroup>
@@ -217,9 +217,6 @@
     <ClInclude Include="src\Engine\RenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\RenderTaskBlend.h">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\CopyColorTask.h">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
@@ -230,6 +227,9 @@
       <Filter>Engine\Tasks\Compute</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ForwardRenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\BlendRenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
   </ItemGroup>
