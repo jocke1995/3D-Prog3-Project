@@ -1,13 +1,13 @@
 #include "Object.h"
 
-Object::Object(Mesh* mesh, DrawOptions* drawOptions)
+Object::Object(Mesh* mesh, UINT drawFlag)
 {
 	this->index = index;
 	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
 	this->transform = new Transform();
 	this->mesh = mesh;
 
-	this->drawOptions = drawOptions;
+	this->drawFlag = drawFlag;
 }
 
 Object::~Object()
@@ -42,7 +42,8 @@ SlotInfo* Object::GetSlotInfo()
 	return &this->info;
 }
 
-DrawOptions* Object::GetDrawOptions()
+UINT Object::GetDrawFlag()
 {
-	return this->drawOptions;
+	return this->drawFlag;
 }
+

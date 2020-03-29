@@ -1,6 +1,6 @@
 #include "Cube.h"
 
-Cube::Cube(Mesh* mesh, DrawOptions* drawOptions) : Object(mesh, drawOptions)
+Cube::Cube(Mesh* mesh, UINT drawFlag) : Object(mesh, drawFlag)
 {
 }
 

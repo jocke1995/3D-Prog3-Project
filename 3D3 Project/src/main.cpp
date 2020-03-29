@@ -28,16 +28,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
 
     // DrawFlags
-    DrawOptions drawOptionsTest;
-    drawOptionsTest.test = true;
-    DrawOptions drawOptionsBlend;
-    drawOptionsBlend.blend = true;
+    UINT drawOptionsFR = DrawOptions::ForwardRendering; // | DrawOptions::Shadow;
+    UINT drawOptionsBlend = DrawOptions::Blend;
 
     // Unique For each object
-    Object* cube = new Cube(cubeMesh, &drawOptionsTest);
+    Object* cube = new Cube(cubeMesh, drawOptionsFR);
     cube->GetTransform()->SetPosition(-2, 0, 10);
 
-    Object* cube2 = new Cube(cubeMesh, &drawOptionsBlend);
+    Object* cube2 = new Cube(cubeMesh, drawOptionsBlend);
     cube2->GetTransform()->SetPosition(2, 0, 10);
 
     renderer->AddObjectToTasks(cube);

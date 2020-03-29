@@ -7,13 +7,12 @@
 class Cube : public Object
 {
 public:
-    Cube(Mesh* mesh, DrawOptions* drawOptions);
+    Cube(Mesh* mesh, UINT drawFlag);
     ~Cube();
 
 private:
     void Init();
     void UpdateSpecific(double dt);
-
 
 };
 

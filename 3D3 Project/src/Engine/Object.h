@@ -4,22 +4,19 @@
 #include "Transform.h"
 #include "Mesh.h"
 
-struct DrawOptions
+enum DrawOptions
 {
-    DrawOptions()
-    {
-        test = false;
-        blend = false;
-    }
-
-    bool test;
-    bool blend;
+    ForwardRendering = 1,
+    Blend = 2,
+    // Shadow = 4,
+    // Bloom = 8,
+    // etc..
 };
 
 class Object
 {
 public:
-    Object(Mesh* mesh, DrawOptions* drawOptions);
+    Object(Mesh* mesh, UINT drawFlag);
     virtual ~Object();
 
     Transform* GetTransform();
@@ -31,7 +28,7 @@ public:
     virtual void UpdateSpecific(double dt) = 0;
 
     SlotInfo* GetSlotInfo();
-    DrawOptions* GetDrawOptions();
+    UINT GetDrawFlag();
 
 protected:
     SlotInfo info;
@@ -42,7 +39,7 @@ protected:
     Transform* transform;
 
 private:
-    DrawOptions *drawOptions;
+    UINT drawFlag = 0;
     
 };
 

@@ -297,12 +297,13 @@ Mesh* Renderer::CreateMesh(std::wstring path)
 // Add the object to each rendertask desired for the object.
 void Renderer::AddObjectToTasks(Object* object)
 {
-	DrawOptions* drawOptions = object->GetDrawOptions();
+	// using bitwise-AND to check what object to draw in what task
+	UINT drawOptions = object->GetDrawFlag();
 
-	if (drawOptions->test == true)
+	if (drawOptions & DrawOptions::ForwardRendering)
 		this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER]->AddObject(object);
 
-	if (drawOptions->blend == true)
+	if (drawOptions & DrawOptions::Blend)
 		this->renderTasks[RENDER_TASK_TYPE::BLEND]->AddObject(object);
 }
 
