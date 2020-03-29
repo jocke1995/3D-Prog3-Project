@@ -6,10 +6,10 @@
 
 enum DrawOptions
 {
-    ForwardRendering = 1,
-    Blend = 2,
-    // Shadow = 4,
-    // Bloom = 8,
+    ForwardRendering = 0x01,
+    Blend = 0x02,
+    // Shadow = 0x04,
+    // Bloom = 0x08,
     // etc..
 };
 

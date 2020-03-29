@@ -24,11 +24,11 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 
 	// Diffuse
 	float4 lightDir = float4(normalize(lightPos.xyz - input.worldPos.xyz), 1.0f);
-	float alpha = max(dot(input.norm.xyz, lightDir.xyz), 0);
+	float alpha = max(dot(input.norm.xyz, lightDir.xyz), 0.0f);
 	float4 diffuse = materialColor * lightColor * alpha;
 
 	// FinalColor
 	float4 finalColor = float4(ambient.rgb + diffuse.rgb, 1.0f);
 
-	return finalColor;
+	return min(finalColor, 1.0f);
 }

@@ -29,17 +29,19 @@ void CopyColorTask::Execute()
 	static float g = 0.0f;
 	static float b = 0.0f;
 
-	// For fun blinking background
-	r += 0.0005f;
-	g += 0.005f;
-	b += 0.001f;
+	// For fun blinking color
+	r += 0.0002f;
+	g += 0.00035f;
+	b += 0.0004f;
 
+	/* Done in ComputeShader now
 	float testr = abs(sinf(r));
 	float testg = abs(sinf(g));
 	float testb = abs(sinf(b));
+	*/
 
 
-	float4 color = { testr, testg, testb, 1.0 };
+	float4 color = { r, g, b, 1.0 };
 
 	this->resources[0]->SetData(&color);
 

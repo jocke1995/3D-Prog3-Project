@@ -309,6 +309,8 @@ void Renderer::Execute()
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 
+
+	/* COPY QUEUE --------------------------------------------------------------- */
 	// Fill queue with copytasks and execute them in parallell
 	for (CopyTask* copyTask : this->copyTasks)
 	{
@@ -324,9 +326,14 @@ void Renderer::Execute()
 		this->copyCommandLists[backBufferIndex].size(),
 		this->copyCommandLists[backBufferIndex].data());
 
-	UINT64 oldFence = this->fenceFrameValue;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, oldFence + 1);
+	UINT64 copyFenceValue = this->fenceFrameValue;
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
 	this->fenceFrameValue++;
+
+	/* --------------------------------------------------------------- */
+
+
+	/* COMPUTE QUEUE --------------------------------------------------------------- */ 
 
 	// Fill queue with computeTasks and execute them in parallell
 	for (ComputeTask* computeTask : this->computeTasks)
@@ -338,17 +345,20 @@ void Renderer::Execute()
 	this->threadpool->WaitForThreads();
 
 	// Wait for copyTask to finish
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, oldFence + 1);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
 
 	// Execute Compute tasks
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->ExecuteCommandLists(
 		this->computeCommandLists[backBufferIndex].size(),
 		this->computeCommandLists[backBufferIndex].data());
 
-	oldFence = this->fenceFrameValue;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Signal(this->fenceFrame, oldFence + 1);
+	int computeFenceValue = this->fenceFrameValue;
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Signal(this->fenceFrame, computeFenceValue + 1);
 	this->fenceFrameValue++;
 
+	/* --------------------------------------------------------------- */
+
+	/* RENDER QUEUE --------------------------------------------------------------- */
 	// Fill queue with rendertasks and execute them in parallell
 	for (RenderTask* renderTask : this->renderTasks)
 	{
@@ -363,18 +373,25 @@ void Renderer::Execute()
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->GetTimestampFrequency(&queueFreq);
 
 	// Wait for ComputeTask to finish
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, oldFence + 1);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, computeFenceValue + 1);
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
 		this->directCommandLists[backBufferIndex].size(), 
 		this->directCommandLists[backBufferIndex].data()
 	);
 	
+	/* --------------------------------------------------------------- */
+
 	// Wait if the CPU is to far ahead of the gpu
 	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
 
+
+
+
+
+	/* TIME MEASURE  ---------------------------*/
 	//get time in ms
 	double timestampToMs = (1.0 / queueFreq) * 1000.0;
 
@@ -568,14 +585,18 @@ void Renderer::CreateFences()
 
 void Renderer::WaitForFrame()
 {
-	const UINT64 oldFence = this->fenceFrameValue;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, oldFence);
+	const UINT64 oldFenceValue = this->fenceFrameValue;
+	const UINT64 newFenceValue = oldFenceValue + 1;
 	this->fenceFrameValue++;
 
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
+
 	//Wait until command queue is done.
-	if (this->fenceFrame->GetCompletedValue() < oldFence - 3)
+	// TODO: Ar detta rätt? Gar inte att testa så bra och crashar pa release
+	int nrOfFenceChanges = 3;
+	if (this->fenceFrame->GetCompletedValue() < newFenceValue - ((NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges))
 	{
-		this->fenceFrame->SetEventOnCompletion(oldFence, this->eventHandle);
+		this->fenceFrame->SetEventOnCompletion(newFenceValue, this->eventHandle);
 		WaitForSingleObject(this->eventHandle, INFINITE);
 	}
 }
