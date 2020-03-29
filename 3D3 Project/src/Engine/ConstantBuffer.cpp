@@ -61,9 +61,8 @@ ConstantBuffer::~ConstantBuffer()
 	
 }
 
-bool ConstantBuffer::SetData(void* beginLocation, const void* data)
+void ConstantBuffer::SetData(void* beginLocation, const void* data)
 {
-	// TODO: return false if fail
 	void* dataBegin = beginLocation;
 
 	// Set up the heap data
@@ -72,8 +71,6 @@ bool ConstantBuffer::SetData(void* beginLocation, const void* data)
 	this->resource->Map(0, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
 	memcpy(dataBegin, data, this->entrySize);
 	this->resource->Unmap(0, nullptr);
-
-	return true;
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGPUAt(UINT index)

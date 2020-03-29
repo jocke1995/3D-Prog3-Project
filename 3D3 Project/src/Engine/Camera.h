@@ -58,8 +58,6 @@ private:
     void DetectInput(double dt);
     void UpdateViewProjMatrix();
 
-    // TODO: STEFAN
-
     /*
     // Initialize the view matrix, ideally this should be based on user
   // interactions The lookat and perspective matrices used for rasterization are

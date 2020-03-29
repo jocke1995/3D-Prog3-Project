@@ -70,7 +70,7 @@ void RootSignature::CreateRootSignatureStructure()
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 
 	rsDesc.NumParameters = ARRAYSIZE(rootParam);
 	rsDesc.pParameters = rootParam;
-	rsDesc.NumStaticSamplers = 0; // TODO: Create Static Sampler
+	rsDesc.NumStaticSamplers = 0;
 
 	// HUR MAN SKA SAMPLA FRÅN TEXTUR: 
 	// D3D12_STATIC_SAMPLER_DESC ssd{};

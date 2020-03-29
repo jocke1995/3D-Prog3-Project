@@ -81,7 +81,6 @@ void RenderTarget::CreateViewport(unsigned int width, unsigned int height)
 	this->viewport.MaxDepth = 1.0f;
 }
 
-// TODO: Fler inparametrar sedan om man vill kunna customizea scizzorRecten
 void RenderTarget::CreateScissorRect(unsigned int width, unsigned int height)
 {
 	this->scissorRect.left = (long)0;

@@ -1,17 +1,17 @@
-#include "RenderTaskTest.h"
+#include "ForwardRenderTask.h"
 #include <stdlib.h>
-RenderTaskTest::RenderTaskTest(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
+FowardRenderTask::FowardRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
 {
 	
 }
 
-RenderTaskTest::~RenderTaskTest()
+FowardRenderTask::~FowardRenderTask()
 {
 }
 
 extern D3D12::D3D12Timer timer;
-void RenderTaskTest::Execute()
+void FowardRenderTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->backBufferIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->backBufferIndex);

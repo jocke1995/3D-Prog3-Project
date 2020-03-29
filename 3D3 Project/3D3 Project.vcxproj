@@ -197,7 +197,7 @@
     <ClCompile Include="src\Engine\RenderTarget.cpp" />
     <ClCompile Include="src\Engine\RenderTask.cpp" />
     <ClCompile Include="src\Engine\RenderTaskBlend.cpp" />
-    <ClCompile Include="src\Engine\RenderTaskTest.cpp" />
+    <ClCompile Include="src\Engine\ForwardRenderTask.cpp" />
     <ClCompile Include="src\Engine\Resource.cpp" />
     <ClCompile Include="src\Engine\RootSignature.cpp" />
     <ClCompile Include="src\Engine\Shader.cpp" />
@@ -237,7 +237,7 @@
     <ClInclude Include="src\Engine\RenderTarget.h" />
     <ClInclude Include="src\Engine\RenderTask.h" />
     <ClInclude Include="src\Engine\RenderTaskBlend.h" />
-    <ClInclude Include="src\Engine\RenderTaskTest.h" />
+    <ClInclude Include="src\Engine\ForwardRenderTask.h" />
     <ClInclude Include="src\Engine\Resource.h" />
     <ClInclude Include="src\Engine\RootSignature.h" />
     <ClInclude Include="src\Engine\Shader.h" />

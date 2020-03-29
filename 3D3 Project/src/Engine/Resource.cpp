@@ -67,7 +67,6 @@ Resource::~Resource()
 
 void Resource::SetData(const void* data)
 {
-	// TODO: return false if fail
 	void* dataBegin = nullptr;
 
 	// Set up the heap data

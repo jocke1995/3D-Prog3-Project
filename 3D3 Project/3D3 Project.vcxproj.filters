@@ -113,9 +113,6 @@
     <ClCompile Include="src\Engine\RenderTaskBlend.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\RenderTaskTest.cpp">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\RenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
@@ -130,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\ComputeTestTask.cpp">
       <Filter>Engine\Tasks\Compute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ForwardRenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,9 +220,6 @@
     <ClInclude Include="src\Engine\RenderTaskBlend.h">
       <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\RenderTaskTest.h">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\CopyColorTask.h">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
@@ -231,6 +228,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\ComputeTestTask.h">
       <Filter>Engine\Tasks\Compute</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ForwardRenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

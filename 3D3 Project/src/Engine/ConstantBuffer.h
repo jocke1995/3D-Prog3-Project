@@ -15,7 +15,7 @@ public:
 	ConstantBuffer(ID3D12Device5* device, unsigned int nrEntries, CONSTANT_BUFFER_TYPE type, std::wstring name = L"CB_NONAME" );
 	~ConstantBuffer();
 
-	bool SetData(void* beginLocation, const void* data);
+	void SetData(void* beginLocation, const void* data);
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUAt(UINT index);
 
 	CONSTANT_BUFFER_TYPE GetType();

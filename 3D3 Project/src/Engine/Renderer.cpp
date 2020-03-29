@@ -98,19 +98,19 @@ void Renderer::InitD3D12(HWND *hwnd)
 
 void Renderer::InitRenderTasks()
 {
-	// :-----------------------------TASK TEST:-----------------------------
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdTest = {};
-	gpsdTest.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	// :-----------------------------TASK Forward Rendering:-----------------------------
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdForwardRender = {};
+	gpsdForwardRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	// RenderTarget
-	gpsdTest.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	gpsdTest.NumRenderTargets = 1;
+	gpsdForwardRender.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdForwardRender.NumRenderTargets = 1;
 	// Depthstencil usage
-	gpsdTest.SampleDesc.Count = 1;
-	gpsdTest.SampleMask = UINT_MAX;
+	gpsdForwardRender.SampleDesc.Count = 1;
+	gpsdForwardRender.SampleMask = UINT_MAX;
 	// Rasterizer behaviour
-	gpsdTest.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdTest.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+	gpsdForwardRender.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdForwardRender.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 
 	// Specify Blend descriptions
 	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {
@@ -119,7 +119,7 @@ void Renderer::InitRenderTasks()
 		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
 		D3D12_LOGIC_OP_NOOP, D3D12_COLOR_WRITE_ENABLE_ALL };
 	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-		gpsdTest.BlendState.RenderTarget[i] = defaultRTdesc;
+		gpsdForwardRender.BlendState.RenderTarget[i] = defaultRTdesc;
 
 	// Depth descriptor
 	D3D12_DEPTH_STENCIL_DESC dsd = {};
@@ -135,19 +135,19 @@ void Renderer::InitRenderTasks()
 	dsd.FrontFace = defaultStencilOP;
 	dsd.BackFace = defaultStencilOP;
 
-	gpsdTest.DepthStencilState = dsd;
-	gpsdTest.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	gpsdForwardRender.DepthStencilState = dsd;
+	gpsdForwardRender.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
-	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdTestVector;
-	gpsdTestVector.push_back(&gpsdTest);
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdForwardRenderVector;
+	gpsdForwardRenderVector.push_back(&gpsdForwardRender);
 	
-	RenderTask* testTask = new RenderTaskTest(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdTestVector, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
-	testTask->AddRenderTarget(this->swapChain);
-	testTask->SetDepthBuffer(this->depthBuffer);
-	testTask->SetDescriptorHeap(this->descriptorHeap);
+	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdForwardRenderVector, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+	forwardRenderTask->AddRenderTarget(this->swapChain);
+	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
+	forwardRenderTask->SetDescriptorHeap(this->descriptorHeap);
 
 	// Resources ------------
-	testTask->AddResource(this->copyDestResource);
+	forwardRenderTask->AddResource(this->copyDestResource);
 	
 	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
 
@@ -270,12 +270,12 @@ void Renderer::InitRenderTasks()
 		this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
-	this->renderTasks[RENDER_TASK_TYPE::TEST] = testTask;
+	this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER] = forwardRenderTask;
 	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendTask;
 
 	// Pushback in the order of execution
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->directCommandLists[i].push_back(testTask->GetCommandList(i));
+		this->directCommandLists[i].push_back(forwardRenderTask->GetCommandList(i));
 
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 		this->directCommandLists[i].push_back(blendTask->GetCommandList(i));
@@ -300,7 +300,7 @@ void Renderer::AddObjectToTasks(Object* object)
 	DrawOptions* drawOptions = object->GetDrawOptions();
 
 	if (drawOptions->test == true)
-		this->renderTasks[RENDER_TASK_TYPE::TEST]->AddObject(object);
+		this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER]->AddObject(object);
 
 	if (drawOptions->blend == true)
 		this->renderTasks[RENDER_TASK_TYPE::BLEND]->AddObject(object);
@@ -478,7 +478,6 @@ bool Renderer::CreateDevice()
 	{
 		HRESULT hr = S_OK;
 		//Create the actual device.
-		// TODO: Exception thrown at ___________
 		if (SUCCEEDED(hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device5))))
 		{
 			deviceCreated = true;

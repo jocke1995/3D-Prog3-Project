@@ -9,7 +9,7 @@
 #include "D3D12Timer.h"
 
 // Graphics
-#include "RenderTaskTest.h"
+#include "ForwardRenderTask.h"
 #include "RenderTaskBlend.h"
 
 // Copy

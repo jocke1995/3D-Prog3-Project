@@ -7,7 +7,7 @@ class Resource;
 
 enum RENDER_TASK_TYPE
 {
-	TEST,
+	FORWARD_RENDER,
 	BLEND,
 	NR_OF_RENDERTASKS
 };

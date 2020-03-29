@@ -4,7 +4,6 @@
 #include "Transform.h"
 #include "Mesh.h"
 
-// TODO: Nu får man ändra manuellt när man gör fler rendertasks... kom ihåg: Samma som en enum i stdafx.h
 struct DrawOptions
 {
     DrawOptions()
@@ -39,7 +38,7 @@ protected:
     UINT index;
 
     Mesh* mesh;
-    // TODO: Material*
+ // Material* material
     Transform* transform;
 
 private:

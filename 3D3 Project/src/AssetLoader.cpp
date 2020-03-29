@@ -159,7 +159,6 @@ Mesh* AssetLoader::LoadMesh(std::wstring path, bool* loadedBefore)
 		UINT size = vertexIndices.size() * sizeof(Mesh::Vertex);
 		Mesh* newMesh = new Mesh(this->device, vvertices, size, this->slotCounter++);
 
-		// TODO: Add mesh in loadedMeshes with name
 		this->loadedMeshes[path] = newMesh;
 
 		*loadedBefore = false;
