@@ -1,5 +1,5 @@
 #include "ForwardRenderTask.h"
-#include <stdlib.h>
+
 FowardRenderTask::FowardRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
 {
@@ -13,15 +13,16 @@ FowardRenderTask::~FowardRenderTask()
 extern D3D12::D3D12Timer timer;
 void FowardRenderTask::Execute()
 {
-	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->backBufferIndex);
-	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->backBufferIndex);
+	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
+	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
 
+	return;
 	commandAllocator->Reset();
 	commandList->Reset(commandAllocator, NULL);
 
 	// Start timestamp
 	UINT timer_index = 0;
-	timer.start(commandList, timer_index);
+	//timer.start(commandList, timer_index);
 
 	commandList->SetGraphicsRootSignature(this->rootSig);
 	
@@ -99,8 +100,8 @@ void FowardRenderTask::Execute()
 		D3D12_RESOURCE_STATE_PRESENT));
 
 	// End timestamp
-	timer.stop(commandList, timer_index);
-	timer.resolveQueryToCPU(commandList, timer_index);
+	//timer.stop(commandList, timer_index);
+	//timer.resolveQueryToCPU(commandList, timer_index);
 
 	commandList->Close();
 }

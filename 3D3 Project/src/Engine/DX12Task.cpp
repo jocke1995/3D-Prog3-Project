@@ -28,6 +28,11 @@ void DX12Task::SetBackBufferIndex(int backBufferIndex)
 	this->backBufferIndex = backBufferIndex;
 }
 
+void DX12Task::SetCommandInterfaceIndex(int index)
+{
+	this->commandInterfaceIndex = index;
+}
+
 ID3D12GraphicsCommandList5* DX12Task::GetCommandList(unsigned int index)
 {
 	return this->commandInterface->GetCommandList(index);

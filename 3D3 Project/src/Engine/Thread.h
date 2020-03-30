@@ -16,6 +16,7 @@ public:
 	bool IsQueueEmpty();
 private:
 	HANDLE thread;
+	HANDLE beginEvent;
 
 	static unsigned int __stdcall threadFunc(LPVOID lpParameter);
 

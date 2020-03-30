@@ -1,5 +1,7 @@
 #include "RenderTask.h"
 
+#include "PipelineState.h"
+
 RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 	:DX12Task(device, interfaceType)
 {

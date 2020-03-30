@@ -1,5 +1,4 @@
 #include "CopyColorTask.h"
-#include "Resource.h"
 
 CopyColorTask::CopyColorTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
 	:CopyTask(device, interfaceType)
@@ -11,18 +10,17 @@ CopyColorTask::~CopyColorTask()
 {
 }
 
-
-//extern D3D12::D3D12Timer timer;
+extern D3D12::D3D12Timer timer;
 void CopyColorTask::Execute()
 {
-	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->backBufferIndex);
-	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->backBufferIndex);
+	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
+	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
 
 	commandAllocator->Reset();
 	commandList->Reset(commandAllocator, NULL);
 
 	// Start timestamp
-	//UINT timer_index = 1;
+	UINT timer_index = 2;
 	//timer.start(commandList, timer_index);
 	
 	static float r = 0.0f;

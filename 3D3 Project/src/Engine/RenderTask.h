@@ -1,17 +1,16 @@
 #ifndef RENDERTASK_H
 #define RENDERTASK_H
 
-#include "PipelineState.h"
-#include "Object.h"
-#include "RenderTarget.h"
-#include "RootSignature.h"
-#include "Camera.h"
-#include "DepthBuffer.h"
-#include "D3D12Timer.h"
 #include "DX12Task.h"
-#include "CommandInterface.h"
 
-class DescriptorHeap;
+#include "DepthBuffer.h"
+#include "RenderTarget.h"
+#include "Camera.h"
+#include "Object.h"
+#include "PipelineState.h"
+#include "DescriptorHeap.h"
+
+
 
 class RenderTask : public DX12Task
 {

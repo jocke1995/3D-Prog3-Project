@@ -3,7 +3,7 @@
 
 #include "DX12Task.h"
 
-class Resource;
+#include "Resource.h"
 
 class CopyTask : public DX12Task
 {

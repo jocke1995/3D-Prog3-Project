@@ -61,8 +61,8 @@ private:
 	ThreadPool* threadpool = nullptr;
 
 	// Resource for the copyQueue
-	Resource* copySourceResource;
-	Resource* copyDestResource;
+	Resource* copySourceResource = nullptr;
+	Resource* copyDestResource = nullptr;
 
 	// RenderTasks
 	std::vector<RenderTask*>  renderTasks;
@@ -70,10 +70,10 @@ private:
 	std::vector<ComputeTask*> computeTasks;
 
 	// Commandlists holders
-	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> computeCommandLists[NUM_SWAP_BUFFERS];
-
+	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
+	
 	// DescriptorHeap
 	DescriptorHeap* descriptorHeap = nullptr;
 	void InitDescriptorHeap();

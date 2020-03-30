@@ -7,8 +7,9 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 
 	while (threadInstance->isRunning)
 	{
-		// TODO: Ska ej vara här... omstrukturering av trådpool?
-		Sleep(1);
+		DWORD eventResult = WaitForSingleObject(
+			threadInstance->beginEvent, // event handle
+			INFINITE);    // indefinite wait
 
 		// ------------------- Critical region -------------------
 		threadInstance->mutex.lock();
@@ -21,23 +22,32 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 			threadInstance->taskQueue.pop();
 		}
 
+		Task* task = threadInstance->task;
 		threadInstance->mutex.unlock();
-		// ------------------ - Critical region -------------------
-
 		// Safetycheck if the thread has a task assigned
-		if (threadInstance->task != nullptr)
+		if (task != nullptr)
 		{
-			threadInstance->task->Execute();
+			task->Execute();
+
+			threadInstance->mutex.lock();
 			threadInstance->task = nullptr;
+			threadInstance->mutex.unlock();
 		}
+		
 	}
 	return 0;
 }
 
 Thread::Thread()
-	: mutex()
 {
 	this->thread = (HANDLE)_beginthreadex(0, 0, this->threadFunc, this, 0, 0);
+	//SetThreadPriority(this->thread, THREAD_PRIORITY_TIME_CRITICAL);
+	this->beginEvent = CreateEvent(
+		NULL,               // default security attributes
+		FALSE,               // manual-reset event
+		FALSE,              // initial state is nonsignaled
+		NULL // object name
+	);
 }
 
 Thread::~Thread()
@@ -47,14 +57,11 @@ Thread::~Thread()
 
 bool Thread::IsTaskNullptr()
 {
-	if (this->task == nullptr)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	this->mutex.lock();
+	bool result = this->task == nullptr;
+	this->mutex.unlock();
+
+	return result;
 }
 
 void Thread::ExitThread()
@@ -66,6 +73,10 @@ void Thread::AddTask(Task* task)
 {
 	this->mutex.lock();
 	this->taskQueue.push(task);
+	if (!SetEvent(this->beginEvent))
+	{
+		OutputDebugStringW(L"ERROR: Set event [Thread::AddTask]\n");
+	}
 	this->mutex.unlock();
 }
 

@@ -69,7 +69,9 @@ void Renderer::InitD3D12(HWND *hwnd)
 	this->CreateSwapChain(hwnd);
 
 	// ThreadPool
-	this->threadpool = new ThreadPool(5);
+	int numCPUs = std::thread::hardware_concurrency();
+	if (numCPUs == 0) numCPUs = 1; // function not supported ej vettig dator
+	this->threadpool = new ThreadPool(numCPUs); // Set num threads to half of the cores
 
 	// Create Main DepthBuffer
 	this->CreateDepthBuffer();
@@ -310,21 +312,26 @@ void Renderer::Execute()
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 
 
+	static int resourceIndexCounter = 0;
+	int commandInterfaceIndex = resourceIndexCounter % 2;
+	resourceIndexCounter++;
+
 	/* COPY QUEUE --------------------------------------------------------------- */
 	// Fill queue with copytasks and execute them in parallell
 	for (CopyTask* copyTask : this->copyTasks)
 	{
-		copyTask->SetBackBufferIndex(backBufferIndex);
-		this->threadpool->AddTask(copyTask);
+		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		//this->threadpool->AddTask(copyTask);
+		//copyTask->Execute();
 	}
 
 	// Wait for Threads to complete
 	this->threadpool->WaitForThreads();
 
 	// Execute copy tasks
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
-		this->copyCommandLists[backBufferIndex].size(),
-		this->copyCommandLists[backBufferIndex].data());
+	//this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
+	//	this->copyCommandLists[commandInterfaceIndex].size(),
+	//	this->copyCommandLists[commandInterfaceIndex].data());
 
 	UINT64 copyFenceValue = this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
@@ -338,8 +345,9 @@ void Renderer::Execute()
 	// Fill queue with computeTasks and execute them in parallell
 	for (ComputeTask* computeTask : this->computeTasks)
 	{
-		computeTask->SetBackBufferIndex(backBufferIndex);
-		this->threadpool->AddTask(computeTask);
+		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		//this->threadpool->AddTask(computeTask);
+		//computeTask->Execute();
 	}
 
 	this->threadpool->WaitForThreads();
@@ -348,9 +356,9 @@ void Renderer::Execute()
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
 
 	// Execute Compute tasks
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->ExecuteCommandLists(
-		this->computeCommandLists[backBufferIndex].size(),
-		this->computeCommandLists[backBufferIndex].data());
+	//this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->ExecuteCommandLists(
+	//	this->computeCommandLists[commandInterfaceIndex].size(),
+	//	this->computeCommandLists[commandInterfaceIndex].data());
 
 	int computeFenceValue = this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Signal(this->fenceFrame, computeFenceValue + 1);
@@ -363,7 +371,9 @@ void Renderer::Execute()
 	for (RenderTask* renderTask : this->renderTasks)
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
-		this->threadpool->AddTask(renderTask);
+		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		//this->threadpool->AddTask(renderTask);
+		//renderTask->Execute();
 	}
 
 	// Wait for Threads to complete
@@ -375,11 +385,18 @@ void Renderer::Execute()
 	// Wait for ComputeTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, computeFenceValue + 1);
 
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
-		this->directCommandLists[backBufferIndex].size(), 
-		this->directCommandLists[backBufferIndex].data()
-	);
+	//this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
+	//	this->directCommandLists[commandInterfaceIndex].size(), 
+	//	this->directCommandLists[commandInterfaceIndex].data());
+
+
+	std::string a = std::to_string(fenceFrameValue);
+	std::wstring b(a.begin(), a.end());
+	b += L"\n";
+	OutputDebugStringW(b.c_str());
 	
+
+
 	/* --------------------------------------------------------------- */
 
 	// Wait if the CPU is to far ahead of the gpu
@@ -387,14 +404,11 @@ void Renderer::Execute()
 
 	dx12SwapChain->Present(0, 0);
 
-
-
-
-
 	/* TIME MEASURE  ---------------------------*/
 	//get time in ms
 	double timestampToMs = (1.0 / queueFreq) * 1000.0;
 
+	/*
 	// 0 = TEST, 1 = BLEND
 	D3D12::GPUTimestampPair drawTimeTest = timer.getTimestampPair(0);
 	D3D12::GPUTimestampPair drawTimeBlend = timer.getTimestampPair(1);
@@ -426,6 +440,7 @@ void Renderer::Execute()
 		sprintf_s(buf, "GPU BLEND TASK : %fms\n\n", SUM_BLEND/ counter);
 		OutputDebugStringA(buf);
 	}
+	*/
 }
 
 ThreadPool* Renderer::GetThreadPool()
@@ -439,7 +454,7 @@ bool Renderer::CreateDevice()
 {
 	bool deviceCreated = false;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	//Enable the D3D12 debug layer.
 	ID3D12Debug* debugController = nullptr;
 
@@ -459,7 +474,7 @@ bool Renderer::CreateDevice()
 	}
 	SAFE_RELEASE(&debugController);
 #endif
-#endif
+//#endif
 
 	IDXGIFactory6* factory = nullptr;
 	IDXGIAdapter1* adapter = nullptr;
@@ -585,18 +600,19 @@ void Renderer::CreateFences()
 
 void Renderer::WaitForFrame()
 {
-	const UINT64 oldFenceValue = this->fenceFrameValue;
-	const UINT64 newFenceValue = oldFenceValue + 1;
-	this->fenceFrameValue++;
+	const UINT64 oldFenceValue = this->fenceFrameValue; // 3
+	const UINT64 newFenceValue = oldFenceValue + 1; // 4
+	this->fenceFrameValue++; // 4
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
 
 	//Wait until command queue is done.
-	// TODO: Ar detta rätt? Gar inte att testa så bra och crashar pa release
 	int nrOfFenceChanges = 3;
-	if (this->fenceFrame->GetCompletedValue() < newFenceValue - ((NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges))
+	int fenceValuesToBeAhead = (NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges;
+	//						3						 7		         - 3
+	if (this->fenceFrame->GetCompletedValue() < newFenceValue - fenceValuesToBeAhead)
 	{
-		this->fenceFrame->SetEventOnCompletion(newFenceValue, this->eventHandle);
+		this->fenceFrame->SetEventOnCompletion(newFenceValue - fenceValuesToBeAhead, this->eventHandle);
 		WaitForSingleObject(this->eventHandle, INFINITE);
 	}
 }

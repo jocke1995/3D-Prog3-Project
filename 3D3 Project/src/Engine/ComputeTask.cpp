@@ -1,4 +1,4 @@
-#include "Computetask.h"
+#include "ComputeTask.h"
 
 ComputeTask::ComputeTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, COMMAND_INTERFACE_TYPE interfaceType)
 	:DX12Task(device, interfaceType)

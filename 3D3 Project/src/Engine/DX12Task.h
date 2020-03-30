@@ -3,6 +3,8 @@
 #include "Task.h"
 #include "CommandInterface.h"
 
+#include "D3D12Timer.h"
+
 class Resource;
 
 enum RENDER_TASK_TYPE
@@ -32,6 +34,7 @@ public:
 
 	void AddResource(Resource* resource);
 	void SetBackBufferIndex(int backBufferIndex);
+	void SetCommandInterfaceIndex(int index);
 
 	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index);
 protected:
@@ -39,4 +42,5 @@ protected:
 
 	CommandInterface* commandInterface = nullptr;
 	int backBufferIndex = -1;
+	int commandInterfaceIndex = -1;
 };
