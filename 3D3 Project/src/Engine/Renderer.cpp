@@ -321,12 +321,12 @@ void Renderer::Execute()
 	for (CopyTask* copyTask : this->copyTasks)
 	{
 		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(copyTask);
-		copyTask->Execute();
+		this->threadpool->AddTask(copyTask);
+		//copyTask->Execute();
 	}
 
 	// Wait for Threads to complete
-	//this->threadpool->WaitForThreads();
+	this->threadpool->WaitForThreads();
 
 	// Execute copy tasks
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
@@ -346,11 +346,11 @@ void Renderer::Execute()
 	for (ComputeTask* computeTask : this->computeTasks)
 	{
 		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(computeTask);
-		computeTask->Execute();
+		this->threadpool->AddTask(computeTask);
+		//computeTask->Execute();
 	}
 
-	//this->threadpool->WaitForThreads();
+	this->threadpool->WaitForThreads();
 
 	// Wait for copyTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
@@ -372,12 +372,12 @@ void Renderer::Execute()
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(renderTask);
-		renderTask->Execute();
+		this->threadpool->AddTask(renderTask);
+		//renderTask->Execute();
 	}
 
 	// Wait for Threads to complete
-	//this->threadpool->WaitForThreads();
+	this->threadpool->WaitForThreads();
 
 	UINT64 queueFreq;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->GetTimestampFrequency(&queueFreq);
