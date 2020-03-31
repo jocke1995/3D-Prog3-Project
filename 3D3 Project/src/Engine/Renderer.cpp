@@ -316,8 +316,7 @@ void Renderer::Execute()
 {
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
-	int commandInterfaceIndex = frameCounter % 2;
-	this->frameCounter++;
+	int commandInterfaceIndex = this->frameCounter++ % 2;
 	
 
 	/* COPY QUEUE --------------------------------------------------------------- */
@@ -397,7 +396,8 @@ void Renderer::Execute()
 
 	dx12SwapChain->Present(0, 0);
 
-	/* TIME MEASURE  ---------------------------*/
+	/*
+	// TIME MEASURE  ---------------------------
 	//get time in ms
 	double timestampToMs = (1.0 / queueFreq) * 1000.0;
 
@@ -453,6 +453,8 @@ void Renderer::Execute()
 		sprintf_s(buf, "GPU SUM:       : %fms\n\n", (SUM_COPY + SUM_COMPUTE + SUM_FW + SUM_BLEND) / counter);
 		OutputDebugStringA(buf);
 	}
+
+	*/
 }
 
 ThreadPool* Renderer::GetThreadPool()

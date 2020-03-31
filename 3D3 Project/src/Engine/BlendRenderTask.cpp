@@ -10,7 +10,7 @@ BlendRenderTask::~BlendRenderTask()
 {
 }
 
-extern D3D12::D3D12Timer timer;
+//extern D3D12::D3D12Timer timer;
 void BlendRenderTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
@@ -20,8 +20,8 @@ void BlendRenderTask::Execute()
 	commandList->Reset(commandAllocator, NULL);
 
 	// Start timestamp
-	UINT timer_index = 2;
-	timer.start(commandList, timer_index);
+	//UINT timer_index = 2;
+	//timer.start(commandList, timer_index);
 
 	commandList->SetGraphicsRootSignature(this->rootSig);
 	
@@ -94,8 +94,8 @@ void BlendRenderTask::Execute()
 		D3D12_RESOURCE_STATE_PRESENT));
 
 	// End timestamp
-	timer.stop(commandList, timer_index);
-	timer.resolveQueryToCPU(commandList, timer_index);
+	//timer.stop(commandList, timer_index);
+	//timer.resolveQueryToCPU(commandList, timer_index);
 
 	commandList->Close();
 }
