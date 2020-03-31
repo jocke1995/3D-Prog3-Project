@@ -612,9 +612,9 @@ void Renderer::CreateFences()
 
 void Renderer::WaitForFrame()
 {
-	const UINT64 oldFenceValue = this->fenceFrameValue; // 3
-	const UINT64 newFenceValue = oldFenceValue + 1; // 4
-	this->fenceFrameValue++; // 4
+	const UINT64 oldFenceValue = this->fenceFrameValue;
+	const UINT64 newFenceValue = oldFenceValue + 1;
+	this->fenceFrameValue++;
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
 
@@ -624,7 +624,6 @@ void Renderer::WaitForFrame()
 	//Wait until command queue is done.
 	int nrOfFenceChanges = 3;
 	int fenceValuesToBeAhead = (NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges;
-	//						3						 4		         - 3
 	if (this->fenceFrame->GetCompletedValue() < newFenceValue - fenceValuesToBeAhead)
 	{
 		this->fenceFrame->SetEventOnCompletion(newFenceValue - fenceValuesToBeAhead, this->eventHandle);
