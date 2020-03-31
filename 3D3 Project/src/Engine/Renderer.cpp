@@ -71,7 +71,7 @@ void Renderer::InitD3D12(HWND *hwnd)
 	// ThreadPool
 	int numCPUs = std::thread::hardware_concurrency();
 	if (numCPUs == 0) numCPUs = 1; // function not supported ej vettig dator
-	this->threadpool = new ThreadPool(numCPUs); // Set num threads to half of the cores
+	this->threadpool = new ThreadPool(numCPUs); // Set num threads to number of cores of the cpu
 
 	// Create Main DepthBuffer
 	this->CreateDepthBuffer();
@@ -322,16 +322,16 @@ void Renderer::Execute()
 	{
 		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		//this->threadpool->AddTask(copyTask);
-		//copyTask->Execute();
+		copyTask->Execute();
 	}
 
 	// Wait for Threads to complete
-	this->threadpool->WaitForThreads();
+	//this->threadpool->WaitForThreads();
 
 	// Execute copy tasks
-	//this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
-	//	this->copyCommandLists[commandInterfaceIndex].size(),
-	//	this->copyCommandLists[commandInterfaceIndex].data());
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
+		this->copyCommandLists[commandInterfaceIndex].size(),
+		this->copyCommandLists[commandInterfaceIndex].data());
 
 	UINT64 copyFenceValue = this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
@@ -347,18 +347,18 @@ void Renderer::Execute()
 	{
 		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		//this->threadpool->AddTask(computeTask);
-		//computeTask->Execute();
+		computeTask->Execute();
 	}
 
-	this->threadpool->WaitForThreads();
+	//this->threadpool->WaitForThreads();
 
 	// Wait for copyTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
 
 	// Execute Compute tasks
-	//this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->ExecuteCommandLists(
-	//	this->computeCommandLists[commandInterfaceIndex].size(),
-	//	this->computeCommandLists[commandInterfaceIndex].data());
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->ExecuteCommandLists(
+		this->computeCommandLists[commandInterfaceIndex].size(),
+		this->computeCommandLists[commandInterfaceIndex].data());
 
 	int computeFenceValue = this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Signal(this->fenceFrame, computeFenceValue + 1);
@@ -373,11 +373,11 @@ void Renderer::Execute()
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		//this->threadpool->AddTask(renderTask);
-		//renderTask->Execute();
+		renderTask->Execute();
 	}
 
 	// Wait for Threads to complete
-	this->threadpool->WaitForThreads();
+	//this->threadpool->WaitForThreads();
 
 	UINT64 queueFreq;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->GetTimestampFrequency(&queueFreq);
@@ -385,9 +385,9 @@ void Renderer::Execute()
 	// Wait for ComputeTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, computeFenceValue + 1);
 
-	//this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
-	//	this->directCommandLists[commandInterfaceIndex].size(), 
-	//	this->directCommandLists[commandInterfaceIndex].data());
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
+		this->directCommandLists[commandInterfaceIndex].size(), 
+		this->directCommandLists[commandInterfaceIndex].data());
 
 
 	std::string a = std::to_string(fenceFrameValue);
@@ -606,10 +606,13 @@ void Renderer::WaitForFrame()
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
 
+	// Wait for direct to finish before we can copy again 
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Wait(this->fenceFrame, newFenceValue);
+
 	//Wait until command queue is done.
 	int nrOfFenceChanges = 3;
 	int fenceValuesToBeAhead = (NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges;
-	//						3						 7		         - 3
+	//						3						 4		         - 3
 	if (this->fenceFrame->GetCompletedValue() < newFenceValue - fenceValuesToBeAhead)
 	{
 		this->fenceFrame->SetEventOnCompletion(newFenceValue - fenceValuesToBeAhead, this->eventHandle);

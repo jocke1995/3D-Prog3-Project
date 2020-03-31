@@ -16,8 +16,6 @@ void BlendRenderTask::Execute()
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
 
-	return;
-
 	commandAllocator->Reset();
 	commandList->Reset(commandAllocator, NULL);
 
