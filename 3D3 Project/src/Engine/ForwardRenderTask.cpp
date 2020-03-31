@@ -20,8 +20,8 @@ void FowardRenderTask::Execute()
 	commandList->Reset(commandAllocator, NULL);
 
 	// Start timestamp
-	UINT timer_index = 0;
-	//timer.start(commandList, timer_index);
+	UINT timer_index = 1;
+	timer.start(commandList, timer_index);
 
 	commandList->SetGraphicsRootSignature(this->rootSig);
 	
@@ -99,8 +99,8 @@ void FowardRenderTask::Execute()
 		D3D12_RESOURCE_STATE_PRESENT));
 
 	// End timestamp
-	//timer.stop(commandList, timer_index);
-	//timer.resolveQueryToCPU(commandList, timer_index);
+	timer.stop(commandList, timer_index);
+	timer.resolveQueryToCPU(commandList, timer_index);
 
 	commandList->Close();
 }

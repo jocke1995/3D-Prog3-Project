@@ -1,6 +1,10 @@
 #include "Renderer.h"
 
+#include "D3D12Timer.h"
+#include "D3D12TimerCopy.h"
+
 D3D12::D3D12Timer timer;
+D3D12TimerCopy timerCopy;
 
 Renderer::Renderer()
 {
@@ -57,7 +61,8 @@ void Renderer::InitD3D12(HWND *hwnd)
 	}
 
 	// Timer
-	timer.init(this->device5, RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
+	timer.init		(this->device5, RENDER_TASK_TYPE::NR_OF_RENDERTASKS + COMPUTE_TASK_TYPE::NR_OF_COMPUTETASKS);
+	timerCopy.init	(this->device5, COPY_TASK_TYPE::NR_OF_COPYTASKS);
 
 	// Create CommandQueues (direct and copy)
 	this->CreateCommandQueues();
@@ -179,7 +184,7 @@ void Renderer::InitRenderTasks()
 	// Depth descriptor
 	D3D12_DEPTH_STENCIL_DESC dsdBlend = {};
 	dsdBlend.DepthEnable = true;
-	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	dsdBlend.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
 
 	// DepthStencil
@@ -212,6 +217,7 @@ void Renderer::InitRenderTasks()
 
 	// DepthStencil
 	dsdBlend.StencilEnable = false;
+	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 
 	gpsdBlendBackCull.DepthStencilState = dsdBlend;
 	gpsdBlendBackCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
@@ -310,11 +316,9 @@ void Renderer::Execute()
 {
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
-
-
-	static int resourceIndexCounter = 0;
-	int commandInterfaceIndex = resourceIndexCounter % 2;
-	resourceIndexCounter++;
+	int commandInterfaceIndex = frameCounter % 2;
+	this->frameCounter++;
+	
 
 	/* COPY QUEUE --------------------------------------------------------------- */
 	// Fill queue with copytasks and execute them in parallell
@@ -322,7 +326,6 @@ void Renderer::Execute()
 	{
 		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		this->threadpool->AddTask(copyTask);
-		//copyTask->Execute();
 	}
 
 	// Wait for Threads to complete
@@ -347,7 +350,6 @@ void Renderer::Execute()
 	{
 		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		this->threadpool->AddTask(computeTask);
-		//computeTask->Execute();
 	}
 
 	this->threadpool->WaitForThreads();
@@ -373,7 +375,6 @@ void Renderer::Execute()
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		this->threadpool->AddTask(renderTask);
-		//renderTask->Execute();
 	}
 
 	// Wait for Threads to complete
@@ -389,14 +390,6 @@ void Renderer::Execute()
 		this->directCommandLists[commandInterfaceIndex].size(), 
 		this->directCommandLists[commandInterfaceIndex].data());
 
-
-	std::string a = std::to_string(fenceFrameValue);
-	std::wstring b(a.begin(), a.end());
-	b += L"\n";
-	OutputDebugStringW(b.c_str());
-	
-
-
 	/* --------------------------------------------------------------- */
 
 	// Wait if the CPU is to far ahead of the gpu
@@ -408,22 +401,33 @@ void Renderer::Execute()
 	//get time in ms
 	double timestampToMs = (1.0 / queueFreq) * 1000.0;
 
-	/*
-	// 0 = TEST, 1 = BLEND
-	D3D12::GPUTimestampPair drawTimeTest = timer.getTimestampPair(0);
-	D3D12::GPUTimestampPair drawTimeBlend = timer.getTimestampPair(1);
+	// 0 = COPY, 0 = COMPUTE, 1 = FW, 2 = BLEND
+	GPUTimestampPair drawTimeCopy = timerCopy.getTimestampPair(0);
+	D3D12::GPUTimestampPair drawTimeCompute = timer.getTimestampPair(0);
+	D3D12::GPUTimestampPair drawTimeFW = timer.getTimestampPair(1);
+	D3D12::GPUTimestampPair drawTimeBlend = timer.getTimestampPair(2);
 
 	// **Temporary test variables**
 	static unsigned int counter = 0;
-	static double SUM_TEST = 0;
+	static double SUM_COPY = 0;
+	static double SUM_COMPUTE = 0;
+	static double SUM_FW = 0;
 	static double SUM_BLEND = 0;
+	const unsigned int limit = 1000;
 
 	counter++;
 
-	const unsigned int limit = 1000;
-	UINT64 dt = drawTimeTest.Stop - drawTimeTest.Start;
+	UINT64 dt = drawTimeCopy.Stop - drawTimeCopy.Start;
 	double timeInMs = dt * timestampToMs;
-	SUM_TEST += timeInMs;
+	SUM_COPY += timeInMs;
+
+	dt = drawTimeCompute.Stop - drawTimeCompute.Start;
+	timeInMs = dt * timestampToMs;
+	SUM_COMPUTE += timeInMs;
+
+	dt = drawTimeFW.Stop - drawTimeFW.Start;
+	timeInMs = dt * timestampToMs;
+	SUM_FW += timeInMs;
 	
 	
 	dt = drawTimeBlend.Stop - drawTimeBlend.Start;
@@ -434,13 +438,21 @@ void Renderer::Execute()
 	if (counter == limit)
 	{
 		char buf[100];
-		sprintf_s(buf, "GPU TEST  TASK : %fms\n", SUM_TEST/ counter);
+		sprintf_s(buf, "GPU COPY  TASK : %fms\n", SUM_COPY / counter);
 		OutputDebugStringA(buf);
 
-		sprintf_s(buf, "GPU BLEND TASK : %fms\n\n", SUM_BLEND/ counter);
+		sprintf_s(buf, "GPU COMP  TASK : %fms\n", SUM_COMPUTE / counter);
+		OutputDebugStringA(buf);
+
+		sprintf_s(buf, "GPU FWRD  TASK : %fms\n", SUM_FW / counter);
+		OutputDebugStringA(buf);
+
+		sprintf_s(buf, "GPU BLND  TASK : %fms\n\n", SUM_BLEND / counter);
+		OutputDebugStringA(buf);
+
+		sprintf_s(buf, "GPU SUM:       : %fms\n\n", (SUM_COPY + SUM_COMPUTE + SUM_FW + SUM_BLEND) / counter);
 		OutputDebugStringA(buf);
 	}
-	*/
 }
 
 ThreadPool* Renderer::GetThreadPool()
@@ -454,7 +466,7 @@ bool Renderer::CreateDevice()
 {
 	bool deviceCreated = false;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
 	//Enable the D3D12 debug layer.
 	ID3D12Debug* debugController = nullptr;
 
@@ -474,7 +486,7 @@ bool Renderer::CreateDevice()
 	}
 	SAFE_RELEASE(&debugController);
 #endif
-//#endif
+#endif
 
 	IDXGIFactory6* factory = nullptr;
 	IDXGIAdapter1* adapter = nullptr;

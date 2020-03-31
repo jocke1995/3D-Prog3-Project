@@ -4,6 +4,7 @@
 #include "CommandInterface.h"
 
 #include "D3D12Timer.h"
+#include "D3D12TimerCopy.h"
 
 class Resource;
 

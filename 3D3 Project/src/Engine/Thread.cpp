@@ -41,7 +41,7 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 Thread::Thread()
 {
 	this->thread = (HANDLE)_beginthreadex(0, 0, this->threadFunc, this, 0, 0);
-	//SetThreadPriority(this->thread, THREAD_PRIORITY_TIME_CRITICAL);
+	SetThreadPriority(this->thread, THREAD_PRIORITY_TIME_CRITICAL);
 	this->beginEvent = CreateEvent(
 		NULL,               // default security attributes
 		FALSE,               // manual-reset event

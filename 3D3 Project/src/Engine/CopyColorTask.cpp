@@ -10,7 +10,7 @@ CopyColorTask::~CopyColorTask()
 {
 }
 
-extern D3D12::D3D12Timer timer;
+extern D3D12TimerCopy timerCopy;
 void CopyColorTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
@@ -20,8 +20,8 @@ void CopyColorTask::Execute()
 	commandList->Reset(commandAllocator, NULL);
 
 	// Start timestamp
-	UINT timer_index = 2;
-	//timer.start(commandList, timer_index);
+	UINT timer_index = 0;
+	timerCopy.start(commandList, timer_index);
 	
 	static float r = 0.0f;
 	static float g = 0.0f;
@@ -57,8 +57,8 @@ void CopyColorTask::Execute()
 		D3D12_RESOURCE_STATE_COMMON));
 
 	// End timestamp
-	//timer.stop(commandList, timer_index);
-	//timer.resolveQueryToCPU(commandList, timer_index);
+	timerCopy.stop(commandList, timer_index);
+	timerCopy.resolveQueryToCPU(commandList, timer_index);
 
 	commandList->Close();
 }

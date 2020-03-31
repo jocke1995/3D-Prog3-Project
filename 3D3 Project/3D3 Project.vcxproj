@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\D3D12TimerCopy.cpp" />
     <ClCompile Include="src\Minotaur.cpp" />
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
     <ClCompile Include="src\Engine\ComputeTask.cpp" />
@@ -216,6 +217,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\D3D12TimerCopy.h" />
     <ClInclude Include="src\Minotaur.h" />
     <ClInclude Include="src\Engine\CommandInterface.h" />
     <ClInclude Include="src\Engine\ComputeTask.h" />

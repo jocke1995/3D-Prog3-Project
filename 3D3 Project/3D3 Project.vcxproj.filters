@@ -137,6 +137,9 @@
     <ClCompile Include="src\Minotaur.cpp">
       <Filter>Objects\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\D3D12TimerCopy.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -237,6 +240,9 @@
     </ClInclude>
     <ClInclude Include="src\Minotaur.h">
       <Filter>Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\D3D12TimerCopy.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

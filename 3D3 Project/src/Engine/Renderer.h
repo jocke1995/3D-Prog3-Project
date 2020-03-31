@@ -6,7 +6,6 @@
 #include "SwapChain.h"
 
 #include "ThreadPool.h"
-#include "D3D12Timer.h"
 
 // Graphics
 #include "ForwardRenderTask.h"
@@ -37,6 +36,8 @@ public:
 
 	ThreadPool* GetThreadPool();
 private:
+	unsigned int frameCounter = 0;
+
 	// Device
 	ID3D12Device5* device5 = nullptr;
 	bool CreateDevice();

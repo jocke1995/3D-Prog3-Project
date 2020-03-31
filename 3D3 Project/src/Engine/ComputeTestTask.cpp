@@ -19,8 +19,8 @@ void ComputeTestTask::Execute()
 	commandList->Reset(commandAllocator, NULL);
 
 	// Start timestamp
-	UINT timer_index = 3;
-	//timer.start(commandList, timer_index);
+	UINT timer_index = 0;
+	timer.start(commandList, timer_index);
 	
 	commandList->SetComputeRootSignature(this->rootSig);
 
@@ -33,8 +33,8 @@ void ComputeTestTask::Execute()
 	commandList->Dispatch(1, 1, 1);
 
 	// End timestamp
-	//timer.stop(commandList, timer_index);
-	//timer.resolveQueryToCPU(commandList, timer_index);
+	timer.stop(commandList, timer_index);
+	timer.resolveQueryToCPU(commandList, timer_index);
 
 	commandList->Close();
 }
