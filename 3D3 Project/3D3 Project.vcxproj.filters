@@ -5,26 +5,261 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{92b7fb5c-53d1-45ff-af0e-3e47d5421f89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{4952c56a-9998-41d8-a97e-354c192c83e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Threads">
+      <UniqueIdentifier>{287876e3-3183-4335-abb8-5c2455dcecdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks">
+      <UniqueIdentifier>{a5e3d336-3a5d-4d14-b602-f4d8412b751d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks\Copy">
+      <UniqueIdentifier>{6068a1ae-ae4c-4a4c-b5f7-d1f8dee4cb5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks\Render">
+      <UniqueIdentifier>{c1028742-f59c-48d8-9ac6-9214956979f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks\Compute">
+      <UniqueIdentifier>{88f51c30-f521-43e8-9045-f427c090d28d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Engine">
+      <UniqueIdentifier>{ed7bca7c-117b-4a58-930f-d2d9f236bf99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Game">
+      <UniqueIdentifier>{abe19655-faaa-426a-aa5d-ed53cae43d99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DepthBuffer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DescriptorHeap.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\PipelineState.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTarget.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Resource.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RootSignature.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Shader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\SwapChain.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Transform.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssetLoader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\D3D12Timer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Thread.cpp">
+      <Filter>Engine\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ThreadPool.cpp">
+      <Filter>Engine\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Task.cpp">
+      <Filter>Engine\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\CommandInterface.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DX12Task.cpp">
+      <Filter>Engine\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\CopyTask.cpp">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\CopyColorTask.cpp">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ComputeTask.cpp">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ComputeTestTask.cpp">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ForwardRenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\BlendRenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Mesh.cpp">
+      <Filter>Objects\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Object.cpp">
+      <Filter>Objects\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Minotaur.cpp">
+      <Filter>Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\D3D12TimerCopy.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Window.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Engine\ConstantBuffer.h">
+      <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\d3dx12.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DepthBuffer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DescriptorHeap.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\PipelineState.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTarget.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Resource.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RootSignature.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Shader.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\stdafx.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\structs.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\SwapChain.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Transform.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AssetLoader.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\D3D12Timer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Thread.h">
+      <Filter>Engine\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ThreadPool.h">
+      <Filter>Engine\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Task.h">
+      <Filter>Engine\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CommandInterface.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DX12Task.h">
+      <Filter>Engine\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CopyTask.h">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CopyColorTask.h">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ComputeTask.h">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ComputeTestTask.h">
+      <Filter>Engine\Tasks\Compute</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ForwardRenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\BlendRenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Mesh.h">
+      <Filter>Objects\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Object.h">
+      <Filter>Objects\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Minotaur.h">
+      <Filter>Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\D3D12TimerCopy.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\VertexShader.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ComputeTest.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
