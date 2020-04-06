@@ -318,17 +318,31 @@ void Renderer::Execute()
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
 	
-
-	/* COPY QUEUE --------------------------------------------------------------- */
 	// Fill queue with copytasks and execute them in parallell
 	for (CopyTask* copyTask : this->copyTasks)
 	{
 		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(copyTask);
+		this->threadpool->AddTask(copyTask, THREAD_FLAG::COPY);
 	}
 
-	// Wait for Threads to complete
-	this->threadpool->WaitForThreads();
+	// Fill queue with computeTasks and execute them in parallell
+	for (ComputeTask* computeTask : this->computeTasks)
+	{
+		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		this->threadpool->AddTask(computeTask, THREAD_FLAG::COMPUTE);
+	}
+
+	// Fill queue with rendertasks and execute them in parallell
+	for (RenderTask* renderTask : this->renderTasks)
+	{
+		renderTask->SetBackBufferIndex(backBufferIndex);
+		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		this->threadpool->AddTask(renderTask, THREAD_FLAG::DIRECT);
+	}
+
+	/* COPY QUEUE --------------------------------------------------------------- */
+	// Wait for CopyTasks to complete
+	this->threadpool->WaitForThreads(THREAD_FLAG::COPY);
 
 	// Execute copy tasks
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
@@ -338,20 +352,11 @@ void Renderer::Execute()
 	UINT64 copyFenceValue = this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
 	this->fenceFrameValue++;
-
 	/* --------------------------------------------------------------- */
 
-
-	/* COMPUTE QUEUE --------------------------------------------------------------- */ 
-
-	// Fill queue with computeTasks and execute them in parallell
-	for (ComputeTask* computeTask : this->computeTasks)
-	{
-		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(computeTask);
-	}
-
-	this->threadpool->WaitForThreads();
+	/* COMPUTE QUEUE --------------------------------------------------------------- */
+	// Wait for ComputeTasks to complete
+	this->threadpool->WaitForThreads(THREAD_FLAG::COMPUTE);
 
 	// Wait for copyTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
@@ -368,16 +373,8 @@ void Renderer::Execute()
 	/* --------------------------------------------------------------- */
 
 	/* RENDER QUEUE --------------------------------------------------------------- */
-	// Fill queue with rendertasks and execute them in parallell
-	for (RenderTask* renderTask : this->renderTasks)
-	{
-		renderTask->SetBackBufferIndex(backBufferIndex);
-		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(renderTask);
-	}
-
-	// Wait for Threads to complete
-	this->threadpool->WaitForThreads();
+	// Wait for DirectTasks to complete
+	this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
 
 	UINT64 queueFreq;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->GetTimestampFrequency(&queueFreq);
@@ -615,7 +612,7 @@ void Renderer::CreateFences()
 void Renderer::WaitForFrame()
 {
 	const UINT64 oldFenceValue = this->fenceFrameValue;
-	const UINT64 newFenceValue = oldFenceValue + 1;
+	const UINT64 newFenceValue = oldFenceValue + 1; // 4
 	this->fenceFrameValue++;
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);

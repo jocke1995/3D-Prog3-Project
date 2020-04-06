@@ -11,7 +11,7 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 			threadInstance->beginEvent, // event handle
 			INFINITE);    // indefinite wait
 
-		// ------------------- Critical region -------------------
+		// ------------------- Critical region 1-------------------
 		threadInstance->mutex.lock();
 
 		if (!threadInstance->taskQueue.empty())
@@ -24,14 +24,18 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 
 		Task* task = threadInstance->task;
 		threadInstance->mutex.unlock();
+		// ------------------- Critical region 1-------------------
+
 		// Safetycheck if the thread has a task assigned
 		if (task != nullptr)
 		{
 			task->Execute();
 
+			// ------------------- Critical region 2-------------------
 			threadInstance->mutex.lock();
 			threadInstance->task = nullptr;
 			threadInstance->mutex.unlock();
+			// ------------------- Critical region 2-------------------
 		}
 		
 	}
@@ -69,8 +73,13 @@ void Thread::ExitThread()
 	this->isRunning = false;
 }
 
-void Thread::AddTask(Task* task)
+void Thread::AddTask(Task* task, unsigned int taskFlag)
 {
+	// Specify the type of task
+	this->taskFlag = taskFlag;
+	this->taskFlag |= THREAD_FLAG::ALL;
+	
+	// Add the task to the thread and start executing
 	this->mutex.lock();
 	this->taskQueue.push(task);
 	if (!SetEvent(this->beginEvent))
@@ -83,4 +92,9 @@ void Thread::AddTask(Task* task)
 bool Thread::IsQueueEmpty()
 {
 	return this->taskQueue.empty();
+}
+
+unsigned int Thread::GetTaskFlag()
+{
+	return this->taskFlag;
 }

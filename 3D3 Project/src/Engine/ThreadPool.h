@@ -8,9 +8,9 @@ public:
 	ThreadPool(int nrOfThreads);
 	~ThreadPool();
 
-	void WaitForThreads();
+	void WaitForThreads(unsigned int flag);
 
-	void AddTask(Task* task);
+	void AddTask(Task* task, unsigned int flag);
 
 	void ExitThreads();
 private:
@@ -19,7 +19,7 @@ private:
 	int nrOfThreads;
 	unsigned int threadCounter = 0;
 
-	bool IsAllFinished();
-	bool IsThreadsQueuesEmpty();
+	bool IsAllFinished(unsigned int flag);
+	bool IsThreadsQueuesEmpty(unsigned int flag);
 };
 

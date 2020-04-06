@@ -15,7 +15,7 @@ ThreadPool::~ThreadPool()
 		delete thread;
 }
 
-void ThreadPool::WaitForThreads()
+void ThreadPool::WaitForThreads(unsigned int flag)
 {
 	// Two conditios to wait.
 	// 1. Until each taskQueue of each thread is empty
@@ -27,19 +27,19 @@ void ThreadPool::WaitForThreads()
 	bool isEmpty = false;
 	while (true)
 	{
-		isEmpty = this->IsThreadsQueuesEmpty();
+		isEmpty = this->IsThreadsQueuesEmpty(flag);
 
-		if (isEmpty && this->IsAllFinished())
+		if (isEmpty && this->IsAllFinished(flag))
 		{
 			break;
 		}
 	}
 }
 
-void ThreadPool::AddTask(Task* task)
+void ThreadPool::AddTask(Task* task, unsigned int flag)
 {
 	// Adds a task to a thread
-	this->threads.at(this->threadCounter % this->nrOfThreads)->AddTask(task);
+	this->threads.at(this->threadCounter % this->nrOfThreads)->AddTask(task, flag);
 	this->threadCounter++;
 }
 
@@ -51,25 +51,32 @@ void ThreadPool::ExitThreads()
 	}
 }
 
-bool ThreadPool::IsAllFinished()
+bool ThreadPool::IsAllFinished(unsigned int flag)
 {
 	for (Thread* thread : this->threads)
 	{
-		if (thread->IsTaskNullptr() == false)
+		if (thread->GetTaskFlag() & flag)
 		{
-			return false;
+			if (thread->IsTaskNullptr() == false)
+			{
+				return false;
+			}
 		}
+		
 	}
 	return true;
 }
 
-bool ThreadPool::IsThreadsQueuesEmpty()
+bool ThreadPool::IsThreadsQueuesEmpty(unsigned int flag)
 {
 	for (auto thread : this->threads)
 	{
-		if (thread->IsQueueEmpty() == false)
+		if (thread->GetTaskFlag() & flag)
 		{
-			return false;
+			if (thread->IsQueueEmpty() == false)
+			{
+				return false;
+			}
 		}
 	}
 	return true;

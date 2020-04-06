@@ -2,6 +2,15 @@
 
 #include "Task.h"
 
+enum THREAD_FLAG
+{
+	COPY = 0x01,
+	COMPUTE = 0x02,
+	DIRECT = 0x04,
+	ALL = 0x08
+	// etc..
+};
+
 class Thread
 {
 public:
@@ -10,10 +19,11 @@ public:
 
 	bool IsTaskNullptr();
 
-	void AddTask(Task* task);
+	void AddTask(Task* task, unsigned int taskFlag);
 	void ExitThread();
 
 	bool IsQueueEmpty();
+	unsigned int GetTaskFlag();
 private:
 	HANDLE thread;
 	HANDLE beginEvent;
@@ -24,6 +34,7 @@ private:
 	std::mutex mutex;
 
 	Task* task= nullptr;
+	unsigned int taskFlag = 0;
 
 	bool isRunning = true;
 };

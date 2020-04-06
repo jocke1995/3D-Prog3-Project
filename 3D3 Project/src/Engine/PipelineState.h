@@ -21,6 +21,8 @@ private:
 	LPCTSTR name;
 	ID3D12PipelineState* PSO = nullptr;
 
+	void CreateShader(LPCTSTR fileName, ShaderType type);
+
 	// For Graphics
 	Shader* VS = nullptr;
 	Shader* PS = nullptr;
@@ -30,7 +32,6 @@ private:
 	Shader* CS = nullptr;
 	D3D12_COMPUTE_PIPELINE_STATE_DESC cpsd = {};
 
-	void CreateShader(LPCTSTR fileName, ShaderType type);
 };
 
 #endif
