@@ -6,6 +6,7 @@
 D3D12::D3D12Timer timer;
 D3D12TimerCopy timerCopy;
 
+#include "../Minotaur.h"
 Renderer::Renderer()
 {
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
@@ -299,6 +300,82 @@ void Renderer::AddObjectToTasks(Object* object)
 	this->objectsToDraw.push_back(object);
 }
 
+void Renderer::UpdateObjectsToDraw()
+{
+	for (RenderTask* rendertask : this->renderTasks)
+	{
+		rendertask->UpdateObjectsToDraw(&this->objectsToDraw);
+	}
+}
+
+int Compare(const void* a, const void* b)
+{
+	if (*(double*)a > * (double*)b)
+		return 1;
+	else if (*(double*)a < *(double*)b)
+		return -1;
+	else
+		return 0;
+}
+
+void Renderer::SortObjectsByDistance(XMFLOAT3 camPos)
+{	
+	struct DistObj
+	{
+		double distance;
+		Object* obj;
+	};
+	
+	int nrOfObjects = this->objectsToDraw.size();
+
+	DistObj* distObjArr = new DistObj[nrOfObjects];
+
+	// Get all the distances of each objects and store them by ID and distance
+	for (int i = 0; i < nrOfObjects; i++)
+	{
+		XMFLOAT3 objectPos = this->objectsToDraw.at(i)->GetTransform()->GetPosition();
+
+		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
+								pow(camPos.y - objectPos.y, 2) +
+								pow(camPos.z - objectPos.z, 2));
+
+		// Save the object alongside its distance to the camera
+		distObjArr[i].distance = distance;
+		distObjArr[i].obj = this->objectsToDraw.at(i);
+	}
+	
+	// InsertionSort (because its best case is O(N), 
+	// and since this is sorted every frame this is a good choice of sorting algorithm
+	DistObj distObjTemp = {};
+
+	// Insertion Sort
+	int j = 0;
+	for (int i = 1; i < nrOfObjects; i++)
+	{
+		j = i;
+		while (j > 0 && (distObjArr[j - 1].distance > distObjArr[j].distance))
+		{
+			// Swap
+			distObjTemp = distObjArr[j - 1];
+			distObjArr[j - 1] = distObjArr[j];
+			distObjArr[j] = distObjTemp;
+			j--;
+		}
+	}
+
+	// Fill the vector with sorted array
+	this->objectsToDraw.clear();
+	for (int i = 0; i < nrOfObjects; i++)
+	{
+		this->objectsToDraw.push_back(distObjArr[i].obj);
+	}
+
+	// Free memory
+	delete distObjArr;
+}
+
+
+
 void Renderer::SetCamera(Camera* camera)
 {
 	for (auto renderTask : this->renderTasks)
@@ -307,8 +384,6 @@ void Renderer::SetCamera(Camera* camera)
 
 void Renderer::Execute()
 {
-	this->UpdateObjectsToDraw();
-
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
@@ -571,14 +646,6 @@ void Renderer::CreateDepthBuffer()
 void Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
-}
-
-void Renderer::UpdateObjectsToDraw()
-{
-	for (RenderTask* rendertask : this->renderTasks)
-	{
-		rendertask->UpdateObjectsToDraw(&this->objectsToDraw);
-	}
 }
 
 void Renderer::InitDescriptorHeap()

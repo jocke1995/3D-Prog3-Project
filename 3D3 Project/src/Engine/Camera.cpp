@@ -46,25 +46,33 @@ void Camera::SetPosition(float x, float y, float z)
 	this->eyeVector = XMVectorSet(x, y, z, 1.0f);
 }
 
-void Camera::SetRotation(XMFLOAT3 axis, float angle)
-{
-}
+// void Camera::SetRotation(XMFLOAT3 axis, float angle)
+// {
+// }
 
-void Camera::RotateX(float angle)
-{
-}
-
-void Camera::RotateY(float angle)
-{
-}
-
-void Camera::RotateZ(float angle)
-{
-}
+// void Camera::RotateX(float angle)
+// {
+// }
+// 
+// void Camera::RotateY(float angle)
+// {
+// }
+// 
+// void Camera::RotateZ(float angle)
+// {
+// }
 
 XMFLOAT4X4* Camera::GetViewProjMatrix()
 {
 	return &this->viewProjMat;
+}
+
+XMFLOAT3 Camera::GetPosition()
+{
+	XMFLOAT3 DXfloat3;
+	XMStoreFloat3(&DXfloat3, this->eyeVector);
+
+	return DXfloat3;
 }
 
 void Camera::UpdateCamera()
@@ -80,6 +88,7 @@ void Camera::UpdateCamera()
 	RotateYTempMatrix = XMMatrixRotationY(camYaw);
 
 	XMVECTOR defaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
+	
 	this->upVector = XMVector3TransformCoord(this->upVector, RotateYTempMatrix);
 	this->atVector = XMVector3TransformCoord(this->atVector, RotateYTempMatrix);
 

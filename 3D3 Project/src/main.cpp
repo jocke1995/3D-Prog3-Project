@@ -33,14 +33,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     UINT drawOptionsBlend = DrawOptions::Blend;
 
     // Unique For each object
-    Object* mino1 = new Minotaur(cubeMesh, drawOptionsFR);
-    mino1->GetTransform()->SetPosition(-2, 0, 10);
+    Object* mino1 = new Minotaur(cubeMesh, drawOptionsBlend, 1);
+    mino1->GetTransform()->SetPosition(0, 0, 0);
 
-    Object* mino2 = new Minotaur(cubeMesh, drawOptionsBlend);
-    mino2->GetTransform()->SetPosition(2, 0, 10);
+    Object* mino2 = new Minotaur(cubeMesh, drawOptionsBlend, 2);
+    mino2->GetTransform()->SetPosition(0, 0, 10);
+
+    Object* mino3 = new Minotaur(cubeMesh, drawOptionsBlend, 3);
+    mino3->GetTransform()->SetPosition(0, 0, 20);
+
+    Object* mino4 = new Minotaur(cubeMesh, drawOptionsBlend, 4);
+    mino4->GetTransform()->SetPosition(0, 0, 30);
+
+    Object* mino5 = new Minotaur(cubeMesh, drawOptionsBlend, 5);
+    mino5->GetTransform()->SetPosition(0, 0, 40);
 
     renderer->AddObjectToTasks(mino1);
     renderer->AddObjectToTasks(mino2);
+    renderer->AddObjectToTasks(mino3);
+    renderer->AddObjectToTasks(mino4);
+    renderer->AddObjectToTasks(mino5);
+    renderer->UpdateObjectsToDraw();
 
     // GAMELOOP
     auto time_now = start;
@@ -68,9 +81,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         /* ------ Update ------ */
         mino1->Update(dt);
         mino2->Update(dt);
+        mino3->Update(dt);
+        mino4->Update(dt);
+        mino5->Update(dt);
         
         camera->Update(dt);
 
+        renderer->SortObjectsByDistance(camera->GetPosition());
+        renderer->UpdateObjectsToDraw();
         /* ------ Draw   ------ */
         renderer->Execute();
     }   
@@ -78,6 +96,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // ---------------------------- SafeExit the program ----------------------------
     delete mino1;
     delete mino2;
+    delete mino3;
+    delete mino4;
+    delete mino5;
 
     delete camera;
     delete window;

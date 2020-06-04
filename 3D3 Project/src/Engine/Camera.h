@@ -18,12 +18,13 @@ public:
 
     void SetPosition(float x, float y, float z);
 
-    void SetRotation(XMFLOAT3 axis, float angle);
-    void RotateX(float angle);
-    void RotateY(float angle);
-    void RotateZ(float angle);
+    // void SetRotation(XMFLOAT3 axis, float angle);
+    // void RotateX(float angle);
+    // void RotateY(float angle);
+    // void RotateZ(float angle);
 
     XMFLOAT4X4* GetViewProjMatrix();
+    XMFLOAT3 GetPosition();
 
 private:
     std::wstring name;

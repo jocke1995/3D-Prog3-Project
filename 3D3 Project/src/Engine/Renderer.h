@@ -4,7 +4,6 @@
 #include "RootSignature.h"
 #include "RenderTask.h"
 #include "SwapChain.h"
-
 #include "ThreadPool.h"
 
 // Graphics
@@ -29,6 +28,9 @@ public:
 	Mesh* CreateMesh(std::wstring path);
 
 	void AddObjectToTasks(Object* object);
+	void UpdateObjectsToDraw();
+
+	void SortObjectsByDistance(XMFLOAT3 camPos);
 
 	void SetCamera(Camera* camera);
 
@@ -72,7 +74,6 @@ private:
 
 	// Objects to draw, a single vector holding all objects of different drawOptions
 	std::vector<Object*> objectsToDraw;
-	void UpdateObjectsToDraw();
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];

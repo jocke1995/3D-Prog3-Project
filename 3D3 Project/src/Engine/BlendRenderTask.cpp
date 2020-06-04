@@ -1,5 +1,7 @@
 #include "BlendRenderTask.h"
 
+#include "../Minotaur.h"
+
 BlendRenderTask::BlendRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
 {
@@ -55,13 +57,14 @@ void BlendRenderTask::Execute()
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
-	for (auto object : this->objects)
+	// Draw from opposite order from the sorted array
+	for(int i = this->objects.size() - 1; i >= 0; i--)
 	{
 		// Check if the object is to be drawn in Blend
-		if (object->GetDrawFlag() & DrawOptions::Blend)
+		if (this->objects.at(i)->GetDrawFlag() & DrawOptions::Blend)
 		{
-			size_t num_vertices = object->GetMesh()->GetNumVertices();
-			Transform* transform = object->GetTransform();
+			size_t num_vertices = this->objects.at(i)->GetMesh()->GetNumVertices();
+			Transform* transform = this->objects.at(i)->GetTransform();
 
 			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 			XMFLOAT4X4 WVPTransposed;
@@ -74,7 +77,7 @@ void BlendRenderTask::Execute()
 			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
 			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-			SlotInfo* info = object->GetSlotInfo();
+			SlotInfo* info = this->objects.at(i)->GetSlotInfo();
 
 			// Create a CB_PER_OBJECT struct
 			CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
