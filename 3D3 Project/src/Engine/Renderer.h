@@ -70,6 +70,10 @@ private:
 	std::vector<CopyTask*>    copyTasks;
 	std::vector<ComputeTask*> computeTasks;
 
+	// Objects to draw, a single vector holding all objects of different drawOptions
+	std::vector<Object*> objectsToDraw;
+	void UpdateObjectsToDraw();
+
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> computeCommandLists[NUM_SWAP_BUFFERS];

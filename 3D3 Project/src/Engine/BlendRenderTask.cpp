@@ -57,33 +57,36 @@ void BlendRenderTask::Execute()
 
 	for (auto object : this->objects)
 	{
-
-		size_t num_vertices = object->GetMesh()->GetNumVertices();
-		Transform* transform = object->GetTransform();
-
-		XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-		XMFLOAT4X4 WVPTransposed;
-		XMFLOAT4X4 wTransposed;
-
-		XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
-		XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
-
-		// Store and transpose the matrices for shader
-		XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
-		XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
-
-		SlotInfo* info = object->GetSlotInfo();
-
-		// Create a CB_PER_OBJECT struct
-		CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
-
-		commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
-
-		// Draw each object twice with different PSO 
-		for (int i = 0; i < 2; i++)
+		// Check if the object is to be drawn in Blend
+		if (object->GetDrawFlag() & DrawOptions::Blend)
 		{
-			commandList->SetPipelineState(this->pipelineStates[i]->GetPSO());
-			commandList->DrawInstanced(num_vertices, 1, 0, 0);
+			size_t num_vertices = object->GetMesh()->GetNumVertices();
+			Transform* transform = object->GetTransform();
+
+			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+			XMFLOAT4X4 WVPTransposed;
+			XMFLOAT4X4 wTransposed;
+
+			XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
+			XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
+
+			// Store and transpose the matrices for shader
+			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
+			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
+
+			SlotInfo* info = object->GetSlotInfo();
+
+			// Create a CB_PER_OBJECT struct
+			CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
+
+			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
+
+			// Draw each object twice with different PSO 
+			for (int i = 0; i < 2; i++)
+			{
+				commandList->SetPipelineState(this->pipelineStates[i]->GetPSO());
+				commandList->DrawInstanced(num_vertices, 1, 0, 0);
+			}
 		}
 	}
 	

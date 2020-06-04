@@ -65,31 +65,35 @@ void FowardRenderTask::Execute()
 
 	for (auto object : this->objects)
 	{
-		size_t num_vertices = object->GetMesh()->GetNumVertices();
-		Transform* transform = object->GetTransform();
+		// Check if the object is to be drawn in forwardRendering
+		if (object->GetDrawFlag() & DrawOptions::ForwardRendering)
+		{
+			size_t num_vertices = object->GetMesh()->GetNumVertices();
+			Transform* transform = object->GetTransform();
 
-		XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-		XMFLOAT4X4 WVPTransposed;
-		XMFLOAT4X4 wTransposed;
+			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+			XMFLOAT4X4 WVPTransposed;
+			XMFLOAT4X4 wTransposed;
 
-		XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
-		XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
+			XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
+			XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
 
-		// Store and transpose the matrices for shader
-		XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
-		XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
+			// Store and transpose the matrices for shader
+			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
+			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-		SlotInfo* info = object->GetSlotInfo();
+			SlotInfo* info = object->GetSlotInfo();
 
-		// Create a CB_PER_OBJECT struct
-		CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
+			// Create a CB_PER_OBJECT struct
+			CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
 
-		commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
+			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
-		// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
-		commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
+			// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
+			commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
 
-		commandList->DrawInstanced(num_vertices, 1, 0, 0);
+			commandList->DrawInstanced(num_vertices, 1, 0, 0);
+		}
 	}
 
 	// Ändra state på front/backbuffer

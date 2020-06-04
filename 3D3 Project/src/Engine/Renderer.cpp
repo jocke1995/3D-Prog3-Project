@@ -296,14 +296,7 @@ Mesh* Renderer::CreateMesh(std::wstring path)
 // Add the object to each rendertask desired for the object.
 void Renderer::AddObjectToTasks(Object* object)
 {
-	// using bitwise-AND to check what object to draw in what task
-	UINT drawOptions = object->GetDrawFlag();
-
-	if (drawOptions & DrawOptions::ForwardRendering)
-		this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER]->AddObject(object);
-
-	if (drawOptions & DrawOptions::Blend)
-		this->renderTasks[RENDER_TASK_TYPE::BLEND]->AddObject(object);
+	this->objectsToDraw.push_back(object);
 }
 
 void Renderer::SetCamera(Camera* camera)
@@ -314,6 +307,8 @@ void Renderer::SetCamera(Camera* camera)
 
 void Renderer::Execute()
 {
+	this->UpdateObjectsToDraw();
+
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
@@ -576,6 +571,14 @@ void Renderer::CreateDepthBuffer()
 void Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
+}
+
+void Renderer::UpdateObjectsToDraw()
+{
+	for (RenderTask* rendertask : this->renderTasks)
+	{
+		rendertask->UpdateObjectsToDraw(&this->objectsToDraw);
+	}
 }
 
 void Renderer::InitDescriptorHeap()

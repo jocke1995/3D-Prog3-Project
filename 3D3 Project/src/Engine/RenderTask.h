@@ -26,7 +26,8 @@ public:
 	PipelineState* GetPipelineState(unsigned int index);
 
 	void AddRenderTarget(RenderTarget* renderTarget);
-	void AddObject(Object* object);
+	//void AddObject(Object* object);
+	void UpdateObjectsToDraw(std::vector<Object*> *objectsToDraw);
 
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);
