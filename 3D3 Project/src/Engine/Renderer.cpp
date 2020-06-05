@@ -344,12 +344,10 @@ void Renderer::SortObjectsByDistance(XMFLOAT3 camPos)
 		distObjArr[i].obj = this->objectsToDraw.at(i);
 	}
 	
-	// InsertionSort (because its best case is O(N), 
+	// InsertionSort (because its best case is O(N)), 
 	// and since this is sorted every frame this is a good choice of sorting algorithm
-	DistObj distObjTemp = {};
-
-	// Insertion Sort
 	int j = 0;
+	DistObj distObjTemp = {};
 	for (int i = 1; i < nrOfObjects; i++)
 	{
 		j = i;

@@ -7,7 +7,7 @@
 class Minotaur : public Object
 {
 public:
-    Minotaur(Mesh* mesh, unsigned int drawFlag, int id);
+    Minotaur(Mesh* mesh, unsigned int drawFlag);
     ~Minotaur();
 private:
     void Init();

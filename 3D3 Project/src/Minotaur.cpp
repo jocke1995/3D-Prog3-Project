@@ -1,8 +1,7 @@
 #include "Minotaur.h"
 
-Minotaur::Minotaur(Mesh* mesh, unsigned int drawFlag, int id) : Object(mesh, drawFlag)
+Minotaur::Minotaur(Mesh* mesh, unsigned int drawFlag) : Object(mesh, drawFlag)
 {
-	this->id = id;
 }
 
 Minotaur::~Minotaur()

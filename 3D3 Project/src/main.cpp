@@ -33,19 +33,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     UINT drawOptionsBlend = DrawOptions::Blend;
 
     // Unique For each object
-    Object* mino1 = new Minotaur(cubeMesh, drawOptionsBlend, 1);
+    Object* mino1 = new Minotaur(cubeMesh, drawOptionsBlend);
     mino1->GetTransform()->SetPosition(0, 0, 0);
 
-    Object* mino2 = new Minotaur(cubeMesh, drawOptionsBlend, 2);
+    Object* mino2 = new Minotaur(cubeMesh, drawOptionsBlend);
     mino2->GetTransform()->SetPosition(0, 0, 10);
 
-    Object* mino3 = new Minotaur(cubeMesh, drawOptionsBlend, 3);
+    Object* mino3 = new Minotaur(cubeMesh, drawOptionsBlend);
     mino3->GetTransform()->SetPosition(0, 0, 20);
 
-    Object* mino4 = new Minotaur(cubeMesh, drawOptionsBlend, 4);
+    Object* mino4 = new Minotaur(cubeMesh, drawOptionsBlend);
     mino4->GetTransform()->SetPosition(0, 0, 30);
 
-    Object* mino5 = new Minotaur(cubeMesh, drawOptionsBlend, 5);
+    Object* mino5 = new Minotaur(cubeMesh, drawOptionsBlend);
     mino5->GetTransform()->SetPosition(0, 0, 40);
 
     renderer->AddObjectToTasks(mino1);
