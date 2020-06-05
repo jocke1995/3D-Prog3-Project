@@ -6,7 +6,6 @@
 D3D12::D3D12Timer timer;
 D3D12TimerCopy timerCopy;
 
-#include "../Minotaur.h"
 Renderer::Renderer()
 {
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);

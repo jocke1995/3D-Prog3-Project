@@ -1,8 +1,8 @@
 #ifndef ASSETLOADER_H
 #define ASSETLOADER_H
 
-#include "Engine/Mesh.h"
-#include "Engine/Shader.h"
+#include "Mesh.h"
+#include "Shader.h"
 
 class AssetLoader
 {

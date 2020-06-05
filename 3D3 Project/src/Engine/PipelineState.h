@@ -3,7 +3,7 @@
 
 #include "Shader.h"
 #include "RootSignature.h"
-#include "../AssetLoader.h"
+#include "AssetLoader.h"
 
 class PipelineState
 {

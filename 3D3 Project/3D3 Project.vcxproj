@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\D3D12TimerCopy.cpp" />
     <ClCompile Include="src\Minotaur.cpp" />
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
@@ -185,7 +186,6 @@
     <ClCompile Include="src\Engine\CopyColorTask.cpp" />
     <ClCompile Include="src\Engine\CopyTask.cpp" />
     <ClCompile Include="src\Engine\D3D12Timer.cpp" />
-    <ClCompile Include="src\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\Camera.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
     <ClCompile Include="src\Engine\DepthBuffer.cpp" />
@@ -217,6 +217,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\AssetLoader.h" />
     <ClInclude Include="src\Engine\D3D12TimerCopy.h" />
     <ClInclude Include="src\Minotaur.h" />
     <ClInclude Include="src\Engine\CommandInterface.h" />
@@ -225,7 +226,6 @@
     <ClInclude Include="src\Engine\CopyColorTask.h" />
     <ClInclude Include="src\Engine\CopyTask.h" />
     <ClInclude Include="src\Engine\D3D12Timer.h" />
-    <ClInclude Include="src\AssetLoader.h" />
     <ClInclude Include="src\Engine\Camera.h" />
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
     <ClInclude Include="src\Engine\d3dx12.h" />
