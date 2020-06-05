@@ -2,8 +2,11 @@
 #include "Engine/Camera.h"
 #include "Window.h"
 
-// Objects
-#include "Minotaur.h"
+// Problem med precompiled header eller liknande.. Intellisense problemet
+#include "Engine/stdafx.h"
+
+#include "Game/Scene.h"
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
@@ -25,35 +28,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Camera* camera = new Camera(L"default_cam", hInstance, *window->GetHwnd());
     renderer->SetCamera(camera);
 
-    // The same mesh can be used for multiple objects
-    Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
+    // The same mesh can be used for multiple Entities
+    Mesh* minoMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
 
     // DrawFlags
     UINT drawOptionsFR = DrawOptions::ForwardRendering; // | DrawOptions::Shadow;
     UINT drawOptionsBlend = DrawOptions::Blend;
 
-    // Unique For each object
-    Object* mino1 = new Minotaur(cubeMesh, drawOptionsBlend);
-    mino1->GetTransform()->SetPosition(0, 0, 0);
+    // --------------------------------------------------------------------------------
 
-    Object* mino2 = new Minotaur(cubeMesh, drawOptionsBlend);
-    mino2->GetTransform()->SetPosition(0, 0, 10);
+    // Create Scene
+    Scene* scene1 = new Scene();
+    
+    // Add Entity to Scene
+    scene1->AddEntity("mino1");
+    
+    // Add Components to Entity
+    scene1->GetEntity("mino1")->AddComponent<HealthComponent>();
+    scene1->GetEntity("mino1")->AddComponent<RenderComponent>();
 
-    Object* mino3 = new Minotaur(cubeMesh, drawOptionsBlend);
-    mino3->GetTransform()->SetPosition(0, 0, 20);
+    // Set the components
+    RenderComponent* rc = scene1->GetEntity("mino1")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.05);
 
-    Object* mino4 = new Minotaur(cubeMesh, drawOptionsBlend);
-    mino4->GetTransform()->SetPosition(0, 0, 30);
+    renderer->SetSceneToDraw(scene1);
 
-    Object* mino5 = new Minotaur(cubeMesh, drawOptionsBlend);
-    mino5->GetTransform()->SetPosition(0, 0, 40);
-
-    renderer->AddObjectToTasks(mino1);
-    renderer->AddObjectToTasks(mino2);
-    renderer->AddObjectToTasks(mino3);
-    renderer->AddObjectToTasks(mino4);
-    renderer->AddObjectToTasks(mino5);
-    renderer->UpdateObjectsToDraw();
+    // --------------------------------------------------------------------------------
 
     // GAMELOOP
     auto time_now = start;
@@ -79,26 +81,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         }
 
         /* ------ Update ------ */
-        mino1->Update(dt);
-        mino2->Update(dt);
-        mino3->Update(dt);
-        mino4->Update(dt);
-        mino5->Update(dt);
+        scene1->UpdateEntities();
         
         camera->Update(dt);
 
-        renderer->SortObjectsByDistance(camera->GetPosition());
-        renderer->UpdateObjectsToDraw();
+        //renderer->SortObjectsByDistance(camera->GetPosition());
+        //renderer->UpdateObjectsToDraw();
         /* ------ Draw   ------ */
         renderer->Execute();
     }   
 
     // ---------------------------- SafeExit the program ----------------------------
-    delete mino1;
-    delete mino2;
-    delete mino3;
-    delete mino4;
-    delete mino5;
+
+    delete scene1;
 
     delete camera;
     delete window;

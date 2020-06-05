@@ -65,6 +65,15 @@ typedef union
 	struct { float u; float v; };
 } float2;
 
+enum DrawOptions
+{
+	ForwardRendering = 0x01,
+	Blend = 0x02,
+	// Shadow = 0x04,
+	// Bloom = 0x08,
+	// etc..
+};
+
 #include "structs.h"
 
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)

@@ -6,7 +6,7 @@
 #include "DepthBuffer.h"
 #include "RenderTarget.h"
 #include "Camera.h"
-#include "Object.h"
+#include "../Game/Entity.h"
 #include "PipelineState.h"
 #include "DescriptorHeap.h"
 
@@ -26,8 +26,8 @@ public:
 	PipelineState* GetPipelineState(unsigned int index);
 
 	void AddRenderTarget(RenderTarget* renderTarget);
-	//void AddObject(Object* object);
-	void UpdateObjectsToDraw(std::vector<Object*> *objectsToDraw);
+
+	void SetEntitiesToDraw(std::vector<Entity*> *entitiesToDraw);
 
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);
@@ -41,7 +41,7 @@ protected:
 	ID3D12RootSignature* rootSig = nullptr;
 	
 	std::vector<PipelineState*> pipelineStates;
-	std::vector<Object*> objects;
+	std::vector<Entity*> entities;
 	Camera* camera = nullptr;
 };
 

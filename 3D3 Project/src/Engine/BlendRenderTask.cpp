@@ -1,7 +1,5 @@
 #include "BlendRenderTask.h"
 
-#include "../Minotaur.h"
-
 BlendRenderTask::BlendRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
 	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
 {
@@ -58,13 +56,16 @@ void BlendRenderTask::Execute()
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw from opposite order from the sorted array
-	for(int i = this->objects.size() - 1; i >= 0; i--)
+	for(int i = this->entities.size() - 1; i >= 0; i--)
 	{
-		// Check if the object is to be drawn in Blend
-		if (this->objects.at(i)->GetDrawFlag() & DrawOptions::Blend)
+		// Get the renderComponent of the entity
+		RenderComponent* rc = this->entities.at(i)->GetComponent<RenderComponent>();
+
+		// Check if the Entity is to be drawn in Blend
+		if (rc->GetDrawFlag() & DrawOptions::Blend)
 		{
-			size_t num_vertices = this->objects.at(i)->GetMesh()->GetNumVertices();
-			Transform* transform = this->objects.at(i)->GetTransform();
+			size_t num_vertices = rc->GetMesh()->GetNumVertices();
+			Transform* transform = rc->GetTransform();
 
 			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 			XMFLOAT4X4 WVPTransposed;
@@ -77,20 +78,20 @@ void BlendRenderTask::Execute()
 			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
 			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-			SlotInfo* info = this->objects.at(i)->GetSlotInfo();
+			SlotInfo* info = rc->GetSlotInfo();
 
-			// Create a CB_PER_OBJECT struct
-			CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
+			// Create a CB_PER_ENTITY struct
+			CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
 
-			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
+			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
 
-			// Draw each object twice with different PSO 
+			// Draw each entity twice with different PSO 
 			for (int i = 0; i < 2; i++)
 			{
 				commandList->SetPipelineState(this->pipelineStates[i]->GetPSO());
 				commandList->DrawInstanced(num_vertices, 1, 0, 0);
 			}
-		}
+		}	
 	}
 	
 	// Ändra state på front/backbuffer

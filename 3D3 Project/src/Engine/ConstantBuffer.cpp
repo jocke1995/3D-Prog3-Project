@@ -6,7 +6,7 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, unsigned int nrEntries, CO
 	this->type = type;
 	this->nrEntries = nrEntries;
 
-	UINT cbSizeAligned = (sizeof(CB_PER_OBJECT)* nrEntries + 255) & ~255;	// 256-byte aligned CB.
+	UINT cbSizeAligned = (sizeof(CB_PER_ENTITY)* nrEntries + 255) & ~255;	// 256-byte aligned CB.
 
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -20,8 +20,8 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, unsigned int nrEntries, CO
 
 	switch (type)
 	{
-	case CONSTANT_BUFFER_TYPE::CB_PER_OBJECT_TYPE:
-		this->entrySize = sizeof(CB_PER_OBJECT);
+	case CONSTANT_BUFFER_TYPE::CB_PER_ENTITY_TYPE:
+		this->entrySize = sizeof(CB_PER_ENTITY);
 	}
 
 	resourceDesc.Width = cbSizeAligned;

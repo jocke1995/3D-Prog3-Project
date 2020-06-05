@@ -27,14 +27,9 @@ void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 	this->renderTargets.push_back(renderTarget);
 }
 
-// void RenderTask::AddObject(Object* object)
-// {
-// 	this->objects.push_back(object);
-// }
-
-void RenderTask::UpdateObjectsToDraw(std::vector<Object*> *objectsToDraw)
+void RenderTask::SetEntitiesToDraw(std::vector<Entity*> *entitiesToDraw)
 {
-	this->objects = *objectsToDraw;
+	this->entities = *entitiesToDraw;
 }
 
 void RenderTask::SetCamera(Camera* camera)

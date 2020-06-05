@@ -293,17 +293,28 @@ Mesh* Renderer::CreateMesh(std::wstring path)
 	return mesh;
 }
 
-// Add the object to each rendertask desired for the object.
-void Renderer::AddObjectToTasks(Object* object)
+void Renderer::SetSceneToDraw(Scene* scene)
 {
-	this->objectsToDraw.push_back(object);
+	std::map<std::string, Entity*> entities = *scene->GetEntities();
+	for (auto const& [entityName, entity] : entities)
+	{
+		// Only add the entities that actually should be drawn
+		RenderComponent* rc = entity->GetComponent<RenderComponent>();
+		if (rc != nullptr)
+		{
+			this->entitiesToDraw.push_back(entity);
+		}
+	}
+
+	// Set the vectors of entities in each renderTask
+	this->SetRenderTasksEntityArrays();
 }
 
-void Renderer::UpdateObjectsToDraw()
+void Renderer::SetRenderTasksEntityArrays()
 {
 	for (RenderTask* rendertask : this->renderTasks)
 	{
-		rendertask->UpdateObjectsToDraw(&this->objectsToDraw);
+		rendertask->SetEntitiesToDraw(&this->entitiesToDraw);
 	}
 }
 
@@ -317,59 +328,59 @@ int Compare(const void* a, const void* b)
 		return 0;
 }
 
-void Renderer::SortObjectsByDistance(XMFLOAT3 camPos)
-{	
-	struct DistObj
-	{
-		double distance;
-		Object* obj;
-	};
-	
-	int nrOfObjects = this->objectsToDraw.size();
-
-	DistObj* distObjArr = new DistObj[nrOfObjects];
-
-	// Get all the distances of each objects and store them by ID and distance
-	for (int i = 0; i < nrOfObjects; i++)
-	{
-		XMFLOAT3 objectPos = this->objectsToDraw.at(i)->GetTransform()->GetPosition();
-
-		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
-								pow(camPos.y - objectPos.y, 2) +
-								pow(camPos.z - objectPos.z, 2));
-
-		// Save the object alongside its distance to the camera
-		distObjArr[i].distance = distance;
-		distObjArr[i].obj = this->objectsToDraw.at(i);
-	}
-	
-	// InsertionSort (because its best case is O(N)), 
-	// and since this is sorted every frame this is a good choice of sorting algorithm
-	int j = 0;
-	DistObj distObjTemp = {};
-	for (int i = 1; i < nrOfObjects; i++)
-	{
-		j = i;
-		while (j > 0 && (distObjArr[j - 1].distance > distObjArr[j].distance))
-		{
-			// Swap
-			distObjTemp = distObjArr[j - 1];
-			distObjArr[j - 1] = distObjArr[j];
-			distObjArr[j] = distObjTemp;
-			j--;
-		}
-	}
-
-	// Fill the vector with sorted array
-	this->objectsToDraw.clear();
-	for (int i = 0; i < nrOfObjects; i++)
-	{
-		this->objectsToDraw.push_back(distObjArr[i].obj);
-	}
-
-	// Free memory
-	delete distObjArr;
-}
+//void Renderer::SortEntitiesByDistance(XMFLOAT3 camPos)
+//{	
+//	struct DistObj
+//	{
+//		double distance;
+//		Object* obj;
+//	};
+//	
+//	int nrOfObjects = this->objectsToDraw.size();
+//
+//	DistObj* distObjArr = new DistObj[nrOfObjects];
+//
+//	// Get all the distances of each objects and store them by ID and distance
+//	for (int i = 0; i < nrOfObjects; i++)
+//	{
+//		XMFLOAT3 objectPos = this->objectsToDraw.at(i)->GetTransform()->GetPosition();
+//
+//		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
+//								pow(camPos.y - objectPos.y, 2) +
+//								pow(camPos.z - objectPos.z, 2));
+//
+//		// Save the object alongside its distance to the camera
+//		distObjArr[i].distance = distance;
+//		distObjArr[i].obj = this->objectsToDraw.at(i);
+//	}
+//	
+//	// InsertionSort (because its best case is O(N)), 
+//	// and since this is sorted every frame this is a good choice of sorting algorithm
+//	int j = 0;
+//	DistObj distObjTemp = {};
+//	for (int i = 1; i < nrOfObjects; i++)
+//	{
+//		j = i;
+//		while (j > 0 && (distObjArr[j - 1].distance > distObjArr[j].distance))
+//		{
+//			// Swap
+//			distObjTemp = distObjArr[j - 1];
+//			distObjArr[j - 1] = distObjArr[j];
+//			distObjArr[j] = distObjTemp;
+//			j--;
+//		}
+//	}
+//
+//	// Fill the vector with sorted array
+//	this->objectsToDraw.clear();
+//	for (int i = 0; i < nrOfObjects; i++)
+//	{
+//		this->objectsToDraw.push_back(distObjArr[i].obj);
+//	}
+//
+//	// Free memory
+//	delete distObjArr;
+//}
 
 
 

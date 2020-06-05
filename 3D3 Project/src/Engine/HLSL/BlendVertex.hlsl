@@ -17,7 +17,7 @@ struct vertex
 
 StructuredBuffer<vertex> meshes[] : register(t0);
 
-ConstantBuffer<CB_PER_OBJECT> transform : register(b0);
+ConstantBuffer<CB_PER_ENTITY> transform : register(b0);
 
 VS_OUT VS_main(uint vID : SV_VertexID)
 {

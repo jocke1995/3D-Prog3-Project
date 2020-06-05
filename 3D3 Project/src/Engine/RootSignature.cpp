@@ -50,11 +50,11 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::dtSRV].DescriptorTable = dtSRV;
 	rootParam[RS::dtSRV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.ShaderRegister = 0; // b0
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.RegisterSpace = 0; // space0
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_OBJECT) / sizeof(UINT);
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam[RS::CB_PER_ENTITY_CONSTANTS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	rootParam[RS::CB_PER_ENTITY_CONSTANTS].Constants.ShaderRegister = 0; // b0
+	rootParam[RS::CB_PER_ENTITY_CONSTANTS].Constants.RegisterSpace = 0; // space0
+	rootParam[RS::CB_PER_ENTITY_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_ENTITY) / sizeof(UINT);
+	rootParam[RS::CB_PER_ENTITY_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	rootParam[RS::ColorCBV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParam[RS::ColorCBV].Descriptor.ShaderRegister = 1; // b0

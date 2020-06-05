@@ -5,6 +5,7 @@
 #include "RenderTask.h"
 #include "SwapChain.h"
 #include "ThreadPool.h"
+#include "../Game/Scene.h"
 
 // Graphics
 #include "ForwardRenderTask.h"
@@ -15,6 +16,8 @@
 
 // Compute
 #include "ComputeTestTask.h"
+
+
 
 class Renderer
 {
@@ -27,10 +30,10 @@ public:
 
 	Mesh* CreateMesh(std::wstring path);
 
-	void AddObjectToTasks(Object* object);
-	void UpdateObjectsToDraw();
+	void SetSceneToDraw(Scene* scene);
+	void SetRenderTasksEntityArrays();
 
-	void SortObjectsByDistance(XMFLOAT3 camPos);
+	//void SortEntitiesByDistance(XMFLOAT3 camPos);
 
 	void SetCamera(Camera* camera);
 
@@ -72,8 +75,8 @@ private:
 	std::vector<CopyTask*>    copyTasks;
 	std::vector<ComputeTask*> computeTasks;
 
-	// Objects to draw, a single vector holding all objects of different drawOptions
-	std::vector<Object*> objectsToDraw;
+	// Entites to draw, a single vector holding all Entites of different drawOptions
+	std::vector<Entity*> entitiesToDraw;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];

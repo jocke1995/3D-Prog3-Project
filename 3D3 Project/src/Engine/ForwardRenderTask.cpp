@@ -63,13 +63,16 @@ void FowardRenderTask::Execute()
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
-	for (auto object : this->objects)
+	for (auto entity : this->entities)
 	{
-		// Check if the object is to be drawn in forwardRendering
-		if (object->GetDrawFlag() & DrawOptions::ForwardRendering)
+		// Get the renderComponent of the entity
+		RenderComponent* rc = entity->GetComponent<RenderComponent>();
+
+		// Check if the entity is to be drawn in forwardRendering
+		if (rc->GetDrawFlag() & DrawOptions::ForwardRendering)
 		{
-			size_t num_vertices = object->GetMesh()->GetNumVertices();
-			Transform* transform = object->GetTransform();
+			size_t num_vertices = rc->GetMesh()->GetNumVertices();
+			Transform* transform = rc->GetTransform();
 
 			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 			XMFLOAT4X4 WVPTransposed;
@@ -82,12 +85,12 @@ void FowardRenderTask::Execute()
 			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
 			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-			SlotInfo* info = object->GetSlotInfo();
+			SlotInfo* info = rc->GetSlotInfo();
 
-			// Create a CB_PER_OBJECT struct
-			CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
+			// Create a CB_PER_ENTITY struct
+			CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
 
-			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
+			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
 
 			// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
 			commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());

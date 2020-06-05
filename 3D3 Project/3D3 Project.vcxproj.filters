@@ -39,6 +39,12 @@
     <Filter Include="Objects\Game">
       <UniqueIdentifier>{abe19655-faaa-426a-aa5d-ed53cae43d99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{32e12c13-c6f5-4420-83dc-e249449164e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Components">
+      <UniqueIdentifier>{39b6045e-c787-43ee-ae90-aa98ce583844}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -128,17 +134,26 @@
     <ClCompile Include="src\Engine\Mesh.cpp">
       <Filter>Objects\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Object.cpp">
-      <Filter>Objects\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Minotaur.cpp">
-      <Filter>Objects\Game</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\D3D12TimerCopy.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\AssetLoader.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Components\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Components\HealthComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Components\RenderComponent.cpp">
+      <Filter>Objects\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,17 +247,18 @@
     <ClInclude Include="src\Engine\Mesh.h">
       <Filter>Objects\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Object.h">
-      <Filter>Objects\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Minotaur.h">
-      <Filter>Objects\Game</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\D3D12TimerCopy.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\AssetLoader.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Components\Component.h" />
+    <ClInclude Include="src\Game\Components\HealthComponent.h" />
+    <ClInclude Include="src\Game\Entity.h" />
+    <ClInclude Include="src\Game\Scene.h" />
+    <ClInclude Include="src\Game\Components\RenderComponent.h">
+      <Filter>Objects\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #pragma once
 
+// Indicies of where the data is stored in GPU-memory
 struct SlotInfo
 {
 	unsigned int vertexDataIndex;
@@ -10,7 +11,7 @@ struct SlotInfo
 	// Texture Specular;
 };
 
-struct CB_PER_OBJECT
+struct CB_PER_ENTITY
 {
 	float4x4 worldMatrix;
 	float4x4 WVP;

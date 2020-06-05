@@ -108,6 +108,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,8 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,6 +147,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +169,7 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -177,9 +182,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game\Scene.cpp" />
+    <ClCompile Include="src\Game\Entity.cpp" />
+    <ClCompile Include="src\Game\Components\HealthComponent.cpp" />
+    <ClCompile Include="src\Game\Components\Component.cpp" />
     <ClCompile Include="src\Engine\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\D3D12TimerCopy.cpp" />
-    <ClCompile Include="src\Minotaur.cpp" />
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
     <ClCompile Include="src\Engine\ComputeTask.cpp" />
     <ClCompile Include="src\Engine\ComputeTestTask.cpp" />
@@ -192,7 +200,7 @@
     <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
     <ClCompile Include="src\Engine\DX12Task.cpp" />
     <ClCompile Include="src\Engine\Mesh.cpp" />
-    <ClCompile Include="src\Engine\Object.cpp" />
+    <ClCompile Include="src\Game\Components\RenderComponent.cpp" />
     <ClCompile Include="src\Engine\PipelineState.cpp" />
     <ClCompile Include="src\Engine\Renderer.cpp" />
     <ClCompile Include="src\Engine\RenderTarget.cpp" />
@@ -217,9 +225,12 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game\Scene.h" />
+    <ClInclude Include="src\Game\Entity.h" />
+    <ClInclude Include="src\Game\Components\HealthComponent.h" />
+    <ClInclude Include="src\Game\Components\Component.h" />
     <ClInclude Include="src\Engine\AssetLoader.h" />
     <ClInclude Include="src\Engine\D3D12TimerCopy.h" />
-    <ClInclude Include="src\Minotaur.h" />
     <ClInclude Include="src\Engine\CommandInterface.h" />
     <ClInclude Include="src\Engine\ComputeTask.h" />
     <ClInclude Include="src\Engine\ComputeTestTask.h" />
@@ -233,7 +244,7 @@
     <ClInclude Include="src\Engine\DescriptorHeap.h" />
     <ClInclude Include="src\Engine\DX12Task.h" />
     <ClInclude Include="src\Engine\Mesh.h" />
-    <ClInclude Include="src\Engine\Object.h" />
+    <ClInclude Include="src\Game\Components\RenderComponent.h" />
     <ClInclude Include="src\Engine\PipelineState.h" />
     <ClInclude Include="src\Engine\Renderer.h" />
     <ClInclude Include="src\Engine\RenderTarget.h" />
