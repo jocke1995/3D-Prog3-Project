@@ -15,9 +15,6 @@
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{f26be303-2f7c-4d54-91ce-7005cee1ee15}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects">
-      <UniqueIdentifier>{4952c56a-9998-41d8-a97e-354c192c83e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Threads">
       <UniqueIdentifier>{287876e3-3183-4335-abb8-5c2455dcecdb}</UniqueIdentifier>
     </Filter>
@@ -33,12 +30,6 @@
     <Filter Include="Engine\Tasks\Compute">
       <UniqueIdentifier>{88f51c30-f521-43e8-9045-f427c090d28d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects\Engine">
-      <UniqueIdentifier>{ed7bca7c-117b-4a58-930f-d2d9f236bf99}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Objects\Game">
-      <UniqueIdentifier>{abe19655-faaa-426a-aa5d-ed53cae43d99}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{32e12c13-c6f5-4420-83dc-e249449164e9}</UniqueIdentifier>
     </Filter>
@@ -51,9 +42,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\ConstantBuffer.cpp">
@@ -131,9 +119,6 @@
     <ClCompile Include="src\Engine\BlendRenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Mesh.cpp">
-      <Filter>Objects\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\D3D12TimerCopy.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -141,19 +126,25 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Game\Components\Component.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Game\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\Game\Components\HealthComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Scene.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Game\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\Game\Components\RenderComponent.cpp">
-      <Filter>Objects\Engine</Filter>
+      <Filter>Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Mesh.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Entity.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Scene.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Camera.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,9 +193,6 @@
     <ClInclude Include="src\Engine\Transform.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Camera.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\D3D12Timer.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -244,21 +232,32 @@
     <ClInclude Include="src\Engine\BlendRenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Mesh.h">
-      <Filter>Objects\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\D3D12TimerCopy.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\AssetLoader.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Components\Component.h" />
-    <ClInclude Include="src\Game\Components\HealthComponent.h" />
-    <ClInclude Include="src\Game\Entity.h" />
-    <ClInclude Include="src\Game\Scene.h" />
+    <ClInclude Include="src\Game\Components\Component.h">
+      <Filter>Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Components\HealthComponent.h">
+      <Filter>Game\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\Game\Components\RenderComponent.h">
-      <Filter>Objects\Engine</Filter>
+      <Filter>Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Mesh.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Entity.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Scene.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Camera.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
