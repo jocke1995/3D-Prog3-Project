@@ -2,12 +2,13 @@
 #define SCENE_H
 
 #include "Entity.h"
+#include "../Engine/Camera.h"
 #include <map>
 
 class Scene
 {
 public:
-	Scene();
+	Scene(Camera* mainCamera);
 	~Scene();
 
 	bool AddEntity(std::string entityName);
@@ -18,11 +19,15 @@ public:
 
 	unsigned int GetNrOfEntites();
 
-	void UpdateEntities();
+	void UpdateScene(double dt);
+	
 private:
 	std::map<std::string, Entity*> entities;
 	unsigned int nrOfEntities = 0;
 
+	Camera* mainCamera = nullptr;
+
+	void UpdateEntities();
 	bool EntityExists(std::string entityName);
 };
 

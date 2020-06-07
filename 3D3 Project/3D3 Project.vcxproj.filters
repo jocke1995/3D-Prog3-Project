@@ -104,9 +104,6 @@
     <ClCompile Include="src\Engine\CopyColorTask.cpp">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\ComputeTask.cpp">
       <Filter>Engine\Tasks\Compute</Filter>
     </ClCompile>
@@ -144,6 +141,9 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Camera.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\stdafx.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>

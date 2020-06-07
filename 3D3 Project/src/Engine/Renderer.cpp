@@ -49,11 +49,16 @@ Renderer::~Renderer()
 
 	SAFE_RELEASE(&this->device5);
 
+	delete this->camera;
+
 	delete this->threadpool;
 }
 
-void Renderer::InitD3D12(HWND *hwnd)
+void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
 {
+	// Camera
+	this->camera = new Camera(L"default_cam", hInstance, *hwnd);
+
 	// Create Device
 	if (!this->CreateDevice())
 	{
@@ -306,16 +311,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		}
 	}
 
-	// Set the vectors of entities in each renderTask
-	this->SetRenderTasksEntityArrays();
-}
-
-void Renderer::SetRenderTasksEntityArrays()
-{
-	for (RenderTask* rendertask : this->renderTasks)
-	{
-		rendertask->SetEntitiesToDraw(&this->entitiesToDraw);
-	}
+	// Update renderTasks with new entities and mainCamera
+	this->SetRenderTasksEntities();
+	this->SetMainCamera();
 }
 
 int Compare(const void* a, const void* b)
@@ -328,66 +326,61 @@ int Compare(const void* a, const void* b)
 		return 0;
 }
 
-//void Renderer::SortEntitiesByDistance(XMFLOAT3 camPos)
-//{	
-//	struct DistObj
-//	{
-//		double distance;
-//		Object* obj;
-//	};
-//	
-//	int nrOfObjects = this->objectsToDraw.size();
-//
-//	DistObj* distObjArr = new DistObj[nrOfObjects];
-//
-//	// Get all the distances of each objects and store them by ID and distance
-//	for (int i = 0; i < nrOfObjects; i++)
-//	{
-//		XMFLOAT3 objectPos = this->objectsToDraw.at(i)->GetTransform()->GetPosition();
-//
-//		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
-//								pow(camPos.y - objectPos.y, 2) +
-//								pow(camPos.z - objectPos.z, 2));
-//
-//		// Save the object alongside its distance to the camera
-//		distObjArr[i].distance = distance;
-//		distObjArr[i].obj = this->objectsToDraw.at(i);
-//	}
-//	
-//	// InsertionSort (because its best case is O(N)), 
-//	// and since this is sorted every frame this is a good choice of sorting algorithm
-//	int j = 0;
-//	DistObj distObjTemp = {};
-//	for (int i = 1; i < nrOfObjects; i++)
-//	{
-//		j = i;
-//		while (j > 0 && (distObjArr[j - 1].distance > distObjArr[j].distance))
-//		{
-//			// Swap
-//			distObjTemp = distObjArr[j - 1];
-//			distObjArr[j - 1] = distObjArr[j];
-//			distObjArr[j] = distObjTemp;
-//			j--;
-//		}
-//	}
-//
-//	// Fill the vector with sorted array
-//	this->objectsToDraw.clear();
-//	for (int i = 0; i < nrOfObjects; i++)
-//	{
-//		this->objectsToDraw.push_back(distObjArr[i].obj);
-//	}
-//
-//	// Free memory
-//	delete distObjArr;
-//}
-
-
-
-void Renderer::SetCamera(Camera* camera)
+void Renderer::SortEntitiesByDistance()
 {
-	for (auto renderTask : this->renderTasks)
-		renderTask->SetCamera(camera);
+	struct DistObj
+	{
+		double distance;
+		Entity* entity;
+	};
+
+	int nrOfEntities = this->entitiesToDraw.size();
+
+	DistObj* distEntArr = new DistObj[nrOfEntities];
+
+	// Get all the distances of each objects and store them by ID and distance
+	for (int i = 0; i < nrOfEntities; i++)
+	{
+		XMFLOAT3 objectPos = this->entitiesToDraw.at(i)->GetComponent<RenderComponent>()->GetTransform()->GetPosition();
+
+		double distance = sqrt(pow(this->camera->GetPosition().x - objectPos.x, 2) +
+			pow(this->camera->GetPosition().y - objectPos.y, 2) +
+			pow(this->camera->GetPosition().z - objectPos.z, 2));
+
+		// Save the object alongside its distance to the camera
+		distEntArr[i].distance = distance;
+		distEntArr[i].entity = this->entitiesToDraw.at(i);
+	}
+
+	// InsertionSort (because its best case is O(N)), 
+	// and since this is sorted ((((((EVERY FRAME)))))) this is a good choice of sorting algorithm
+	int j = 0;
+	DistObj distEntTemp = {};
+	for (int i = 1; i < nrOfEntities; i++)
+	{
+		j = i;
+		while (j > 0 && (distEntArr[j - 1].distance > distEntArr[j].distance))
+		{
+			// Swap
+			distEntTemp = distEntArr[j - 1];
+			distEntArr[j - 1] = distEntArr[j];
+			distEntArr[j] = distEntTemp;
+			j--;
+		}
+	}
+
+	// Fill the vector with sorted array
+	this->entitiesToDraw.clear();
+	for (int i = 0; i < nrOfEntities; i++)
+	{
+		this->entitiesToDraw.push_back(distEntArr[i].entity);
+	}
+
+	// Free memory
+	delete distEntArr;
+
+	// Update the entity-arrays inside the rendertasks
+	this->SetRenderTasksEntities();
 }
 
 void Renderer::Execute()
@@ -537,6 +530,17 @@ ThreadPool* Renderer::GetThreadPool()
 	return this->threadpool;
 }
 
+Camera* Renderer::GetCamera()
+{
+	return this->camera;
+}
+
+void Renderer::SetMainCamera()
+{
+	for (auto renderTask : this->renderTasks)
+		renderTask->SetCamera(this->camera);
+}
+
 // -----------------------  Private Functions  ----------------------- //
 
 bool Renderer::CreateDevice()
@@ -654,6 +658,14 @@ void Renderer::CreateDepthBuffer()
 void Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
+}
+
+void Renderer::SetRenderTasksEntities()
+{
+	for (RenderTask* rendertask : this->renderTasks)
+	{
+		rendertask->SetEntitiesToDraw(&this->entitiesToDraw);
+	}
 }
 
 void Renderer::InitDescriptorHeap()

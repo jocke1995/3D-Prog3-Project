@@ -5,6 +5,7 @@
 #include "RenderTask.h"
 #include "SwapChain.h"
 #include "ThreadPool.h"
+#include "Camera.h"
 #include "../Game/Scene.h"
 
 // Graphics
@@ -25,22 +26,24 @@ public:
 	Renderer();
 	~Renderer();
 
-	void InitD3D12(HWND *hwnd);
+	void InitD3D12(HWND *hwnd, HINSTANCE hInstance);
 	void InitRenderTasks();
 
 	Mesh* CreateMesh(std::wstring path);
 
 	void SetSceneToDraw(Scene* scene);
-	void SetRenderTasksEntityArrays();
+	
 
-	//void SortEntitiesByDistance(XMFLOAT3 camPos);
-
-	void SetCamera(Camera* camera);
-
+	void SortEntitiesByDistance();
 	void Execute();
 
 	ThreadPool* GetThreadPool();
+	Camera* GetCamera();
 private:
+	// Camera
+	Camera* camera = nullptr;
+	void SetMainCamera();
+
 	unsigned int frameCounter = 0;
 
 	// Device
@@ -77,6 +80,7 @@ private:
 
 	// Entites to draw, a single vector holding all Entites of different drawOptions
 	std::vector<Entity*> entitiesToDraw;
+	void SetRenderTasksEntities();
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];

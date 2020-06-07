@@ -1,7 +1,8 @@
 #include "Scene.h"
 
-Scene::Scene()
+Scene::Scene(Camera* mainCamera)
 {
+    this->mainCamera = mainCamera;
 }
 
 Scene::~Scene()
@@ -55,6 +56,12 @@ std::map<std::string, Entity*>* Scene::GetEntities()
 unsigned int Scene::GetNrOfEntites()
 {
     return this->nrOfEntities;
+}
+
+void Scene::UpdateScene(double dt)
+{
+    this->mainCamera->Update(dt);
+    this->UpdateEntities();
 }
 
 void Scene::UpdateEntities()

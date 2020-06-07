@@ -1,5 +1,4 @@
 #include "Engine/Renderer.h"
-#include "Engine/Camera.h"
 #include "Window.h"
 
 // Problem med precompiled header eller liknande.. Intellisense problemet
@@ -18,40 +17,58 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
 
     Renderer* renderer = new Renderer();
-    renderer->InitD3D12(window->GetHwnd());
+    renderer->InitD3D12(window->GetHwnd(), hInstance);
     renderer->InitRenderTasks();
 
     // Get threadpool so other tasks (physics, gameupdates etc..) can use it 
     ThreadPool* threadPool = renderer->GetThreadPool();
-    
-    // Camera
-    Camera* camera = new Camera(L"default_cam", hInstance, *window->GetHwnd());
-    renderer->SetCamera(camera);
 
     // The same mesh can be used for multiple Entities
     Mesh* minoMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
 
-    // DrawFlags
-    UINT drawOptionsFR = DrawOptions::ForwardRendering; // | DrawOptions::Shadow;
-    UINT drawOptionsBlend = DrawOptions::Blend;
-
     // --------------------------------------------------------------------------------
 
     // Create Scene
-    Scene* scene1 = new Scene();
+    Scene* scene1 = new Scene(renderer->GetCamera());
     
     // Add Entity to Scene
     scene1->AddEntity("mino1");
+    scene1->AddEntity("mino2");
+    scene1->AddEntity("mino3");
+    scene1->AddEntity("mino4");
     
     // Add Components to Entity
-    scene1->GetEntity("mino1")->AddComponent<HealthComponent>();
+    //scene1->GetEntity("mino1")->AddComponent<HealthComponent>();
     scene1->GetEntity("mino1")->AddComponent<RenderComponent>();
+    scene1->GetEntity("mino2")->AddComponent<RenderComponent>();
+    scene1->GetEntity("mino3")->AddComponent<RenderComponent>();
+    scene1->GetEntity("mino4")->AddComponent<RenderComponent>();
 
     // Set the components
     RenderComponent* rc = scene1->GetEntity("mino1")->GetComponent<RenderComponent>();
     rc->SetMesh(minoMesh);
-    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->SetDrawFlag(DrawOptions::Blend);
     rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
+
+    rc = scene1->GetEntity("mino2")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
+
+    rc = scene1->GetEntity("mino3")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
+
+    rc = scene1->GetEntity("mino4")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 30.0f);
+    
 
     renderer->SetSceneToDraw(scene1);
 
@@ -81,12 +98,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         }
 
         /* ------ Update ------ */
-        scene1->UpdateEntities();
-        
-        camera->Update(dt);
+        scene1->UpdateScene(dt);
 
-        //renderer->SortObjectsByDistance(camera->GetPosition());
-        //renderer->UpdateObjectsToDraw();
+        renderer->SortEntitiesByDistance();
+
         /* ------ Draw   ------ */
         renderer->Execute();
     }   
@@ -94,8 +109,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // ---------------------------- SafeExit the program ----------------------------
 
     delete scene1;
-
-    delete camera;
     delete window;
     delete renderer;
     return 0;
