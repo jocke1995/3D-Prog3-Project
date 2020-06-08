@@ -1,7 +1,8 @@
 #include "Engine/Renderer.h"
+#include "Engine/Timer.h"
 #include "Window.h"
 
-// Problem med precompiled header eller liknande.. Intellisense problemet
+// TODO: Problem med precompiled header eller liknande.. Intellisense problemet
 #include "Engine/stdafx.h"
 
 #include "Game/Scene.h"
@@ -10,11 +11,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    // Setup timer
-    auto start = std::chrono::system_clock::now();
-
+    /* ------ Window  ------ */
     Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
 
+    /* ------ Timer  ------ */
+    Timer* timer = new Timer(window);
+
+    /* ------ Renderer  ------ */
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd(), hInstance);
 
@@ -72,28 +75,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     renderer->SetSceneToDraw(scene1);
 
-    // GAMELOOP
-    auto time_now = start;
-    auto time_lastFps = start;
-    double fpsInterval = 0.5;
-
     while (!window->ExitWindow())
     {  
         /* ------ Timer  ------ */
-        // TODO: Create Timer Class
-        auto time_last = time_now;
-        time_now = std::chrono::system_clock::now();
-        std::chrono::duration<double> elapsed_time = time_now - time_last;
-        double dt = elapsed_time.count(); // dt.count() to get ms time
-
-        std::chrono::duration<double> elapsed_timeFps = time_now - time_lastFps;
-        if (elapsed_timeFps.count() >= fpsInterval)
-        {
-            std::string fpsString = std::to_string(int(1.0 / dt));
-            std::wstring tmp = std::wstring(fpsString.begin(), fpsString.end());
-            window->SetWindowTitle(tmp);
-            time_lastFps = time_now;
-        }
+        timer->Update();
 
         // Test to add objects during runtime
         if (window->WasSpacePressed())
@@ -125,7 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         } 
 
         /* ------ Update ------ */
-        scene1->UpdateScene(dt);
+        scene1->UpdateScene(timer->GetDeltaTime());
 
         renderer->SortEntitiesByDistance();
 
@@ -133,10 +118,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         renderer->Execute();
     }   
 
-    // ---------------------------- SafeExit the program ----------------------------
+
     delete scene1;
     delete window;
     delete renderer;
+    delete timer;
 
     return 0;
 }

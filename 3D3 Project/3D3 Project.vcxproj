@@ -226,6 +226,7 @@
     <ClCompile Include="src\Engine\Transform.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Window.cpp" />
+    <ClCompile Include="src\Engine\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game\Scene.h" />
@@ -265,6 +266,7 @@
     <ClInclude Include="src\Engine\ThreadPool.h" />
     <ClInclude Include="src\Engine\Transform.h" />
     <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Engine\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">

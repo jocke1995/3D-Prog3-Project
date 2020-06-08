@@ -146,6 +146,9 @@
     <ClCompile Include="src\Engine\stdafx.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Timer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -257,6 +260,9 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Camera.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Timer.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
