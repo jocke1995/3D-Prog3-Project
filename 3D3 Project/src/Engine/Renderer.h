@@ -29,7 +29,9 @@ public:
 	Mesh* CreateMesh(std::wstring path);
 
 	void SetSceneToDraw(Scene* scene);
-	
+	void AddEntityToDraw(Entity* entity);
+	void RemoveEntityFromDraw(Entity* entity);
+
 	void SortEntitiesByDistance();
 	void Execute();
 
@@ -38,7 +40,7 @@ public:
 private:
 	// Camera
 	Camera* camera = nullptr;
-	void SetMainCamera();
+	void SetMainCamera(Camera *camera);
 
 	unsigned int frameCounter = 0;
 

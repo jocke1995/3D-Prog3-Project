@@ -1,6 +1,9 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+// Temp
+static bool spacePressed = false;
+
 class Window
 {
 public:
@@ -14,6 +17,9 @@ public:
 	int GetScreenWidth();
 	int GetScreenHeight();
 	HWND* GetHwnd();
+
+	// Temp
+	bool WasSpacePressed();
 private:
 	// Window * window;
 	bool InitWindow(HINSTANCE hInstance, int nCmdShow);

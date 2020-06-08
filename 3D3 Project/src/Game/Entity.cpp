@@ -2,6 +2,16 @@
 
 Entity::Entity()
 {
+	this->id = staticID++;
+}
+
+bool Entity::operator==(const Entity& rhs) const
+{
+	if (this->id == rhs.id)
+	{
+		return true;
+	}
+	return false;
 }
 
 Entity::~Entity()
@@ -10,6 +20,11 @@ Entity::~Entity()
 	{
 		delete component;
 	}
+}
+
+unsigned int Entity::GetID()
+{
+	return this->id;
 }
 
 void Entity::Update()

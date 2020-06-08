@@ -17,7 +17,8 @@ public:
 	Entity* GetEntity(std::string entityName);
 	std::map<std::string, Entity*> *GetEntities();
 
-	unsigned int GetNrOfEntites();
+	unsigned int GetNrOfEntites() const;
+	Camera* GetMainCamera() const;
 
 	void UpdateScene(double dt);
 	

@@ -28,6 +28,7 @@ public:
 	void AddRenderTarget(RenderTarget* renderTarget);
 
 	void SetEntitiesToDraw(std::vector<Entity*> *entitiesToDraw);
+	void AddEntity(Entity* entity);
 
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DescriptorHeap* dh);

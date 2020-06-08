@@ -1,11 +1,5 @@
 #include "Renderer.h"
 
-#include "D3D12Timer.h"
-#include "D3D12TimerCopy.h"
-
-D3D12::D3D12Timer timer;
-D3D12TimerCopy timerCopy;
-
 Renderer::Renderer()
 {
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
@@ -66,10 +60,6 @@ void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
 		OutputDebugStringA("Error: Failed to create Device!\n");
 	}
 
-	// Timer
-	timer.init		(this->device5, RENDER_TASK_TYPE::NR_OF_RENDERTASKS + COMPUTE_TASK_TYPE::NR_OF_COMPUTETASKS);
-	timerCopy.init	(this->device5, COPY_TASK_TYPE::NR_OF_COPYTASKS);
-
 	// Create CommandQueues (direct and copy)
 	this->CreateCommandQueues();
 
@@ -117,6 +107,8 @@ Mesh* Renderer::CreateMesh(std::wstring path)
 
 void Renderer::SetSceneToDraw(Scene* scene)
 {
+	this->entitiesToDraw.clear();
+
 	std::map<std::string, Entity*> entities = *scene->GetEntities();
 	for (auto const& [entityName, entity] : entities)
 	{
@@ -129,8 +121,37 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	}
 
 	// Update renderTasks with new entities and mainCamera
+	// TODO: slå ihop till en loop..? problem: duplicering av kod
 	this->SetRenderTasksEntities();
-	this->SetMainCamera();
+	this->SetMainCamera(scene->GetMainCamera());
+}
+
+void Renderer::AddEntityToDraw(Entity* entity)
+{
+	RenderComponent* rc = entity->GetComponent<RenderComponent>();
+	if (rc != nullptr)
+	{
+		this->entitiesToDraw.push_back(entity);
+	}
+
+	this->SetRenderTasksEntities();
+}
+
+void Renderer::RemoveEntityFromDraw(Entity* entity)
+{
+	RenderComponent* rc = entity->GetComponent<RenderComponent>();
+	if (rc != nullptr)
+	{
+		for (int i = 0; i < this->entitiesToDraw.size(); i++)
+		{
+			if (*entity == *this->entitiesToDraw[i])
+			{
+				this->entitiesToDraw.erase(this->entitiesToDraw.begin() + i);
+			}
+		}
+	}
+	
+	this->SetRenderTasksEntities();
 }
 
 int Compare(const void* a, const void* b)
@@ -145,7 +166,7 @@ int Compare(const void* a, const void* b)
 
 void Renderer::SortEntitiesByDistance()
 {
-	struct DistObj
+	struct DistEnt
 	{
 		double distance;
 		Entity* entity;
@@ -153,16 +174,16 @@ void Renderer::SortEntitiesByDistance()
 
 	int nrOfEntities = this->entitiesToDraw.size();
 
-	DistObj* distEntArr = new DistObj[nrOfEntities];
+	DistEnt* distEntArr = new DistEnt[nrOfEntities];
 
 	// Get all the distances of each objects and store them by ID and distance
 	for (int i = 0; i < nrOfEntities; i++)
 	{
 		XMFLOAT3 objectPos = this->entitiesToDraw.at(i)->GetComponent<RenderComponent>()->GetTransform()->GetPosition();
 
-		double distance = sqrt(pow(this->camera->GetPosition().x - objectPos.x, 2) +
-			pow(this->camera->GetPosition().y - objectPos.y, 2) +
-			pow(this->camera->GetPosition().z - objectPos.z, 2));
+		double distance = sqrt(	pow(this->camera->GetPosition().x - objectPos.x, 2) +
+								pow(this->camera->GetPosition().y - objectPos.y, 2) +
+								pow(this->camera->GetPosition().z - objectPos.z, 2));
 
 		// Save the object alongside its distance to the camera
 		distEntArr[i].distance = distance;
@@ -172,7 +193,7 @@ void Renderer::SortEntitiesByDistance()
 	// InsertionSort (because its best case is O(N)), 
 	// and since this is sorted ((((((EVERY FRAME)))))) this is a good choice of sorting algorithm
 	int j = 0;
-	DistObj distEntTemp = {};
+	DistEnt distEntTemp = {};
 	for (int i = 1; i < nrOfEntities; i++)
 	{
 		j = i;
@@ -264,9 +285,6 @@ void Renderer::Execute()
 	// Wait for DirectTasks to complete
 	this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
 
-	UINT64 queueFreq;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->GetTimestampFrequency(&queueFreq);
-
 	// Wait for ComputeTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, computeFenceValue + 1);
 
@@ -280,66 +298,6 @@ void Renderer::Execute()
 	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
-
-	/*
-	// TIME MEASURE  ---------------------------
-	//get time in ms
-	double timestampToMs = (1.0 / queueFreq) * 1000.0;
-
-	// 0 = COPY, 0 = COMPUTE, 1 = FW, 2 = BLEND
-	GPUTimestampPair drawTimeCopy = timerCopy.getTimestampPair(0);
-	D3D12::GPUTimestampPair drawTimeCompute = timer.getTimestampPair(0);
-	D3D12::GPUTimestampPair drawTimeFW = timer.getTimestampPair(1);
-	D3D12::GPUTimestampPair drawTimeBlend = timer.getTimestampPair(2);
-
-	// **Temporary test variables**
-	static unsigned int counter = 0;
-	static double SUM_COPY = 0;
-	static double SUM_COMPUTE = 0;
-	static double SUM_FW = 0;
-	static double SUM_BLEND = 0;
-	const unsigned int limit = 1000;
-
-	counter++;
-
-	UINT64 dt = drawTimeCopy.Stop - drawTimeCopy.Start;
-	double timeInMs = dt * timestampToMs;
-	SUM_COPY += timeInMs;
-
-	dt = drawTimeCompute.Stop - drawTimeCompute.Start;
-	timeInMs = dt * timestampToMs;
-	SUM_COMPUTE += timeInMs;
-
-	dt = drawTimeFW.Stop - drawTimeFW.Start;
-	timeInMs = dt * timestampToMs;
-	SUM_FW += timeInMs;
-	
-	
-	dt = drawTimeBlend.Stop - drawTimeBlend.Start;
-	timeInMs = dt * timestampToMs;
-	SUM_BLEND += timeInMs;
-
-	// Stop when at limit
-	if (counter == limit)
-	{
-		char buf[100];
-		sprintf_s(buf, "GPU COPY  TASK : %fms\n", SUM_COPY / counter);
-		OutputDebugStringA(buf);
-
-		sprintf_s(buf, "GPU COMP  TASK : %fms\n", SUM_COMPUTE / counter);
-		OutputDebugStringA(buf);
-
-		sprintf_s(buf, "GPU FWRD  TASK : %fms\n", SUM_FW / counter);
-		OutputDebugStringA(buf);
-
-		sprintf_s(buf, "GPU BLND  TASK : %fms\n\n", SUM_BLEND / counter);
-		OutputDebugStringA(buf);
-
-		sprintf_s(buf, "GPU SUM:       : %fms\n\n", (SUM_COPY + SUM_COMPUTE + SUM_FW + SUM_BLEND) / counter);
-		OutputDebugStringA(buf);
-	}
-
-	*/
 }
 
 ThreadPool* Renderer::GetThreadPool() const
@@ -352,10 +310,10 @@ Camera* Renderer::GetCamera()
 	return this->camera;
 }
 
-void Renderer::SetMainCamera()
+void Renderer::SetMainCamera(Camera* camera)
 {
 	for (auto renderTask : this->renderTasks)
-		renderTask->SetCamera(this->camera);
+		renderTask->SetCamera(camera);
 }
 
 // -----------------------  Private Functions  ----------------------- //

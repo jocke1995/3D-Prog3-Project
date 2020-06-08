@@ -11,6 +11,7 @@ Scene::~Scene()
     {
         delete entity;
     }
+    this->entities.clear();
 }
 
 // Returns false if the entity couldn't be created
@@ -22,18 +23,22 @@ bool Scene::AddEntity(std::string entityName)
     }
 
     this->entities[entityName] = new Entity();
+    this->nrOfEntities++;
     return true;
 }
 
 bool Scene::RemoveEntity(std::string entityName)
 {
-    if (this->EntityExists(entityName) == true)
+    if (this->EntityExists(entityName) == false)
     {
         return false;
     }
 
     delete this->entities[entityName];
+    this->entities.erase(entityName);
+
     this->nrOfEntities--;
+    return true;
 }
 
 Entity* Scene::GetEntity(std::string entityName)
@@ -53,9 +58,14 @@ std::map<std::string, Entity*>* Scene::GetEntities()
 	return &this->entities;
 }
 
-unsigned int Scene::GetNrOfEntites()
+unsigned int Scene::GetNrOfEntites() const
 {
     return this->nrOfEntities;
+}
+
+Camera* Scene::GetMainCamera() const
+{
+	return this->mainCamera;
 }
 
 void Scene::UpdateScene(double dt)

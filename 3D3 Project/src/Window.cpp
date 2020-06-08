@@ -1,5 +1,8 @@
 #include "Window.h"
 
+// Problem med precompiled header eller liknande.. Intellisense problemet
+#include "Engine/stdafx.h"
+
 // callback function for windows messages
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -13,6 +16,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(hWnd);
 			}
 		}
+		// Temp to create objects during runtime
+		if (wParam == VK_SPACE)
+		{
+			spacePressed = true;
+		}
+		
 
 		return 0;
 
@@ -81,6 +90,16 @@ int Window::GetScreenHeight()
 HWND* Window::GetHwnd()
 {
 	return &this->hwnd;
+}
+
+bool Window::WasSpacePressed()
+{
+	if (spacePressed == true)
+	{
+		spacePressed = false;
+		return true;
+	}
+	return false;
 }
 
 bool Window::InitWindow(HINSTANCE hInstance, int nCmdShow)

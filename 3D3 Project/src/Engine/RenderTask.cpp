@@ -32,6 +32,11 @@ void RenderTask::SetEntitiesToDraw(std::vector<Entity*> *entitiesToDraw)
 	this->entities = *entitiesToDraw;
 }
 
+void RenderTask::AddEntity(Entity* entity)
+{
+	this->entities.push_back(entity);
+}
+
 void RenderTask::SetCamera(Camera* camera)
 {
 	this->camera = camera;

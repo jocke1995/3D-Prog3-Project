@@ -67,10 +67,18 @@ XMFLOAT4X4* Camera::GetViewProjMatrix()
 	return &this->viewProjMat;
 }
 
-XMFLOAT3 Camera::GetPosition()
+XMFLOAT3 Camera::GetPosition() const
 {
 	XMFLOAT3 DXfloat3;
 	XMStoreFloat3(&DXfloat3, this->eyeVector);
+
+	return DXfloat3;
+}
+
+XMFLOAT3 Camera::GetLookAt() const
+{
+	XMFLOAT3 DXfloat3;
+	XMStoreFloat3(&DXfloat3, this->atVector);
 
 	return DXfloat3;
 }
@@ -187,7 +195,6 @@ void Camera::DetectInput(double dt)
 		this->mouseLastState = mouseCurrState;
 	}
 	this->UpdateCamera();
-
 }
 
 void Camera::UpdateViewProjMatrix()

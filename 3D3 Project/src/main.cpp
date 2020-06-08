@@ -23,11 +23,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // The same mesh can be used for multiple Entities
     Mesh* minoMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
+    Mesh* cubeMesh = renderer->CreateMesh(L"Resources/Models/cube3.obj");
 
 #pragma region CreateScene1
 
     // Create Scene
     Scene* scene1 = new Scene(renderer->GetCamera());
+
     // Add Entity to Scene
     scene1->AddEntity("mino1");
     scene1->AddEntity("mino2");
@@ -65,11 +67,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->SetDrawFlag(DrawOptions::Blend);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 30.0f);
-    
-
-    renderer->SetSceneToDraw(scene1);
 
 #pragma endregion CreateScene1
+
+    renderer->SetSceneToDraw(scene1);
 
     // GAMELOOP
     auto time_now = start;
@@ -77,14 +78,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     double fpsInterval = 0.5;
 
     while (!window->ExitWindow())
-    {
+    {  
         /* ------ Timer  ------ */
         // TODO: Create Timer Class
         auto time_last = time_now;
         time_now = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_time = time_now - time_last;
         double dt = elapsed_time.count(); // dt.count() to get ms time
-        
+
         std::chrono::duration<double> elapsed_timeFps = time_now - time_lastFps;
         if (elapsed_timeFps.count() >= fpsInterval)
         {
@@ -93,6 +94,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
             window->SetWindowTitle(tmp);
             time_lastFps = time_now;
         }
+
+        // Test to add objects during runtime
+        if (window->WasSpacePressed())
+        {
+            char entityName[10];
+            static int entityCounter = 0;
+            sprintf(entityName, "cube%d", entityCounter);
+            entityCounter++;
+
+            // Test to add entity during runtime
+            scene1->AddEntity(entityName);
+            scene1->GetEntity(entityName)->AddComponent<RenderComponent>();
+            rc = scene1->GetEntity(entityName)->GetComponent<RenderComponent>();
+            rc->SetMesh(cubeMesh);
+            rc->SetDrawFlag(DrawOptions::ForwardRendering);
+            
+            // Create entity infront of camera
+            rc->GetTransform()->SetPosition(scene1->GetMainCamera()->GetPosition().x + scene1->GetMainCamera()->GetLookAt().x*8,
+                                            scene1->GetMainCamera()->GetPosition().y + scene1->GetMainCamera()->GetLookAt().y*8,
+                                            scene1->GetMainCamera()->GetPosition().z + scene1->GetMainCamera()->GetLookAt().z*8);
+
+            renderer->AddEntityToDraw(scene1->GetEntity(entityName));
+
+            // Test To Remove Entity
+            //renderer->RemoveEntityFromDraw(scene1->GetEntity(entityName2));
+            //char entityName2[10];
+            //sprintf(entityName2, "mino%d", entityCounter);
+            //scene1->RemoveEntity(entityName2);
+        } 
 
         /* ------ Update ------ */
         scene1->UpdateScene(dt);

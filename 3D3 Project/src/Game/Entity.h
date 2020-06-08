@@ -6,10 +6,12 @@
 #include "../Engine/stdafx.h"
 class Component;
 
+static unsigned int staticID = 0;
 class Entity
 {
 public:
 	Entity();
+	bool operator == (const Entity& rhs) const;
 	~Entity();
 
 	template <class T>
@@ -17,11 +19,12 @@ public:
 
 	template <class T>
 	T* GetComponent();
-
+	unsigned int GetID();
 
 	void Update();
 
 private:
+	unsigned int id = -1;
 	std::vector<Component*> components;
 };
 
