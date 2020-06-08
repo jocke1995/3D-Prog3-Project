@@ -16,6 +16,7 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 	this->WaitForFrame();
+	this->threadpool->WaitForThreads(THREAD_FLAG::ALL);
 	this->threadpool->ExitThreads();
 
 	CloseHandle(this->eventHandle);
@@ -97,192 +98,8 @@ void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
 	this->InitDescriptorHeap();
 
 	AssetLoader::Get().SetDevice(this->device5);
-}
 
-void Renderer::InitRenderTasks()
-{
-	// :-----------------------------TASK Forward Rendering:-----------------------------
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdForwardRender = {};
-	gpsdForwardRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	// RenderTarget
-	gpsdForwardRender.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	gpsdForwardRender.NumRenderTargets = 1;
-	// Depthstencil usage
-	gpsdForwardRender.SampleDesc.Count = 1;
-	gpsdForwardRender.SampleMask = UINT_MAX;
-	// Rasterizer behaviour
-	gpsdForwardRender.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdForwardRender.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
-
-	// Specify Blend descriptions
-	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {
-		false, false,
-		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
-		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
-		D3D12_LOGIC_OP_NOOP, D3D12_COLOR_WRITE_ENABLE_ALL };
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-		gpsdForwardRender.BlendState.RenderTarget[i] = defaultRTdesc;
-
-	// Depth descriptor
-	D3D12_DEPTH_STENCIL_DESC dsd = {};
-	dsd.DepthEnable = true;
-	dsd.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
-
-	// DepthStencil
-	dsd.StencilEnable = false;
-	dsd.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-	dsd.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-	const D3D12_DEPTH_STENCILOP_DESC defaultStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
-	dsd.FrontFace = defaultStencilOP;
-	dsd.BackFace = defaultStencilOP;
-
-	gpsdForwardRender.DepthStencilState = dsd;
-	gpsdForwardRender.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdForwardRenderVector;
-	gpsdForwardRenderVector.push_back(&gpsdForwardRender);
-	
-	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdForwardRenderVector, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
-	forwardRenderTask->AddRenderTarget(this->swapChain);
-	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
-	forwardRenderTask->SetDescriptorHeap(this->descriptorHeap);
-
-	// Resources ------------
-	forwardRenderTask->AddResource(this->copyDestResource);
-	
-	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendFrontCull = {};
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendBackCull = {};
-	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdBlendVector;
-
-	gpsdBlendFrontCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	// RenderTarget
-	gpsdBlendFrontCull.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	gpsdBlendFrontCull.NumRenderTargets = 1;
-	// Depthstencil usage
-	gpsdBlendFrontCull.SampleDesc.Count = 1;
-	gpsdBlendFrontCull.SampleMask = UINT_MAX;
-	// Rasterizer behaviour
-	gpsdBlendFrontCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdBlendFrontCull.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
-
-	// Specify Blend descriptions
-	D3D12_RENDER_TARGET_BLEND_DESC blendRTdesc{};
-	blendRTdesc.BlendEnable = true;
-	blendRTdesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendRTdesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	blendRTdesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blendRTdesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendRTdesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-	blendRTdesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendRTdesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	
-
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-		gpsdBlendFrontCull.BlendState.RenderTarget[i] = blendRTdesc;
-
-
-	// Depth descriptor
-	D3D12_DEPTH_STENCIL_DESC dsdBlend = {};
-	dsdBlend.DepthEnable = true;
-	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	dsdBlend.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
-
-	// DepthStencil
-	dsdBlend.StencilEnable = false;
-	dsdBlend.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-	dsdBlend.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-	const D3D12_DEPTH_STENCILOP_DESC blendStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
-	dsdBlend.FrontFace = blendStencilOP;
-	dsdBlend.BackFace = blendStencilOP;
-
-	gpsdBlendFrontCull.DepthStencilState = dsdBlend;
-	gpsdBlendFrontCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	// ------------------------ TASK 2: BLEND ---------------------------- BACKCULL
-
-	gpsdBlendBackCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	// RenderTarget
-	gpsdBlendBackCull.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	gpsdBlendBackCull.NumRenderTargets = 1;
-	// Depthstencil usage
-	gpsdBlendBackCull.SampleDesc.Count = 1;
-	gpsdBlendBackCull.SampleMask = UINT_MAX;
-	// Rasterizer behaviour
-	gpsdBlendBackCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdBlendBackCull.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
-
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-		gpsdBlendBackCull.BlendState.RenderTarget[i] = blendRTdesc;
-
-	// DepthStencil
-	dsdBlend.StencilEnable = false;
-	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-
-	gpsdBlendBackCull.DepthStencilState = dsdBlend;
-	gpsdBlendBackCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-	
-	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
-	gpsdBlendVector.push_back(&gpsdBlendBackCull);
-
-	RenderTask* blendRenderTask = new BlendRenderTask(this->device5, 
-		this->rootSignature, 
-		L"BlendVertex.hlsl", 
-		L"BlendPixel.hlsl", 
-		&gpsdBlendVector, 
-		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
-
-	blendRenderTask->AddRenderTarget(this->swapChain);
-	blendRenderTask->SetDepthBuffer(this->depthBuffer);
-	blendRenderTask->SetDescriptorHeap(this->descriptorHeap);
-
-	// :-----------------------------TASK CopyColor:-----------------------------
-	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE);
-	
-	copyTask->AddResource(this->copySourceResource);
-	copyTask->AddResource(this->copyDestResource);
-	
-	// :-----------------------------TASK ComputeTest:-----------------------------
-	ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
-		this->rootSignature,
-		L"ComputeTest.hlsl",
-		COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
-
-	computeTestTask->AddResource(this->copyDestResource);
-
-	// Add the tasks to desired vectors so they can be used in renderer
-	/* -------------------------------------------------------------- */
-	
-
-	/* ------------------------- CopyQueue Tasks ------------------------ */
-	this->copyTasks[COPY_TASK_TYPE::COPY_COLOR] = copyTask;
-	
-	// Pushback in the order of execution
-	 for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-	 	this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
-
-	/* ------------------------- ComputeQueue Tasks ------------------------ */
-	this->computeTasks[COMPUTE_TASK_TYPE::COMPUTE_TEST] = computeTestTask;
-	
-	// Pushback in the order of execution
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
-
-	/* ------------------------- DirectQueue Tasks ---------------------- */
-	this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER] = forwardRenderTask;
-	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendRenderTask;
-
-	// Pushback in the order of execution
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->directCommandLists[i].push_back(forwardRenderTask->GetCommandList(i));
-
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->directCommandLists[i].push_back(blendRenderTask->GetCommandList(i));
+	this->InitRenderTasks();
 }
 
 Mesh* Renderer::CreateMesh(std::wstring path)
@@ -525,7 +342,7 @@ void Renderer::Execute()
 	*/
 }
 
-ThreadPool* Renderer::GetThreadPool()
+ThreadPool* Renderer::GetThreadPool() const
 {
 	return this->threadpool;
 }
@@ -658,6 +475,196 @@ void Renderer::CreateDepthBuffer()
 void Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
+}
+
+
+void Renderer::InitRenderTasks()
+{
+#pragma region ForwardRendering
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdForwardRender = {};
+	gpsdForwardRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdForwardRender.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdForwardRender.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdForwardRender.SampleDesc.Count = 1;
+	gpsdForwardRender.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdForwardRender.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdForwardRender.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+
+	// Specify Blend descriptions
+	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {
+		false, false,
+		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+		D3D12_LOGIC_OP_NOOP, D3D12_COLOR_WRITE_ENABLE_ALL };
+	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdForwardRender.BlendState.RenderTarget[i] = defaultRTdesc;
+
+	// Depth descriptor
+	D3D12_DEPTH_STENCIL_DESC dsd = {};
+	dsd.DepthEnable = true;
+	dsd.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+
+	// DepthStencil
+	dsd.StencilEnable = false;
+	dsd.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	dsd.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	const D3D12_DEPTH_STENCILOP_DESC defaultStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	dsd.FrontFace = defaultStencilOP;
+	dsd.BackFace = defaultStencilOP;
+
+	gpsdForwardRender.DepthStencilState = dsd;
+	gpsdForwardRender.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdForwardRenderVector;
+	gpsdForwardRenderVector.push_back(&gpsdForwardRender);
+
+	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdForwardRenderVector, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+	forwardRenderTask->AddRenderTarget(this->swapChain);
+	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
+	forwardRenderTask->SetDescriptorHeap(this->descriptorHeap);
+
+	// Resources ------------
+	forwardRenderTask->AddResource(this->copyDestResource);
+#pragma endregion ForwardRendering
+#pragma region Blend
+	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendFrontCull = {};
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdBlendBackCull = {};
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdBlendVector;
+
+	gpsdBlendFrontCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdBlendFrontCull.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdBlendFrontCull.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdBlendFrontCull.SampleDesc.Count = 1;
+	gpsdBlendFrontCull.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdBlendFrontCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdBlendFrontCull.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
+
+	// Specify Blend descriptions
+	D3D12_RENDER_TARGET_BLEND_DESC blendRTdesc{};
+	blendRTdesc.BlendEnable = true;
+	blendRTdesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendRTdesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendRTdesc.BlendOp = D3D12_BLEND_OP_ADD;
+	blendRTdesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendRTdesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendRTdesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendRTdesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+
+	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdBlendFrontCull.BlendState.RenderTarget[i] = blendRTdesc;
+
+
+	// Depth descriptor
+	D3D12_DEPTH_STENCIL_DESC dsdBlend = {};
+	dsdBlend.DepthEnable = true;
+	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	dsdBlend.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+
+	// DepthStencil
+	dsdBlend.StencilEnable = false;
+	dsdBlend.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	dsdBlend.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	const D3D12_DEPTH_STENCILOP_DESC blendStencilOP{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	dsdBlend.FrontFace = blendStencilOP;
+	dsdBlend.BackFace = blendStencilOP;
+
+	gpsdBlendFrontCull.DepthStencilState = dsdBlend;
+	gpsdBlendFrontCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
+	// ------------------------ TASK 2: BLEND ---------------------------- BACKCULL
+
+	gpsdBlendBackCull.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdBlendBackCull.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdBlendBackCull.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdBlendBackCull.SampleDesc.Count = 1;
+	gpsdBlendBackCull.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdBlendBackCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdBlendBackCull.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+
+	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdBlendBackCull.BlendState.RenderTarget[i] = blendRTdesc;
+
+	// DepthStencil
+	dsdBlend.StencilEnable = false;
+	dsdBlend.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+	gpsdBlendBackCull.DepthStencilState = dsdBlend;
+	gpsdBlendBackCull.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
+	gpsdBlendVector.push_back(&gpsdBlendFrontCull);
+	gpsdBlendVector.push_back(&gpsdBlendBackCull);
+
+	RenderTask* blendRenderTask = new BlendRenderTask(this->device5,
+		this->rootSignature,
+		L"BlendVertex.hlsl",
+		L"BlendPixel.hlsl",
+		&gpsdBlendVector,
+		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+
+	blendRenderTask->AddRenderTarget(this->swapChain);
+	blendRenderTask->SetDepthBuffer(this->depthBuffer);
+	blendRenderTask->SetDescriptorHeap(this->descriptorHeap);
+
+#pragma endregion Blend
+
+	// :-----------------------------TASK CopyColor:-----------------------------
+	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE);
+
+	copyTask->AddResource(this->copySourceResource);
+	copyTask->AddResource(this->copyDestResource);
+
+	// :-----------------------------TASK ComputeTest:-----------------------------
+	ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
+		this->rootSignature,
+		L"ComputeTest.hlsl",
+		COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
+
+	computeTestTask->AddResource(this->copyDestResource);
+
+	// Add the tasks to desired vectors so they can be used in renderer
+	/* -------------------------------------------------------------- */
+
+
+	/* ------------------------- CopyQueue Tasks ------------------------ */
+	this->copyTasks[COPY_TASK_TYPE::COPY_COLOR] = copyTask;
+
+	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
+
+	/* ------------------------- ComputeQueue Tasks ------------------------ */
+	this->computeTasks[COMPUTE_TASK_TYPE::COMPUTE_TEST] = computeTestTask;
+
+	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
+
+	/* ------------------------- DirectQueue Tasks ---------------------- */
+	this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER] = forwardRenderTask;
+	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendRenderTask;
+
+	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->directCommandLists[i].push_back(forwardRenderTask->GetCommandList(i));
+
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->directCommandLists[i].push_back(blendRenderTask->GetCommandList(i));
 }
 
 void Renderer::SetRenderTasksEntities()

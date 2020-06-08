@@ -18,8 +18,6 @@
 // Compute
 #include "ComputeTestTask.h"
 
-
-
 class Renderer
 {
 public:
@@ -27,17 +25,15 @@ public:
 	~Renderer();
 
 	void InitD3D12(HWND *hwnd, HINSTANCE hInstance);
-	void InitRenderTasks();
 
 	Mesh* CreateMesh(std::wstring path);
 
 	void SetSceneToDraw(Scene* scene);
 	
-
 	void SortEntitiesByDistance();
 	void Execute();
 
-	ThreadPool* GetThreadPool();
+	ThreadPool* GetThreadPool() const;
 	Camera* GetCamera();
 private:
 	// Camera
@@ -77,6 +73,7 @@ private:
 	std::vector<RenderTask*>  renderTasks;
 	std::vector<CopyTask*>    copyTasks;
 	std::vector<ComputeTask*> computeTasks;
+	void InitRenderTasks();
 
 	// Entites to draw, a single vector holding all Entites of different drawOptions
 	std::vector<Entity*> entitiesToDraw;

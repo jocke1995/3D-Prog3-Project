@@ -37,7 +37,6 @@ unsigned int __stdcall Thread::threadFunc(LPVOID lpParameter)
 			threadInstance->mutex.unlock();
 			// ------------------- Critical region 2-------------------
 		}
-		
 	}
 	return 0;
 }

@@ -13,8 +13,7 @@ Scene::~Scene()
     }
 }
 
-// Returns -1 if the entity couldn't be created
-// Returns nrOfEntites in scene otherwise
+// Returns false if the entity couldn't be created
 bool Scene::AddEntity(std::string entityName)
 {
     if (this->EntityExists(entityName) == true)
@@ -44,6 +43,7 @@ Entity* Scene::GetEntity(std::string entityName)
         return this->entities[entityName];
     }
 
+    // Log
     std::cout << "No Entity with name: \"" << entityName << "\" was found." << std::endl;
     return nullptr;
 }
@@ -82,5 +82,6 @@ bool Scene::EntityExists(std::string entityName)
             return true;
         }
     }
+    // Log
     return false;
 }

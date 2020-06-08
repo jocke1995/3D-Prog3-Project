@@ -6,7 +6,6 @@
 
 #include "Game/Scene.h"
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -18,7 +17,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     Renderer* renderer = new Renderer();
     renderer->InitD3D12(window->GetHwnd(), hInstance);
-    renderer->InitRenderTasks();
 
     // Get threadpool so other tasks (physics, gameupdates etc..) can use it 
     ThreadPool* threadPool = renderer->GetThreadPool();
@@ -26,11 +24,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // The same mesh can be used for multiple Entities
     Mesh* minoMesh = renderer->CreateMesh(L"Resources/Models/mino.obj");
 
-    // --------------------------------------------------------------------------------
+#pragma region CreateScene1
 
     // Create Scene
     Scene* scene1 = new Scene(renderer->GetCamera());
-    
     // Add Entity to Scene
     scene1->AddEntity("mino1");
     scene1->AddEntity("mino2");
@@ -72,7 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     renderer->SetSceneToDraw(scene1);
 
-    // --------------------------------------------------------------------------------
+#pragma endregion CreateScene1
 
     // GAMELOOP
     auto time_now = start;
@@ -107,10 +104,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     }   
 
     // ---------------------------- SafeExit the program ----------------------------
-
     delete scene1;
     delete window;
     delete renderer;
+
     return 0;
 }
-
