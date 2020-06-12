@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Window" Collapsed="true">
+    <Position X="26.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAALAAAgAAAACAACAAQAAAAABAAAASAgAAIY=</HashCode>
+      <FileName>src\Window.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AssetLoader" Collapsed="true">
+    <Position X="16.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BIAAAAECAAAAAABAAAAAAAAACACAAgAAAAAgAAECCAA=</HashCode>
+      <FileName>src\Engine\AssetLoader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="D3D12TimerCopy" Collapsed="true">
+    <Position X="23" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAEABAEIEIQDgAABAAJAEAAAgAAIAAIAARCAABAA=</HashCode>
+      <FileName>src\Engine\D3D12TimerCopy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CommandInterface" Collapsed="true">
+    <Position X="10.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAIAAAAAAACAAACAAABAAAAAAAA=</HashCode>
+      <FileName>src\Engine\CommandInterface.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera" Collapsed="true">
+    <Position X="10" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBwiAAIqACAAAAAgQEABAUAIAAAGAgRIBAAJAALABAA=</HashCode>
+      <FileName>src\Engine\Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConstantBuffer" Collapsed="true">
+    <Position X="6" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgABAAAAAAAAAAAAAAIAAAABAAEAACFQAAAAAAA=</HashCode>
+      <FileName>src\Engine\ConstantBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DepthBuffer" Collapsed="true">
+    <Position X="14.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAgAAAAAAAACQARCECAABAAAAAAAAAAACAAEAAAAA=</HashCode>
+      <FileName>src\Engine\DepthBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DescriptorHeap" Collapsed="true">
+    <Position X="8" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgABAAAIACACAABAAAAAAAAAEAAAgChAAACAAACAgQA=</HashCode>
+      <FileName>src\Engine\DescriptorHeap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mesh" Collapsed="true">
+    <Position X="26" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAABAAEAACCAAAAIAAAAAAAQAAAAAQAACAgAAEA=</HashCode>
+      <FileName>src\Engine\Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PipelineState" Collapsed="true">
+    <Position X="15.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgABAAgAAAAAAGAAAIAAAACAAAAEAAAAAABCAAAIEAA=</HashCode>
+      <FileName>src\Engine\PipelineState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderer" Collapsed="true">
+    <Position X="14.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAkkQAgJoABCoSARAACIIQBAggKAAgYAgKgAAsCGIA=</HashCode>
+      <FileName>src\Engine\Renderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderTarget" Collapsed="true">
+    <Position X="8" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AiAAgAAAAAAAACQAZCAAAABAAAAAAAAAIACAAEAAAAA=</HashCode>
+      <FileName>src\Engine\RenderTarget.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Resource" Collapsed="true">
+    <Position X="6" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAhBIAAAACCAAIAAAAAAAAAGAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\Resource.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RootSignature" Collapsed="true">
+    <Position X="12.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAgQAAIAAAAIAAgAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\RootSignature.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shader" Collapsed="true">
+    <Position X="15.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAQAAAAAAAAAAAACAAAAAAABAAAQBAAAAABAAAA=</HashCode>
+      <FileName>src\Engine\Shader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SwapChain" Collapsed="true">
+    <Position X="8" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\SwapChain.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Transform" Collapsed="true">
+    <Position X="27.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAA2AgAECAEAAAAAAAAIAQCAAABEggAAAAAAgAAAIA=</HashCode>
+      <FileName>src\Engine\Transform.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Timer" Collapsed="true">
+    <Position X="26.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAAAAAAAAAQAAAAAAAAAAAAAAAAAIAAQoAEAEAAA=</HashCode>
+      <FileName>src\Engine\Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thread" Collapsed="true">
+    <Position X="29" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACCAAQAAABFAAAAAAAIAQFAAAAAAAAAEAAhAICA=</HashCode>
+      <FileName>src\Engine\Thread.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThreadPool" Collapsed="true">
+    <Position X="29" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAECgCAAAAAAAAAABAAAAAAAAAAABQCABAAAAAAAA=</HashCode>
+      <FileName>src\Engine\ThreadPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12Task" Collapsed="true">
+    <Position X="4" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAACAAAAIAAAAIBAAQAAAAAABAAAQBQAA=</HashCode>
+      <FileName>src\Engine\DX12Task.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Task" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAQAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\Task.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CopyColorTask" Collapsed="true">
+    <Position X="0.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\CopyColorTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CopyTask" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAIAA=</HashCode>
+      <FileName>src\Engine\CopyTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderTask" Collapsed="true">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAQAAAAgAAAAAAAgACAAEhAgQAAQAAAICAAAAgAQI=</HashCode>
+      <FileName>src\Engine\RenderTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlendRenderTask" Collapsed="true">
+    <Position X="3" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\BlendRenderTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FowardRenderTask" Collapsed="true">
+    <Position X="5.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAQAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\ForwardRenderTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ComputeTask" Collapsed="true">
+    <Position X="7.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAEAAAAAAAAAAgAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\ComputeTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ComputeTestTask" Collapsed="true">
+    <Position X="7.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAQAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\ComputeTestTask.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Scene" Collapsed="true">
+    <Position X="23" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAQAAAAAAQAAwAABAAAAQgAAEQEAAYAAAAAAAAA=</HashCode>
+      <FileName>src\Game\Scene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entity" Collapsed="true">
+    <Position X="23" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAQAAAAAAAAIAAAAAACAhQAAACAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>src\Game\Entity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HealthComponent" Collapsed="true">
+    <Position X="21.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAIAAAAAAAAAAAAAAAAAAQAAAAAAACAAAAg=</HashCode>
+      <FileName>src\Game\Components\HealthComponent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Component" Collapsed="true">
+    <Position X="23" Y="8.5" Width="1.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAQgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>src\Game\Components\Component.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderComponent" Collapsed="true">
+    <Position X="24.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAJEAAAAABAAAAAAAAVACAAYIAAAAAAgAA=</HashCode>
+      <FileName>src\Game\Components\RenderComponent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="D3D12::D3D12Timer" Collapsed="true">
+    <Position X="23" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAABAEIEIADgIABAAJAEAAAgAAIAAIAARCABBAA=</HashCode>
+      <FileName>src\Engine\D3D12Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="ID3DX12PipelineParserCallbacks" Collapsed="true">
+    <Position X="0.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oACACEAAAMAASQEICAgCQQAAAAAIAgEAACAEBIAAACA=</HashCode>
+      <FileName>src\Engine\d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CD3DX12_PIPELINE_STATE_STREAM_PARSE_HELPER" Collapsed="true">
+    <Position X="0.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oACACUAAAIAAYAEIAAgCQQAAAIAIAgEAACAEBIAAACA=</HashCode>
+      <FileName>src\Engine\d3dx12.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SlotInfo" Collapsed="true">
+    <Position X="26" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>src\Engine\structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CB_PER_ENTITY" Collapsed="true">
+    <Position X="23.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAQAACAAAAAAA=</HashCode>
+      <FileName>src\Engine\structs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="float4x4" Collapsed="true">
+    <Position X="21.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\stdafx.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="float4" Collapsed="true">
+    <Position X="20" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\stdafx.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="float3" Collapsed="true">
+    <Position X="18.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\stdafx.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="float2" Collapsed="true">
+    <Position X="16.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\stdafx.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="COMMAND_INTERFACE_TYPE" Collapsed="true">
+    <Position X="16.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\CommandInterface.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CONSTANT_BUFFER_TYPE" Collapsed="true">
+    <Position X="20" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABBAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\ConstantBuffer.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DESCRIPTOR_HEAP_TYPE" Collapsed="true">
+    <Position X="23.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAEBA=</HashCode>
+      <FileName>src\Engine\DescriptorHeap.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RESOURCE_TYPE" Collapsed="true">
+    <Position X="16.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAgAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\Resource.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RS" Collapsed="true">
+    <Position X="18.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABQAAAAAAAQAAAAAAEACAAAAAAA=</HashCode>
+      <FileName>src\Engine\RootSignature.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ShaderType" Collapsed="true">
+    <Position X="20" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>src\Engine\Shader.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DrawOptions" Collapsed="true">
+    <Position X="24.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAIAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\stdafx.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="THREAD_FLAG" Collapsed="true">
+    <Position X="21.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAIAAAAAAAAAAAAAAAAAAIAAAAAABAA=</HashCode>
+      <FileName>src\Engine\Thread.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RENDER_TASK_TYPE" Collapsed="true">
+    <Position X="23.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAQAAAAAAAEAAA=</HashCode>
+      <FileName>src\Engine\DX12Task.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="COPY_TASK_TYPE" Collapsed="true">
+    <Position X="21.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\DX12Task.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="COMPUTE_TASK_TYPE" Collapsed="true">
+    <Position X="18.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\Engine\DX12Task.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

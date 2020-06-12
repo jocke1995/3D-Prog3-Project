@@ -32,6 +32,9 @@ public:
 	void AddEntityToDraw(Entity* entity);
 	void RemoveEntityFromDraw(Entity* entity);
 
+	const int* const a() const;
+
+	void UpdateScene(double dt);
 	void SortEntitiesByDistance();
 	void Execute();
 
@@ -80,6 +83,9 @@ private:
 	// Entites to draw, a single vector holding all Entites of different drawOptions
 	std::vector<Entity*> entitiesToDraw;
 	void SetRenderTasksEntities();
+
+	// Current scene to be drawn
+	Scene* scene = nullptr;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];

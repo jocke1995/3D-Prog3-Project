@@ -124,6 +124,8 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	// TODO: slå ihop till en loop..? problem: duplicering av kod
 	this->SetRenderTasksEntities();
 	this->SetMainCamera(scene->GetMainCamera());
+
+	this->scene = scene;
 }
 
 void Renderer::AddEntityToDraw(Entity* entity)
@@ -162,6 +164,11 @@ int Compare(const void* a, const void* b)
 		return -1;
 	else
 		return 0;
+}
+
+void Renderer::UpdateScene(double dt)
+{
+	this->scene->UpdateScene(dt);
 }
 
 void Renderer::SortEntitiesByDistance()
@@ -428,6 +435,7 @@ void Renderer::CreateSwapChain(HWND *hwnd)
 void Renderer::CreateDepthBuffer()
 {
 	this->depthBuffer = new DepthBuffer(this->device5, 800, 600);
+	//this->depthBuffer = new DepthBuffer(this->device5, 1920, 1080);
 }
 
 void Renderer::CreateRootSignature()
@@ -580,7 +588,6 @@ void Renderer::InitRenderTasks()
 	blendRenderTask->SetDescriptorHeap(this->descriptorHeap);
 
 #pragma endregion Blend
-
 	// :-----------------------------TASK CopyColor:-----------------------------
 	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE);
 

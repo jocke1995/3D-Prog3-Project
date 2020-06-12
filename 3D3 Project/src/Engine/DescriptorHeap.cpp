@@ -20,8 +20,6 @@ DescriptorHeap::DescriptorHeap(ID3D12Device5* device, DESCRIPTOR_HEAP_TYPE type)
 		break;
 	}
 
-
-
 	this->handleIncrementSize = device->GetDescriptorHandleIncrementSize(this->desc.Type);
 
 	// Create descriptorHeap for the renderTarget

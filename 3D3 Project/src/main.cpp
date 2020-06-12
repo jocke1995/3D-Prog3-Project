@@ -73,6 +73,48 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
 #pragma endregion CreateScene1
 
+#pragma region CreateScene2
+    // Create Scene
+    Scene* scene2 = new Scene(renderer->GetCamera());
+
+    // Add Entity to Scene
+    scene2->AddEntity("mino1");
+    scene2->AddEntity("mino2");
+    scene2->AddEntity("mino3");
+    scene2->AddEntity("mino4");
+
+    // Add Components to Entity
+    //scene1->GetEntity("mino1")->AddComponent<HealthComponent>();
+    scene2->GetEntity("mino1")->AddComponent<RenderComponent>();
+    scene2->GetEntity("mino2")->AddComponent<RenderComponent>();
+    scene2->GetEntity("mino3")->AddComponent<RenderComponent>();
+    scene2->GetEntity("mino4")->AddComponent<RenderComponent>();
+
+    // Set the components
+    rc = scene2->GetEntity("mino1")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
+
+    rc = scene2->GetEntity("mino2")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
+
+    rc = scene2->GetEntity("mino3")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.05);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
+
+    rc = scene2->GetEntity("mino4")->GetComponent<RenderComponent>();
+    rc->SetMesh(minoMesh);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.3);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 30.0f);
+#pragma endregion CreateScene2
     renderer->SetSceneToDraw(scene1);
 
     while (!window->ExitWindow())
@@ -86,6 +128,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
             char entityName[10];
             static int entityCounter = 0;
             sprintf(entityName, "cube%d", entityCounter);
+
             entityCounter++;
 
             // Test to add entity during runtime
@@ -110,16 +153,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         } 
 
         /* ------ Update ------ */
-        scene1->UpdateScene(timer->GetDeltaTime());
+        renderer->UpdateScene(timer->GetDeltaTime());
 
         renderer->SortEntitiesByDistance();
 
         /* ------ Draw   ------ */
         renderer->Execute();
-    }   
-
-
+    }
+    
     delete scene1;
+    delete scene2;
     delete window;
     delete renderer;
     delete timer;
