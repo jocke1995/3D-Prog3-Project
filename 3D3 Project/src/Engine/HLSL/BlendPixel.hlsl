@@ -8,7 +8,7 @@ struct VS_OUT
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
-	float4 lightPos = float4(0.5f, 2.0f, 0.0f, 1.0f);
+	float4 lightPos = float4(0.0f, 5.0f, -5.0f, 1.0f);
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	float4 materialColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 

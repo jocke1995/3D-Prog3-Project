@@ -1,11 +1,11 @@
 #include "Mesh.h"
 
-Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT vertexDataIndex)
+Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT vertexDataIndex)
 {
 	this->vertices = vertices;
 	this->vertexDataIndex = vertexDataIndex;
 
-	this->resource = new Resource(device, size, RESOURCE_TYPE::UPLOAD, L"MESH_NONAME");
+	this->resource = new Resource(device, this->GetSize(), RESOURCE_TYPE::UPLOAD, L"MESH_NONAME");
 
 	this->resource->SetData(this->vertices.data());
 }
@@ -22,7 +22,8 @@ Resource* Mesh::GetResource()
 
 size_t Mesh::GetSize()
 {
-	return this->vertices.size() * sizeof(Vertex);
+	size_t hello = this->vertices.size() * sizeof(Vertex);
+	return hello;
 }
 
 size_t Mesh::GetNumVertices()

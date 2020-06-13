@@ -34,7 +34,6 @@ void BlendRenderTask::Execute()
 	DescriptorHeap* renderTargetHeap = this->renderTargets[0]->GetDescriptorHeap();
 	DescriptorHeap* depthBufferHeap = this->depthBuffer->GetDescriptorHeap();
 
-	
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = renderTargetHeap->GetCPUHeapAt(this->backBufferIndex);
 	D3D12_CPU_DESCRIPTOR_HANDLE dsh = depthBufferHeap->GetCPUHeapAt(0);
 
@@ -46,7 +45,6 @@ void BlendRenderTask::Execute()
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Draw
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
@@ -59,32 +57,37 @@ void BlendRenderTask::Execute()
 		// Check if the Entity is to be drawn in Blend
 		if (rc->GetDrawFlag() & DrawOptions::Blend)
 		{
-			size_t num_vertices = rc->GetMesh()->GetNumVertices();
-			Transform* transform = rc->GetTransform();
-
-			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-			XMFLOAT4X4 WVPTransposed;
-			XMFLOAT4X4 wTransposed;
-
-			XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
-			XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
-
-			// Store and transpose the matrices for shader
-			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
-			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
-
-			SlotInfo* info = rc->GetSlotInfo();
-
-			// Create a CB_PER_ENTITY struct
-			CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
-
-			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
-
-			// Draw each entity twice with different PSO 
-			for (int i = 0; i < 2; i++)
+			// Draw for every mesh the entity has
+			for (unsigned int j = 0; j < rc->GetNrOfMeshes(); j++)
 			{
-				commandList->SetPipelineState(this->pipelineStates[i]->GetPSO());
-				commandList->DrawInstanced(num_vertices, 1, 0, 0);
+				size_t num_vertices = rc->GetMesh(j)->GetNumVertices();
+				SlotInfo* info = rc->GetSlotInfo(j);
+
+				Transform* transform = rc->GetTransform();
+				XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+				XMFLOAT4X4 WVPTransposed;
+				XMFLOAT4X4 wTransposed;
+
+				XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
+				XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
+
+				// Store and transpose the matrices for shader
+				XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
+				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
+
+
+
+				// Create a CB_PER_ENTITY struct
+				CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
+
+				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
+
+				// Draw each entity twice with different PSO 
+				for (int k = 0; k < 2; k++)
+				{
+					commandList->SetPipelineState(this->pipelineStates[k]->GetPSO());
+					commandList->DrawInstanced(num_vertices, 1, 0, 0);
+				}
 			}
 		}	
 	}

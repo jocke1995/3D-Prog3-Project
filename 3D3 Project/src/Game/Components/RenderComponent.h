@@ -14,22 +14,23 @@ public:
     void Update();
 
     // Sets
-    void SetMesh(Mesh* mesh);
+    void SetMeshes(std::vector<Mesh*> *meshes);
     void SetDrawFlag(UINT drawFlag);
 
     // Gets
     Transform* GetTransform();
-    Mesh* GetMesh();
+    Mesh* GetMesh(unsigned int index);
     UINT GetDrawFlag();
-    SlotInfo* GetSlotInfo();
+    unsigned int GetNrOfMeshes();
+    SlotInfo* GetSlotInfo(unsigned int index);
 
 private:
     Transform* transform;
-    Mesh* mesh;
+    std::vector<Mesh*> meshes;
     UINT drawFlag = 0;
 
     // Material* material
-    SlotInfo info;
+    std::vector<SlotInfo*> info;
 };
 
 #endif

@@ -92,17 +92,21 @@ void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
 	this->InitRenderTasks();
 }
 
-Mesh* Renderer::CreateMesh(std::wstring path)
+std::vector<Mesh*> Renderer::GetModel(std::wstring path)
 {
 	// TODO: Är detta en dålig lösning?
 	bool loadedBefore = false;
-	Mesh* mesh = AssetLoader::Get().LoadMesh(path, &loadedBefore);
+	std::vector<Mesh*> meshes = AssetLoader::Get().LoadModel(path, &loadedBefore);
 
-	// Only Create the SRV if its the first time the mesh is loaded
-	if(!loadedBefore)
-		this->CreateShaderResourceView(mesh);
-
-	return mesh;
+	// Only Create the SRVs if its the first time the model is loaded
+	if (!loadedBefore)
+	{
+		for (Mesh* mesh : meshes)
+		{
+			this->CreateShaderResourceView(mesh);
+		}
+	}
+	return meshes;
 }
 
 void Renderer::SetSceneToDraw(Scene* scene)

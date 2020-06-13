@@ -9,7 +9,6 @@ ComputeTestTask::~ComputeTestTask()
 {
 }
 
-//extern D3D12::D3D12Timer timer;
 void ComputeTestTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
@@ -17,10 +16,6 @@ void ComputeTestTask::Execute()
 
 	commandAllocator->Reset();
 	commandList->Reset(commandAllocator, NULL);
-
-	// Start timestamp
-	//UINT timer_index = 0;
-	//timer.start(commandList, timer_index);
 	
 	commandList->SetComputeRootSignature(this->rootSig);
 
@@ -31,10 +26,6 @@ void ComputeTestTask::Execute()
 		this->resources[0]->GetGPUVirtualAdress());
 
 	commandList->Dispatch(1, 1, 1);
-
-	// End timestamp
-	//timer.stop(commandList, timer_index);
-	//timer.resolveQueryToCPU(commandList, timer_index);
 
 	commandList->Close();
 }

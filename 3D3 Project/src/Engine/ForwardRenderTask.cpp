@@ -52,10 +52,10 @@ void FowardRenderTask::Execute()
 
 	commandList->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
-	// Draw
 	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
+	// Draw for every entity
 	for (auto entity : this->entities)
 	{
 		// Get the renderComponent of the entity
@@ -64,31 +64,34 @@ void FowardRenderTask::Execute()
 		// Check if the entity is to be drawn in forwardRendering
 		if (rc->GetDrawFlag() & DrawOptions::ForwardRendering)
 		{
-			size_t num_vertices = rc->GetMesh()->GetNumVertices();
-			Transform* transform = rc->GetTransform();
+			// Draw for every mesh the entity has
+			for (unsigned int i = 0; i < rc->GetNrOfMeshes(); i++)
+			{
+				size_t num_vertices = rc->GetMesh(i)->GetNumVertices();
+				SlotInfo* info = rc->GetSlotInfo(i);
 
-			XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-			XMFLOAT4X4 WVPTransposed;
-			XMFLOAT4X4 wTransposed;
+				Transform* transform = rc->GetTransform();
+				XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+				XMFLOAT4X4 WVPTransposed;
+				XMFLOAT4X4 wTransposed;
 
-			XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
-			XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
+				XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
+				XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
 
-			// Store and transpose the matrices for shader
-			XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
-			XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
+				// Store and transpose the matrices for shader
+				XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
+				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-			SlotInfo* info = rc->GetSlotInfo();
+				// Create a CB_PER_ENTITY struct
+				CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
 
-			// Create a CB_PER_ENTITY struct
-			CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
+				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
 
-			commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
+				// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
+				commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
 
-			// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
-			commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
-
-			commandList->DrawInstanced(num_vertices, 1, 0, 0);
+				commandList->DrawInstanced(num_vertices, 1, 0, 0);
+			}
 		}
 	}
 

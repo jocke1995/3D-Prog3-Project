@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX	// Assimp is using a function called "min"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers.
 #endif
@@ -13,6 +14,7 @@
 #include "d3dx12.h"
 
 // Windows stuff
+
 #include <Windows.h>
 
 // Time

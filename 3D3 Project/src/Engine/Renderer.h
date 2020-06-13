@@ -26,13 +26,11 @@ public:
 
 	void InitD3D12(HWND *hwnd, HINSTANCE hInstance);
 
-	Mesh* CreateMesh(std::wstring path);
+	std::vector<Mesh*> GetModel(std::wstring path);
 
 	void SetSceneToDraw(Scene* scene);
 	void AddEntityToDraw(Entity* entity);
 	void RemoveEntityFromDraw(Entity* entity);
-
-	const int* const a() const;
 
 	void UpdateScene(double dt);
 	void SortEntitiesByDistance();

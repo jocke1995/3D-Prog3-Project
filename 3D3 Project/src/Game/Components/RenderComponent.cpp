@@ -8,12 +8,22 @@ RenderComponent::RenderComponent()
 RenderComponent::~RenderComponent()
 {
 	delete this->transform;
+
+	for (SlotInfo* slotInfo : this->info)
+	{
+		delete slotInfo;
+	}
 }
 
-void RenderComponent::SetMesh(Mesh* mesh)
+void RenderComponent::SetMeshes(std::vector<Mesh*> *meshes)
 {
-	this->mesh = mesh;
-	this->info.vertexDataIndex = mesh->GetVertexDataIndex();
+	this->meshes = *meshes;
+
+	for (int i = 0; i < this->meshes.size(); i++)
+	{
+		this->info.push_back(new SlotInfo());
+		this->info[i]->vertexDataIndex = this->meshes[i]->GetVertexDataIndex();
+	}
 }
 
 void RenderComponent::SetDrawFlag(UINT drawFlag)
@@ -31,9 +41,9 @@ Transform* RenderComponent::GetTransform()
 	return this->transform;
 }
 
-Mesh* RenderComponent::GetMesh()
+Mesh* RenderComponent::GetMesh(unsigned int index)
 {
-	return this->mesh;
+	return this->meshes[index];
 }
 
 UINT RenderComponent::GetDrawFlag()
@@ -41,7 +51,12 @@ UINT RenderComponent::GetDrawFlag()
 	return this->drawFlag;
 }
 
-SlotInfo* RenderComponent::GetSlotInfo()
+unsigned int RenderComponent::GetNrOfMeshes()
 {
-	return &this->info;
+	return this->meshes.size();
+}
+
+SlotInfo* RenderComponent::GetSlotInfo(unsigned int index)
+{
+	return this->info[index];
 }

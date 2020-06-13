@@ -13,21 +13,16 @@ public:
         DirectX::XMFLOAT4 nor;
     };
 
-    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT size, UINT vertexDataIndex);
+    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT vertexDataIndex);
     ~Mesh();
 
     std::vector<Vertex> vertices;
 
     Resource* GetResource();
 
-    void SetSize(size_t size);
     size_t GetSize();
     size_t GetNumVertices();
     UINT GetVertexDataIndex();
-
-    void SetData();
-
-    // Indici buffer
 
 private:
     UINT vertexDataIndex;
