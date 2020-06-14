@@ -18,12 +18,11 @@ AssetLoader::~AssetLoader()
 		delete shader.second;
 }
 
-// TODO: testa pekare istället för referens
-AssetLoader& AssetLoader::Get()
+AssetLoader* AssetLoader::Get()
 {
 	static AssetLoader instance;
 
-	return instance;
+	return &instance;
 }
 
 void AssetLoader::SetDevice(ID3D12Device5* device)
@@ -31,14 +30,13 @@ void AssetLoader::SetDevice(ID3D12Device5* device)
 	this->device = device;
 }
 
-// TODO: return pointer and fix (if model fails to be loaded)
-std::vector<Mesh*> AssetLoader::LoadModel(const std::wstring path, bool* loadedBefore)
+std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loadedBefore)
 {
 	// Check if the model allready exists
 	if (this->loadedModels.count(path) != 0)
 	{
 		*loadedBefore = true;
-		return *this->loadedModels[path];
+		return this->loadedModels[path];
 	}
 
 	// Else load the model
@@ -50,7 +48,7 @@ std::vector<Mesh*> AssetLoader::LoadModel(const std::wstring path, bool* loadedB
 	if (assimpScene == nullptr)
 	{
 		// Log failed to load model
-		// return nullptr;
+		return nullptr;
 	}
 	
 	std::vector<Mesh*> *meshes = new std::vector<Mesh*>;
@@ -59,7 +57,7 @@ std::vector<Mesh*> AssetLoader::LoadModel(const std::wstring path, bool* loadedB
 	this->ProcessNode(assimpScene->mRootNode, assimpScene, meshes);
 
 	*loadedBefore = false;
-	return *meshes;
+	return this->loadedModels[path];
 }
 
 Shader* AssetLoader::LoadShader(std::wstring fileName, ShaderType type)
@@ -102,7 +100,6 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 	// Get data from assimpMesh and store it
 	for (unsigned int i = 0; i < assimpMesh->mNumVertices; i++)
 	{
-		// TODO: Init it to 0 everywhere
 		Mesh::Vertex vTemp = {};
 
 		// Get positions

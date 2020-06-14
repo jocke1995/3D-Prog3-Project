@@ -26,7 +26,7 @@ public:
 
 	void InitD3D12(HWND *hwnd, HINSTANCE hInstance);
 
-	std::vector<Mesh*> LoadModel(std::wstring path);
+	std::vector<Mesh*>* LoadModel(std::wstring path);
 
 	void SetSceneToDraw(Scene* scene);
 	void AddEntityToDraw(Entity* entity);

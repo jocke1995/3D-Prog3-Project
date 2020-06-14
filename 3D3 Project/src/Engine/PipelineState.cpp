@@ -58,15 +58,15 @@ void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
 {
 	if (type == ShaderType::VS)
 	{
-		this->VS = AssetLoader::Get().LoadShader(fileName, type);
+		this->VS = AssetLoader::Get()->LoadShader(fileName, type);
 	}
 	else if (type == ShaderType::PS)
 	{
-		this->PS = AssetLoader::Get().LoadShader(fileName, type);
+		this->PS = AssetLoader::Get()->LoadShader(fileName, type);
 	}
 	else if (type == ShaderType::CS)
 	{
-		this->CS = AssetLoader::Get().LoadShader(fileName, type);
+		this->CS = AssetLoader::Get()->LoadShader(fileName, type);
 	}
 }
 

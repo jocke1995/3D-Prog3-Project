@@ -87,21 +87,20 @@ void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
 
-	AssetLoader::Get().SetDevice(this->device5);
+	AssetLoader::Get()->SetDevice(this->device5);
 
 	this->InitRenderTasks();
 }
 
-std::vector<Mesh*> Renderer::LoadModel(std::wstring path)
+std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 {
-	// TODO: Är detta en dålig lösning?
 	bool loadedBefore = false;
-	std::vector<Mesh*> meshes = AssetLoader::Get().LoadModel(path, &loadedBefore);
+	std::vector<Mesh*>* meshes = AssetLoader::Get()->LoadModel(path, &loadedBefore);
 
 	// Only Create the SRVs if its the first time the model is loaded
 	if (!loadedBefore)
 	{
-		for (Mesh* mesh : meshes)
+		for (Mesh* mesh : *meshes)
 		{
 			this->CreateShaderResourceView(mesh);
 		}

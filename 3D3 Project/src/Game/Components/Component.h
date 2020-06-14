@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-// TODO: Filip
+// TODO: precompiled header problem
 #include "../../Engine/stdafx.h"
 
 class Component

@@ -13,13 +13,13 @@ class AssetLoader
 public:
     ~AssetLoader();
 
-    static AssetLoader& Get();
+    static AssetLoader* Get();
 
     void SetDevice(ID3D12Device5* device);
 
     /* Load Functions */
     // Mesh ---------------
-    std::vector<Mesh*> LoadModel(const std::wstring path, bool* loadedBefore);
+    std::vector<Mesh*>* LoadModel(const std::wstring path, bool* loadedBefore);
 
     // Texture ------------
     //Texture& LoadTexture(std::wstring path);
