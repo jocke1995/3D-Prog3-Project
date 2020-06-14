@@ -5,7 +5,7 @@ struct color
 
 RWStructuredBuffer<color> materialColor0 : register(u0);
 
-[numthreads(3, 1, 1)] // ? Man skriver ju detta i dispatch
+[numthreads(3, 1, 1)]
 void CS_main(uint3 DTid : SV_DispatchThreadID)
 {
 	int threadId = DTid.x;

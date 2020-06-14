@@ -92,7 +92,7 @@ void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
 	this->InitRenderTasks();
 }
 
-std::vector<Mesh*> Renderer::GetModel(std::wstring path)
+std::vector<Mesh*> Renderer::LoadModel(std::wstring path)
 {
 	// TODO: Är detta en dålig lösning?
 	bool loadedBefore = false;
@@ -463,6 +463,7 @@ void Renderer::InitRenderTasks()
 	// Rasterizer behaviour
 	gpsdForwardRender.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	gpsdForwardRender.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+	gpsdForwardRender.RasterizerState.FrontCounterClockwise = false;
 
 	// Specify Blend descriptions
 	D3D12_RENDER_TARGET_BLEND_DESC defaultRTdesc = {

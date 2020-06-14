@@ -15,7 +15,7 @@ ConstantBuffer<color> materialColor0 : register(b1);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
-	float4 lightPos = float4(0.0f, 1.0f, -5.0f, 1.0f);
+	float4 lightPos = float4(3.0f, 5.0f, -5.0f, 1.0f);
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	float4 materialColor = materialColor0.rgba;
 
@@ -27,10 +27,8 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 	float alpha = max(dot(input.norm.xyz, lightDir.xyz), 0.0f);
 	float4 diffuse = materialColor * lightColor * alpha;
 
-	// FinalColor
-	float4 finalColor = float4(ambient.rgb + diffuse.rgb, 1.0f);
-	//float4 finalColor = float4(materialColor.rgb, 1.0f);
+	float4 finalColor = float4(diffuse.rgb + ambient.rgb, 1.0f);
+	finalColor = saturate(finalColor);
 
-	//return float4(1.0f, 0.0f, 1.0f, 1.0f);
-	return min(finalColor, 1.0f);
+	return finalColor;
 }

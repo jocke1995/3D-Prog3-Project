@@ -31,19 +31,19 @@ void Transform::SetRotation(XMFLOAT3 axis, float angle)
 {
 }
 
-void Transform::RotateX(float angle)
+void Transform::RotateX(float radians)
 {
-	this->rotXMat = XMMatrixRotationX(angle);
+	this->rotXMat = XMMatrixRotationX(radians);
 }
 
-void Transform::RotateY(float angle)
+void Transform::RotateY(float radians)
 {
-	this->rotYMat = XMMatrixRotationY(angle);
+	this->rotYMat = XMMatrixRotationY(radians);
 }
 
-void Transform::RotateZ(float angle)
+void Transform::RotateZ(float radians)
 {
-	this->rotZMat = XMMatrixRotationZ(angle);
+	this->rotZMat = XMMatrixRotationZ(radians);
 }
 
 void Transform::SetScale(float scale)

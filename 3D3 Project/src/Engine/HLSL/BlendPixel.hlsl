@@ -8,20 +8,22 @@ struct VS_OUT
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
-	float4 lightPos = float4(0.0f, 5.0f, -5.0f, 1.0f);
+	float4 lightPos = float4(3.0f, 5.0f, -5.0f, 1.0f);
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	float4 materialColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Ambient
-	float4 ambient = materialColor * float4(0.2f, 0.2f, 0.2f, 0.2f);
+	float4 ambient = materialColor * float4(0.3f, 0.3f, 0.3f, 1.0f);
 
 	// Diffuse
-	float4 lightDir = float4(normalize(lightPos.xyz - input.worldPos.xyz), 1.0f);
-	float alpha = max(dot(input.norm.xyz, lightDir.xyz), 0);
+	float4 lightDir = normalize(lightPos - input.worldPos);
+	float alpha = max(dot(input.norm, lightDir), 0.0f);
 	float4 diffuse = materialColor * lightColor * alpha;
 
 	// FinalColor
-	float4 finalColor = float4(ambient.rgb + diffuse.rgb, 0.7f);
+	float blendFactor = 0.2f;
+	float4 finalColor = float4(ambient.rgb + diffuse.rgb, blendFactor);
 
+	finalColor = saturate(finalColor);
 	return finalColor;
 }

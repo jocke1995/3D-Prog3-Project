@@ -7,6 +7,10 @@
 
 #include "Game/Scene.h"
 
+// Kom ihåg: 
+// 2. fixa så att assimp.dll inte plockas bort i gitignore. 
+// (gör så att vi bara inte tar med obj i x64. men sparar själva mappen
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -24,9 +28,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Get threadpool so other tasks (physics, gameupdates etc..) can use it 
     ThreadPool* threadPool = renderer->GetThreadPool();
 
-    // The same mesh can be used for multiple Entities
-    std::vector<Mesh*> minoModel = renderer->GetModel(L"Resources/Models/mino.obj");
-    std::vector<Mesh*> cubeModel = renderer->GetModel(L"Resources/Models/cube3.obj");
+    // This will be loaded once from disk, then the next time the same function is called (with the same filepath),
+    // the function will just return the same pointer to the mesh that was loaded earlier.
+    std::vector<Mesh*> minoModel = renderer->LoadModel(L"Resources/Models/mino.obj");
+    std::vector<Mesh*> cubeModel = renderer->LoadModel(L"Resources/Models/cube.obj");
+    std::vector<Mesh*> dragonModel = renderer->LoadModel(L"Resources/Models/dragon.fbx");
 
 #pragma region CreateScene1
 
@@ -79,56 +85,56 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Add Entity to Scene
     scene2->AddEntity("cube1");
     scene2->AddEntity("cube2");
-    //scene2->AddEntity("cube3");
-    //scene2->AddEntity("cube4");
-    //scene2->AddEntity("mino1");
+    scene2->AddEntity("cube3");
+    scene2->AddEntity("dragon");
+    scene2->AddEntity("mino1");
     scene2->AddEntity("cam");
     
     // Add Components to Entity
-    //scene1->GetEntity("mino1")->AddComponent<HealthComponent>();
     scene2->GetEntity("cube1")->AddComponent<RenderComponent>();
     scene2->GetEntity("cube2")->AddComponent<RenderComponent>();
-    //scene2->GetEntity("cube3")->AddComponent<RenderComponent>();
-    //scene2->GetEntity("cube4")->AddComponent<RenderComponent>();
-    //scene2->GetEntity("mino1")->AddComponent<RenderComponent>();
+    scene2->GetEntity("cube3")->AddComponent<RenderComponent>();
+    scene2->GetEntity("dragon")->AddComponent<RenderComponent>();
+    scene2->GetEntity("mino1")->AddComponent<RenderComponent>();
     scene2->GetEntity("cam")->AddComponent<RenderComponent>();
     
     // Set the components
     rc = scene2->GetEntity("cube1")->GetComponent<RenderComponent>();
     rc->SetMeshes(&cubeModel);
-    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.5);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
     
     rc = scene2->GetEntity("cube2")->GetComponent<RenderComponent>();
-    rc->SetMeshes(&cubeModel);
-    rc->SetDrawFlag(DrawOptions::Blend);
-    rc->GetTransform()->SetScale(0.5);
+    rc->SetMeshes(&minoModel);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
     
-    //rc = scene2->GetEntity("cube3")->GetComponent<RenderComponent>();
-    //rc->SetMeshes(&cubeModel);
-    //rc->SetDrawFlag(DrawOptions::Blend);
-    //rc->GetTransform()->SetScale(0.5);
-    //rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
-    //
-    //rc = scene2->GetEntity("cube4")->GetComponent<RenderComponent>();
-    //rc->SetMeshes(&cubeModel);
-    //rc->SetDrawFlag(DrawOptions::Blend);
-    //rc->GetTransform()->SetScale(0.3);
-    //rc->GetTransform()->SetPosition(0.0f, 0.0f, 30.0f);
-    //
-    //rc = scene2->GetEntity("mino1")->GetComponent<RenderComponent>();
-    //rc->SetMeshes(&minoModel);
-    //rc->SetDrawFlag(DrawOptions::ForwardRendering);
-    //rc->GetTransform()->SetScale(0.07);
-    //rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
+    rc = scene2->GetEntity("cube3")->GetComponent<RenderComponent>();
+    rc->SetMeshes(&cubeModel);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.5);
+    rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
+    
+    rc = scene2->GetEntity("dragon")->GetComponent<RenderComponent>();
+    rc->SetMeshes(&dragonModel);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.2);
+    rc->GetTransform()->RotateX(3.0*DirectX::XM_PI / 2.0);
+    rc->GetTransform()->SetPosition(30.0f, 0.0f, 30.0f);
+    
+    rc = scene2->GetEntity("mino1")->GetComponent<RenderComponent>();
+    rc->SetMeshes(&minoModel);
+    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->GetTransform()->SetScale(0.07);
+    rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
 
     rc = scene2->GetEntity("cam")->GetComponent<RenderComponent>();
     rc->SetMeshes(&cubeModel);
-    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);
-    rc->GetTransform()->SetPosition(0.0f, 5.0f, -5.0f);
+    rc->GetTransform()->SetPosition(3.0f, 5.0f, -5.0f);
 
 #pragma endregion CreateScene2
     renderer->SetSceneToDraw(scene2);
