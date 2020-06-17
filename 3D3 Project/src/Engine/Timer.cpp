@@ -36,3 +36,17 @@ double Timer::GetDeltaTime() const
 {
     return this->dt;
 }
+
+void Timer::StartTimer()
+{
+    this->start = std::chrono::system_clock::now();
+}
+
+double Timer::StopTimer()
+{
+    this->stop = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsedTime = this->stop - this->start;
+
+    return elapsedTime.count();
+}

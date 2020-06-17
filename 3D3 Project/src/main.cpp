@@ -182,7 +182,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         /* ------ Draw   ------ */
         renderer->Execute();
     }
-    
+
     delete scene1;
     delete scene2;
     delete window;
