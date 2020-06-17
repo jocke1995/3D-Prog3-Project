@@ -45,7 +45,7 @@ Entity* Scene::GetEntity(std::string entityName)
 {
     if (this->EntityExists(entityName))
     {
-        return this->entities[entityName];
+        return this->entities.at(entityName);
     }
 
     // Log
@@ -53,7 +53,7 @@ Entity* Scene::GetEntity(std::string entityName)
     return nullptr;
 }
 
-std::map<std::string, Entity*>* Scene::GetEntities()
+const std::map<std::string, Entity*>* Scene::GetEntities() const
 {
 	return &this->entities;
 }
@@ -82,7 +82,7 @@ void Scene::UpdateEntities()
     }
 }
 
-bool Scene::EntityExists(std::string entityName)
+bool Scene::EntityExists(std::string entityName) const
 {
     for (auto const& [entityNameInScene, entity] : this->entities)
     {

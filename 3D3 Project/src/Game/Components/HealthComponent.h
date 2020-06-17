@@ -8,8 +8,9 @@ public:
 	HealthComponent();
 	~HealthComponent();
 
+	int GetHealth() const;
+
 	void Update();
-	int GetHealth();
 private:
 	int health = 0;
 };

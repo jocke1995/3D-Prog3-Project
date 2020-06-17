@@ -5,9 +5,9 @@ Entity::Entity()
 	this->id = staticID++;
 }
 
-bool Entity::operator==(const Entity& rhs) const
+bool Entity::operator==(const Entity* rhs) const
 {
-	if (this->id == rhs.id)
+	if (this->id == rhs->id)
 	{
 		return true;
 	}
@@ -22,7 +22,7 @@ Entity::~Entity()
 	}
 }
 
-unsigned int Entity::GetID()
+unsigned int Entity::GetID() const
 {
 	return this->id;
 }

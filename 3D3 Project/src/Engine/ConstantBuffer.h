@@ -16,9 +16,9 @@ public:
 	~ConstantBuffer();
 
 	void SetData(void* beginLocation, const void* data);
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPUAt(UINT index);
 
-	CONSTANT_BUFFER_TYPE GetType();
+	D3D12_GPU_VIRTUAL_ADDRESS GetGPUAt(UINT index) const;
+	CONSTANT_BUFFER_TYPE GetType() const;
 	void* GetValidLocation();
 
 private:

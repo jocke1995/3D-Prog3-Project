@@ -49,7 +49,7 @@ Renderer::~Renderer()
 	delete this->threadpool;
 }
 
-void Renderer::InitD3D12(HWND *hwnd, HINSTANCE hInstance)
+void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 {
 	// Camera
 	this->camera = new Camera(L"default_cam", hInstance, *hwnd);
@@ -131,32 +131,34 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	this->scene = scene;
 }
 
-void Renderer::AddEntityToDraw(Entity* entity)
+bool Renderer::AddEntityToDraw(Entity* entity)
 {
 	RenderComponent* rc = entity->GetComponent<RenderComponent>();
 	if (rc != nullptr)
 	{
 		this->entitiesToDraw.push_back(entity);
+		this->SetRenderTasksEntities();
+		return true;
 	}
-
-	this->SetRenderTasksEntities();
+	return false;	
 }
 
-void Renderer::RemoveEntityFromDraw(Entity* entity)
+bool Renderer::RemoveEntityFromDraw(Entity* entity)
 {
 	RenderComponent* rc = entity->GetComponent<RenderComponent>();
 	if (rc != nullptr)
 	{
 		for (int i = 0; i < this->entitiesToDraw.size(); i++)
 		{
-			if (*entity == *this->entitiesToDraw[i])
+			if (*entity == this->entitiesToDraw[i])
 			{
 				this->entitiesToDraw.erase(this->entitiesToDraw.begin() + i);
+				this->SetRenderTasksEntities();
+				return true;
 			}
 		}
 	}
-	
-	this->SetRenderTasksEntities();
+	return false;
 }
 
 int Compare(const void* a, const void* b)
@@ -187,13 +189,14 @@ void Renderer::SortEntitiesByDistance()
 	DistEnt* distEntArr = new DistEnt[nrOfEntities];
 
 	// Get all the distances of each objects and store them by ID and distance
+	XMFLOAT3 camPos = this->camera->GetPosition();
 	for (int i = 0; i < nrOfEntities; i++)
 	{
 		XMFLOAT3 objectPos = this->entitiesToDraw.at(i)->GetComponent<RenderComponent>()->GetTransform()->GetPosition();
 
-		double distance = sqrt(	pow(this->camera->GetPosition().x - objectPos.x, 2) +
-								pow(this->camera->GetPosition().y - objectPos.y, 2) +
-								pow(this->camera->GetPosition().z - objectPos.z, 2));
+		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
+								pow(camPos.y - objectPos.y, 2) +
+								pow(camPos.z - objectPos.z, 2));
 
 		// Save the object alongside its distance to the camera
 		distEntArr[i].distance = distance;
@@ -315,7 +318,7 @@ ThreadPool* Renderer::GetThreadPool() const
 	return this->threadpool;
 }
 
-Camera* Renderer::GetCamera()
+Camera* Renderer::GetCamera() const
 {
 	return this->camera;
 }
@@ -430,7 +433,7 @@ void Renderer::CreateCommandQueues()
 	}
 }
 
-void Renderer::CreateSwapChain(HWND *hwnd)
+void Renderer::CreateSwapChain(const HWND *hwnd)
 {
 	swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
 }

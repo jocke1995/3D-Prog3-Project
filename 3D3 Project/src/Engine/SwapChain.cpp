@@ -1,6 +1,6 @@
 #include "SwapChain.h"
 
-SwapChain::SwapChain(ID3D12Device5* device, HWND* hwnd, ID3D12CommandQueue* commandQueue)
+SwapChain::SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue* commandQueue)
 {
 	this->descriptorHeap = new DescriptorHeap(device, DESCRIPTOR_HEAP_TYPE::RTV);
 	this->resources.resize(NUM_SWAP_BUFFERS);
@@ -79,7 +79,7 @@ SwapChain::~SwapChain()
 	SAFE_RELEASE(&this->swapChain4);
 }
 
-IDXGISwapChain4* SwapChain::GetDX12SwapChain()
+IDXGISwapChain4* SwapChain::GetDX12SwapChain() const
 {
 	return this->swapChain4;
 }

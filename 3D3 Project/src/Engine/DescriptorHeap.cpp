@@ -38,12 +38,12 @@ DescriptorHeap::~DescriptorHeap()
 	SAFE_RELEASE(&this->descriptorHeap);
 }
 
-D3D12_DESCRIPTOR_HEAP_DESC* DescriptorHeap::GetDesc()
+const D3D12_DESCRIPTOR_HEAP_DESC* DescriptorHeap::GetDesc() const
 {
 	return &this->desc;
 }
 
-ID3D12DescriptorHeap* DescriptorHeap::GetID3D12DescriptorHeap()
+ID3D12DescriptorHeap* DescriptorHeap::GetID3D12DescriptorHeap() const
 {
 	return this->descriptorHeap;
 }
@@ -60,7 +60,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGPUHeapAt(UINT descriptorIndex)
 	return GPUHeapAt;
 }
 
-UINT DescriptorHeap::GetHandleIncrementSize()
+const UINT DescriptorHeap::GetHandleIncrementSize() const
 {
 	return this->handleIncrementSize;
 }

@@ -27,7 +27,7 @@ void BlendRenderTask::Execute()
 
 	// Change state on front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-		this->renderTargets[0]->GetRenderTarget(this->backBufferIndex),
+		this->renderTargets[0]->GetResource(this->backBufferIndex),
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
@@ -39,13 +39,13 @@ void BlendRenderTask::Execute()
 
 	commandList->OMSetRenderTargets(1, &cdh, true, &dsh);
 
-	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
-	D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
+	const D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
+	const D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
 	commandList->RSSetViewports(1, viewPort);
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
+	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw from opposite order from the sorted array
@@ -64,7 +64,7 @@ void BlendRenderTask::Execute()
 				SlotInfo* info = rc->GetSlotInfo(j);
 
 				Transform* transform = rc->GetTransform();
-				XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 				XMFLOAT4X4 WVPTransposed;
 				XMFLOAT4X4 wTransposed;
 
@@ -94,7 +94,7 @@ void BlendRenderTask::Execute()
 	
 	// Ändra state på front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-		this->renderTargets[0]->GetRenderTarget(this->backBufferIndex),
+		this->renderTargets[0]->GetResource(this->backBufferIndex),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT));
 

@@ -24,20 +24,20 @@ public:
 	Renderer();
 	~Renderer();
 
-	void InitD3D12(HWND *hwnd, HINSTANCE hInstance);
+	void InitD3D12(const HWND *hwnd, HINSTANCE hInstance);
 
 	std::vector<Mesh*>* LoadModel(std::wstring path);
 
 	void SetSceneToDraw(Scene* scene);
-	void AddEntityToDraw(Entity* entity);
-	void RemoveEntityFromDraw(Entity* entity);
+	bool AddEntityToDraw(Entity* entity);
+	bool RemoveEntityFromDraw(Entity* entity);
 
 	void UpdateScene(double dt);
 	void SortEntitiesByDistance();
 	void Execute();
 
 	ThreadPool* GetThreadPool() const;
-	Camera* GetCamera();
+	Camera* GetCamera() const;
 private:
 	// Camera
 	Camera* camera = nullptr;
@@ -55,7 +55,7 @@ private:
 
 	// Swapchain
 	RenderTarget* swapChain = nullptr;
-	void CreateSwapChain(HWND *hwnd);
+	void CreateSwapChain(const HWND *hwnd);
 
 	// Depthbuffer
 	DepthBuffer* depthBuffer = nullptr;

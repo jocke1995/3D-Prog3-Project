@@ -9,7 +9,7 @@ public:
 	Shader(LPCTSTR path, ShaderType type);
 	~Shader();
 
-	ID3DBlob* GetBlob();
+	ID3DBlob* GetBlob() const;
 
 private:
 	ID3DBlob* blob;

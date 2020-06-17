@@ -62,7 +62,7 @@ void Camera::SetPosition(float x, float y, float z)
 // {
 // }
 
-XMFLOAT4X4* Camera::GetViewProjMatrix()
+const XMFLOAT4X4* const Camera::GetViewProjMatrix() const
 {
 	return &this->viewProjMat;
 }

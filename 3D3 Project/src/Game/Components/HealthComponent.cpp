@@ -9,12 +9,12 @@ HealthComponent::~HealthComponent()
 {
 }
 
+int HealthComponent::GetHealth() const
+{
+	return this->health;
+}
+
 void HealthComponent::Update()
 {
 
-}
-
-int HealthComponent::GetHealth()
-{
-	return this->health;
 }

@@ -12,11 +12,11 @@ public:
 	PipelineState(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName);
 	~PipelineState();
 
-	ID3D12PipelineState* GetPSO();
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC* GetGpsd();
-	D3D12_COMPUTE_PIPELINE_STATE_DESC* GetCpsd();
+	ID3D12PipelineState* GetPSO() const;
+	const D3D12_GRAPHICS_PIPELINE_STATE_DESC* GetGpsd() const;
+	const D3D12_COMPUTE_PIPELINE_STATE_DESC*  GetCpsd() const;
+	Shader* GetShader(ShaderType type) const;
 
-	Shader* GetShader(ShaderType type);
 private:
 	LPCTSTR name;
 	ID3D12PipelineState* PSO = nullptr;

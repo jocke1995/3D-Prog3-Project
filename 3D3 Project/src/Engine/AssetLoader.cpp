@@ -43,7 +43,7 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 	const std::string filePath(path.begin(), path.end());
 	Assimp::Importer importer;
 
-	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate);
+	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
 
 	if (assimpScene == nullptr)
 	{
@@ -118,14 +118,28 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		// Get Normals
 		if (assimpMesh->HasNormals())
 		{
-			vTemp.nor.x = assimpMesh->mNormals[i].x;
-			vTemp.nor.y = assimpMesh->mNormals[i].y;
-			vTemp.nor.z = assimpMesh->mNormals[i].z;
-			vTemp.nor.w = 0.0;
+			vTemp.normal.x = assimpMesh->mNormals[i].x;
+			vTemp.normal.y = assimpMesh->mNormals[i].y;
+			vTemp.normal.z = assimpMesh->mNormals[i].z;
+			vTemp.normal.w = 0.0;
 		}
 		else
 		{
 			// Log no Normals
+			int a = 5;
+		}
+
+		if (assimpMesh->HasTangentsAndBitangents())
+		{
+			// Todo: Add bitangent if needed
+			vTemp.tangent.x = assimpMesh->mTangents[i].x;
+			vTemp.tangent.y = assimpMesh->mTangents[i].y;
+			vTemp.tangent.z = assimpMesh->mTangents[i].z;
+			vTemp.tangent.w = 0.0;
+		}
+		else
+		{
+			// Log no Tangents or Bitangents
 			int a = 5;
 		}
 		

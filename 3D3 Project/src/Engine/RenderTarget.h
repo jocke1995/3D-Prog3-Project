@@ -8,15 +8,13 @@ class RenderTarget
 {
 public:
 	RenderTarget(ID3D12Device5* device, unsigned int width, unsigned int height, unsigned int nrOf = 1);
+	RenderTarget();
 	virtual ~RenderTarget();
-	RenderTarget() {}
 
-	DescriptorHeap* GetDescriptorHeap();
-	ID3D12Resource1* GetRenderTarget(UINT index);
-	D3D12_VIEWPORT* GetViewPort();
-	D3D12_RECT* GetScissorRect();
-
-	
+	DescriptorHeap* GetDescriptorHeap() const;
+	ID3D12Resource1* GetResource(UINT index) const;
+	const D3D12_VIEWPORT* GetViewPort() const;
+	const D3D12_RECT* GetScissorRect() const;
 
 protected:
 	void CreateViewport(unsigned int width, unsigned int height);

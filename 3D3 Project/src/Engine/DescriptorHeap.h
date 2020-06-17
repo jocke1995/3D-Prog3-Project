@@ -14,12 +14,11 @@ public:
 	DescriptorHeap(ID3D12Device5* device, DESCRIPTOR_HEAP_TYPE type);
 	~DescriptorHeap();
 
-	D3D12_DESCRIPTOR_HEAP_DESC* GetDesc();
-	ID3D12DescriptorHeap* GetID3D12DescriptorHeap();
-
+	const D3D12_DESCRIPTOR_HEAP_DESC* GetDesc() const;
+	ID3D12DescriptorHeap* GetID3D12DescriptorHeap() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHeapAt(UINT descriptorIndex);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHeapAt(UINT descriptorIndex);
-	UINT GetHandleIncrementSize();
+	const UINT GetHandleIncrementSize() const;
 
 	void SetCPUGPUHeapStart();
 private:

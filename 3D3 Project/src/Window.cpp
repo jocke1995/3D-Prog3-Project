@@ -53,6 +53,26 @@ void Window::SetWindowTitle(std::wstring newTitle)
 	SetWindowTextW(this->hwnd, newTitle.c_str());
 }
 
+bool Window::IsFullScreen() const
+{
+	return this->fullScreen;
+}
+
+int Window::GetScreenWidth() const
+{
+	return this->screenWidth;
+}
+
+int Window::GetScreenHeight() const
+{
+	return this->screenHeight;
+}
+
+const HWND* Window::GetHwnd() const
+{
+	return &this->hwnd;
+}
+
 bool Window::ExitWindow()
 {
 	bool closeWindow = false;
@@ -70,26 +90,6 @@ bool Window::ExitWindow()
 		}
 	}
 	return closeWindow;
-}
-
-bool Window::IsFullScreen()
-{
-	return this->fullScreen;
-}
-
-int Window::GetScreenWidth()
-{
-	return this->screenWidth;
-}
-
-int Window::GetScreenHeight()
-{
-	return this->screenHeight;
-}
-
-HWND* Window::GetHwnd()
-{
-	return &this->hwnd;
 }
 
 bool Window::WasSpacePressed()

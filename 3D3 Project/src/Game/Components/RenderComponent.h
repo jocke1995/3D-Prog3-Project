@@ -18,11 +18,11 @@ public:
     void SetDrawFlag(UINT drawFlag);
 
     // Gets
-    Transform* GetTransform();
-    Mesh* GetMesh(unsigned int index);
-    UINT GetDrawFlag();
-    unsigned int GetNrOfMeshes();
-    SlotInfo* GetSlotInfo(unsigned int index);
+    Transform* GetTransform() const;
+    Mesh* GetMesh(unsigned int index) const;
+    UINT GetDrawFlag() const;
+    unsigned int GetNrOfMeshes() const;
+    SlotInfo* GetSlotInfo(unsigned int index) const;
 
 private:
     Transform* transform;

@@ -27,7 +27,7 @@ void FowardRenderTask::Execute()
 
 	// Change state on front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-		this->renderTargets[0]->GetRenderTarget(this->backBufferIndex),
+		this->renderTargets[0]->GetResource(this->backBufferIndex),
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
@@ -44,15 +44,16 @@ void FowardRenderTask::Execute()
 	commandList->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
 	commandList->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
-	D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
+	const D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
+	const D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
 	commandList->RSSetViewports(1, viewPort);
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	commandList->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
-	XMFLOAT4X4* viewProjMat = this->camera->GetViewProjMatrix();
+	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
+	
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw for every entity
@@ -71,7 +72,7 @@ void FowardRenderTask::Execute()
 				SlotInfo* info = rc->GetSlotInfo(i);
 
 				Transform* transform = rc->GetTransform();
-				XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
+				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 				XMFLOAT4X4 WVPTransposed;
 				XMFLOAT4X4 wTransposed;
 
@@ -97,7 +98,7 @@ void FowardRenderTask::Execute()
 
 	// Ändra state på front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-		this->renderTargets[0]->GetRenderTarget(this->backBufferIndex),
+		this->renderTargets[0]->GetResource(this->backBufferIndex),
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT));
 

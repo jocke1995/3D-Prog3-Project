@@ -37,7 +37,7 @@ public:
 	void SetBackBufferIndex(int backBufferIndex);
 	void SetCommandInterfaceIndex(int index);
 
-	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index);
+	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index) const;
 protected:
 	std::vector<Resource*> resources;
 

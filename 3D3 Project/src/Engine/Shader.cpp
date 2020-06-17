@@ -13,7 +13,7 @@ Shader::~Shader()
 	SAFE_RELEASE(&this->blob);
 }
 
-ID3DBlob* Shader::GetBlob()
+ID3DBlob* Shader::GetBlob() const
 {
 	return this->blob;
 }

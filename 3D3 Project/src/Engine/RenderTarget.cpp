@@ -51,6 +51,10 @@ RenderTarget::RenderTarget(ID3D12Device5* device, unsigned int width, unsigned i
 	this->CreateScissorRect(width, height);
 }
 
+RenderTarget::RenderTarget()
+{
+}
+
 RenderTarget::~RenderTarget()
 {
 	for (int i = 0; i < this->resources.size(); i++)
@@ -61,15 +65,26 @@ RenderTarget::~RenderTarget()
 	delete this->descriptorHeap;
 }
 
-DescriptorHeap* RenderTarget::GetDescriptorHeap()
+DescriptorHeap* RenderTarget::GetDescriptorHeap() const
 {
 	return this->descriptorHeap;
 }
 
-ID3D12Resource1* RenderTarget::GetRenderTarget(UINT index)
+ID3D12Resource1* RenderTarget::GetResource(UINT index) const
 {
 	return this->resources[index];
 }
+
+const D3D12_VIEWPORT* RenderTarget::GetViewPort() const
+{
+	return &this->viewport;
+}
+
+const D3D12_RECT* RenderTarget::GetScissorRect() const
+{
+	return &this->scissorRect;
+}
+
 
 void RenderTarget::CreateViewport(unsigned int width, unsigned int height)
 {
@@ -87,14 +102,4 @@ void RenderTarget::CreateScissorRect(unsigned int width, unsigned int height)
 	this->scissorRect.right = (long)width;
 	this->scissorRect.top = (long)0;
 	this->scissorRect.bottom = (long)height;
-}
-
-D3D12_VIEWPORT* RenderTarget::GetViewPort()
-{
-	return &this->viewport;
-}
-
-D3D12_RECT* RenderTarget::GetScissorRect()
-{
-	return &this->scissorRect;
 }

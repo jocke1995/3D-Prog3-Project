@@ -32,7 +32,7 @@ void Timer::Update()
     }
 }
 
-double Timer::GetDeltaTime()
+double Timer::GetDeltaTime() const
 {
     return this->dt;
 }

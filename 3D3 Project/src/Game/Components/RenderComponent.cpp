@@ -36,27 +36,27 @@ void RenderComponent::Update()
 	this->transform->UpdateWorldMatrix();
 }
 
-Transform* RenderComponent::GetTransform()
+Transform* RenderComponent::GetTransform() const
 {
 	return this->transform;
 }
 
-Mesh* RenderComponent::GetMesh(unsigned int index)
+Mesh* RenderComponent::GetMesh(unsigned int index) const
 {
 	return this->meshes[index];
 }
 
-UINT RenderComponent::GetDrawFlag()
+UINT RenderComponent::GetDrawFlag() const
 {
 	return this->drawFlag;
 }
 
-unsigned int RenderComponent::GetNrOfMeshes()
+unsigned int RenderComponent::GetNrOfMeshes() const
 {
 	return this->meshes.size();
 }
 
-SlotInfo* RenderComponent::GetSlotInfo(unsigned int index)
+SlotInfo* RenderComponent::GetSlotInfo(unsigned int index) const
 {
 	return this->info[index];
 }

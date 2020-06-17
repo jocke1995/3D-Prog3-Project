@@ -54,38 +54,22 @@ PipelineState::~PipelineState()
 	SAFE_RELEASE(&this->PSO);
 }
 
-void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
-{
-	if (type == ShaderType::VS)
-	{
-		this->VS = AssetLoader::Get()->LoadShader(fileName, type);
-	}
-	else if (type == ShaderType::PS)
-	{
-		this->PS = AssetLoader::Get()->LoadShader(fileName, type);
-	}
-	else if (type == ShaderType::CS)
-	{
-		this->CS = AssetLoader::Get()->LoadShader(fileName, type);
-	}
-}
-
-ID3D12PipelineState* PipelineState::GetPSO()
+ID3D12PipelineState* PipelineState::GetPSO() const
 {
 	return this->PSO;
 }
 
-D3D12_GRAPHICS_PIPELINE_STATE_DESC* PipelineState::GetGpsd()
+const D3D12_GRAPHICS_PIPELINE_STATE_DESC* PipelineState::GetGpsd() const
 {
 	return &this->gpsd;
 }
 
-D3D12_COMPUTE_PIPELINE_STATE_DESC* PipelineState::GetCpsd()
+const D3D12_COMPUTE_PIPELINE_STATE_DESC* PipelineState::GetCpsd()  const
 {
 	return &this->cpsd;
 }
 
-Shader* PipelineState::GetShader(ShaderType type)
+Shader* PipelineState::GetShader(ShaderType type) const
 {
 	if (type == ShaderType::VS)
 	{
@@ -103,3 +87,18 @@ Shader* PipelineState::GetShader(ShaderType type)
 	return nullptr;
 }
 
+void PipelineState::CreateShader(LPCTSTR fileName, ShaderType type)
+{
+	if (type == ShaderType::VS)
+	{
+		this->VS = AssetLoader::Get()->LoadShader(fileName, type);
+	}
+	else if (type == ShaderType::PS)
+	{
+		this->PS = AssetLoader::Get()->LoadShader(fileName, type);
+	}
+	else if (type == ShaderType::CS)
+	{
+		this->CS = AssetLoader::Get()->LoadShader(fileName, type);
+	}
+}

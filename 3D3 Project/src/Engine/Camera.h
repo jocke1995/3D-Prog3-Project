@@ -23,7 +23,7 @@ public:
     // void RotateY(float angle);
     // void RotateZ(float angle);
 
-    XMFLOAT4X4* GetViewProjMatrix();
+    const XMFLOAT4X4* const GetViewProjMatrix() const;
     XMFLOAT3 GetPosition() const;
     XMFLOAT3 GetLookAt() const;
 

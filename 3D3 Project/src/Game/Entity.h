@@ -11,15 +11,16 @@ class Entity
 {
 public:
 	Entity();
-	bool operator == (const Entity& rhs) const;
+	bool operator == (const Entity* rhs) const;
 	~Entity();
 
 	template <class T>
 	void AddComponent();
 
 	template <class T>
-	T* GetComponent();
-	unsigned int GetID();
+	T* GetComponent() const;
+
+	unsigned int GetID() const;
 
 	void Update();
 
@@ -35,7 +36,7 @@ void Entity::AddComponent()
 }
 
 template<class T>
-T* Entity::GetComponent()
+T* Entity::GetComponent() const
 {
 	for (int i = 0; i < this->components.size(); i++)
 	{

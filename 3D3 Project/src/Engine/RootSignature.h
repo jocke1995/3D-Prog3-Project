@@ -17,8 +17,8 @@ public:
 	RootSignature(ID3D12Device5* device);
 	~RootSignature();
 
-	ID3D12RootSignature* GetRootSig();
-	ID3DBlob* GetBlob();
+	ID3D12RootSignature* GetRootSig() const;
+	ID3DBlob* GetBlob() const;
 private:
 	// Rootsignature
 	ID3D12RootSignature* rootSig;

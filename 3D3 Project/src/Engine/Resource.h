@@ -14,16 +14,14 @@ public:
         unsigned long long entrySize, 
         RESOURCE_TYPE type,
         std::wstring name = L"RESOURCE_NONAME");
-    Resource(std::wstring name = L"RESOURCE_NONAME"); // Just set default variables
+    Resource(std::wstring name = L"RESOURCE_NONAME");
     virtual ~Resource();
 
+    size_t GetSize() const;
+    ID3D12Resource1* GetID3D12Resource1() const;
+    D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAdress() const;
+
     void SetData(const void* data);
-
-    size_t GetSize();
-
-    ID3D12Resource1* GetID3D12Resource1();
-    D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAdress();
-
 protected:
     std::wstring name;
     unsigned long long entrySize = 0;

@@ -6,6 +6,7 @@ struct VS_OUT
 	float4 worldPos : WPos;
 	float4 uv       : UV;
 	float4 norm     : NORMAL;
+	float4 tang     : TANGENT;
 };
 
 struct vertex
@@ -13,6 +14,7 @@ struct vertex
 	float4 pos;
 	float4 uv;
 	float4 norm;
+	float4 tang;
 };
 
 StructuredBuffer<vertex> meshes[] : register(t0);
@@ -32,6 +34,8 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 
 	output.uv = float4(mesh.uv);
 	output.norm = mul(float4(mesh.norm), transform.worldMatrix);
+
+	output.tang = 0;
 
 	return output;
 }

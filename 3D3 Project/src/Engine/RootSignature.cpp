@@ -22,12 +22,12 @@ RootSignature::~RootSignature()
 	SAFE_RELEASE(&this->sBlob);
 }
 
-ID3D12RootSignature* RootSignature::GetRootSig()
+ID3D12RootSignature* RootSignature::GetRootSig() const
 {
 	return this->rootSig;
 }
 
-ID3DBlob* RootSignature::GetBlob()
+ID3DBlob* RootSignature::GetBlob() const
 {
 	return this->sBlob;
 }

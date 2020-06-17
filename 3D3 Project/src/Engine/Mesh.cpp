@@ -15,23 +15,22 @@ Mesh::~Mesh()
 	delete this->resource;
 }
 
-Resource* Mesh::GetResource()
+Resource* Mesh::GetResource() const
 {
 	return this->resource;
 }
 
-size_t Mesh::GetSize()
+const size_t Mesh::GetSize() const
 {
-	size_t hello = this->vertices.size() * sizeof(Vertex);
-	return hello;
+	return this->vertices.size() * sizeof(Vertex);
 }
 
-size_t Mesh::GetNumVertices()
+const size_t Mesh::GetNumVertices() const
 {
 	return this->vertices.size();
 }
 
-UINT Mesh::GetVertexDataIndex()
+const UINT Mesh::GetVertexDataIndex() const
 {
 	return this->vertexDataIndex;
 }

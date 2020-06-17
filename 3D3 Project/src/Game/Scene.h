@@ -15,7 +15,7 @@ public:
 	bool RemoveEntity(std::string entityName);
 
 	Entity* GetEntity(std::string entityName);
-	std::map<std::string, Entity*> *GetEntities();
+	const std::map<std::string, Entity*> *GetEntities() const;
 
 	unsigned int GetNrOfEntites() const;
 	Camera* GetMainCamera() const;
@@ -29,7 +29,7 @@ private:
 	Camera* mainCamera = nullptr;
 
 	void UpdateEntities();
-	bool EntityExists(std::string entityName);
+	bool EntityExists(std::string entityName) const;
 };
 
 #endif

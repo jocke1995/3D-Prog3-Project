@@ -73,7 +73,7 @@ void ConstantBuffer::SetData(void* beginLocation, const void* data)
 	this->resource->Unmap(0, nullptr);
 }
 
-D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGPUAt(UINT index)
+D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGPUAt(UINT index) const
 {
 	if (index > this->entrySize)
 	{
@@ -86,7 +86,7 @@ D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGPUAt(UINT index)
 	return address;
 }
 
-CONSTANT_BUFFER_TYPE ConstantBuffer::GetType()
+CONSTANT_BUFFER_TYPE ConstantBuffer::GetType() const
 {
 	return this->type;
 }

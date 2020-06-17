@@ -125,9 +125,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->GetTransform()->SetPosition(30.0f, 0.0f, 30.0f);
     
     rc = scene2->GetEntity("mino1")->GetComponent<RenderComponent>();
-    rc->SetMeshes(minoModel);
+    rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::Blend);
-    rc->GetTransform()->SetScale(0.07);
+    rc->GetTransform()->SetScale(0.57);
     rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
 
     rc = scene2->GetEntity("cam")->GetComponent<RenderComponent>();

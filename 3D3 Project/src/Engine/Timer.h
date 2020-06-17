@@ -10,7 +10,7 @@ public:
 	~Timer();
 
 	void Update();
-	double GetDeltaTime();
+	double GetDeltaTime() const;
 private:
 	Window* window;
 

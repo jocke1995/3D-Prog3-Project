@@ -27,10 +27,6 @@ void Transform::SetPosition(XMFLOAT3 pos)
 	this->position = pos;
 }
 
-void Transform::SetRotation(XMFLOAT3 axis, float angle)
-{
-}
-
 void Transform::RotateX(float radians)
 {
 	this->rotXMat = XMMatrixRotationX(radians);
@@ -61,16 +57,6 @@ void Transform::SetScale(XMFLOAT3 scale)
 	this->scale = scale;
 }
 
-XMFLOAT4X4* Transform::GetWorldMatrix()
-{
-	return &this->worldMat;
-}
-
-XMFLOAT3 Transform::GetPosition()
-{
-	return this->position;
-}
-
 void Transform::UpdateWorldMatrix()
 {
 	XMMATRIX tmpWorldMat;
@@ -82,4 +68,14 @@ void Transform::UpdateWorldMatrix()
 	tmpWorldMat = rotMat * sclMat * posMat;
 
 	XMStoreFloat4x4(&this->worldMat, tmpWorldMat);
+}
+
+const XMFLOAT4X4* Transform::GetWorldMatrix() const
+{
+	return &this->worldMat;
+}
+
+XMFLOAT3 Transform::GetPosition() const
+{
+	return this->position;
 }

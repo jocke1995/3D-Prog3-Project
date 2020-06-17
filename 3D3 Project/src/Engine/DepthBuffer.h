@@ -9,10 +9,9 @@ public:
 	DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int height);
 	virtual ~DepthBuffer();
 
-	DescriptorHeap* GetDescriptorHeap();
-
-	D3D12_VIEWPORT* GetViewPort();
-	D3D12_RECT* GetScissorRect();
+	DescriptorHeap* GetDescriptorHeap() const;
+	const D3D12_VIEWPORT* GetViewPort() const;
+	const D3D12_RECT* GetScissorRect() const;
 
 protected:
 	void CreateViewport(unsigned int width, unsigned int height);

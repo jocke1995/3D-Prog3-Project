@@ -12,10 +12,9 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetPosition(XMFLOAT3 pos);
 	
-	void SetRotation(XMFLOAT3 axis, float angle);
-	void RotateX(float angle);
-	void RotateY(float angle);
-	void RotateZ(float angle);
+	void RotateX(float radians);
+	void RotateY(float radians);
+	void RotateZ(float radians);
 
 	void SetScale(float scale);
 	void SetScale(float x, float y, float z);
@@ -23,8 +22,8 @@ public:
 
 	void UpdateWorldMatrix();
 
-	XMFLOAT4X4* GetWorldMatrix();
-	XMFLOAT3 GetPosition();
+	const XMFLOAT4X4* GetWorldMatrix() const;
+	XMFLOAT3 GetPosition() const;
 
 private:
 	XMFLOAT3 position;

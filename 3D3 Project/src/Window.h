@@ -12,11 +12,12 @@ public:
 
 	void SetWindowTitle(std::wstring newTitle);
 
+	bool IsFullScreen() const;
+	int GetScreenWidth() const;
+	int GetScreenHeight() const;
+	const HWND* GetHwnd() const;
+
 	bool ExitWindow();
-	bool IsFullScreen();
-	int GetScreenWidth();
-	int GetScreenHeight();
-	HWND* GetHwnd();
 
 	// Temp
 	bool WasSpacePressed();

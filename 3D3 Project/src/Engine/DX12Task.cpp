@@ -33,7 +33,7 @@ void DX12Task::SetCommandInterfaceIndex(int index)
 	this->commandInterfaceIndex = index;
 }
 
-ID3D12GraphicsCommandList5* DX12Task::GetCommandList(unsigned int index)
+ID3D12GraphicsCommandList5* DX12Task::GetCommandList(unsigned int index) const
 {
 	return this->commandInterface->GetCommandList(index);
 }

@@ -61,17 +61,17 @@ DepthBuffer::~DepthBuffer()
 	delete this->descriptorHeap;
 }
 
-DescriptorHeap* DepthBuffer::GetDescriptorHeap()
+DescriptorHeap* DepthBuffer::GetDescriptorHeap() const
 {
 	return this->descriptorHeap;
 }
 
-D3D12_VIEWPORT* DepthBuffer::GetViewPort()
+const D3D12_VIEWPORT* DepthBuffer::GetViewPort() const
 {
 	return &this->viewport;
 }
 
-D3D12_RECT* DepthBuffer::GetScissorRect()
+const D3D12_RECT* DepthBuffer::GetScissorRect() const
 {
 	return &this->scissorRect;
 }

@@ -14,12 +14,12 @@ CommandInterface::~CommandInterface()
 	}
 }
 
-ID3D12GraphicsCommandList5* CommandInterface::GetCommandList(int index)
+ID3D12GraphicsCommandList5* CommandInterface::GetCommandList(int index) const
 {
 	return this->commandLists[index];
 }
 
-ID3D12CommandAllocator* CommandInterface::GetCommandAllocator(int index)
+ID3D12CommandAllocator* CommandInterface::GetCommandAllocator(int index) const
 {
 	return this->commandAllocators[index];
 }
