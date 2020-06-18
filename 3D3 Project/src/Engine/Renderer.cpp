@@ -143,7 +143,7 @@ bool Renderer::AddEntityToDraw(Entity* entity)
 	return false;	
 }
 
-bool Renderer::RemoveEntityFromDraw(Entity* entity)
+bool Renderer::RemoveEntityToDraw(Entity* entity)
 {
 	RenderComponent* rc = entity->GetComponent<RenderComponent>();
 	if (rc != nullptr)
@@ -496,7 +496,13 @@ void Renderer::InitRenderTasks()
 	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdForwardRenderVector;
 	gpsdForwardRenderVector.push_back(&gpsdForwardRender);
 
-	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, this->rootSignature, L"VertexShader.hlsl", L"PixelShader.hlsl", &gpsdForwardRenderVector, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, 
+		this->rootSignature, 
+		L"VertexShader.hlsl", L"PixelShader.hlsl", 
+		&gpsdForwardRenderVector, 
+		L"ForwardRenderingPSO",
+		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+
 	forwardRenderTask->AddRenderTarget(this->swapChain);
 	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
 	forwardRenderTask->SetDescriptorHeap(this->descriptorHeap);
@@ -588,6 +594,7 @@ void Renderer::InitRenderTasks()
 		L"BlendVertex.hlsl",
 		L"BlendPixel.hlsl",
 		&gpsdBlendVector,
+		L"BlendPSO",
 		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
 
 	blendRenderTask->AddRenderTarget(this->swapChain);
@@ -605,6 +612,7 @@ void Renderer::InitRenderTasks()
 	ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
 		this->rootSignature,
 		L"ComputeTest.hlsl",
+		L"ComputeTestPSO",
 		COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
 
 	computeTestTask->AddResource(this->copyDestResource);

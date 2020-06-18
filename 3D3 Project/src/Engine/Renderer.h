@@ -30,7 +30,7 @@ public:
 
 	void SetSceneToDraw(Scene* scene);
 	bool AddEntityToDraw(Entity* entity);
-	bool RemoveEntityFromDraw(Entity* entity);
+	bool RemoveEntityToDraw(Entity* entity);
 
 	void UpdateScene(double dt);
 	void SortEntitiesByDistance();

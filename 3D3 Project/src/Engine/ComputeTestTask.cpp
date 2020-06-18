@@ -1,7 +1,7 @@
 #include "ComputeTestTask.h"
 
-ComputeTestTask::ComputeTestTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, COMMAND_INTERFACE_TYPE interfaceType)
-	:ComputeTask(device, rootSignature, CSName, interfaceType)
+ComputeTestTask::ComputeTestTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, LPCTSTR psoName, COMMAND_INTERFACE_TYPE interfaceType)
+	:ComputeTask(device, rootSignature, CSName, psoName, interfaceType)
 {
 }
 

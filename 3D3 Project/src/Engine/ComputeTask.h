@@ -2,7 +2,7 @@
 #define COMPUTETASK_H
 
 #include "DX12Task.h"
-#include "PipelineState.h"
+#include "ComputeState.h"
 
 class ComputeTask : public DX12Task
 {
@@ -10,6 +10,7 @@ public:
 	ComputeTask(ID3D12Device5* device,
 		RootSignature* rootSignature,
 		LPCWSTR CSName,
+		LPCTSTR psoName,
 		COMMAND_INTERFACE_TYPE interfaceType);
 	~ComputeTask();
 

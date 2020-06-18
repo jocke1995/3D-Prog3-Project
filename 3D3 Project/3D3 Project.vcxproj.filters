@@ -149,6 +149,12 @@
     <ClCompile Include="src\Engine\Timer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\GraphicsState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ComputeState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -265,6 +271,8 @@
     <ClInclude Include="src\Engine\Timer.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\GraphicsState.h" />
+    <ClInclude Include="src\Engine\ComputeState.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">

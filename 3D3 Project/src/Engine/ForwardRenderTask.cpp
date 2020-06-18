@@ -1,7 +1,7 @@
 #include "ForwardRenderTask.h"
 
-FowardRenderTask::FowardRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, COMMAND_INTERFACE_TYPE interfaceType)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsds, interfaceType)
+FowardRenderTask::FowardRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, LPCTSTR psoName, COMMAND_INTERFACE_TYPE interfaceType)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds, psoName, interfaceType)
 {
 	
 }

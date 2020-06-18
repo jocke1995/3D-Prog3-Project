@@ -7,7 +7,7 @@
 #include "RenderTarget.h"
 #include "Camera.h"
 #include "../Game/Entity.h"
-#include "PipelineState.h"
+#include "GraphicsState.h"
 #include "DescriptorHeap.h"
 
 
@@ -18,7 +18,8 @@ public:
 	RenderTask(ID3D12Device5* device, 
 		RootSignature* rootSignature, 
 		LPCWSTR VSName, LPCWSTR PSName, 
-		std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds, 
+		std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds,
+		LPCTSTR psoName,
 		COMMAND_INTERFACE_TYPE interfaceType);
 	
 	virtual ~RenderTask();
