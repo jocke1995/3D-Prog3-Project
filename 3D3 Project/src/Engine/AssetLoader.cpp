@@ -171,5 +171,5 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 	// 	}
 	// }
 
-	return new Mesh(this->device, vertices, this->slotCounter++);
+	return new Mesh(this->device, vertices, descriptorHeapIndex++);
 }

@@ -7,9 +7,9 @@ Scene::Scene(Camera* mainCamera)
 
 Scene::~Scene()
 {
-    for (auto const& [entityName, entity] : this->entities)
+    for (auto pair : this->entities)
     {
-        delete entity;
+        delete pair.second;
     }
     this->entities.clear();
 }
@@ -76,18 +76,18 @@ void Scene::UpdateScene(double dt)
 
 void Scene::UpdateEntities()
 {
-    for (auto const& [entityName, entity] : this->entities)
+    for (auto pair : this->entities)
     {
-        entity->Update();
+        pair.second->Update();
     }
 }
 
 bool Scene::EntityExists(std::string entityName) const
 {
-    for (auto const& [entityNameInScene, entity] : this->entities)
+    for (auto pair : this->entities)
     {
         // An entity with this name already exists
-        if (entityNameInScene == entityName)
+        if (pair.first == entityName)
         {
             return true;
         }

@@ -435,7 +435,7 @@ void Renderer::CreateCommandQueues()
 
 void Renderer::CreateSwapChain(const HWND *hwnd)
 {
-	swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+	this->swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
 }
 
 void Renderer::CreateDepthBuffer()
@@ -505,7 +505,7 @@ void Renderer::InitRenderTasks()
 
 	forwardRenderTask->AddRenderTarget(this->swapChain);
 	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
-	forwardRenderTask->SetDescriptorHeap(this->descriptorHeap);
+	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap);
 
 	// Resources ------------
 	forwardRenderTask->AddResource(this->copyDestResource);
@@ -599,7 +599,7 @@ void Renderer::InitRenderTasks()
 
 	blendRenderTask->AddRenderTarget(this->swapChain);
 	blendRenderTask->SetDepthBuffer(this->depthBuffer);
-	blendRenderTask->SetDescriptorHeap(this->descriptorHeap);
+	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap);
 
 #pragma endregion Blend
 	// :-----------------------------TASK CopyColor:-----------------------------

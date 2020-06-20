@@ -91,4 +91,51 @@ enum DrawOptions
 
 #define NUM_SWAP_BUFFERS 2
 
+namespace Log
+{
+	enum class ErrorType
+	{
+		GAME,
+		ENGINE,
+		OTHER
+	};
 
+	template <typename... Variables>
+	inline void PrintError(const ErrorType type, const std::string string, const Variables&... variables)
+	{
+		char inputBuffer[128] = {};
+		char typeBuffer[128] = {};
+
+		sprintf(inputBuffer, string.c_str(), variables...);
+
+		switch (type)
+		{
+		case ErrorType::ENGINE:
+			sprintf(typeBuffer, "ENGINE ERROR: ");
+			break;
+
+		// todo: Write to .txt file?
+		case ErrorType::GAME:
+			sprintf(typeBuffer, "GAME ERROR: ");
+			break;
+
+		default:
+			sprintf(typeBuffer, "");
+			break;
+		}
+
+		std::string finalBuffer = std::string(typeBuffer) + inputBuffer;
+
+		OutputDebugStringA(finalBuffer.c_str());
+	}
+
+	template <typename... variables>
+	inline void Print(const std::string string, const variables&... rest)
+	{
+		char inputBuffer[128] = {};
+
+		sprintf(inputBuffer, string.c_str(), rest...);
+
+		OutputDebugStringA(inputBuffer);
+	}
+}

@@ -32,11 +32,11 @@ public:
 	void AddEntity(Entity* entity);
 
 	void SetCamera(Camera* camera);
-	void SetDescriptorHeap(DescriptorHeap* dh);
+	void SetDescriptorHeap_CBV_UAV_SRV(DescriptorHeap* dh);
 	void SetDepthBuffer(DepthBuffer* depthBuffer);
 
 protected:
-	DescriptorHeap* descriptorHeap = nullptr;
+	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
 
 	std::vector<RenderTarget*> renderTargets;
 	DepthBuffer* depthBuffer = nullptr;

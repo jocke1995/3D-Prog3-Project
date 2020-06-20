@@ -40,9 +40,9 @@ void RenderTask::SetCamera(Camera* camera)
 	this->camera = camera;
 }
 
-void RenderTask::SetDescriptorHeap(DescriptorHeap* dh)
+void RenderTask::SetDescriptorHeap_CBV_UAV_SRV(DescriptorHeap* dh)
 {
-	this->descriptorHeap = dh;
+	this->descriptorHeap_CBV_UAV_SRV = dh;
 }
 
 void RenderTask::SetDepthBuffer(DepthBuffer* depthBuffer)
