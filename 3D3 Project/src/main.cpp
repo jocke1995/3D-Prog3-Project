@@ -57,19 +57,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
-
+    
     rc = scene1->GetEntity("mino2")->GetComponent<RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
-
+    
     rc = scene1->GetEntity("mino3")->GetComponent<RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
-
+    
     rc = scene1->GetEntity("mino4")->GetComponent<RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
@@ -129,7 +129,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->SetDrawFlag(DrawOptions::Blend);
     rc->GetTransform()->SetScale(0.57);
     rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
-
+    
     rc = scene2->GetEntity("cam")->GetComponent<RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);

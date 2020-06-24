@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>AssetLoader.h</FILENAME>
+      <LINE>34</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'AssetLoader::device' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>AssetLoader::{ctor}</FUNCTION>
+    <DECORATED>??0AssetLoader@@AEAA@XZ</DECORATED>
+    <FUNCLINE>34</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>AssetLoader::device</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>Thread.cpp</FILENAME>
+      <LINE>47</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>28183</DEFECTCODE>
+    <DESCRIPTION>'this-&gt;thread' could be '0', and is a copy of the value found in '_beginthreadex()`46':  this does not adhere to the specification for the function 'SetThreadPriority'. </DESCRIPTION>
+    <FUNCTION>Thread::{ctor}</FUNCTION>
+    <DECORATED>??0Thread@@QEAA@XZ</DECORATED>
+    <FUNCLINE>44</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\joaki\documents\github projects\3d programming3 project\3d3 project\src\engine\</FILEPATH>
+        <FILENAME>thread.cpp</FILENAME>
+        <LINE>45</LINE>
+        <COLUMN>0</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\joaki\documents\github projects\3d programming3 project\3d3 project\src\engine\</FILEPATH>
+        <FILENAME>thread.h</FILENAME>
+        <LINE>36</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\joaki\documents\github projects\3d programming3 project\3d3 project\src\engine\</FILEPATH>
+        <FILENAME>thread.h</FILENAME>
+        <LINE>37</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\joaki\documents\github projects\3d programming3 project\3d3 project\src\engine\</FILEPATH>
+        <FILENAME>thread.h</FILENAME>
+        <LINE>39</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\joaki\documents\github projects\3d programming3 project\3d3 project\src\engine\</FILEPATH>
+        <FILENAME>thread.cpp</FILENAME>
+        <LINE>46</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\joaki\documents\github projects\3d programming3 project\3d3 project\src\engine\</FILEPATH>
+        <FILENAME>thread.cpp</FILENAME>
+        <LINE>47</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT>
+</DEFECTS>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>CommandInterface.cpp</FILENAME>
+      <LINE>3</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'COMMAND_INTERFACE_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CommandInterface::{ctor}</FUNCTION>
+    <DECORATED>??0CommandInterface@@QEAA@PEAUID3D12Device5@@W4COMMAND_INTERFACE_TYPE@@@Z</DECORATED>
+    <FUNCLINE>3</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>CommandInterface.cpp</FILENAME>
+      <LINE>29</LINE>
+      <COLUMN>25</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_COMMAND_LIST_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CommandInterface::CreateCommandInterfaces</FUNCTION>
+    <DECORATED>?CreateCommandInterfaces@CommandInterface@@AEAAXPEAUID3D12Device5@@W4COMMAND_INTERFACE_TYPE@@@Z</DECORATED>
+    <FUNCLINE>27</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

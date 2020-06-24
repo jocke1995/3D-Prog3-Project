@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>180</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_DEPTH_WRITE_MASK' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_DEPTH_STENCIL_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_DEPTH_STENCIL_DESC@@QEAA@UCD3DX12_DEFAULT@@@Z</DECORATED>
+    <FUNCLINE>177</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>181</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_COMPARISON_FUNC' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_DEPTH_STENCIL_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_DEPTH_STENCIL_DESC@@QEAA@UCD3DX12_DEFAULT@@@Z</DECORATED>
+    <FUNCLINE>177</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>190</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_STENCIL_OP' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_DEPTH_STENCIL_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_DEPTH_STENCIL_DESC@@QEAA@HW4D3D12_DEPTH_WRITE_MASK@@W4D3D12_COMPARISON_FUNC@@HEEW4D3D12_STENCIL_OP@@2212221@Z</DECORATED>
+    <FUNCLINE>190</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>349</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_FILL_MODE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RASTERIZER_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_RASTERIZER_DESC@@QEAA@UCD3DX12_DEFAULT@@@Z</DECORATED>
+    <FUNCLINE>347</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>350</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_CULL_MODE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RASTERIZER_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_RASTERIZER_DESC@@QEAA@UCD3DX12_DEFAULT@@@Z</DECORATED>
+    <FUNCLINE>347</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>359</LINE>
+      <COLUMN>27</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_CONSERVATIVE_RASTERIZATION_MODE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RASTERIZER_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_RASTERIZER_DESC@@QEAA@UCD3DX12_DEFAULT@@@Z</DECORATED>
+    <FUNCLINE>347</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>411</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_CPU_PAGE_PROPERTY' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_HEAP_PROPERTIES::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_HEAP_PROPERTIES@@QEAA@W4D3D12_CPU_PAGE_PROPERTY@@W4D3D12_MEMORY_POOL@@II@Z</DECORATED>
+    <FUNCLINE>411</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>411</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_MEMORY_POOL' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_HEAP_PROPERTIES::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_HEAP_PROPERTIES@@QEAA@W4D3D12_CPU_PAGE_PROPERTY@@W4D3D12_MEMORY_POOL@@II@Z</DECORATED>
+    <FUNCLINE>411</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>417</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_HEAP_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_HEAP_PROPERTIES::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_HEAP_PROPERTIES@@QEAA@W4D3D12_CPU_PAGE_PROPERTY@@W4D3D12_MEMORY_POOL@@II@Z</DECORATED>
+    <FUNCLINE>411</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>457</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_HEAP_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_HEAP_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_HEAP_DESC@@QEAA@_KUD3D12_HEAP_PROPERTIES@@0W4D3D12_HEAP_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>457</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>542</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'DXGI_FORMAT' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_CLEAR_VALUE::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_CLEAR_VALUE@@QEAA@W4DXGI_FORMAT@@QEBM@Z</DECORATED>
+    <FUNCLINE>542</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>727</LINE>
+      <COLUMN>43</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_RESOURCE_STATES' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RESOURCE_BARRIER::Transition</FUNCTION>
+    <DECORATED>?Transition@CD3DX12_RESOURCE_BARRIER@@SA?AU1@PEAUID3D12Resource@@W4D3D12_RESOURCE_STATES@@1IW4D3D12_RESOURCE_BARRIER_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>727</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>727</LINE>
+      <COLUMN>43</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_RESOURCE_BARRIER_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RESOURCE_BARRIER::Transition</FUNCTION>
+    <DECORATED>?Transition@CD3DX12_RESOURCE_BARRIER@@SA?AU1@PEAUID3D12Resource@@W4D3D12_RESOURCE_STATES@@1IW4D3D12_RESOURCE_BARRIER_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>727</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>828</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_TEXTURE_COPY_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_TEXTURE_COPY_LOCATION::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_TEXTURE_COPY_LOCATION@@QEAA@PEAUID3D12Resource@@@Z</DECORATED>
+    <FUNCLINE>825</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>852</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_DESCRIPTOR_RANGE_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_DESCRIPTOR_RANGE::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_DESCRIPTOR_RANGE@@QEAA@W4D3D12_DESCRIPTOR_RANGE_TYPE@@IIII@Z</DECORATED>
+    <FUNCLINE>852</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>993</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_SHADER_VISIBILITY' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_ROOT_PARAMETER::InitAsDescriptorTable</FUNCTION>
+    <DECORATED>?InitAsDescriptorTable@CD3DX12_ROOT_PARAMETER@@SAXAEAUD3D12_ROOT_PARAMETER@@IPEBUD3D12_DESCRIPTOR_RANGE@@W4D3D12_SHADER_VISIBILITY@@@Z</DECORATED>
+    <FUNCLINE>993</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1098</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_FILTER' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_STATIC_SAMPLER_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_STATIC_SAMPLER_DESC@@QEAA@IW4D3D12_FILTER@@W4D3D12_TEXTURE_ADDRESS_MODE@@11MIW4D3D12_COMPARISON_FUNC@@W4D3D12_STATIC_BORDER_COLOR@@MMW4D3D12_SHADER_VISIBILITY@@I@Z</DECORATED>
+    <FUNCLINE>1098</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1098</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_TEXTURE_ADDRESS_MODE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_STATIC_SAMPLER_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_STATIC_SAMPLER_DESC@@QEAA@IW4D3D12_FILTER@@W4D3D12_TEXTURE_ADDRESS_MODE@@11MIW4D3D12_COMPARISON_FUNC@@W4D3D12_STATIC_BORDER_COLOR@@MMW4D3D12_SHADER_VISIBILITY@@I@Z</DECORATED>
+    <FUNCLINE>1098</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1098</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_STATIC_BORDER_COLOR' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_STATIC_SAMPLER_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_STATIC_SAMPLER_DESC@@QEAA@IW4D3D12_FILTER@@W4D3D12_TEXTURE_ADDRESS_MODE@@11MIW4D3D12_COMPARISON_FUNC@@W4D3D12_STATIC_BORDER_COLOR@@MMW4D3D12_SHADER_VISIBILITY@@I@Z</DECORATED>
+    <FUNCLINE>1098</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1200</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_ROOT_SIGNATURE_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_ROOT_SIGNATURE_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_ROOT_SIGNATURE_DESC@@QEAA@IPEBUD3D12_ROOT_PARAMETER@@IPEBUD3D12_STATIC_SAMPLER_DESC@@W4D3D12_ROOT_SIGNATURE_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>1200</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1247</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_DESCRIPTOR_RANGE_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_DESCRIPTOR_RANGE1::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_DESCRIPTOR_RANGE1@@QEAA@W4D3D12_DESCRIPTOR_RANGE_TYPE@@IIIW4D3D12_DESCRIPTOR_RANGE_FLAGS@@I@Z</DECORATED>
+    <FUNCLINE>1247</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1328</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_ROOT_DESCRIPTOR_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_ROOT_DESCRIPTOR1::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_ROOT_DESCRIPTOR1@@QEAA@IIW4D3D12_ROOT_DESCRIPTOR_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>1328</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1477</LINE>
+      <COLUMN>16</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D_ROOT_SIGNATURE_VERSION' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC@@QEAA@AEBUD3D12_ROOT_SIGNATURE_DESC@@@Z</DECORATED>
+    <FUNCLINE>1475</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1719</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_RESOURCE_DIMENSION' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RESOURCE_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_RESOURCE_DESC@@QEAA@W4D3D12_RESOURCE_DIMENSION@@_K1IGGW4DXGI_FORMAT@@IIW4D3D12_TEXTURE_LAYOUT@@W4D3D12_RESOURCE_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>1719</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1719</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_TEXTURE_LAYOUT' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RESOURCE_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_RESOURCE_DESC@@QEAA@W4D3D12_RESOURCE_DIMENSION@@_K1IGGW4DXGI_FORMAT@@IIW4D3D12_TEXTURE_LAYOUT@@W4D3D12_RESOURCE_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>1719</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1719</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_RESOURCE_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_RESOURCE_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_RESOURCE_DESC@@QEAA@W4D3D12_RESOURCE_DIMENSION@@_K1IGGW4DXGI_FORMAT@@IIW4D3D12_TEXTURE_LAYOUT@@W4D3D12_RESOURCE_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>1719</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>1838</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_VIEW_INSTANCING_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_VIEW_INSTANCING_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_VIEW_INSTANCING_DESC@@QEAA@UCD3DX12_DEFAULT@@@Z</DECORATED>
+    <FUNCLINE>1834</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2218</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_PIPELINE_STATE_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ID3DX12PipelineParserCallbacks::FlagsCb</FUNCTION>
+    <DECORATED>?FlagsCb@ID3DX12PipelineParserCallbacks@@UEAAXW4D3D12_PIPELINE_STATE_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>2218</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2222</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_INDEX_BUFFER_STRIP_CUT_VALUE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ID3DX12PipelineParserCallbacks::IBStripCutValueCb</FUNCTION>
+    <DECORATED>?IBStripCutValueCb@ID3DX12PipelineParserCallbacks@@UEAAXW4D3D12_INDEX_BUFFER_STRIP_CUT_VALUE@@@Z</DECORATED>
+    <FUNCLINE>2222</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2223</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_PRIMITIVE_TOPOLOGY_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ID3DX12PipelineParserCallbacks::PrimitiveTopologyTypeCb</FUNCTION>
+    <DECORATED>?PrimitiveTopologyTypeCb@ID3DX12PipelineParserCallbacks@@UEAAXW4D3D12_PRIMITIVE_TOPOLOGY_TYPE@@@Z</DECORATED>
+    <FUNCLINE>2223</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2244</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_PIPELINE_STATE_SUBOBJECT_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ID3DX12PipelineParserCallbacks::ErrorDuplicateSubobject</FUNCTION>
+    <DECORATED>?ErrorDuplicateSubobject@ID3DX12PipelineParserCallbacks@@UEAAXW4D3D12_PIPELINE_STATE_SUBOBJECT_TYPE@@@Z</DECORATED>
+    <FUNCLINE>2244</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2733</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_STATE_OBJECT_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_STATE_OBJECT_DESC::{ctor}</FUNCTION>
+    <DECORATED>??0CD3DX12_STATE_OBJECT_DESC@@QEAA@W4D3D12_STATE_OBJECT_TYPE@@@Z</DECORATED>
+    <FUNCLINE>2733</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2813</LINE>
+      <COLUMN>27</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_STATE_SUBOBJECT_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_STATE_OBJECT_DESC::TrackSubobject</FUNCTION>
+    <DECORATED>?TrackSubobject@CD3DX12_STATE_OBJECT_DESC@@AEAAPEAUD3D12_STATE_SUBOBJECT@@W4D3D12_STATE_SUBOBJECT_TYPE@@PEAX@Z</DECORATED>
+    <FUNCLINE>2813</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>2936</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_EXPORT_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_DXIL_LIBRARY_SUBOBJECT::DefineExport</FUNCTION>
+    <DECORATED>?DefineExport@CD3DX12_DXIL_LIBRARY_SUBOBJECT@@QEAAXPEB_W0W4D3D12_EXPORT_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>2936</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>3191</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_HIT_GROUP_TYPE' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_HIT_GROUP_SUBOBJECT::SetHitGroupType</FUNCTION>
+    <DECORATED>?SetHitGroupType@CD3DX12_HIT_GROUP_SUBOBJECT@@QEAAXW4D3D12_HIT_GROUP_TYPE@@@Z</DECORATED>
+    <FUNCLINE>3191</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\src\Engine\</FILEPATH>
+      <FILENAME>d3dx12.h</FILENAME>
+      <LINE>3378</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'D3D12_STATE_OBJECT_FLAGS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>CD3DX12_STATE_OBJECT_CONFIG_SUBOBJECT::SetFlags</FUNCTION>
+    <DECORATED>?SetFlags@CD3DX12_STATE_OBJECT_CONFIG_SUBOBJECT@@QEAAXW4D3D12_STATE_OBJECT_FLAGS@@@Z</DECORATED>
+    <FUNCLINE>3378</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

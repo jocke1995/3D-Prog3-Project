@@ -52,6 +52,7 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 	}
 	
 	std::vector<Mesh*> *meshes = new std::vector<Mesh*>;
+	meshes->reserve(assimpScene->mNumMeshes);
 	this->loadedModels[path] = meshes;
 
 	this->ProcessNode(assimpScene->mRootNode, assimpScene, meshes);
@@ -83,6 +84,8 @@ void AssetLoader::ProcessNode(aiNode* node, const aiScene* assimpScene, std::vec
 	{
 		aiMesh* mesh = assimpScene->mMeshes[node->mMeshes[i]];
 		meshes->push_back(this->ProcessMesh(mesh, assimpScene));
+		
+		//aiMaterial* mat = assimpScene->mMaterials[mesh->mMaterialIndex];
 	}
 	
 	// If the node has more node children
