@@ -47,7 +47,8 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 
 	if (assimpScene == nullptr)
 	{
-		// Log failed to load model
+
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to load model with path: \'%s\'\n", filePath.c_str());
 		return nullptr;
 	}
 	
@@ -115,7 +116,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			// Log no positions
+			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no positions");
 		}
 
 		// Get Normals
@@ -128,8 +129,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			// Log no Normals
-			int a = 5;
+			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no normals");
 		}
 
 		if (assimpMesh->HasTangentsAndBitangents())
@@ -142,8 +142,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			// Log no Tangents or Bitangents
-			int a = 5;
+			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no tangents");
 		}
 		
 		
@@ -157,7 +156,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			// Log no uv
+			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no textureCoords");
 		}
 
 		vertices.push_back(vTemp);

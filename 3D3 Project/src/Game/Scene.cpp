@@ -48,8 +48,7 @@ Entity* Scene::GetEntity(std::string entityName)
         return this->entities.at(entityName);
     }
 
-    // Log
-    std::cout << "No Entity with name: \"" << entityName << "\" was found." << std::endl;
+    Log::PrintError(Log::ErrorType::ENGINE, "No Entity with name: \'%s\' was found.\n", entityName);
     return nullptr;
 }
 
@@ -92,6 +91,6 @@ bool Scene::EntityExists(std::string entityName) const
             return true;
         }
     }
-    // Log
+    
     return false;
 }

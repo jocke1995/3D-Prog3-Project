@@ -57,7 +57,7 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Create Device
 	if (!this->CreateDevice())
 	{
-		OutputDebugStringA("Error: Failed to create Device!\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Device\n");
 	}
 
 	// Create CommandQueues (direct and copy)
@@ -411,7 +411,7 @@ void Renderer::CreateCommandQueues()
 	hr = device5->CreateCommandQueue(&cqdDirect, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]));
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"ERROR: Failed to create Direct CommandQueue");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Direct CommandQueue\n");
 	}
 
 	// Compute
@@ -420,7 +420,7 @@ void Renderer::CreateCommandQueues()
 	hr = device5->CreateCommandQueue(&cqdCompute, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]));
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"ERROR: Failed to create Compute CommandQueue");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Compute CommandQueue\n");
 	}
 
 	// Copy
@@ -429,7 +429,7 @@ void Renderer::CreateCommandQueues()
 	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]));
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"ERROR: Failed to create Copy CommandQueue");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Copy CommandQueue\n");
 	}
 }
 

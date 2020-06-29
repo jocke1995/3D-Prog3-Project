@@ -45,7 +45,7 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 
 	if (FAILED(hr))
 	{
-		OutputDebugStringA("Error: Failed to create DepthBuffer!\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create DepthBuffer!\n");
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(0);

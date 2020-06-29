@@ -12,7 +12,7 @@ RootSignature::RootSignature(ID3D12Device5* device)
 
 	if(FAILED(hr))
 	{
-		OutputDebugStringA("Error: Failed to create RootSignature!\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create RootSignature\n");
 	}
 }
 
@@ -91,6 +91,6 @@ void RootSignature::CreateRootSignatureStructure()
 
 	if (hr != S_OK)
 	{
-		OutputDebugStringA("Error: Failed to Serialize RootSignature!\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Serialize RootSignature\n");
 	}
 }

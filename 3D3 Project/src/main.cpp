@@ -88,7 +88,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene2->AddEntity("cube3");
     scene2->AddEntity("dragon");
     scene2->AddEntity("mino1");
-    scene2->AddEntity("cam");
+    scene2->AddEntity("light");
     
     // Add Components to Entity
     scene2->GetEntity("cube1")->AddComponent<RenderComponent>();
@@ -96,7 +96,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene2->GetEntity("cube3")->AddComponent<RenderComponent>();
     scene2->GetEntity("dragon")->AddComponent<RenderComponent>();
     scene2->GetEntity("mino1")->AddComponent<RenderComponent>();
-    scene2->GetEntity("cam")->AddComponent<RenderComponent>();
+    scene2->GetEntity("light")->AddComponent<RenderComponent>();
     
     // Set the components
     rc = scene2->GetEntity("cube1")->GetComponent<RenderComponent>();
@@ -130,7 +130,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->GetTransform()->SetScale(0.57);
     rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
     
-    rc = scene2->GetEntity("cam")->GetComponent<RenderComponent>();
+    rc = scene2->GetEntity("light")->GetComponent<RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);

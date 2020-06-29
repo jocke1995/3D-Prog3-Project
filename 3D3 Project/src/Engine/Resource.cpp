@@ -49,7 +49,7 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"ERROR: Failed to create Resource\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Resource\n");
 	}
 
 	this->resource->SetName(name.c_str());

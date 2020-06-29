@@ -83,7 +83,7 @@ void Thread::AddTask(Task* task, unsigned int taskFlag)
 	this->taskQueue.push(task);
 	if (!SetEvent(this->beginEvent))
 	{
-		OutputDebugStringW(L"ERROR: Set event [Thread::AddTask]\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to SetEvent in thread\n");
 	}
 	this->mutex.unlock();
 }

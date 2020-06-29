@@ -122,37 +122,37 @@ void Camera::InitDirectInput(HINSTANCE hInstance, HWND hwnd)
 		(void**)&DirectInput,
 		NULL);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to Create DirectInput\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Direct Input\n");
 
 	// Create Device for Keyboard
 	hr = DirectInput->CreateDevice(GUID_SysKeyboard,
 		&this->keyboard,
 		NULL);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to Create Device for keyboard\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create device for keyboard\n");
 
 	// Create Device for Mouse
 	hr = DirectInput->CreateDevice(GUID_SysMouse,
 		&this->mouse,
 		NULL);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to Create Device for mouse\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create device for mouse\n");
 
 	// Init Keyboard
 	hr = this->keyboard->SetDataFormat(&c_dfDIKeyboard);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to SetDataFormat for keyboard\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to SetDataFormat for keyboard\n");
 	hr = this->keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to SetCooperativeLevel for keyboard\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to SetCooperativeLevel for keyboard\n");
 
 	// Init Mouse
 	hr = this->mouse->SetDataFormat(&c_dfDIMouse);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to SetDataFormat for mouse\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to SetDataFormat for mouse\n");
 	hr = this->mouse->SetCooperativeLevel(hwnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
 	if (FAILED(hr))
-		OutputDebugStringW(L"ERROR: Failed to SetCooperativeLevel for mouse\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to SetCooperativeLevel for mouse\n");
 }
 
 void Camera::DetectInput(double dt)

@@ -18,8 +18,7 @@ ComputeState::ComputeState(ID3D12Device5* device, RootSignature* rootSignature, 
 	this->PSO->SetName(this->psoName);
 	if (!SUCCEEDED(hr))
 	{
-		// Log failed to create "psoName"
-		OutputDebugStringW(L"Failed to create ComputePSO");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create %S\n", this->psoName);
 	}
 }
 
@@ -38,7 +37,14 @@ Shader* ComputeState::GetShader(ShaderType type) const
 	{
 		return this->CS;
 	}
+	else if (type == ShaderType::VS)
+	{
+		Log::PrintError(Log::ErrorType::ENGINE, "There is no vertexShader in \'%S\'\n", this->psoName);
+	}
+	else if (type == ShaderType::PS)
+	{
+		Log::PrintError(Log::ErrorType::ENGINE, "There is no pixelShader in \'%S\'\n", this->psoName);
+	}
 
-	// LOG no shader of that type in this pso
 	return nullptr;
 }

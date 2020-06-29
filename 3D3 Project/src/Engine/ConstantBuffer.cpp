@@ -43,7 +43,8 @@ ConstantBuffer::ConstantBuffer(ID3D12Device5* device, unsigned int nrEntries, CO
 
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"ERROR: Failed to create Constant Buffer");
+		std::string cbName(this->name.begin(), this->name.end());
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create constant buffer with name: \'%s\'\n", cbName.c_str());
 	}
 
 	this->resource->SetName(name.c_str());
@@ -77,7 +78,8 @@ D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGPUAt(UINT index) const
 {
 	if (index > this->entrySize)
 	{
-		OutputDebugStringW(L"ERROR: Constant Buffer Memory Out of Range");
+		std::string cbName(this->name.begin(), this->name.end());
+		Log::PrintError(Log::ErrorType::ENGINE, "\'%s\' Memory Out of Range\n", cbName.c_str());
 		return 0;
 	}
 
