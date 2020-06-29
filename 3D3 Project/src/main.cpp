@@ -7,10 +7,6 @@
 
 #include "Game/Scene.h"
 
-// Kom ihåg: 
-// 2. fixa så att assimp.dll inte plockas bort i gitignore. 
-// (gör så att vi bara inte tar med obj i x64. men sparar själva mappen
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
