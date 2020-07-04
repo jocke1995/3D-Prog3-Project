@@ -42,31 +42,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene1->AddEntity("mino4");
     
     // Add Components to Entity
-    scene1->GetEntity("mino1")->AddComponent<RenderComponent>();
-    scene1->GetEntity("mino2")->AddComponent<RenderComponent>();
-    scene1->GetEntity("mino3")->AddComponent<RenderComponent>();
-    scene1->GetEntity("mino4")->AddComponent<RenderComponent>();
+    scene1->GetEntity("mino1")->AddComponent<component::RenderComponent>();
+    scene1->GetEntity("mino2")->AddComponent<component::RenderComponent>();
+    scene1->GetEntity("mino3")->AddComponent<component::RenderComponent>();
+    scene1->GetEntity("mino4")->AddComponent<component::RenderComponent>();
 
     // Set the components
-    RenderComponent* rc = scene1->GetEntity("mino1")->GetComponent<RenderComponent>();
+    component::RenderComponent* rc = scene1->GetEntity("mino1")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
     
-    rc = scene1->GetEntity("mino2")->GetComponent<RenderComponent>();
+    rc = scene1->GetEntity("mino2")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
     
-    rc = scene1->GetEntity("mino3")->GetComponent<RenderComponent>();
+    rc = scene1->GetEntity("mino3")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
     
-    rc = scene1->GetEntity("mino4")->GetComponent<RenderComponent>();
+    rc = scene1->GetEntity("mino4")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
@@ -87,46 +87,46 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene2->AddEntity("light");
     
     // Add Components to Entity
-    scene2->GetEntity("cube1")->AddComponent<RenderComponent>();
-    scene2->GetEntity("cube2")->AddComponent<RenderComponent>();
-    scene2->GetEntity("cube3")->AddComponent<RenderComponent>();
-    scene2->GetEntity("dragon")->AddComponent<RenderComponent>();
-    scene2->GetEntity("mino1")->AddComponent<RenderComponent>();
-    scene2->GetEntity("light")->AddComponent<RenderComponent>();
+    scene2->GetEntity("cube1")->AddComponent<component::RenderComponent>();
+    scene2->GetEntity("cube2")->AddComponent<component::RenderComponent>();
+    scene2->GetEntity("cube3")->AddComponent<component::RenderComponent>();
+    scene2->GetEntity("dragon")->AddComponent<component::RenderComponent>();
+    scene2->GetEntity("mino1")->AddComponent<component::RenderComponent>();
+    scene2->GetEntity("light")->AddComponent<component::RenderComponent>();
     
     // Set the components
-    rc = scene2->GetEntity("cube1")->GetComponent<RenderComponent>();
+    rc = scene2->GetEntity("cube1")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.5);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
     
-    rc = scene2->GetEntity("cube2")->GetComponent<RenderComponent>();
-    rc->SetMeshes(minoModel);
-    rc->SetDrawFlag(DrawOptions::ForwardRendering);
-    rc->GetTransform()->SetScale(0.05);
+    rc = scene2->GetEntity("cube2")->GetComponent<component::RenderComponent>();
+    rc->SetMeshes(cubeModel);
+    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->GetTransform()->SetScale(0.57);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
     
-    rc = scene2->GetEntity("cube3")->GetComponent<RenderComponent>();
+    rc = scene2->GetEntity("cube3")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.5);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
     
-    rc = scene2->GetEntity("dragon")->GetComponent<RenderComponent>();
+    rc = scene2->GetEntity("dragon")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(dragModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);
     rc->GetTransform()->RotateX(3.0*DirectX::XM_PI / 2.0);
     rc->GetTransform()->SetPosition(30.0f, 0.0f, 30.0f);
     
-    rc = scene2->GetEntity("mino1")->GetComponent<RenderComponent>();
-    rc->SetMeshes(cubeModel);
-    rc->SetDrawFlag(DrawOptions::Blend);
-    rc->GetTransform()->SetScale(0.57);
+    rc = scene2->GetEntity("mino1")->GetComponent<component::RenderComponent>();
+    rc->SetMeshes(minoModel);
+    rc->SetDrawFlag(DrawOptions::ForwardRendering);
+    rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
     
-    rc = scene2->GetEntity("light")->GetComponent<RenderComponent>();
+    rc = scene2->GetEntity("light")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);

@@ -5,32 +5,36 @@
 #include "../../Engine/Mesh.h"
 #include "Component.h"
 
-class RenderComponent : public Component
+namespace component
 {
-public:
-    RenderComponent();
-    virtual ~RenderComponent();
 
-    void Update();
+    class RenderComponent : public Component
+    {
+    public:
+        RenderComponent();
+        virtual ~RenderComponent();
 
-    // Sets
-    void SetMeshes(std::vector<Mesh*> *meshes);
-    void SetDrawFlag(UINT drawFlag);
+        void Update();
 
-    // Gets
-    Transform* GetTransform() const;
-    Mesh* GetMesh(unsigned int index) const;
-    UINT GetDrawFlag() const;
-    unsigned int GetNrOfMeshes() const;
-    SlotInfo* GetSlotInfo(unsigned int index) const;
+        // Sets
+        void SetMeshes(std::vector<Mesh*>* meshes);
+        void SetDrawFlag(UINT drawFlag);
 
-private:
-    Transform* transform;
-    std::vector<Mesh*> meshes;
-    UINT drawFlag = 0;
+        // Gets
+        Transform* GetTransform() const;
+        Mesh* GetMesh(unsigned int index) const;
+        UINT GetDrawFlag() const;
+        unsigned int GetNrOfMeshes() const;
+        SlotInfo* GetSlotInfo(unsigned int index) const;
 
-    // Material* material
-    std::vector<SlotInfo*> info;
-};
+    private:
+        Transform* transform;
+        std::vector<Mesh*> meshes;
+        UINT drawFlag = 0;
+
+        // Material* material
+        std::vector<SlotInfo*> info;
+    };
+}
 
 #endif

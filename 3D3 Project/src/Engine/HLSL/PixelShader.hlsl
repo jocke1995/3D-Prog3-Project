@@ -1,3 +1,5 @@
+#include "../structs.h"
+
 struct VS_OUT
 {
 	float4 pos      : SV_Position;
@@ -11,10 +13,13 @@ struct color
 	float4 rgba;
 };
 
-ConstantBuffer<color> materialColor0 : register(b1);
+ConstantBuffer<CB_PER_FRAME> cbPerFrame : register(b1);
+ConstantBuffer<color> materialColor0 : register(b2);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
+	float3 camPos = cbPerFrame.camPos;
+
 	float4 lightPos = float4(3.0f, 5.0f, -5.0f, 1.0f);
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	float4 materialColor = materialColor0.rgba;
@@ -27,7 +32,17 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 	float alpha = max(dot(input.norm.xyz, lightDir.xyz), 0.0f);
 	float4 diffuse = materialColor * lightColor * alpha;
 
-	float4 finalColor = float4(diffuse.rgb + ambient.rgb, 1.0f);
+	// Specular
+	float3 vecToCam = normalize(camPos - input.worldPos.xyz);
+	float3 reflection = normalize(reflect(normalize(-lightDir.xyz), normalize(input.norm.xyz)));
+	float spec = pow(max(dot(reflection, vecToCam), 0.0), 100);
+	float3 finalSpecular = materialColor * lightColor * spec;
+
+	// Attenuation
+	float distancePixelToLight = length(lightPos - input.worldPos.xyz);
+	float attenuation = 1.0f / (1.0f + (0.1 * distancePixelToLight) + (0.01 * pow(distancePixelToLight, 2)));
+
+	float4 finalColor = float4(ambient.rgb + attenuation * (diffuse.rgb + finalSpecular.rgb), 1.0f);
 	finalColor = saturate(finalColor);
 
 	return finalColor;

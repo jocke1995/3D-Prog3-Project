@@ -1,62 +1,65 @@
 #include "RenderComponent.h"
 
-RenderComponent::RenderComponent()
+namespace component
 {
-	this->transform = new Transform();
-}
-
-RenderComponent::~RenderComponent()
-{
-	delete this->transform;
-
-	for (SlotInfo* slotInfo : this->info)
+	RenderComponent::RenderComponent()
 	{
-		delete slotInfo;
+		this->transform = new Transform();
 	}
-}
 
-void RenderComponent::SetMeshes(std::vector<Mesh*> *meshes)
-{
-	this->meshes = *meshes;
-
-	for (int i = 0; i < this->meshes.size(); i++)
+	RenderComponent::~RenderComponent()
 	{
-		this->info.push_back(new SlotInfo());
-		this->info[i]->vertexDataIndex = this->meshes[i]->GetVertexDataIndex();
+		delete this->transform;
+
+		for (SlotInfo* slotInfo : this->info)
+		{
+			delete slotInfo;
+		}
 	}
-}
 
-void RenderComponent::SetDrawFlag(UINT drawFlag)
-{
-	this->drawFlag = drawFlag;
-}
+	void RenderComponent::SetMeshes(std::vector<Mesh*>* meshes)
+	{
+		this->meshes = *meshes;
 
-void RenderComponent::Update()
-{
-	this->transform->UpdateWorldMatrix();
-}
+		for (int i = 0; i < this->meshes.size(); i++)
+		{
+			this->info.push_back(new SlotInfo());
+			this->info[i]->vertexDataIndex = this->meshes[i]->GetVertexDataIndex();
+		}
+	}
 
-Transform* RenderComponent::GetTransform() const
-{
-	return this->transform;
-}
+	void RenderComponent::SetDrawFlag(UINT drawFlag)
+	{
+		this->drawFlag = drawFlag;
+	}
 
-Mesh* RenderComponent::GetMesh(unsigned int index) const
-{
-	return this->meshes[index];
-}
+	void RenderComponent::Update()
+	{
+		this->transform->UpdateWorldMatrix();
+	}
 
-UINT RenderComponent::GetDrawFlag() const
-{
-	return this->drawFlag;
-}
+	Transform* RenderComponent::GetTransform() const
+	{
+		return this->transform;
+	}
 
-unsigned int RenderComponent::GetNrOfMeshes() const
-{
-	return this->meshes.size();
-}
+	Mesh* RenderComponent::GetMesh(unsigned int index) const
+	{
+		return this->meshes[index];
+	}
 
-SlotInfo* RenderComponent::GetSlotInfo(unsigned int index) const
-{
-	return this->info[index];
+	UINT RenderComponent::GetDrawFlag() const
+	{
+		return this->drawFlag;
+	}
+
+	unsigned int RenderComponent::GetNrOfMeshes() const
+	{
+		return this->meshes.size();
+	}
+
+	SlotInfo* RenderComponent::GetSlotInfo(unsigned int index) const
+	{
+		return this->info[index];
+	}
 }

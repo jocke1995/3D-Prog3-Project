@@ -53,15 +53,18 @@ void FowardRenderTask::Execute()
 
 	commandList->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
+	// Create a CB_PER_FRAME struct
+	CB_PER_FRAME perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
+	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME) / sizeof(UINT), &perFrame, 0);
+
 	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
-	
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw for every entity
 	for (auto entity : this->entities)
 	{
 		// Get the renderComponent of the entity
-		RenderComponent* rc = entity->GetComponent<RenderComponent>();
+		component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
 
 		// Check if the entity is to be drawn in forwardRendering
 		if (rc->GetDrawFlag() & DrawOptions::ForwardRendering)

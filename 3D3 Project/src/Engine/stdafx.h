@@ -49,6 +49,7 @@
 
 // Need to declare before including structs.h
 typedef DirectX::XMFLOAT4X4 float4x4;
+
 typedef union
 {
 	struct { float x; float y; float z; float w; };
@@ -72,7 +73,7 @@ enum DrawOptions
 	ForwardRendering = 0x01,
 	Blend = 0x02,
 	// Shadow = 0x04,
-	// Bloom = 0x08,
+	// animation = 0x08,
 	// etc..
 };
 
@@ -129,8 +130,8 @@ namespace Log
 		OutputDebugStringA(finalBuffer.c_str());
 	}
 
-	template <typename... variables>
-	inline void Print(const std::string string, const variables&... rest)
+	template <typename... Variables>
+	inline void Print(const std::string string, const Variables&... rest)
 	{
 		char inputBuffer[128] = {};
 

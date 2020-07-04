@@ -1,20 +1,24 @@
 #include "HealthComponent.h"
 
-HealthComponent::HealthComponent()
+namespace component
 {
-	this->health = 100;
+	HealthComponent::HealthComponent()
+	{
+		this->health = 100;
+	}
+
+	HealthComponent::~HealthComponent()
+	{
+	}
+
+	int HealthComponent::GetHealth() const
+	{
+		return this->health;
+	}
+
+	void HealthComponent::Update()
+	{
+
+	}
 }
 
-HealthComponent::~HealthComponent()
-{
-}
-
-int HealthComponent::GetHealth() const
-{
-	return this->health;
-}
-
-void HealthComponent::Update()
-{
-
-}

@@ -17,3 +17,10 @@ struct CB_PER_ENTITY
 	float4x4 WVP;
 	SlotInfo info;
 };
+
+struct CB_PER_FRAME
+{
+	float3 camPos;
+	// deltaTime ..
+	// etc ..
+};

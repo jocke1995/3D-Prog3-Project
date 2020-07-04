@@ -2,17 +2,21 @@
 #define HEALTHCOMPONENT_H
 
 #include "Component.h"
-class HealthComponent : public Component
+
+namespace component
 {
-public:
-	HealthComponent();
-	~HealthComponent();
+	class HealthComponent : public Component
+	{
+	public:
+		HealthComponent();
+		~HealthComponent();
 
-	int GetHealth() const;
+		int GetHealth() const;
 
-	void Update();
-private:
-	int health = 0;
-};
+		void Update();
+	private:
+		int health = 0;
+	};
+}
 
 #endif

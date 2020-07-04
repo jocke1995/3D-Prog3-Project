@@ -45,6 +45,10 @@ void BlendRenderTask::Execute()
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	// Create a CB_PER_FRAME struct
+	CB_PER_FRAME perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
+	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME) / sizeof(UINT), &perFrame, 0);
+
 	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
@@ -52,7 +56,7 @@ void BlendRenderTask::Execute()
 	for(int i = this->entities.size() - 1; i >= 0; i--)
 	{
 		// Get the renderComponent of the entity
-		RenderComponent* rc = this->entities.at(i)->GetComponent<RenderComponent>();
+		component::RenderComponent* rc = this->entities.at(i)->GetComponent<component::RenderComponent>();
 
 		// Check if the Entity is to be drawn in Blend
 		if (rc->GetDrawFlag() & DrawOptions::Blend)

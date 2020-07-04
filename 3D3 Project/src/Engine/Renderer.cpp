@@ -116,7 +116,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	for (auto const& [entityName, entity] : entities)
 	{
 		// Only add the entities that actually should be drawn
-		RenderComponent* rc = entity->GetComponent<RenderComponent>();
+		component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
 		if (rc != nullptr)
 		{
 			this->entitiesToDraw.push_back(entity);
@@ -133,7 +133,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 
 bool Renderer::AddEntityToDraw(Entity* entity)
 {
-	RenderComponent* rc = entity->GetComponent<RenderComponent>();
+	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
 	if (rc != nullptr)
 	{
 		this->entitiesToDraw.push_back(entity);
@@ -145,7 +145,7 @@ bool Renderer::AddEntityToDraw(Entity* entity)
 
 bool Renderer::RemoveEntityToDraw(Entity* entity)
 {
-	RenderComponent* rc = entity->GetComponent<RenderComponent>();
+	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
 	if (rc != nullptr)
 	{
 		for (int i = 0; i < this->entitiesToDraw.size(); i++)
@@ -192,7 +192,7 @@ void Renderer::SortEntitiesByDistance()
 	XMFLOAT3 camPos = this->camera->GetPosition();
 	for (int i = 0; i < nrOfEntities; i++)
 	{
-		XMFLOAT3 objectPos = this->entitiesToDraw.at(i)->GetComponent<RenderComponent>()->GetTransform()->GetPosition();
+		XMFLOAT3 objectPos = this->entitiesToDraw.at(i)->GetComponent<component::RenderComponent>()->GetTransform()->GetPosition();
 
 		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
 								pow(camPos.y - objectPos.y, 2) +
