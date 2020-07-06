@@ -47,11 +47,21 @@ void CommandInterface::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_IN
 	{
 		HRESULT hr = device->CreateCommandAllocator(D3D12type, IID_PPV_ARGS(&this->commandAllocators[i]));
 
+		if (FAILED(hr))
+		{
+			Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create CommandAllocator\n");
+		}
+
 		hr = device->CreateCommandList(0,
 			D3D12type,
 			this->commandAllocators[i],
 			nullptr,
 			IID_PPV_ARGS(&this->commandLists[i]));
+
+		if (FAILED(hr))
+		{
+			Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create CommandList\n");
+		}
 
 		this->commandLists[i]->Close();
 	}

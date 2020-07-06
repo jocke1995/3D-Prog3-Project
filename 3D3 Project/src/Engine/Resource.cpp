@@ -7,6 +7,7 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 
 	D3D12_HEAP_TYPE d3d12HeapType;
 	D3D12_RESOURCE_STATES startState = D3D12_RESOURCE_STATE_GENERIC_READ;
+
 	switch (type)
 	{
 	case RESOURCE_TYPE::UPLOAD:
@@ -49,7 +50,8 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 
 	if (FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Resource\n");
+		std::string cbName(this->name.begin(), this->name.end());
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Resource with name: \'%s\'\n", cbName.c_str());
 	}
 
 	this->resource->SetName(name.c_str());
@@ -80,14 +82,14 @@ D3D12_GPU_VIRTUAL_ADDRESS Resource::GetGPUVirtualAdress() const
 	return this->resource->GetGPUVirtualAddress();
 }
 
-void Resource::SetData(const void* data)
+void Resource::SetData(const void* data, unsigned int subResourceIndex)
 {
 	void* dataBegin = nullptr;
 
 	// Set up the heap data
 	D3D12_RANGE range = { 0, 0 }; // We do not intend to read this resource on the CPU.
 
-	this->resource->Map(0, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
+	this->resource->Map(subResourceIndex, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
 	memcpy(dataBegin, data, this->entrySize);
-	this->resource->Unmap(0, nullptr);
+	this->resource->Unmap(subResourceIndex, nullptr);
 }

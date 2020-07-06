@@ -387,6 +387,10 @@ bool Renderer::CreateDevice()
 		{
 			deviceCreated = true;
 		}
+		else
+		{
+			Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Device\n");
+		}
 	
 		SAFE_RELEASE(&adapter);
 	}
@@ -678,8 +682,12 @@ void Renderer::CreateShaderResourceView(Mesh* mesh)
 
 void Renderer::CreateFences()
 {
-	device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fenceFrame));
+	HRESULT hr = device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fenceFrame));
 
+	if (FAILED(hr))
+	{
+		Log::PrintError(Log::ErrorType::ENGINE, "Faile to Create Fence\n");
+	}
 	this->fenceFrameValue = 1;
 
 	// Event handle to use for GPU synchronization
@@ -689,7 +697,7 @@ void Renderer::CreateFences()
 void Renderer::WaitForFrame()
 {
 	const UINT64 oldFenceValue = this->fenceFrameValue;
-	const UINT64 newFenceValue = oldFenceValue + 1; // 4
+	const UINT64 newFenceValue = oldFenceValue + 1;
 	this->fenceFrameValue++;
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);

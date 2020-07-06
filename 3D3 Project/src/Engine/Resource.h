@@ -21,7 +21,7 @@ public:
     ID3D12Resource1* GetID3D12Resource1() const;
     D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAdress() const;
 
-    void SetData(const void* data);
+    void SetData(const void* data, unsigned int subResourceIndex = 0);
 protected:
     std::wstring name;
     unsigned long long entrySize = 0;
