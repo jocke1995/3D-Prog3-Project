@@ -91,7 +91,7 @@ private:
 	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
 	
 	// DescriptorHeap
-	DescriptorHeap* descriptorHeap = nullptr;
+	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
 	void InitDescriptorHeap();
 
 	// ShaderResourceView

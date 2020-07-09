@@ -34,17 +34,32 @@ ID3DBlob* RootSignature::GetBlob() const
 
 void RootSignature::CreateRootSignatureStructure()
 {
+	// DescriptorTable for CBV's (lights with 256 max lights in scene)
+	D3D12_DESCRIPTOR_RANGE dtRangesCBV[1]{};
+	dtRangesCBV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	dtRangesCBV[0].NumDescriptors = 256;
+	dtRangesCBV[0].BaseShaderRegister = 3;	// b3
+	dtRangesCBV[0].RegisterSpace = 0;
+	D3D12_ROOT_DESCRIPTOR_TABLE dtCBV = {};
+	dtCBV.NumDescriptorRanges = ARRAYSIZE(dtRangesCBV);
+	dtCBV.pDescriptorRanges = dtRangesCBV;
+
+	// DescriptorTable for SRV's (bindless)
 	D3D12_DESCRIPTOR_RANGE dtRangesSRV[1]{};
 	dtRangesSRV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	dtRangesSRV[0].NumDescriptors = -1; // Bindless
-	dtRangesSRV[0].BaseShaderRegister = 0;
-	dtRangesSRV[0].RegisterSpace = 0; // space0
+	dtRangesSRV[0].BaseShaderRegister = 0;	// t0
+	dtRangesSRV[0].RegisterSpace = 0;
 
 	D3D12_ROOT_DESCRIPTOR_TABLE dtSRV = {};
 	dtSRV.NumDescriptorRanges = ARRAYSIZE(dtRangesSRV);
 	dtSRV.pDescriptorRanges = dtRangesSRV;
 
 	D3D12_ROOT_PARAMETER rootParam[RS::NUM_PARAMS]{};
+
+	rootParam[RS::dtCBV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParam[RS::dtCBV].DescriptorTable = dtCBV;
+	rootParam[RS::dtCBV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	rootParam[RS::dtSRV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParam[RS::dtSRV].DescriptorTable = dtSRV;

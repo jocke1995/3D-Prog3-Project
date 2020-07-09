@@ -50,14 +50,15 @@ ID3D12DescriptorHeap* DescriptorHeap::GetID3D12DescriptorHeap() const
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCPUHeapAt(UINT descriptorIndex)
 {
-	CPUHeapAt.ptr = CPUHeapStart.ptr + this->handleIncrementSize * descriptorIndex;
-	return CPUHeapAt;
+	this->CPUHeapAt.ptr = this->CPUHeapStart.ptr + this->handleIncrementSize * descriptorIndex;
+	return this->CPUHeapAt;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGPUHeapAt(UINT descriptorIndex)
 {
-	GPUHeapAt.ptr = GPUHeapStart.ptr + this->handleIncrementSize * descriptorIndex;
-	return GPUHeapAt;
+	this->GPUHeapAt.ptr = this->GPUHeapStart.ptr + this->handleIncrementSize * descriptorIndex;
+
+	return this->GPUHeapAt;
 }
 
 const UINT DescriptorHeap::GetHandleIncrementSize() const

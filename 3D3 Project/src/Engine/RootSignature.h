@@ -4,6 +4,7 @@
 
 enum RS
 {
+	dtCBV,
 	dtSRV,
 	CB_PER_ENTITY_CONSTANTS,
 	CB_PER_FRAME_CONSTANTS,
@@ -11,6 +12,8 @@ enum RS
 	ColorUAV,
 	NUM_PARAMS
 };
+
+
 
 class RootSignature
 {

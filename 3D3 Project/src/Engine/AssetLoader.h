@@ -8,7 +8,7 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
-static unsigned int descriptorHeapIndex = 0;
+static unsigned int descriptorHeapIndex = 256;
 
 class AssetLoader
 {

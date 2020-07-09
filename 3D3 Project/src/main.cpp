@@ -29,7 +29,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     std::vector<Mesh*>* minoModel = renderer->LoadModel(L"Resources/Models/mino.obj");
     std::vector<Mesh*>* cubeModel = renderer->LoadModel(L"Resources/Models/cube.obj");
     std::vector<Mesh*>* dragModel = renderer->LoadModel(L"Resources/Models/dragon.fbx");
-
 #pragma region CreateScene1
 
     // Create Scene

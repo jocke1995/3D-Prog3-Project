@@ -24,3 +24,9 @@ struct CB_PER_FRAME
 	// deltaTime ..
 	// etc ..
 };
+
+struct PointLight
+{
+	float4 position;
+	float4 color;
+};

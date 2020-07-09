@@ -1,7 +1,5 @@
-3D3\ Project/x64/**/*.obj
-3D3\ Project/x64/**/*.pch
-3D3\ Project/x64/**/*.pchast
-3D3\ Project/x64/**/*.pdb
+3D3\ Project/x64
+
 
 
 *.tlog

@@ -26,7 +26,7 @@ Renderer::~Renderer()
 	
 	delete this->depthBuffer;
 
-	delete this->descriptorHeap;
+	delete this->descriptorHeap_CBV_UAV_SRV;
 
 	for (auto computeTask : this->computeTasks)
 		delete computeTask;
@@ -509,7 +509,7 @@ void Renderer::InitRenderTasks()
 
 	forwardRenderTask->AddRenderTarget(this->swapChain);
 	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
-	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap);
+	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
 
 	// Resources ------------
 	forwardRenderTask->AddResource(this->copyDestResource);
@@ -603,7 +603,7 @@ void Renderer::InitRenderTasks()
 
 	blendRenderTask->AddRenderTarget(this->swapChain);
 	blendRenderTask->SetDepthBuffer(this->depthBuffer);
-	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap);
+	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
 
 #pragma endregion Blend
 	// :-----------------------------TASK CopyColor:-----------------------------
@@ -661,12 +661,12 @@ void Renderer::SetRenderTasksEntities()
 
 void Renderer::InitDescriptorHeap()
 {
-	this->descriptorHeap = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
+	this->descriptorHeap_CBV_UAV_SRV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
 }
 
 void Renderer::CreateShaderResourceView(Mesh* mesh)
 {
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(mesh->GetVertexDataIndex());
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(mesh->GetVertexDataIndex());
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 
