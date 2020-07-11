@@ -8,7 +8,7 @@
 class Scene
 {
 public:
-	Scene(Camera* mainCamera);
+	Scene(Camera* camera);
 	~Scene();
 
 	bool AddEntity(std::string entityName);
@@ -23,6 +23,7 @@ public:
 	void UpdateScene(double dt);
 	
 private:
+
 	std::map<std::string, Entity*> entities;
 	unsigned int nrOfEntities = 0;
 

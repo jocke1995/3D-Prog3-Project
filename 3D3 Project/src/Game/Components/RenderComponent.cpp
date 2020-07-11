@@ -2,7 +2,8 @@
 
 namespace component
 {
-	RenderComponent::RenderComponent()
+	RenderComponent::RenderComponent(Entity* parent)
+		:Component(parent)
 	{
 		this->transform = new Transform();
 	}
@@ -24,7 +25,7 @@ namespace component
 		for (int i = 0; i < this->meshes.size(); i++)
 		{
 			this->info.push_back(new SlotInfo());
-			this->info[i]->vertexDataIndex = this->meshes[i]->GetVertexDataIndex();
+			this->info[i]->vertexDataIndex = this->meshes[i]->GetDescriptorHeapIndex();
 		}
 	}
 

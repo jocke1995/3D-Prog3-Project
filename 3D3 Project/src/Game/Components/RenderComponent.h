@@ -3,15 +3,15 @@
 
 #include "../../Engine/Transform.h"
 #include "../../Engine/Mesh.h"
+
 #include "Component.h"
 
 namespace component
 {
-
     class RenderComponent : public Component
     {
     public:
-        RenderComponent();
+        RenderComponent(Entity* parent);
         virtual ~RenderComponent();
 
         void Update();

@@ -23,7 +23,8 @@ public:
 	void UpdateWorldMatrix();
 
 	const XMFLOAT4X4* GetWorldMatrix() const;
-	XMFLOAT3 GetPosition() const;
+	XMFLOAT3 GetPositionXMFLOAT3() const;
+	float3 GetPositionFloat3() const;
 
 private:
 	XMFLOAT3 position;

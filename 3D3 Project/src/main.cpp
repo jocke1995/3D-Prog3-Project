@@ -5,7 +5,7 @@
 // TODO: Problem med precompiled header eller liknande.. Intellisense problemet
 #include "Engine/stdafx.h"
 
-#include "Game/Scene.h"
+#include "Game/SceneHandler.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
@@ -24,48 +24,54 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Get threadpool so other tasks (physics, gameupdates etc..) can use it 
     ThreadPool* threadPool = renderer->GetThreadPool();
 
+    // Handler to the scenes, which will be used to create different scenes with entities..
+    SceneHandler* sceneHandler = new SceneHandler();
+
     // This will be loaded once from disk, then the next time the same function is called (with the same filepath),
     // the function will just return the same pointer to the mesh that was loaded earlier.
     std::vector<Mesh*>* minoModel = renderer->LoadModel(L"Resources/Models/mino.obj");
     std::vector<Mesh*>* cubeModel = renderer->LoadModel(L"Resources/Models/cube.obj");
     std::vector<Mesh*>* dragModel = renderer->LoadModel(L"Resources/Models/dragon.fbx");
+
+    
 #pragma region CreateScene1
 
     // Create Scene
-    Scene* scene1 = new Scene(renderer->GetCamera());
+    sceneHandler->CreateScene("scene1", renderer->GetCamera());
 
+    Scene* scene = sceneHandler->GetScene("scene1");
     // Add Entity to Scene
-    scene1->AddEntity("mino1");
-    scene1->AddEntity("mino2");
-    scene1->AddEntity("mino3");
-    scene1->AddEntity("mino4");
+    scene->AddEntity("mino1");
+    scene->AddEntity("mino2");
+    scene->AddEntity("mino3");
+    scene->AddEntity("mino4");
     
     // Add Components to Entity
-    scene1->GetEntity("mino1")->AddComponent<component::RenderComponent>();
-    scene1->GetEntity("mino2")->AddComponent<component::RenderComponent>();
-    scene1->GetEntity("mino3")->AddComponent<component::RenderComponent>();
-    scene1->GetEntity("mino4")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("mino1")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("mino2")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("mino3")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("mino4")->AddComponent<component::RenderComponent>();
 
     // Set the components
-    component::RenderComponent* rc = scene1->GetEntity("mino1")->GetComponent<component::RenderComponent>();
+    component::RenderComponent* rc = scene->GetEntity("mino1")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
     
-    rc = scene1->GetEntity("mino2")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("mino2")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
     
-    rc = scene1->GetEntity("mino3")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("mino3")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
     
-    rc = scene1->GetEntity("mino4")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("mino4")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
@@ -75,64 +81,91 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
 #pragma region CreateScene2
     // Create Scene
-    Scene* scene2 = new Scene(renderer->GetCamera());
+    sceneHandler->CreateScene("scene2", renderer->GetCamera());
+
+    scene = sceneHandler->GetScene("scene2");
     
     // Add Entity to Scene
-    scene2->AddEntity("cube1");
-    scene2->AddEntity("cube2");
-    scene2->AddEntity("cube3");
-    scene2->AddEntity("dragon");
-    scene2->AddEntity("mino1");
-    scene2->AddEntity("light");
+    scene->AddEntity("Floor");
+    scene->AddEntity("cube1");
+    scene->AddEntity("cube2");
+    scene->AddEntity("cube3");
+    scene->AddEntity("dragon");
+    scene->AddEntity("mino1");
+    scene->AddEntity("light");
     
     // Add Components to Entity
-    scene2->GetEntity("cube1")->AddComponent<component::RenderComponent>();
-    scene2->GetEntity("cube2")->AddComponent<component::RenderComponent>();
-    scene2->GetEntity("cube3")->AddComponent<component::RenderComponent>();
-    scene2->GetEntity("dragon")->AddComponent<component::RenderComponent>();
-    scene2->GetEntity("mino1")->AddComponent<component::RenderComponent>();
-    scene2->GetEntity("light")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("Floor")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("cube1")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("cube2")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("cube3")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("dragon")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("mino1")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("light")->AddComponent<component::RenderComponent>();
+    scene->GetEntity("light")->AddComponent<component::DirectionalLightComponent>();
     
     // Set the components
-    rc = scene2->GetEntity("cube1")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("Floor")->GetComponent<component::RenderComponent>();
+    rc->SetMeshes(cubeModel);
+    rc->SetDrawFlag(DrawOptions::Blend);
+    rc->GetTransform()->SetScale(50);
+    rc->GetTransform()->SetPosition(0.0f, -53.0f, 0.0f);
+
+    rc = scene->GetEntity("cube1")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.5);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
     
-    rc = scene2->GetEntity("cube2")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("cube2")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::Blend);
     rc->GetTransform()->SetScale(0.57);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
     
-    rc = scene2->GetEntity("cube3")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("cube3")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.5);
     rc->GetTransform()->SetPosition(0.0f, 0.0f, 20.0f);
     
-    rc = scene2->GetEntity("dragon")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("dragon")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(dragModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);
     rc->GetTransform()->RotateX(3.0*DirectX::XM_PI / 2.0);
     rc->GetTransform()->SetPosition(30.0f, 0.0f, 30.0f);
     
-    rc = scene2->GetEntity("mino1")->GetComponent<component::RenderComponent>();
+    rc = scene->GetEntity("mino1")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(minoModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.05);
     rc->GetTransform()->SetPosition(8.0f, 0.0f, 10.0f);
     
-    rc = scene2->GetEntity("light")->GetComponent<component::RenderComponent>();
+    // --------------------------- Set Light components START---------------------------
+    rc = scene->GetEntity("light")->GetComponent<component::RenderComponent>();
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);
     rc->GetTransform()->SetPosition(3.0f, 5.0f, -5.0f);
 
+    component::DirectionalLightComponent* dl = scene->GetEntity("light")->GetComponent<component::DirectionalLightComponent>();
+    CB_DirectionalLight dlData = {};
+    dlData.position = { rc->GetTransform()->GetPositionFloat3().x,
+                        rc->GetTransform()->GetPositionFloat3().y,
+                        rc->GetTransform()->GetPositionFloat3().z,
+                        0.0f };
+    dlData.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+    dl->SetDirectionalLight(&dlData);
+    dl->CreateResource(renderer->GetDevice());
+    renderer->CreateConstantBufferView( dl->GetDescriptorHeapIndex(), 
+                                        dl->GetCbSizeAligned(), 
+                                        dl->GetResource());
+    // --------------------------- Set Light components END---------------------------
+
+
 #pragma endregion CreateScene2
-    renderer->SetSceneToDraw(scene2);
+    renderer->SetSceneToDraw(sceneHandler->GetScene("scene2"));
 
     while (!window->ExitWindow())
     {  
@@ -178,8 +211,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         renderer->Execute();
     }
 
-    delete scene1;
-    delete scene2;
+    delete sceneHandler;
     delete window;
     delete renderer;
     delete timer;

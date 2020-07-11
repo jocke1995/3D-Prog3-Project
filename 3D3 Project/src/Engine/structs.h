@@ -11,7 +11,7 @@ struct SlotInfo
 	// Texture Specular;
 };
 
-struct CB_PER_ENTITY
+struct CB_PER_OBJECT
 {
 	float4x4 worldMatrix;
 	float4x4 WVP;
@@ -25,7 +25,7 @@ struct CB_PER_FRAME
 	// etc ..
 };
 
-struct PointLight
+struct CB_DirectionalLight
 {
 	float4 position;
 	float4 color;

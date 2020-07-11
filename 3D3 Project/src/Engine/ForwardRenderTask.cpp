@@ -23,8 +23,8 @@ void FowardRenderTask::Execute()
 	ID3D12DescriptorHeap* bindlessHeap = this->descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
 	commandList->SetDescriptorHeaps(1, &bindlessHeap);
 
-	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 	commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
+	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 
 	// Change state on front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
@@ -62,11 +62,8 @@ void FowardRenderTask::Execute()
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw for every entity
-	for (auto entity : this->entities)
+	for (component::RenderComponent* rc : this->renderComponents)
 	{
-		// Get the renderComponent of the entity
-		component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
-
 		// Check if the entity is to be drawn in forwardRendering
 		if (rc->GetDrawFlag() & DrawOptions::ForwardRendering)
 		{
@@ -89,9 +86,9 @@ void FowardRenderTask::Execute()
 				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
 				// Create a CB_PER_ENTITY struct
-				CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
+				CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
 
-				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
+				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
 				// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
 				commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());

@@ -25,14 +25,14 @@ void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 	this->renderTargets.push_back(renderTarget);
 }
 
-void RenderTask::SetEntitiesToDraw(std::vector<Entity*> *entitiesToDraw)
+void RenderTask::SetRenderComponents(std::vector<component::RenderComponent*> *renderComponents)
 {
-	this->entities = *entitiesToDraw;
+	this->renderComponents = *renderComponents;
 }
 
-void RenderTask::AddEntity(Entity* entity)
+void RenderTask::SetdirectionalLightComponents(std::vector<component::DirectionalLightComponent*>* dirLightComponents)
 {
-	this->entities.push_back(entity);
+	this->dirLightComponents = *dirLightComponents;
 }
 
 void RenderTask::SetCamera(Camera* camera)

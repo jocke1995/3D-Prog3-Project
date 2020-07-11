@@ -4,10 +4,10 @@
 
 enum THREAD_FLAG
 {
-	COPY = 0x01,
-	COMPUTE = 0x02,
-	DIRECT = 0x04,
-	ALL = 0x08
+	COPY = BIT(1),
+	COMPUTE = BIT(2),
+	DIRECT = BIT(3),
+	ALL = BIT(4)
 	// etc..
 };
 

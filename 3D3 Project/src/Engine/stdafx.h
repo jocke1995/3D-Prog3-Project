@@ -47,6 +47,20 @@
 #include <locale>
 #include <codecvt>
 
+// this will only call release if an object exists (prevents exceptions calling release on non existant objects)
+#define SAFE_RELEASE(p)			\
+{								\
+	if ((*p))					\
+	{							\
+		(*p)->Release();		\
+		(*p) = NULL;			\
+	}							\
+}
+
+
+#define NUM_SWAP_BUFFERS 2
+#define BIT(x) (1 << x)
+
 // Need to declare before including structs.h
 typedef DirectX::XMFLOAT4X4 float4x4;
 
@@ -70,27 +84,14 @@ typedef union
 
 enum DrawOptions
 {
-	ForwardRendering = 0x01,
-	Blend = 0x02,
-	// Shadow = 0x04,
-	// animation = 0x08,
+	ForwardRendering = BIT(1),
+	Blend = BIT(2),
+	// Shadow = BIT(3),
+	// animation = BIT(4),
 	// etc..
 };
 
 #include "structs.h"
-
-// this will only call release if an object exists (prevents exceptions calling release on non existant objects)
-#define SAFE_RELEASE(p)			\
-{								\
-	if ((*p))					\
-	{							\
-		(*p)->Release();		\
-		(*p) = NULL;			\
-	}							\
-}
-
-
-#define NUM_SWAP_BUFFERS 2
 
 namespace Log
 {

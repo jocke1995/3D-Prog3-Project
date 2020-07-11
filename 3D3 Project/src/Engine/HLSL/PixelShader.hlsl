@@ -15,13 +15,14 @@ struct color
 
 ConstantBuffer<CB_PER_FRAME> cbPerFrame : register(b1);
 ConstantBuffer<color> materialColor0 : register(b2);
+ConstantBuffer<CB_DirectionalLight> dirLight : register(b3);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
 	float3 camPos = cbPerFrame.camPos;
 
-	float4 lightPos = float4(3.0f, 5.0f, -5.0f, 1.0f);
-	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float4 lightPos = dirLight.position;
+	float4 lightColor = dirLight.color;
 	float4 materialColor = materialColor0.rgba;
 
 	// Ambient

@@ -28,8 +28,8 @@ public:
 
 	void AddRenderTarget(RenderTarget* renderTarget);
 
-	void SetEntitiesToDraw(std::vector<Entity*> *entitiesToDraw);
-	void AddEntity(Entity* entity);
+	void SetRenderComponents(std::vector<component::RenderComponent*> * renderComponents);
+	void SetdirectionalLightComponents(std::vector<component::DirectionalLightComponent*>* dirLightComponents);
 
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap_CBV_UAV_SRV(DescriptorHeap* dh);
@@ -43,8 +43,11 @@ protected:
 	ID3D12RootSignature* rootSig = nullptr;
 	
 	std::vector<PipelineState*> pipelineStates;
-	std::vector<Entity*> entities;
 	Camera* camera = nullptr;
+
+	std::vector<component::RenderComponent*> renderComponents;
+	std::vector<component::DirectionalLightComponent*> dirLightComponents;
+
 };
 
 #endif

@@ -9,13 +9,14 @@ struct VS_OUT
 };
 
 ConstantBuffer<CB_PER_FRAME> cbPerFrame : register(b1);
+ConstantBuffer<CB_DirectionalLight> dirLight[] : register(b3);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
 	float3 camPos = cbPerFrame.camPos;
 
-	float4 lightPos = float4(3.0f, 5.0f, -5.0f, 1.0f);
-	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float4 lightPos = dirLight[0].position;
+	float4 lightColor = dirLight[0].color;
 	float4 materialColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Ambient
@@ -29,7 +30,7 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 	// Specular
 	float3 vecToCam = normalize(camPos - input.worldPos.xyz);
 	float3 reflection = normalize(reflect(normalize(-lightDir.xyz), normalize(input.norm.xyz)));
-	float spec = pow(max(dot(reflection, vecToCam), 0.0), 1000);
+	float spec = pow(max(dot(reflection, vecToCam), 0.0), 100);
 	float3 finalSpecular = materialColor * lightColor * spec;
 
 	// Attenuation

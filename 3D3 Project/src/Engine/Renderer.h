@@ -27,10 +27,11 @@ public:
 	void InitD3D12(const HWND *hwnd, HINSTANCE hInstance);
 
 	std::vector<Mesh*>* LoadModel(std::wstring path);
+	void CreateConstantBufferView(unsigned int descriptorHeapIndex, unsigned int size, Resource* resource);
 
 	void SetSceneToDraw(Scene* scene);
-	bool AddEntityToDraw(Entity* entity);
-	bool RemoveEntityToDraw(Entity* entity);
+	//bool AddEntityToDraw(Entity* entity);
+	//bool RemoveEntityToDraw(Entity* entity);
 
 	void UpdateScene(double dt);
 	void SortEntitiesByDistance();
@@ -38,10 +39,11 @@ public:
 
 	ThreadPool* GetThreadPool() const;
 	Camera* GetCamera() const;
+	ID3D12Device5* GetDevice() const;
 private:
 	// Camera
 	Camera* camera = nullptr;
-	void SetMainCamera(Camera *camera);
+	void SetRenderTasksMainCamera(Camera *camera);
 
 	unsigned int frameCounter = 0;
 
@@ -78,9 +80,11 @@ private:
 	std::vector<ComputeTask*> computeTasks;
 	void InitRenderTasks();
 
-	// Entites to draw, a single vector holding all Entites of different drawOptions
-	std::vector<Entity*> entitiesToDraw;
-	void SetRenderTasksEntities();
+	// Components of Entities that's needed for rendering:
+	std::vector<component::RenderComponent*> renderComponents;
+	void SetRenderTasksRenderComponents();
+	std::vector<component::DirectionalLightComponent*> dirLightComponents;
+	void SetRenderTasksDirLightComponents();
 
 	// Current scene to be drawn
 	Scene* scene = nullptr;
@@ -94,8 +98,8 @@ private:
 	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
 	void InitDescriptorHeap();
 
-	// ShaderResourceView
-	void CreateShaderResourceView(Mesh* mesh);
+	// Views
+	void CreateShaderResourceView(unsigned int descriptorHeapIndex, unsigned int numElements, Resource* resource);
 
 	// Fences
 	HANDLE eventHandle = nullptr;

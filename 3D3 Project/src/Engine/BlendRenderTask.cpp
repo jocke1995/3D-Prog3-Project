@@ -23,6 +23,7 @@ void BlendRenderTask::Execute()
 	ID3D12DescriptorHeap* bindlessHeap = this->descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
 	commandList->SetDescriptorHeaps(1, &bindlessHeap);
 
+	//commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 
 	// Change state on front/backbuffer
@@ -53,15 +54,14 @@ void BlendRenderTask::Execute()
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw from opposite order from the sorted array
-	for(int i = this->entities.size() - 1; i >= 0; i--)
+	for(int i = this->renderComponents.size() - 1; i >= 0; i--)
 	{
-		// Get the renderComponent of the entity
-		component::RenderComponent* rc = this->entities.at(i)->GetComponent<component::RenderComponent>();
+		component::RenderComponent* rc = this->renderComponents.at(i);
 
-		// Check if the Entity is to be drawn in Blend
+		// Check if the renderComponent is to be drawn in Blend
 		if (rc->GetDrawFlag() & DrawOptions::Blend)
 		{
-			// Draw for every mesh the entity has
+			// Draw for every mesh the renderComponent has
 			for (unsigned int j = 0; j < rc->GetNrOfMeshes(); j++)
 			{
 				size_t num_vertices = rc->GetMesh(j)->GetNumVertices();
@@ -79,14 +79,12 @@ void BlendRenderTask::Execute()
 				XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
 				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
+				// Create a CB_PER_OBJECT struct
+				CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
 
+				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
-				// Create a CB_PER_ENTITY struct
-				CB_PER_ENTITY perEntity = { wTransposed, WVPTransposed, *info };
-
-				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_ENTITY_CONSTANTS, sizeof(CB_PER_ENTITY) / sizeof(UINT), &perEntity, 0);
-
-				// Draw each entity twice with different PSO 
+				// Draw each object twice with different PSO 
 				for (int k = 0; k < 2; k++)
 				{
 					commandList->SetPipelineState(this->pipelineStates[k]->GetPSO());

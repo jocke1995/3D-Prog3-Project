@@ -75,7 +75,16 @@ const XMFLOAT4X4* Transform::GetWorldMatrix() const
 	return &this->worldMat;
 }
 
-XMFLOAT3 Transform::GetPosition() const
+XMFLOAT3 Transform::GetPositionXMFLOAT3() const
 {
 	return this->position;
+}
+
+float3 Transform::GetPositionFloat3() const
+{
+	float3 pos = {};
+	pos.x = this->position.x;
+	pos.y = this->position.y;
+	pos.z = this->position.z;
+	return pos;
 }

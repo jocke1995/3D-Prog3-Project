@@ -14,7 +14,7 @@ public:
         DirectX::XMFLOAT4 tangent;
     };
 
-    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT vertexDataIndex);
+    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT descriptorHeapIndex);
     ~Mesh();
 
     std::vector<Vertex> vertices;
@@ -22,10 +22,10 @@ public:
     Resource* GetResource() const;
     const size_t GetSize() const;
     const size_t GetNumVertices() const;
-    const UINT GetVertexDataIndex() const;
+    const UINT GetDescriptorHeapIndex() const;
 
 private:
-    UINT vertexDataIndex;
+    UINT descriptorHeapIndex;
 
     Resource* resource = nullptr;
 };

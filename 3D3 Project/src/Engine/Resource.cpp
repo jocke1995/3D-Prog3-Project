@@ -57,11 +57,6 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 	this->resource->SetName(name.c_str());
 }
 
-Resource::Resource(std::wstring name)
-{
-	this->name = name;
-}
-
 Resource::~Resource()
 {
 	SAFE_RELEASE(&this->resource);

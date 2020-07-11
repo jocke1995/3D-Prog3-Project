@@ -14,7 +14,6 @@ public:
         unsigned long long entrySize, 
         RESOURCE_TYPE type,
         std::wstring name = L"RESOURCE_NONAME");
-    Resource(std::wstring name = L"RESOURCE_NONAME");
     virtual ~Resource();
 
     size_t GetSize() const;

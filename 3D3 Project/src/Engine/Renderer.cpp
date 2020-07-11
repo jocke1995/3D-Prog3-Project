@@ -102,7 +102,9 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 	{
 		for (Mesh* mesh : *meshes)
 		{
-			this->CreateShaderResourceView(mesh);
+			this->CreateShaderResourceView(	mesh->GetDescriptorHeapIndex(),
+											mesh->GetNumVertices(),
+											mesh->GetResource());
 		}
 	}
 	return meshes;
@@ -110,7 +112,7 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 
 void Renderer::SetSceneToDraw(Scene* scene)
 {
-	this->entitiesToDraw.clear();
+	this->renderComponents.clear();
 
 	std::map<std::string, Entity*> entities = *scene->GetEntities();
 	for (auto const& [entityName, entity] : entities)
@@ -119,47 +121,53 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
 		if (rc != nullptr)
 		{
-			this->entitiesToDraw.push_back(entity);
+			this->renderComponents.push_back(rc);
+		}
+
+		component::DirectionalLightComponent* dlc = entity->GetComponent<component::DirectionalLightComponent>();
+		if (dlc != nullptr)
+		{
+			this->dirLightComponents.push_back(dlc);
 		}
 	}
 
 	// Update renderTasks with new entities and mainCamera
 	// TODO: slå ihop till en loop..? problem: duplicering av kod
-	this->SetRenderTasksEntities();
-	this->SetMainCamera(scene->GetMainCamera());
+	this->SetRenderTasksRenderComponents();
+	this->SetRenderTasksMainCamera(scene->GetMainCamera());
 
 	this->scene = scene;
 }
 
-bool Renderer::AddEntityToDraw(Entity* entity)
-{
-	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
-	if (rc != nullptr)
-	{
-		this->entitiesToDraw.push_back(entity);
-		this->SetRenderTasksEntities();
-		return true;
-	}
-	return false;	
-}
-
-bool Renderer::RemoveEntityToDraw(Entity* entity)
-{
-	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
-	if (rc != nullptr)
-	{
-		for (int i = 0; i < this->entitiesToDraw.size(); i++)
-		{
-			if (*entity == this->entitiesToDraw[i])
-			{
-				this->entitiesToDraw.erase(this->entitiesToDraw.begin() + i);
-				this->SetRenderTasksEntities();
-				return true;
-			}
-		}
-	}
-	return false;
-}
+//bool Renderer::AddEntityToDraw(Entity* entity)
+//{
+//	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
+//	if (rc != nullptr)
+//	{
+//		this->renderComponents.push_back(entity);
+//		this->SetRenderTasksRenderComponents();
+//		return true;
+//	}
+//	return false;	
+//}
+//
+//bool Renderer::RemoveEntityToDraw(Entity* entity)
+//{
+//	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
+//	if (rc != nullptr)
+//	{
+//		for (int i = 0; i < this->renderComponents.size(); i++)
+//		{
+//			if (*entity == this->renderComponents[i])
+//			{
+//				this->renderComponents.erase(this->renderComponents.begin() + i);
+//				this->SetRenderTasksRenderComponents();
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}
 
 int Compare(const void* a, const void* b)
 {
@@ -178,60 +186,60 @@ void Renderer::UpdateScene(double dt)
 
 void Renderer::SortEntitiesByDistance()
 {
-	struct DistEnt
+	struct DistRc
 	{
 		double distance;
-		Entity* entity;
+		component::RenderComponent* rc;
 	};
 
-	int nrOfEntities = this->entitiesToDraw.size();
+	int nrOfEntities = this->renderComponents.size();
 
-	DistEnt* distEntArr = new DistEnt[nrOfEntities];
+	DistRc* distRcArr = new DistRc[nrOfEntities];
 
 	// Get all the distances of each objects and store them by ID and distance
 	XMFLOAT3 camPos = this->camera->GetPosition();
 	for (int i = 0; i < nrOfEntities; i++)
 	{
-		XMFLOAT3 objectPos = this->entitiesToDraw.at(i)->GetComponent<component::RenderComponent>()->GetTransform()->GetPosition();
+		XMFLOAT3 objectPos = this->renderComponents.at(i)->GetTransform()->GetPositionXMFLOAT3();
 
 		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
 								pow(camPos.y - objectPos.y, 2) +
 								pow(camPos.z - objectPos.z, 2));
 
 		// Save the object alongside its distance to the camera
-		distEntArr[i].distance = distance;
-		distEntArr[i].entity = this->entitiesToDraw.at(i);
+		distRcArr[i].distance = distance;
+		distRcArr[i].rc = this->renderComponents.at(i);
 	}
 
 	// InsertionSort (because its best case is O(N)), 
 	// and since this is sorted ((((((EVERY FRAME)))))) this is a good choice of sorting algorithm
 	int j = 0;
-	DistEnt distEntTemp = {};
+	DistRc distRcTemp = {};
 	for (int i = 1; i < nrOfEntities; i++)
 	{
 		j = i;
-		while (j > 0 && (distEntArr[j - 1].distance > distEntArr[j].distance))
+		while (j > 0 && (distRcArr[j - 1].distance > distRcArr[j].distance))
 		{
 			// Swap
-			distEntTemp = distEntArr[j - 1];
-			distEntArr[j - 1] = distEntArr[j];
-			distEntArr[j] = distEntTemp;
+			distRcTemp = distRcArr[j - 1];
+			distRcArr[j - 1] = distRcArr[j];
+			distRcArr[j] = distRcTemp;
 			j--;
 		}
 	}
 
 	// Fill the vector with sorted array
-	this->entitiesToDraw.clear();
+	this->renderComponents.clear();
 	for (int i = 0; i < nrOfEntities; i++)
 	{
-		this->entitiesToDraw.push_back(distEntArr[i].entity);
+		this->renderComponents.push_back(distRcArr[i].rc);
 	}
 
 	// Free memory
-	delete distEntArr;
+	delete distRcArr;
 
 	// Update the entity-arrays inside the rendertasks
-	this->SetRenderTasksEntities();
+	this->SetRenderTasksRenderComponents();
 }
 
 void Renderer::Execute()
@@ -323,7 +331,12 @@ Camera* Renderer::GetCamera() const
 	return this->camera;
 }
 
-void Renderer::SetMainCamera(Camera* camera)
+ID3D12Device5* Renderer::GetDevice() const
+{
+	return this->device5;
+}
+
+void Renderer::SetRenderTasksMainCamera(Camera* camera)
 {
 	for (auto renderTask : this->renderTasks)
 		renderTask->SetCamera(camera);
@@ -651,12 +664,16 @@ void Renderer::InitRenderTasks()
 		this->directCommandLists[i].push_back(blendRenderTask->GetCommandList(i));
 }
 
-void Renderer::SetRenderTasksEntities()
+void Renderer::SetRenderTasksRenderComponents()
 {
 	for (RenderTask* rendertask : this->renderTasks)
 	{
-		rendertask->SetEntitiesToDraw(&this->entitiesToDraw);
+		rendertask->SetRenderComponents(&this->renderComponents);
 	}
+}
+
+void Renderer::SetRenderTasksDirLightComponents()
+{
 }
 
 void Renderer::InitDescriptorHeap()
@@ -664,20 +681,30 @@ void Renderer::InitDescriptorHeap()
 	this->descriptorHeap_CBV_UAV_SRV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
 }
 
-void Renderer::CreateShaderResourceView(Mesh* mesh)
+void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex, unsigned int numElements, Resource* resource)
 {
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(mesh->GetVertexDataIndex());
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(descriptorHeapIndex);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
 
 	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	desc.Buffer.FirstElement = 0;
-	desc.Buffer.NumElements = mesh->GetNumVertices();
+	desc.Buffer.NumElements = numElements;//mesh->GetNumVertices();
 	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
 	desc.Format = DXGI_FORMAT_UNKNOWN;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
-	this->device5->CreateShaderResourceView(mesh->GetResource()->GetID3D12Resource1(), &desc, cdh);
+	this->device5->CreateShaderResourceView(resource->GetID3D12Resource1(), &desc, cdh);
+}
+
+void Renderer::CreateConstantBufferView(unsigned int descriptorHeapIndex, unsigned int size, Resource* resource)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(descriptorHeapIndex);
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvd = {};
+	cbvd.BufferLocation = resource->GetGPUVirtualAdress();
+	cbvd.SizeInBytes = size;
+	this->device5->CreateConstantBufferView(&cbvd, cdh);
 }
 
 void Renderer::CreateFences()
@@ -686,7 +713,7 @@ void Renderer::CreateFences()
 
 	if (FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Faile to Create Fence\n");
+		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Fence\n");
 	}
 	this->fenceFrameValue = 1;
 

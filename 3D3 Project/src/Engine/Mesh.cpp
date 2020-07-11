@@ -1,9 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT vertexDataIndex)
+Mesh::Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT descriptorHeapIndex)
 {
 	this->vertices = vertices;
-	this->vertexDataIndex = vertexDataIndex;
+	this->descriptorHeapIndex = descriptorHeapIndex;
 
 	this->resource = new Resource(device, this->GetSize(), RESOURCE_TYPE::UPLOAD, L"MESH_NONAME");
 
@@ -30,8 +30,8 @@ const size_t Mesh::GetNumVertices() const
 	return this->vertices.size();
 }
 
-const UINT Mesh::GetVertexDataIndex() const
+const UINT Mesh::GetDescriptorHeapIndex() const
 {
-	return this->vertexDataIndex;
+	return this->descriptorHeapIndex;
 }
 

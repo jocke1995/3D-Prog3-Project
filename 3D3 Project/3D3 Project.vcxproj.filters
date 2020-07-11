@@ -44,9 +44,6 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\DepthBuffer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -125,9 +122,6 @@
     <ClCompile Include="src\Game\Components\Component.cpp">
       <Filter>Game\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Components\HealthComponent.cpp">
-      <Filter>Game\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\Game\Components\RenderComponent.cpp">
       <Filter>Game\Components</Filter>
     </ClCompile>
@@ -155,13 +149,16 @@
     <ClCompile Include="src\Engine\GraphicsState.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game\Components\DirectionalLightComponent.cpp">
+      <Filter>Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\SceneHandler.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\ConstantBuffer.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\d3dx12.h">
       <Filter>Engine</Filter>
@@ -250,9 +247,6 @@
     <ClInclude Include="src\Game\Components\Component.h">
       <Filter>Game\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Components\HealthComponent.h">
-      <Filter>Game\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\Game\Components\RenderComponent.h">
       <Filter>Game\Components</Filter>
     </ClInclude>
@@ -276,6 +270,12 @@
     </ClInclude>
     <ClInclude Include="src\Engine\ComputeState.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Components\DirectionalLightComponent.h">
+      <Filter>Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\SceneHandler.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

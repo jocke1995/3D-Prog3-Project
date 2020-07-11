@@ -1,8 +1,9 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "Components/HealthComponent.h"
 #include "Components/RenderComponent.h"
+#include "Components/DirectionalLightComponent.h"
+
 #include "../Engine/stdafx.h"
 class Component;
 
@@ -26,13 +27,14 @@ public:
 
 private:
 	unsigned int id = -1;
+
 	std::vector<Component*> components;
 };
 
 template<class T>
 void Entity::AddComponent()
 {
-	this->components.push_back(new T);
+	this->components.push_back(new T(this));
 }
 
 template<class T>
