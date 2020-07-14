@@ -62,7 +62,6 @@ bool ThreadPool::IsAllFinished(unsigned int flag)
 				return false;
 			}
 		}
-		
 	}
 	return true;
 }

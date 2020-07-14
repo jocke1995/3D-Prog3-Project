@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STRUCTS_H
+#define STRUCTS_H
 
 // Indicies of where the data is stored in GPU-memory
 struct SlotInfo
@@ -30,3 +31,13 @@ struct CB_DirectionalLight
 	float4 position;
 	float4 color;
 };
+
+struct Lights
+{
+	CB_DirectionalLight dirLights[256];
+	float Num_Dir_Lights;
+};
+
+
+
+#endif

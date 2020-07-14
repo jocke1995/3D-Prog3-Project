@@ -5,7 +5,7 @@ namespace component
 	DirectionalLightComponent::DirectionalLightComponent(Entity* parent)
 		:Component(parent)
 	{
-		this->lightDescriptorHeapIndex = staticLightDescriptorHeapIndex++;
+		this->lightDescriptorHeapIndex = 10;// staticLightDescriptorHeapIndex++;
 
 		this->directionalLightStruct = new CB_DirectionalLight();
 		this->directionalLightStruct->position = { 0.0f, 0.0f, 0.0f, 0.0f }; 
@@ -16,12 +16,6 @@ namespace component
 	{
 		delete this->directionalLightStruct;
 		delete this->resource;
-	}
-
-	void DirectionalLightComponent::SetDirectionalLight(CB_DirectionalLight* dlData)
-	{
-		this->directionalLightStruct->position = dlData->position;
-		this->directionalLightStruct->color = dlData->color;
 	}
 
 	unsigned int DirectionalLightComponent::GetDescriptorHeapIndex() const
@@ -46,13 +40,34 @@ namespace component
 		this->resource->SetData(this->directionalLightStruct);
 	}
 
+	void DirectionalLightComponent::SetLightFlag(unsigned int lightFlag)
+	{
+		this->lightFlag = lightFlag;
+	}
+
+	void DirectionalLightComponent::SetPosition(float3 position)
+	{
+		this->directionalLightStruct->position = { position.x, position.y, position.z, 1.0 };
+	}
+
+	void DirectionalLightComponent::SetColor(float4 color)
+	{
+		this->directionalLightStruct->color = color;
+	}
+
 	void DirectionalLightComponent::Update()
 	{
-		static float g = 0;
-		g += 0.0025f;
-
-		this->directionalLightStruct->color.g = g;
-		this->directionalLightStruct->color.g = abs(sin(this->directionalLightStruct->color.g));
+		if (this->lightFlag & LIGHT_FLAG::USE_MESH_POSITION)
+		{
+			RenderComponent* rc = this->parent->GetComponent<RenderComponent>();
+			float3 position = rc->GetTransform()->GetPositionFloat3();
+			this->directionalLightStruct->position = { position.x, position.y, position.z, 0.0 };
+		}
+		//static float g = 0;
+		//g += 0.0025f;
+		//
+		//this->directionalLightStruct->color.g = g;
+		//this->directionalLightStruct->color.g = abs(sin(this->directionalLightStruct->color.g));
 
 		this->resource->SetData(this->directionalLightStruct);
 	}

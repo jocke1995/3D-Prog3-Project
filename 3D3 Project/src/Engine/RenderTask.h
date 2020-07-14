@@ -6,10 +6,11 @@
 #include "DepthBuffer.h"
 #include "RenderTarget.h"
 #include "Camera.h"
-#include "../Game/Entity.h"
 #include "GraphicsState.h"
 #include "DescriptorHeap.h"
 
+#include "../Game/Components/RenderComponent.h"
+#include "../Game/Components/DirectionalLightComponent.h"
 
 
 class RenderTask : public DX12Task

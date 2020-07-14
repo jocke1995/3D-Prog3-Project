@@ -1,11 +1,14 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "Components/RenderComponent.h"
-#include "Components/DirectionalLightComponent.h"
+//#include "Components/RenderComponent.h"
+//#include "Components/DirectionalLightComponent.h"
+
+class RenderComponent;
+class DirectionalLightComponent;
 
 #include "../Engine/stdafx.h"
-class Component;
+#include "Components/Component.h"
 
 static unsigned int staticID = 0;
 class Entity

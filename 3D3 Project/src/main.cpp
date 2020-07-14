@@ -147,16 +147,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->SetMeshes(cubeModel);
     rc->SetDrawFlag(DrawOptions::ForwardRendering);
     rc->GetTransform()->SetScale(0.2);
-    rc->GetTransform()->SetPosition(3.0f, 5.0f, -5.0f);
+    rc->GetTransform()->SetPosition(0.0f, 5.0f, -5.0f);
 
     component::DirectionalLightComponent* dl = scene->GetEntity("light")->GetComponent<component::DirectionalLightComponent>();
-    CB_DirectionalLight dlData = {};
-    dlData.position = { rc->GetTransform()->GetPositionFloat3().x,
-                        rc->GetTransform()->GetPositionFloat3().y,
-                        rc->GetTransform()->GetPositionFloat3().z,
-                        0.0f };
-    dlData.color = { 0.0f, 0.0f, 0.0f, 1.0f };
-    dl->SetDirectionalLight(&dlData);
+
+    dl->SetLightFlag(LIGHT_FLAG::USE_MESH_POSITION);
+    dl->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
     dl->CreateResource(renderer->GetDevice());
     renderer->CreateConstantBufferView( dl->GetDescriptorHeapIndex(), 
                                         dl->GetCbSizeAligned(), 
@@ -203,6 +199,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         //} 
 
         /* ------ Update ------ */
+        static double x = 0.0;
+        x += 0.005f;
+        Transform* lt = scene->GetEntity("light")->GetComponent<component::RenderComponent>()->GetTransform();
+        lt->SetPosition(lt->GetPositionFloat3().x + sin(x) * timer->GetDeltaTime() * 10, lt->GetPositionFloat3().y, lt->GetPositionFloat3().z);
         renderer->UpdateScene(timer->GetDeltaTime());
 
         renderer->SortEntitiesByDistance();
