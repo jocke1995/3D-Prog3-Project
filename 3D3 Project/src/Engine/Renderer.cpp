@@ -9,25 +9,34 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	Log::Print("----------------------------  Renderer Destructor  ----------------------------------\n");
 	this->WaitForFrame();
+	Log::Print("1\n");
 	this->threadpool->WaitForThreads(THREAD_FLAG::ALL);
+	Log::Print("2\n");
 	this->threadpool->ExitThreads();
-
-	CloseHandle(this->eventHandle);
+	Log::Print("3\n");
 	SAFE_RELEASE(&this->fenceFrame);
-	
+	Log::Print("4\n");
+	if (!CloseHandle(this->eventHandle))
+	{
+		Log::Print("Failed To Close Handle... ErrorCode: %d\n", GetLastError());
+	}
+	Log::Print("5\n");
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+	Log::Print("6\n");
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]);
+	Log::Print("7\n");
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]);
-
+	Log::Print("8\n");
 	delete this->rootSignature;
-
+	Log::Print("9\n");
 	delete this->swapChain;
-	
+	Log::Print("10\n");
 	delete this->depthBuffer;
-
+	Log::Print("11\n");
 	delete this->descriptorHeap_CBV_UAV_SRV;
-
+	Log::Print("12\n");
 	for (auto computeTask : this->computeTasks)
 		delete computeTask;
 
@@ -39,14 +48,17 @@ Renderer::~Renderer()
 
 	// Resources -------------
 	delete this->copySourceResource;
+	Log::Print("13\n");
 	delete this->copyDestResource;
+	Log::Print("14\n");
 	// -----------------------
 
 	SAFE_RELEASE(&this->device5);
-
+	Log::Print("15\n");
 	delete this->camera;
-
+	Log::Print("16\n");
 	delete this->threadpool;
+	Log::Print("17\n");
 }
 
 void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
@@ -296,7 +308,7 @@ void Renderer::Execute()
 		this->computeCommandLists[commandInterfaceIndex].size(),
 		this->computeCommandLists[commandInterfaceIndex].data());
 
-	int computeFenceValue = this->fenceFrameValue;
+	UINT64 computeFenceValue = this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Signal(this->fenceFrame, computeFenceValue + 1);
 	this->fenceFrameValue++;
 
@@ -430,6 +442,7 @@ void Renderer::CreateCommandQueues()
 	{
 		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Direct CommandQueue\n");
 	}
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->SetName(L"DirectQueue");
 
 	// Compute
 	D3D12_COMMAND_QUEUE_DESC cqdCompute = {};
@@ -439,6 +452,7 @@ void Renderer::CreateCommandQueues()
 	{
 		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Compute CommandQueue\n");
 	}
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->SetName(L"ComputeQueue");
 
 	// Copy
 	D3D12_COMMAND_QUEUE_DESC cqdCopy = {};
@@ -448,6 +462,7 @@ void Renderer::CreateCommandQueues()
 	{
 		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Copy CommandQueue\n");
 	}
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->SetName(L"CopyQueue");
 }
 
 void Renderer::CreateSwapChain(const HWND *hwnd)

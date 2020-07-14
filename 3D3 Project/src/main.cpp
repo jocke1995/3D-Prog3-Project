@@ -102,7 +102,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene->GetEntity("dragon")->AddComponent<component::RenderComponent>();
     scene->GetEntity("mino1")->AddComponent<component::RenderComponent>();
     scene->GetEntity("light")->AddComponent<component::RenderComponent>();
-    scene->GetEntity("light")->AddComponent<component::DirectionalLightComponent>();
+    //scene->GetEntity("light")->AddComponent<component::DirectionalLightComponent>();
     
     // Set the components
     rc = scene->GetEntity("Floor")->GetComponent<component::RenderComponent>();
@@ -149,14 +149,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     rc->GetTransform()->SetScale(0.2);
     rc->GetTransform()->SetPosition(0.0f, 5.0f, -5.0f);
 
-    component::DirectionalLightComponent* dl = scene->GetEntity("light")->GetComponent<component::DirectionalLightComponent>();
-
-    dl->SetLightFlag(LIGHT_FLAG::USE_MESH_POSITION);
-    dl->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-    dl->CreateResource(renderer->GetDevice());
-    renderer->CreateConstantBufferView( dl->GetDescriptorHeapIndex(), 
-                                        dl->GetCbSizeAligned(), 
-                                        dl->GetResource());
+    //component::DirectionalLightComponent* dl = scene->GetEntity("light")->GetComponent<component::DirectionalLightComponent>();
+    //
+    //dl->SetLightFlag(LIGHT_FLAG::USE_MESH_POSITION);
+    //dl->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+    //dl->CreateResource(renderer->GetDevice());
+    //renderer->CreateConstantBufferView( dl->GetDescriptorHeapIndex(), 
+    //                                    dl->GetCbSizeAligned(), 
+    //                                    dl->GetResource());
     // --------------------------- Set Light components END---------------------------
 
 
@@ -206,14 +206,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         renderer->UpdateScene(timer->GetDeltaTime());
 
         renderer->SortEntitiesByDistance();
-
         /* ------ Draw   ------ */
         renderer->Execute();
     }
 
-    delete sceneHandler;
     delete window;
     delete renderer;
+    delete sceneHandler;
     delete timer;
 
     return 0;

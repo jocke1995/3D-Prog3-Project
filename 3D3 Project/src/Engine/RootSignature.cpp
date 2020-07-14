@@ -37,7 +37,7 @@ void RootSignature::CreateRootSignatureStructure()
 	// DescriptorTable for CBV's (lights with 256 max lights in scene)
 	D3D12_DESCRIPTOR_RANGE dtRangesCBV[1]{};
 	dtRangesCBV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	dtRangesCBV[0].NumDescriptors = -1;
+	dtRangesCBV[0].NumDescriptors = 256;
 	dtRangesCBV[0].BaseShaderRegister = 3;	// b3
 	dtRangesCBV[0].RegisterSpace = 0;
 	D3D12_ROOT_DESCRIPTOR_TABLE dtCBV = {};

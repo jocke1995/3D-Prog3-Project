@@ -15,8 +15,8 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 {
 	float3 camPos = cbPerFrame.camPos;
 
-	float4 lightPos = dirLight[10].position;
-	float4 lightColor = dirLight[10].color;
+	float4 lightPos = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].position;
+	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].color;
 	float4 materialColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Ambient
