@@ -1,18 +1,16 @@
-#ifndef RENDERCOMPONENT_H
-#define RENDERCOMPONENT_H
+#ifndef MESHCOMPONENT_H
+#define MESHCOMPONENT_H
 
-#include "../../Engine/Transform.h"
 #include "../../Engine/Mesh.h"
-
 #include "Component.h"
 
 namespace component
 {
-    class RenderComponent : public Component
+    class MeshComponent : public Component
     {
     public:
-        RenderComponent(Entity* parent);
-        virtual ~RenderComponent();
+        MeshComponent(Entity* parent);
+        virtual ~MeshComponent();
 
         void Update();
 
@@ -21,14 +19,14 @@ namespace component
         void SetDrawFlag(UINT drawFlag);
 
         // Gets
-        Transform* GetTransform() const;
+        //Transform* GetTransform() const;
         Mesh* GetMesh(unsigned int index) const;
         UINT GetDrawFlag() const;
         unsigned int GetNrOfMeshes() const;
         SlotInfo* GetSlotInfo(unsigned int index) const;
 
     private:
-        Transform* transform;
+        //Transform* transform;
         std::vector<Mesh*> meshes;
         UINT drawFlag = 0;
 
@@ -36,5 +34,4 @@ namespace component
         std::vector<SlotInfo*> info;
     };
 }
-
 #endif

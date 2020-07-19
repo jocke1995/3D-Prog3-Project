@@ -4,11 +4,14 @@
 #include "Component.h"
 #include "../../Engine/Resource.h"
 #include "../Entity.h"
-#include "RenderComponent.h"
+#include "TransformComponent.h"
 
 enum LIGHT_FLAG
 {
-	USE_MESH_POSITION = BIT(1)
+	USE_MESH_POSITION = BIT(1),
+	// CastShadows.. = BIT(2),
+	// StaticPosition.. = BIT(3),
+	// etc..
 };
 
 static int staticLightDescriptorHeapIndex = 0;

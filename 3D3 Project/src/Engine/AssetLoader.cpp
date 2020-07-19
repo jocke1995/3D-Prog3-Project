@@ -14,6 +14,13 @@ AssetLoader::~AssetLoader()
 		delete pair.second;
 	}
 
+	// For every texture
+	for (auto pair : this->loadedTextures)
+	{
+		delete pair.second;
+	}
+
+	// For every shader
 	for (auto shader : this->loadedShaders)
 		delete shader.second;
 }
@@ -43,7 +50,7 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 	const std::string filePath(path.begin(), path.end());
 	Assimp::Importer importer;
 
-	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
 
 	if (assimpScene == nullptr)
 	{
@@ -60,6 +67,23 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 
 	*loadedBefore = false;
 	return this->loadedModels[path];
+}
+
+Texture* AssetLoader::LoadTexture(std::wstring path, bool* loadedBefore)
+{
+	*loadedBefore = false;
+
+	// Check if the texture allready exists
+	if (this->loadedTextures.count(path) != 0)
+	{
+		*loadedBefore = true;
+		return this->loadedTextures[path];
+	}
+
+	Texture* texture = new Texture(path, this->device);
+
+	this->loadedTextures[path] = texture;
+	return this->loadedTextures[path];
 }
 
 Shader* AssetLoader::LoadShader(std::wstring fileName, ShaderType type)
@@ -100,6 +124,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 {
 	// Fill this data
 	std::vector<Mesh::Vertex> vertices;
+	std::vector<unsigned int> indices;
 
 	// Get data from assimpMesh and store it
 	for (unsigned int i = 0; i < assimpMesh->mNumVertices; i++)
@@ -163,15 +188,15 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 	}
 
 	// Get indices
-	// for (unsigned int i = 0; i < assimpMesh->mNumFaces; i++)
-	// {
-	// 	aiFace face = assimpMesh->mFaces[i];
-	// 
-	// 	for (unsigned int j = 0; j < face.mNumIndices; j++)
-	// 	{
-	// 		blabla.push_back(face.mIndices[j]);
-	// 	}
-	// }
+	for (unsigned int i = 0; i < assimpMesh->mNumFaces; i++)
+	{
+		aiFace face = assimpMesh->mFaces[i];
+	
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+		{
+			indices.push_back(face.mIndices[j]);
+		}
+	}
 
-	return new Mesh(this->device, vertices, descriptorHeapIndex++);
+	return new Mesh(this->device, vertices, indices, descriptorHeapIndex++);
 }

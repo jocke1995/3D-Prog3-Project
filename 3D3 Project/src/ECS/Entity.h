@@ -1,10 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-//#include "Components/RenderComponent.h"
-//#include "Components/DirectionalLightComponent.h"
-
-class RenderComponent;
+class MeshComponent;
+class TransformComponent;
 class DirectionalLightComponent;
 
 #include "../Engine/stdafx.h"
@@ -19,7 +17,7 @@ public:
 	~Entity();
 
 	template <class T>
-	void AddComponent();
+	T* AddComponent();
 
 	template <class T>
 	T* GetComponent() const;
@@ -35,13 +33,23 @@ private:
 };
 
 template<class T>
-void Entity::AddComponent()
+inline T* Entity::AddComponent()
 {
-	this->components.push_back(new T(this));
+	// Check if component allready exists
+	T* compInEntity = this->GetComponent<T>();
+	if (compInEntity == nullptr)
+	{
+		// Add component
+		T* finalComponent = new T(this);
+		this->components.push_back(finalComponent);
+
+		return finalComponent;
+	}
+	return nullptr;
 }
 
 template<class T>
-T* Entity::GetComponent() const
+inline T* Entity::GetComponent() const
 {
 	for (int i = 0; i < this->components.size(); i++)
 	{

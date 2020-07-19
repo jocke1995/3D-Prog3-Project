@@ -59,8 +59,8 @@ namespace component
 	{
 		if (this->lightFlag & LIGHT_FLAG::USE_MESH_POSITION)
 		{
-			RenderComponent* rc = this->parent->GetComponent<RenderComponent>();
-			float3 position = rc->GetTransform()->GetPositionFloat3();
+			Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
+			float3 position = tc->GetPositionFloat3();
 			this->directionalLightStruct->position = { position.x, position.y, position.z, 0.0 };
 		}
 		//static float g = 0;

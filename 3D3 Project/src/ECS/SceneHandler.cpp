@@ -13,9 +13,17 @@ SceneHandler::~SceneHandler()
     this->scenes.clear();
 }
 
-void SceneHandler::CreateScene(std::string sceneName, Camera* camera)
+Scene* SceneHandler::CreateScene(std::string sceneName, Camera* camera)
 {
-	this->scenes[sceneName] = new Scene(camera);
+    if (this->SceneExists(sceneName))
+    {
+        Log::PrintError(Log::ErrorType::ENGINE, "A scene with the name: \'%s\' allready exists.\n", sceneName.c_str());
+        return nullptr;
+    }
+
+    // Create Scene and return it
+    this->scenes[sceneName] = new Scene(camera);
+    return this->scenes[sceneName];
 }
 
 Scene* SceneHandler::GetScene(std::string sceneName) const
@@ -25,7 +33,7 @@ Scene* SceneHandler::GetScene(std::string sceneName) const
         return this->scenes.at(sceneName);
     }
 
-    Log::PrintError(Log::ErrorType::GAME, "No Scene with name: \'%s\' was found.\n", sceneName);
+    Log::PrintError(Log::ErrorType::ENGINE, "No Scene with name: \'%s\' was found.\n", sceneName.c_str());
     return nullptr;
 }
 

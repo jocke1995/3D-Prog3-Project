@@ -48,7 +48,7 @@ Entity* Scene::GetEntity(std::string entityName)
         return this->entities.at(entityName);
     }
 
-    Log::PrintError(Log::ErrorType::GAME, "No Entity with name: \'%s\' was found.\n", entityName);
+    Log::PrintError(Log::ErrorType::ENGINE, "No Entity with name: \'%s\' was found.\n", entityName.c_str());
     return nullptr;
 }
 

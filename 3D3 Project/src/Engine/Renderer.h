@@ -6,7 +6,7 @@
 #include "SwapChain.h"
 #include "ThreadPool.h"
 #include "Camera.h"
-#include "../Game/Scene.h"
+#include "../ECS/Scene.h"
 
 // Graphics
 #include "ForwardRenderTask.h"
@@ -80,14 +80,14 @@ private:
 	std::vector<ComputeTask*> computeTasks;
 	void InitRenderTasks();
 
-	// Components of Entities that's needed for rendering:
-	std::vector<component::RenderComponent*> renderComponents;
+	// Group of components that's needed for rendering:
+	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	void SetRenderTasksRenderComponents();
 	std::vector<component::DirectionalLightComponent*> dirLightComponents;
 	void SetRenderTasksDirLightComponents();
 
 	// Current scene to be drawn
-	Scene* scene = nullptr;
+	Scene* currActiveScene = nullptr;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];

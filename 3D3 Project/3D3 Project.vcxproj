@@ -185,12 +185,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ECS\Components\MeshComponent.cpp" />
     <ClCompile Include="src\Engine\ComputeState.cpp" />
     <ClCompile Include="src\Engine\GraphicsState.cpp" />
-    <ClCompile Include="src\Game\Components\DirectionalLightComponent.cpp" />
-    <ClCompile Include="src\Game\Scene.cpp" />
-    <ClCompile Include="src\Game\Entity.cpp" />
-    <ClCompile Include="src\Game\Components\Component.cpp" />
+    <ClCompile Include="src\ECS\Components\DirectionalLightComponent.cpp" />
+    <ClCompile Include="src\ECS\Scene.cpp" />
+    <ClCompile Include="src\ECS\Entity.cpp" />
+    <ClCompile Include="src\ECS\Components\Component.cpp" />
     <ClCompile Include="src\Engine\AssetLoader.cpp" />
     <ClCompile Include="src\Engine\D3D12TimerCopy.cpp" />
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
@@ -204,7 +205,6 @@
     <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
     <ClCompile Include="src\Engine\DX12Task.cpp" />
     <ClCompile Include="src\Engine\Mesh.cpp" />
-    <ClCompile Include="src\Game\Components\RenderComponent.cpp" />
     <ClCompile Include="src\Engine\PipelineState.cpp" />
     <ClCompile Include="src\Engine\Renderer.cpp" />
     <ClCompile Include="src\Engine\RenderTarget.cpp" />
@@ -225,18 +225,22 @@
     <ClCompile Include="src\Engine\Thread.cpp" />
     <ClCompile Include="src\Engine\ThreadPool.cpp" />
     <ClCompile Include="src\Engine\Transform.cpp" />
-    <ClCompile Include="src\Game\SceneHandler.cpp" />
+    <ClCompile Include="src\ECS\SceneHandler.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Window.cpp" />
     <ClCompile Include="src\Engine\Timer.cpp" />
+    <ClCompile Include="src\ECS\Components\TransformComponent.cpp" />
+    <ClCompile Include="src\Engine\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\Components\MeshComponent.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Engine\ComputeState.h" />
     <ClInclude Include="src\Engine\GraphicsState.h" />
-    <ClInclude Include="src\Game\Components\DirectionalLightComponent.h" />
-    <ClInclude Include="src\Game\Scene.h" />
-    <ClInclude Include="src\Game\Entity.h" />
-    <ClInclude Include="src\Game\Components\Component.h" />
+    <ClInclude Include="src\ECS\Components\DirectionalLightComponent.h" />
+    <ClInclude Include="src\ECS\Scene.h" />
+    <ClInclude Include="src\ECS\Entity.h" />
+    <ClInclude Include="src\ECS\Components\Component.h" />
     <ClInclude Include="src\Engine\AssetLoader.h" />
     <ClInclude Include="src\Engine\D3D12TimerCopy.h" />
     <ClInclude Include="src\Engine\CommandInterface.h" />
@@ -251,7 +255,6 @@
     <ClInclude Include="src\Engine\DescriptorHeap.h" />
     <ClInclude Include="src\Engine\DX12Task.h" />
     <ClInclude Include="src\Engine\Mesh.h" />
-    <ClInclude Include="src\Game\Components\RenderComponent.h" />
     <ClInclude Include="src\Engine\PipelineState.h" />
     <ClInclude Include="src\Engine\Renderer.h" />
     <ClInclude Include="src\Engine\RenderTarget.h" />
@@ -268,9 +271,11 @@
     <ClInclude Include="src\Engine\Thread.h" />
     <ClInclude Include="src\Engine\ThreadPool.h" />
     <ClInclude Include="src\Engine\Transform.h" />
-    <ClInclude Include="src\Game\SceneHandler.h" />
+    <ClInclude Include="src\ECS\SceneHandler.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\Engine\Timer.h" />
+    <ClInclude Include="src\ECS\Components\TransformComponent.h" />
+    <ClInclude Include="src\Engine\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">
@@ -308,6 +313,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="3D3 Project.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

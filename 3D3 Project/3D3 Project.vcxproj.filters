@@ -30,10 +30,10 @@
     <Filter Include="Engine\Tasks\Compute">
       <UniqueIdentifier>{88f51c30-f521-43e8-9045-f427c090d28d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game">
+    <Filter Include="ECS">
       <UniqueIdentifier>{32e12c13-c6f5-4420-83dc-e249449164e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Components">
+    <Filter Include="ECS\Components">
       <UniqueIdentifier>{39b6045e-c787-43ee-ae90-aa98ce583844}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -119,20 +119,8 @@
     <ClCompile Include="src\Engine\AssetLoader.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Components\Component.cpp">
-      <Filter>Game\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Components\RenderComponent.cpp">
-      <Filter>Game\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Mesh.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Entity.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Scene.cpp">
-      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Camera.cpp">
       <Filter>Engine</Filter>
@@ -149,11 +137,29 @@
     <ClCompile Include="src\Engine\GraphicsState.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Components\DirectionalLightComponent.cpp">
-      <Filter>Game\Components</Filter>
+    <ClCompile Include="src\ECS\Components\Component.cpp">
+      <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\SceneHandler.cpp">
-      <Filter>Game</Filter>
+    <ClCompile Include="src\ECS\Components\DirectionalLightComponent.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Entity.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Scene.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\SceneHandler.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\MeshComponent.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\TransformComponent.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Texture.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,20 +250,8 @@
     <ClInclude Include="src\Engine\AssetLoader.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Components\Component.h">
-      <Filter>Game\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Components\RenderComponent.h">
-      <Filter>Game\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\Mesh.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Entity.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Scene.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Camera.h">
       <Filter>Engine</Filter>
@@ -271,11 +265,30 @@
     <ClInclude Include="src\Engine\ComputeState.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Components\DirectionalLightComponent.h">
-      <Filter>Game\Components</Filter>
+    <ClInclude Include="src\ECS\Components\Component.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\SceneHandler.h">
-      <Filter>Game</Filter>
+    <ClInclude Include="src\ECS\Components\DirectionalLightComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Entity.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Scene.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\SceneHandler.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\ECS\Components\MeshComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\TransformComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Texture.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,5 +312,10 @@
     <None Include="ClassDiagram.cd">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="3D3 Project.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

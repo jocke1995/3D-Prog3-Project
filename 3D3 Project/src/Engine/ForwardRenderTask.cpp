@@ -62,18 +62,21 @@ void FowardRenderTask::Execute()
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
 	// Draw for every entity
-	for (component::RenderComponent* rc : this->renderComponents)
+	for (int i = 0; i < this->renderComponents.size(); i++)
 	{
+		component::MeshComponent* mc = this->renderComponents.at(i).first;
+		component::TransformComponent* tc = this->renderComponents.at(i).second;
+
 		// Check if the entity is to be drawn in forwardRendering
-		if (rc->GetDrawFlag() & DrawOptions::ForwardRendering)
+		if (mc->GetDrawFlag() & DrawOptions::ForwardRendering)
 		{
 			// Draw for every mesh the entity has
-			for (unsigned int i = 0; i < rc->GetNrOfMeshes(); i++)
+			for (unsigned int i = 0; i < mc->GetNrOfMeshes(); i++)
 			{
-				size_t num_vertices = rc->GetMesh(i)->GetNumVertices();
-				SlotInfo* info = rc->GetSlotInfo(i);
+				size_t num_Indices= mc->GetMesh(i)->GetNumIndices();
+				SlotInfo* info = mc->GetSlotInfo(i);
 
-				Transform* transform = rc->GetTransform();
+				Transform* transform = tc->GetTransform();
 				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 				XMFLOAT4X4 WVPTransposed;
 				XMFLOAT4X4 wTransposed;
@@ -93,7 +96,9 @@ void FowardRenderTask::Execute()
 				// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
 				commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
 
-				commandList->DrawInstanced(num_vertices, 1, 0, 0);
+				commandList->IASetIndexBuffer(mc->GetMesh(i)->GetIndexBufferView());
+				commandList->DrawIndexedInstanced(num_Indices, 1, 0, 0, 0);
+				//commandList->DrawInstanced(mc->GetMesh(i)->GetNumVertices(), 0, 0, 0);
 			}
 		}
 	}

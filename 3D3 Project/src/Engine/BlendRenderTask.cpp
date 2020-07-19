@@ -56,18 +56,19 @@ void BlendRenderTask::Execute()
 	// Draw from opposite order from the sorted array
 	for(int i = this->renderComponents.size() - 1; i >= 0; i--)
 	{
-		component::RenderComponent* rc = this->renderComponents.at(i);
+		component::MeshComponent* mc = this->renderComponents.at(i).first;
+		component::TransformComponent* tc = this->renderComponents.at(i).second;
 
 		// Check if the renderComponent is to be drawn in Blend
-		if (rc->GetDrawFlag() & DrawOptions::Blend)
+		if (mc->GetDrawFlag() & DrawOptions::Blend)
 		{
-			// Draw for every mesh the renderComponent has
-			for (unsigned int j = 0; j < rc->GetNrOfMeshes(); j++)
+			// Draw for every mesh the MeshComponent has
+			for (unsigned int j = 0; j < mc->GetNrOfMeshes(); j++)
 			{
-				size_t num_vertices = rc->GetMesh(j)->GetNumVertices();
-				SlotInfo* info = rc->GetSlotInfo(j);
+				size_t num_Indices = mc->GetMesh(j)->GetNumIndices();
+				SlotInfo* info = mc->GetSlotInfo(j);
 
-				Transform* transform = rc->GetTransform();
+				Transform* transform = tc->GetTransform();
 				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
 				XMFLOAT4X4 WVPTransposed;
 				XMFLOAT4X4 wTransposed;
@@ -84,11 +85,12 @@ void BlendRenderTask::Execute()
 
 				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
+				commandList->IASetIndexBuffer(mc->GetMesh(j)->GetIndexBufferView());
 				// Draw each object twice with different PSO 
 				for (int k = 0; k < 2; k++)
 				{
 					commandList->SetPipelineState(this->pipelineStates[k]->GetPSO());
-					commandList->DrawInstanced(num_vertices, 1, 0, 0);
+					commandList->DrawIndexedInstanced(num_Indices, 1, 0, 0, 0);
 				}
 			}
 		}	

@@ -1,9 +1,8 @@
 #include "Resource.h"
 
-Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_TYPE type, std::wstring name)
+Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_TYPE type, std::wstring name, D3D12_RESOURCE_DESC* resourceDescInput)
 {
 	this->name = name;
-	this->entrySize = entrySize;
 
 	D3D12_HEAP_TYPE d3d12HeapType;
 	D3D12_RESOURCE_STATES startState = D3D12_RESOURCE_STATE_GENERIC_READ;
@@ -30,14 +29,27 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 
 	D3D12_RESOURCE_DESC resourceDesc = {};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Width = entrySize;
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
+	// if the input parameter was unspecified
+	if (resourceDescInput == nullptr)
+	{
+		// Apply default settings
+		this->entrySize = entrySize;
+		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		resourceDesc.Width = this->entrySize;
+		resourceDesc.Height = 1;
+		resourceDesc.DepthOrArraySize = 1;
+		resourceDesc.MipLevels = 1;
+		resourceDesc.SampleDesc.Count = 1;
+		resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	}
+	else
+	{
+		// Use specified resource description
+		this->entrySize = resourceDescInput->Width;
+		resourceDesc = *resourceDescInput;
+	}
+	
 
 	HRESULT hr = device->CreateCommittedResource(
 		&heapProperties,

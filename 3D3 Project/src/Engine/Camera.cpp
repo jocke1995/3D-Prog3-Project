@@ -13,7 +13,7 @@ Camera::Camera(std::wstring name, HINSTANCE hInstance, HWND hwnd)
 	XMStoreFloat4x4(&this->projMat, tempProj);
 
 	// Create View Matrix
-	this->eyeVector = XMVectorSet(0.0, 0.0, 0.0, 1.0f);
+	this->eyeVector = XMVectorSet(0.0, 3.0, 0.0, 1.0f);
 	this->atVector = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 	this->upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX tempView = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);

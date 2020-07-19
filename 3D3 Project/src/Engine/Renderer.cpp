@@ -116,7 +116,7 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 		{
 			this->CreateShaderResourceView(	mesh->GetDescriptorHeapIndex(),
 											mesh->GetNumVertices(),
-											mesh->GetResource());
+											mesh->GetResourceVertices());
 		}
 	}
 	return meshes;
@@ -130,10 +130,14 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	for (auto const& [entityName, entity] : entities)
 	{
 		// Only add the entities that actually should be drawn
-		component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
-		if (rc != nullptr)
+		component::MeshComponent* mc = entity->GetComponent<component::MeshComponent>();
+		if (mc != nullptr)
 		{
-			this->renderComponents.push_back(rc);
+			component::TransformComponent* tc = entity->GetComponent<component::TransformComponent>();
+			if (tc != nullptr)
+			{
+				this->renderComponents.push_back(std::make_pair(mc, tc));
+			}
 		}
 
 		component::DirectionalLightComponent* dlc = entity->GetComponent<component::DirectionalLightComponent>();
@@ -143,12 +147,10 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		}
 	}
 
-	// Update renderTasks with new entities and mainCamera
-	// TODO: slå ihop till en loop..? problem: duplicering av kod
 	this->SetRenderTasksRenderComponents();
 	this->SetRenderTasksMainCamera(scene->GetMainCamera());
 
-	this->scene = scene;
+	this->currActiveScene = scene;
 }
 
 //bool Renderer::AddEntityToDraw(Entity* entity)
@@ -193,62 +195,64 @@ int Compare(const void* a, const void* b)
 
 void Renderer::UpdateScene(double dt)
 {
-	this->scene->UpdateScene(dt);
+	this->currActiveScene->UpdateScene(dt);
 }
 
 void Renderer::SortEntitiesByDistance()
 {
-	struct DistRc
+	struct DistFromCamera
 	{
 		double distance;
-		component::RenderComponent* rc;
+		component::MeshComponent* mc;
+		component::TransformComponent* tc;
 	};
 
-	int nrOfEntities = this->renderComponents.size();
+	int nrOfRenderComponents = this->renderComponents.size();
 
-	DistRc* distRcArr = new DistRc[nrOfEntities];
+	DistFromCamera* distFromCamArr = new DistFromCamera[nrOfRenderComponents];
 
 	// Get all the distances of each objects and store them by ID and distance
 	XMFLOAT3 camPos = this->camera->GetPosition();
-	for (int i = 0; i < nrOfEntities; i++)
+	for (int i = 0; i < nrOfRenderComponents; i++)
 	{
-		XMFLOAT3 objectPos = this->renderComponents.at(i)->GetTransform()->GetPositionXMFLOAT3();
+		XMFLOAT3 objectPos = this->renderComponents.at(i).second->GetTransform()->GetPositionXMFLOAT3();
 
 		double distance = sqrt(	pow(camPos.x - objectPos.x, 2) +
 								pow(camPos.y - objectPos.y, 2) +
 								pow(camPos.z - objectPos.z, 2));
 
 		// Save the object alongside its distance to the camera
-		distRcArr[i].distance = distance;
-		distRcArr[i].rc = this->renderComponents.at(i);
+		distFromCamArr[i].distance = distance;
+		distFromCamArr[i].mc = this->renderComponents.at(i).first;
+		distFromCamArr[i].tc = this->renderComponents.at(i).second;
 	}
 
 	// InsertionSort (because its best case is O(N)), 
 	// and since this is sorted ((((((EVERY FRAME)))))) this is a good choice of sorting algorithm
 	int j = 0;
-	DistRc distRcTemp = {};
-	for (int i = 1; i < nrOfEntities; i++)
+	DistFromCamera distFromCamArrTemp = {};
+	for (int i = 1; i < nrOfRenderComponents; i++)
 	{
 		j = i;
-		while (j > 0 && (distRcArr[j - 1].distance > distRcArr[j].distance))
+		while (j > 0 && (distFromCamArr[j - 1].distance > distFromCamArr[j].distance))
 		{
 			// Swap
-			distRcTemp = distRcArr[j - 1];
-			distRcArr[j - 1] = distRcArr[j];
-			distRcArr[j] = distRcTemp;
+			distFromCamArrTemp = distFromCamArr[j - 1];
+			distFromCamArr[j - 1] = distFromCamArr[j];
+			distFromCamArr[j] = distFromCamArrTemp;
 			j--;
 		}
 	}
 
 	// Fill the vector with sorted array
 	this->renderComponents.clear();
-	for (int i = 0; i < nrOfEntities; i++)
+	for (int i = 0; i < nrOfRenderComponents; i++)
 	{
-		this->renderComponents.push_back(distRcArr[i].rc);
+		this->renderComponents.push_back(std::make_pair(distFromCamArr[i].mc, distFromCamArr[i].tc));
 	}
 
 	// Free memory
-	delete distRcArr;
+	delete distFromCamArr;
 
 	// Update the entity-arrays inside the rendertasks
 	this->SetRenderTasksRenderComponents();
@@ -264,14 +268,16 @@ void Renderer::Execute()
 	for (CopyTask* copyTask : this->copyTasks)
 	{
 		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(copyTask, THREAD_FLAG::COPY);
+		//this->threadpool->AddTask(copyTask, THREAD_FLAG::COPY);
+		copyTask->Execute();
 	}
 
 	// Fill queue with computeTasks and execute them in parallell
 	for (ComputeTask* computeTask : this->computeTasks)
 	{
 		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(computeTask, THREAD_FLAG::COMPUTE);
+		//this->threadpool->AddTask(computeTask, THREAD_FLAG::COMPUTE);
+		computeTask->Execute();
 	}
 
 	// Fill queue with rendertasks and execute them in parallell
@@ -279,12 +285,13 @@ void Renderer::Execute()
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(renderTask, THREAD_FLAG::DIRECT);
+		//this->threadpool->AddTask(renderTask, THREAD_FLAG::DIRECT);
+		renderTask->Execute();
 	}
 
 	/* COPY QUEUE --------------------------------------------------------------- */
 	// Wait for CopyTasks to complete
-	this->threadpool->WaitForThreads(THREAD_FLAG::COPY);
+	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY);
 
 	// Execute copy tasks
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
@@ -298,7 +305,7 @@ void Renderer::Execute()
 
 	/* COMPUTE QUEUE --------------------------------------------------------------- */
 	// Wait for ComputeTasks to complete
-	this->threadpool->WaitForThreads(THREAD_FLAG::COMPUTE);
+	//this->threadpool->WaitForThreads(THREAD_FLAG::COMPUTE);
 
 	// Wait for copyTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
@@ -316,7 +323,7 @@ void Renderer::Execute()
 
 	/* RENDER QUEUE --------------------------------------------------------------- */
 	// Wait for DirectTasks to complete
-	this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
+	//this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
 
 	// Wait for ComputeTask to finish
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, computeFenceValue + 1);
@@ -704,7 +711,7 @@ void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex, unsign
 
 	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	desc.Buffer.FirstElement = 0;
-	desc.Buffer.NumElements = numElements;//mesh->GetNumVertices();
+	desc.Buffer.NumElements = numElements;
 	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
 	desc.Format = DXGI_FORMAT_UNKNOWN;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;

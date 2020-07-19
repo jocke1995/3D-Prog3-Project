@@ -14,20 +14,32 @@ public:
         DirectX::XMFLOAT4 tangent;
     };
 
-    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, UINT descriptorHeapIndex);
+    Mesh(ID3D12Device5* device, std::vector<Vertex> vertices, std::vector<unsigned int> indices, UINT descriptorHeapIndex);
     ~Mesh();
 
-    std::vector<Vertex> vertices;
-
-    Resource* GetResource() const;
-    const size_t GetSize() const;
+    // Gets
+    Resource* GetResourceVertices() const;
+    const size_t GetSizeOfVertices() const;
     const size_t GetNumVertices() const;
+
+    Resource* GetResourceIndices() const;
+    const size_t GetSizeOfIndices() const;
+    const size_t GetNumIndices() const;
+    const D3D12_INDEX_BUFFER_VIEW* GetIndexBufferView() const;
+
     const UINT GetDescriptorHeapIndex() const;
 
 private:
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
     UINT descriptorHeapIndex;
 
-    Resource* resource = nullptr;
+    Resource* resourceVertices = nullptr;
+    Resource* resourceIndices = nullptr;
+
+    D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
+    void CreateIndexBufferView();
 };
 
 #endif

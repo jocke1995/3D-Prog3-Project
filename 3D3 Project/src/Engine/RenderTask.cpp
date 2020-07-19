@@ -25,7 +25,8 @@ void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
 	this->renderTargets.push_back(renderTarget);
 }
 
-void RenderTask::SetRenderComponents(std::vector<component::RenderComponent*> *renderComponents)
+void RenderTask::SetRenderComponents(std::vector<std::pair<	component::MeshComponent*,
+															component::TransformComponent*>>*renderComponents)
 {
 	this->renderComponents = *renderComponents;
 }

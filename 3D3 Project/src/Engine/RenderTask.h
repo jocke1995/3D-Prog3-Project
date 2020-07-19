@@ -9,8 +9,9 @@
 #include "GraphicsState.h"
 #include "DescriptorHeap.h"
 
-#include "../Game/Components/RenderComponent.h"
-#include "../Game/Components/DirectionalLightComponent.h"
+#include "../ECS/Components/DirectionalLightComponent.h"
+#include "../ECS/Components/MeshComponent.h"
+#include "../ECS/Components/TransformComponent.h"
 
 
 class RenderTask : public DX12Task
@@ -29,7 +30,8 @@ public:
 
 	void AddRenderTarget(RenderTarget* renderTarget);
 
-	void SetRenderComponents(std::vector<component::RenderComponent*> * renderComponents);
+	void SetRenderComponents(std::vector<std::pair<	component::MeshComponent*,
+													component::TransformComponent*>>* renderComponents);
 	void SetdirectionalLightComponents(std::vector<component::DirectionalLightComponent*>* dirLightComponents);
 
 	void SetCamera(Camera* camera);
@@ -46,7 +48,7 @@ protected:
 	std::vector<PipelineState*> pipelineStates;
 	Camera* camera = nullptr;
 
-	std::vector<component::RenderComponent*> renderComponents;
+	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	std::vector<component::DirectionalLightComponent*> dirLightComponents;
 
 };
