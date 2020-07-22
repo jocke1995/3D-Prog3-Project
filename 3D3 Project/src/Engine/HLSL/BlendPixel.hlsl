@@ -3,10 +3,9 @@
 struct VS_OUT
 {
 	float4 pos      : SV_Position;
-	float4 uv       : UV;
-	float4 norm     : NORMAL;
-	float4 tang     : TANGENT;
 	float4 worldPos : WPos;
+	float4 uv       : UV;
+	float3x3 tbn	: TBN;
 };
 
 ConstantBuffer<CB_PER_FRAME> cbPerFrame : register(b1);
@@ -22,19 +21,24 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 
 	float4 lightPos = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].position;
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].color;
-	float4 materialColor = textures[transform.info.Texture_Diffuse].Sample(samLinear, input.uv);
+	float4 materialColor = textures[transform.info.textureDiffuse].Sample(samLinear, input.uv);
+
+	// Sample from normalMap
+	float4 normalMap = textures[transform.info.textureNormal].Sample(samLinear, input.uv);
+	normalMap = (2.0f * normalMap) - 1.0f;
+	float3 normal = normalize(mul(normalMap.xyz, input.tbn));
 
 	// Ambient
 	float4 ambient = materialColor * float4(0.3f, 0.3f, 0.3f, 1.0f);
 
 	// Diffuse
 	float4 lightDir = normalize(lightPos - input.worldPos);
-	float alpha = max(dot(input.norm, lightDir), 0.0f);
+	float alpha = max(dot(normal, lightDir), 0.0f);
 	float4 diffuse = materialColor * lightColor * alpha;
 
 	// Specular
 	float3 vecToCam = normalize(camPos - input.worldPos.xyz);
-	float3 reflection = normalize(reflect(normalize(-lightDir.xyz), normalize(input.norm.xyz)));
+	float3 reflection = normalize(reflect(normalize(-lightDir.xyz), normalize(normal)));
 	float spec = pow(max(dot(reflection, vecToCam), 0.0), 100);
 	float3 finalSpecular = materialColor * lightColor * spec;
 

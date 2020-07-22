@@ -109,10 +109,11 @@ namespace Log
 	template <typename... Args>
 	inline void PrintSeverity(const Severity type, const std::string string, const Args&... args)
 	{
-		char inputBuffer[128] = {};
+		std::vector<char> inputBuffer;
+		inputBuffer.resize(256);
 		char typeBuffer[128] = {};
 
-		sprintf(inputBuffer, string.c_str(), args...);
+		sprintf(inputBuffer.data(), string.c_str(), args...);
 
 		switch (type)
 		{
@@ -129,7 +130,7 @@ namespace Log
 			break;
 		}
 
-		std::string finalBuffer = std::string(typeBuffer) + inputBuffer;
+		std::string finalBuffer = std::string(typeBuffer) + inputBuffer.data();
 
 		OutputDebugStringA(finalBuffer.c_str());
 	}
@@ -137,7 +138,7 @@ namespace Log
 	template <typename... Args>
 	inline void Print(const std::string string, const Args&... args)
 	{
-		char inputBuffer[128] = {};
+		char inputBuffer[512] = {};
 
 		sprintf(inputBuffer, string.c_str(), args...);
 

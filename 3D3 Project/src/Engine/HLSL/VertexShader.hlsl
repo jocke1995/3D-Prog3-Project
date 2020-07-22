@@ -5,8 +5,7 @@ struct VS_OUT
 	float4 pos      : SV_Position;
 	float4 worldPos : WPos;
 	float4 uv       : UV;
-	float4 norm     : NORMAL;
-	float4 tang     : TANGENT;
+	float3x3 tbn	: TBN;
 };
 
 struct vertex
@@ -33,9 +32,17 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 	output.worldPos = mul(vertexPosition, transform.worldMatrix);
 
 	output.uv = float4(mesh.uv);
-	output.norm = mul(float4(mesh.norm), transform.worldMatrix);
 
-	output.tang = 0;
+	// Create TBN-Matrix
+	float3 T = normalize(mul(float4(mesh.tang), transform.worldMatrix)).xyz;
+	float3 N = normalize(mul(float4(mesh.norm), transform.worldMatrix)).xyz;
+
+	// Gram schmidt
+	T = normalize(T - dot(T, N) * N);
+
+	float3 B = cross(T, N);
+
+	output.tbn = float3x3(T, B, N);
 
 	return output;
 }

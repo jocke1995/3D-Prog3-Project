@@ -60,7 +60,7 @@ void FowardRenderTask::Execute()
 	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
 
-	// Draw for every entity
+	// Draw for every Rendercomponent
 	for (int i = 0; i < this->renderComponents.size(); i++)
 	{
 		component::MeshComponent* mc = this->renderComponents.at(i).first;
@@ -69,7 +69,7 @@ void FowardRenderTask::Execute()
 		// Check if the entity is to be drawn in forwardRendering
 		if (mc->GetDrawFlag() & DrawOptions::ForwardRendering)
 		{
-			// Draw for every mesh the entity has
+			// Draw for every mesh the meshComponent has
 			for (unsigned int i = 0; i < mc->GetNrOfMeshes(); i++)
 			{
 				size_t num_Indices= mc->GetMesh(i)->GetNumIndices();

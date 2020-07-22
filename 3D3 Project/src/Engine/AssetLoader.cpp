@@ -56,7 +56,7 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 	const std::string filePath(path.begin(), path.end());
 	Assimp::Importer importer;
 
-	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace);
 
 	if (assimpScene == nullptr)
 	{
@@ -168,7 +168,6 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 
 		if (assimpMesh->HasTangentsAndBitangents())
 		{
-			// Todo: Add bitangent if needed
 			vTemp.tangent.x = assimpMesh->mTangents[i].x;
 			vTemp.tangent.y = assimpMesh->mTangents[i].y;
 			vTemp.tangent.z = assimpMesh->mTangents[i].z;
