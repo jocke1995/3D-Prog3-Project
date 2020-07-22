@@ -5,15 +5,17 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 	this->name = name;
 
 	D3D12_HEAP_TYPE d3d12HeapType;
-	D3D12_RESOURCE_STATES startState = D3D12_RESOURCE_STATE_GENERIC_READ;
+	D3D12_RESOURCE_STATES startState;
 
 	switch (type)
 	{
 	case RESOURCE_TYPE::UPLOAD:
 		d3d12HeapType = D3D12_HEAP_TYPE_UPLOAD;
+		startState = D3D12_RESOURCE_STATE_GENERIC_READ;
 		break;
 	case RESOURCE_TYPE::DEFAULT:
 		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
+		startState = D3D12_RESOURCE_STATE_COPY_DEST;
 		break;
 	case RESOURCE_TYPE::RESOURCE_COPY:
 		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
@@ -63,7 +65,7 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 	if (FAILED(hr))
 	{
 		std::string cbName(this->name.begin(), this->name.end());
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Resource with name: \'%s\'\n", cbName.c_str());
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create Resource with name: \'%s\'\n", cbName.c_str());
 	}
 
 	this->resource->SetName(name.c_str());

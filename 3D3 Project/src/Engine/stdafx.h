@@ -47,6 +47,10 @@
 #include <locale>
 #include <codecvt>
 
+std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
+std::string to_string(std::wstring wstr);
+std::wstring to_wstring(std::string str);
+
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
 #define SAFE_RELEASE(p)			\
 {								\
@@ -95,30 +99,29 @@ enum DrawOptions
 
 namespace Log
 {
-	enum class ErrorType
+	enum class Severity
 	{
-		GAME,
-		ENGINE,
+		WARNING,
+		CRITICAL,
 		OTHER
 	};
 
-	template <typename... Variables>
-	inline void PrintError(const ErrorType type, const std::string string, const Variables&... variables)
+	template <typename... Args>
+	inline void PrintSeverity(const Severity type, const std::string string, const Args&... args)
 	{
 		char inputBuffer[128] = {};
 		char typeBuffer[128] = {};
 
-		sprintf(inputBuffer, string.c_str(), variables...);
+		sprintf(inputBuffer, string.c_str(), args...);
 
 		switch (type)
 		{
-		case ErrorType::ENGINE:
-			sprintf(typeBuffer, "ENGINE ERROR: ");
+		case Severity::CRITICAL:
+			sprintf(typeBuffer, "CRITICAL ERROR: ");
 			break;
 
-		// todo: Write to .txt file?
-		case ErrorType::GAME:
-			sprintf(typeBuffer, "GAME ERROR: ");
+		case Severity::WARNING:
+			sprintf(typeBuffer, "WARNING: ");
 			break;
 
 		default:
@@ -131,12 +134,12 @@ namespace Log
 		OutputDebugStringA(finalBuffer.c_str());
 	}
 
-	template <typename... Variables>
-	inline void Print(const std::string string, const Variables&... rest)
+	template <typename... Args>
+	inline void Print(const std::string string, const Args&... args)
 	{
 		char inputBuffer[128] = {};
 
-		sprintf(inputBuffer, string.c_str(), rest...);
+		sprintf(inputBuffer, string.c_str(), args...);
 
 		OutputDebugStringA(inputBuffer);
 	}

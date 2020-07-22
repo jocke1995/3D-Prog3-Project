@@ -15,13 +15,12 @@ void FowardRenderTask::Execute()
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
 
-	commandAllocator->Reset();
-	commandList->Reset(commandAllocator, NULL);
+	this->commandInterface->Reset(this->commandInterfaceIndex);
 
 	commandList->SetGraphicsRootSignature(this->rootSig);
 	
-	ID3D12DescriptorHeap* bindlessHeap = this->descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
-	commandList->SetDescriptorHeaps(1, &bindlessHeap);
+	ID3D12DescriptorHeap* descriptorHeap_CBV_UAV_SRV = this->descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
+	commandList->SetDescriptorHeaps(1, &descriptorHeap_CBV_UAV_SRV);
 
 	//commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
@@ -74,7 +73,7 @@ void FowardRenderTask::Execute()
 			for (unsigned int i = 0; i < mc->GetNrOfMeshes(); i++)
 			{
 				size_t num_Indices= mc->GetMesh(i)->GetNumIndices();
-				SlotInfo* info = mc->GetSlotInfo(i);
+				const SlotInfo* info = mc->GetMesh(i)->GetSlotInfo();
 
 				Transform* transform = tc->GetTransform();
 				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
@@ -93,12 +92,8 @@ void FowardRenderTask::Execute()
 
 				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
 
-				// Resource with color from the copyQueue -> Computequeue -> this DirectQueue
-				commandList->SetGraphicsRootConstantBufferView(RS::ColorCBV, this->resources[0]->GetGPUVirtualAdress());
-
 				commandList->IASetIndexBuffer(mc->GetMesh(i)->GetIndexBufferView());
 				commandList->DrawIndexedInstanced(num_Indices, 1, 0, 0, 0);
-				//commandList->DrawInstanced(mc->GetMesh(i)->GetNumVertices(), 0, 0, 0);
 			}
 		}
 	}

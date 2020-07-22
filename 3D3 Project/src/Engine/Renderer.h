@@ -12,11 +12,11 @@
 #include "ForwardRenderTask.h"
 #include "BlendRenderTask.h"
 
-// Copy
-#include "CopyColorTask.h"
+// Copy (Later include the specific task, not this)
+#include "CopyTask.h"
 
-// Compute
-#include "ComputeTestTask.h"
+// Compute (Later include the specific task, not this)
+#include "ComputeTask.h"
 
 class Renderer
 {
@@ -27,6 +27,7 @@ public:
 	void InitD3D12(const HWND *hwnd, HINSTANCE hInstance);
 
 	std::vector<Mesh*>* LoadModel(std::wstring path);
+	Texture* LoadTexture(std::wstring path);
 	void CreateConstantBufferView(unsigned int descriptorHeapIndex, unsigned int size, Resource* resource);
 
 	void SetSceneToDraw(Scene* scene);
@@ -70,10 +71,6 @@ private:
 	// ThreadPool
 	ThreadPool* threadpool = nullptr;
 
-	// Resource for the copyQueue
-	Resource* copySourceResource = nullptr;
-	Resource* copyDestResource = nullptr;
-
 	// RenderTasks
 	std::vector<RenderTask*>  renderTasks;
 	std::vector<CopyTask*>    copyTasks;
@@ -99,14 +96,23 @@ private:
 	void InitDescriptorHeap();
 
 	// Views
-	void CreateShaderResourceView(unsigned int descriptorHeapIndex, unsigned int numElements, Resource* resource);
+	void CreateShaderResourceView(	unsigned int descriptorHeapIndex,
+									D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
+									Resource* resource);
+
+	bool CreateSRVForTexture(Texture* texture);
 
 	// Fences
 	HANDLE eventHandle = nullptr;
 	ID3D12Fence1* fenceFrame = nullptr;
 	UINT64 fenceFrameValue = 0;
 	void CreateFences();
+
 	void WaitForFrame();
+
+	// Temp
+	void WaitForGpu();
+	CommandInterface* tempCommandInterface = nullptr;
 };
 
 #endif

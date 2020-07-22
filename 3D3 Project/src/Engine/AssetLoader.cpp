@@ -1,5 +1,16 @@
 #include "AssetLoader.h"
-#include <iostream>
+
+AssetLoader::AssetLoader(ID3D12Device5* device)
+{
+	this->device = device;
+
+	// Load default textures
+	LoadTexture(this->filePathDefaultTextures + L"default_ambient.png");
+	LoadTexture(this->filePathDefaultTextures + L"default_diffuse.jpg");
+	LoadTexture(this->filePathDefaultTextures + L"default_specular.png");
+	LoadTexture(this->filePathDefaultTextures + L"default_normal.png");
+	LoadTexture(this->filePathDefaultTextures + L"default_emissive.png");
+}
 
 AssetLoader::~AssetLoader()
 {
@@ -25,21 +36,16 @@ AssetLoader::~AssetLoader()
 		delete shader.second;
 }
 
-AssetLoader* AssetLoader::Get()
+AssetLoader* AssetLoader::Get(ID3D12Device5* device)
 {
-	static AssetLoader instance;
+	static AssetLoader instance(device);
 
 	return &instance;
 }
 
-void AssetLoader::SetDevice(ID3D12Device5* device)
-{
-	this->device = device;
-}
-
 std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loadedBefore)
 {
-	// Check if the model allready exists
+	// Check if the model already exists
 	if (this->loadedModels.count(path) != 0)
 	{
 		*loadedBefore = true;
@@ -55,7 +61,7 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 	if (assimpScene == nullptr)
 	{
 
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to load model with path: \'%s\'\n", filePath.c_str());
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to load model with path: \'%s\'\n", filePath.c_str());
 		return nullptr;
 	}
 	
@@ -63,32 +69,36 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 	meshes->reserve(assimpScene->mNumMeshes);
 	this->loadedModels[path] = meshes;
 
-	this->ProcessNode(assimpScene->mRootNode, assimpScene, meshes);
+	this->ProcessNode(assimpScene->mRootNode, assimpScene, meshes, &filePath);
 
 	*loadedBefore = false;
 	return this->loadedModels[path];
 }
 
-Texture* AssetLoader::LoadTexture(std::wstring path, bool* loadedBefore)
+Texture* AssetLoader::LoadTexture(std::wstring path)
 {
-	*loadedBefore = false;
-
-	// Check if the texture allready exists
+	// Check if the texture already exists
 	if (this->loadedTextures.count(path) != 0)
 	{
-		*loadedBefore = true;
 		return this->loadedTextures[path];
 	}
 
-	Texture* texture = new Texture(path, this->device);
+	Texture* texture = new Texture();
+	if (texture->Init(path, this->device, descriptorHeapIndex_SRV) == false)
+	{
+		delete texture;
+		return nullptr;
+	}
 
+	descriptorHeapIndex_SRV++;
 	this->loadedTextures[path] = texture;
+
 	return this->loadedTextures[path];
 }
 
 Shader* AssetLoader::LoadShader(std::wstring fileName, ShaderType type)
 {
-	// Check if the shader allready exists
+	// Check if the shader already exists
 	if (loadedShaders.count(fileName) != 0)
 	{
 		return loadedShaders[fileName];
@@ -102,29 +112,28 @@ Shader* AssetLoader::LoadShader(std::wstring fileName, ShaderType type)
 	return loadedShaders[fileName];
 }
 
-void AssetLoader::ProcessNode(aiNode* node, const aiScene* assimpScene, std::vector<Mesh*>* meshes)
+void AssetLoader::ProcessNode(aiNode* node, const aiScene* assimpScene, std::vector<Mesh*>* meshes, const std::string* filePath)
 {
 	// Go through all the meshes
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = assimpScene->mMeshes[node->mMeshes[i]];
-		meshes->push_back(this->ProcessMesh(mesh, assimpScene));
-		
-		//aiMaterial* mat = assimpScene->mMaterials[mesh->mMaterialIndex];
+		meshes->push_back(this->ProcessMesh(mesh, assimpScene, filePath));
 	}
 	
 	// If the node has more node children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		this->ProcessNode(node->mChildren[i], assimpScene, meshes);
+		this->ProcessNode(node->mChildren[i], assimpScene, meshes, filePath);
 	}
 }
 
-Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
+Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, const std::string* filePath)
 {
 	// Fill this data
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<unsigned int> indices;
+	std::map<TEXTURE_TYPE, Texture*> textures;
 
 	// Get data from assimpMesh and store it
 	for (unsigned int i = 0; i < assimpMesh->mNumVertices; i++)
@@ -141,7 +150,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no positions");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Mesh has no positions");
 		}
 
 		// Get Normals
@@ -154,7 +163,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no normals");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Mesh has no normals");
 		}
 
 		if (assimpMesh->HasTangentsAndBitangents())
@@ -167,7 +176,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no tangents");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Mesh has no tangents");
 		}
 		
 		
@@ -181,7 +190,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 		else
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Mesh has no textureCoords");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Mesh has no textureCoords");
 		}
 
 		vertices.push_back(vTemp);
@@ -198,5 +207,90 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene)
 		}
 	}
 
-	return new Mesh(this->device, vertices, indices, descriptorHeapIndex++);
+	// Create Mesh
+	Mesh* mesh = new Mesh(this->device, vertices, indices, descriptorHeapIndex_SRV++);
+
+	// Get Textures and set them to the mesh
+	aiMaterial* mat = assimpScene->mMaterials[assimpMesh->mMaterialIndex];
+	
+	// Split filepath
+	std::string* filePathWithoutTexture = const_cast<std::string*>(filePath);
+	std::size_t indicesInPath = filePathWithoutTexture->find_last_of("/\\");
+	*filePathWithoutTexture = filePathWithoutTexture->substr(0, indicesInPath + 1);
+
+	// Add the textures to the mesh
+	Texture* texture = nullptr;
+	for (int i = 0; i < TEXTURE_TYPE::NUM_TEXTURE_TYPES; i++)
+	{
+		TEXTURE_TYPE type = static_cast<TEXTURE_TYPE>(i);
+		texture = ProcessTexture(mat, type, filePathWithoutTexture);
+		mesh->SetTexture(type, texture);
+	}
+	
+	return mesh;
 }
+
+Texture* AssetLoader::ProcessTexture(aiMaterial* mat,
+	TEXTURE_TYPE texture_type,
+	const std::string* filePathWithoutTexture)
+{
+	aiTextureType type;
+	aiString str;
+	Texture* texture = nullptr;
+
+	// incase of the texture doesn't exist
+	std::wstring defaultPath = L"";
+	std::string warningMessageTextureType = "";
+
+	// Find the textureType
+	switch (texture_type)
+	{
+	case::TEXTURE_TYPE::AMBIENT:
+		type = aiTextureType_AMBIENT;
+		defaultPath = this->filePathDefaultTextures + L"default_ambient.png";
+		warningMessageTextureType = "ambient";
+		break;
+	case::TEXTURE_TYPE::DIFFUSE:
+		type = aiTextureType_DIFFUSE;
+		defaultPath = this->filePathDefaultTextures + L"default_diffuse.jpg";
+		warningMessageTextureType = "diffuse";
+		break;
+	case::TEXTURE_TYPE::SPECULAR:
+		type = aiTextureType_SPECULAR;
+		defaultPath = this->filePathDefaultTextures + L"default_specular.png";
+		warningMessageTextureType = "specular";
+		break;
+	case::TEXTURE_TYPE::NORMAL:
+		type = aiTextureType_NORMALS;
+		defaultPath = this->filePathDefaultTextures + L"default_normal.png";
+		warningMessageTextureType = "normal";
+		break;
+	case::TEXTURE_TYPE::EMISSIVE:
+		type = aiTextureType_EMISSIVE;
+		defaultPath = this->filePathDefaultTextures + L"default_emissive.png";
+		warningMessageTextureType = "emissive";
+		break;
+	}
+
+	mat->GetTexture(type, 0, &str);
+	std::string textureFile = str.C_Str();
+	if (textureFile.size() != 0)
+	{
+		texture = this->LoadTexture(to_wstring(*filePathWithoutTexture + textureFile).c_str());
+	}
+
+	if (texture != nullptr)
+	{
+		return texture;
+	}
+	else
+	{
+		// No texture, warn and apply default Texture
+		Log::PrintSeverity(Log::Severity::WARNING, "Applying default texture: " + warningMessageTextureType + 
+			" on mesh with path: \'%s\'\n", filePathWithoutTexture->c_str());
+		return this->loadedTextures[defaultPath];
+	}
+
+	return nullptr;
+}
+

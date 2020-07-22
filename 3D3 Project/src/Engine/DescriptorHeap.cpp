@@ -27,7 +27,7 @@ DescriptorHeap::DescriptorHeap(ID3D12Device5* device, DESCRIPTOR_HEAP_TYPE type)
 	HRESULT hr = device->CreateDescriptorHeap(&this->desc, IID_PPV_ARGS(&this->descriptorHeap));
 	if (hr != S_OK)
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create DescriptorHeap\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create DescriptorHeap\n");
 	}
 
 	this->SetCPUGPUHeapStart();

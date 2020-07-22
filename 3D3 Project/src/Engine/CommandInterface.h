@@ -13,8 +13,10 @@ public:
 	CommandInterface(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType);
 	~CommandInterface();
 
-	ID3D12GraphicsCommandList5* GetCommandList(int index) const;
-	ID3D12CommandAllocator* GetCommandAllocator(int index) const;
+	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index) const;
+	ID3D12CommandAllocator* GetCommandAllocator(unsigned int index) const;
+
+	void Reset(unsigned int index);
 
 private:
 	ID3D12GraphicsCommandList5* commandLists[NUM_SWAP_BUFFERS]{ nullptr };

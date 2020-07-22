@@ -18,7 +18,7 @@ ComputeState::ComputeState(ID3D12Device5* device, RootSignature* rootSignature, 
 	this->PSO->SetName(this->psoName);
 	if (!SUCCEEDED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create %S\n", this->psoName);
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create %S\n", this->psoName);
 	}
 }
 
@@ -39,11 +39,11 @@ Shader* ComputeState::GetShader(ShaderType type) const
 	}
 	else if (type == ShaderType::VS)
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "There is no vertexShader in \'%S\'\n", this->psoName);
+		Log::PrintSeverity(Log::Severity::CRITICAL, "There is no vertexShader in \'%S\'\n", this->psoName);
 	}
 	else if (type == ShaderType::PS)
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "There is no pixelShader in \'%S\'\n", this->psoName);
+		Log::PrintSeverity(Log::Severity::CRITICAL, "There is no pixelShader in \'%S\'\n", this->psoName);
 	}
 
 	return nullptr;

@@ -14,14 +14,21 @@ CommandInterface::~CommandInterface()
 	}
 }
 
-ID3D12GraphicsCommandList5* CommandInterface::GetCommandList(int index) const
+ID3D12GraphicsCommandList5* CommandInterface::GetCommandList(unsigned int index) const
 {
 	return this->commandLists[index];
 }
 
-ID3D12CommandAllocator* CommandInterface::GetCommandAllocator(int index) const
+ID3D12CommandAllocator* CommandInterface::GetCommandAllocator(unsigned int index) const
 {
 	return this->commandAllocators[index];
+}
+
+void CommandInterface::Reset(unsigned int index)
+{
+	this->commandAllocators[index]->Reset();
+
+	this->commandLists[index]->Reset(this->commandAllocators[index], NULL);
 }
 
 void CommandInterface::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType)
@@ -49,7 +56,7 @@ void CommandInterface::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_IN
 
 		if (FAILED(hr))
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create CommandAllocator\n");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create CommandAllocator\n");
 		}
 
 		hr = device->CreateCommandList(0,
@@ -60,7 +67,7 @@ void CommandInterface::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_IN
 
 		if (FAILED(hr))
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create CommandList\n");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create CommandList\n");
 		}
 
 		this->commandLists[i]->Close();

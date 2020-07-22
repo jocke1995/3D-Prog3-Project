@@ -17,7 +17,7 @@ SwapChain::SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue
 
 	if (hr != S_OK)
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create DXGIFactory\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create DXGIFactory\n");
 	}
 
 	//Create descriptor
@@ -51,7 +51,7 @@ SwapChain::SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue
 	}
 	else
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Swapchain\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create Swapchain\n");
 	}
 
 	SAFE_RELEASE(&factory);
@@ -62,7 +62,7 @@ SwapChain::SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue
 		HRESULT hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(&this->resources[i]));
 		if (hr != S_OK)
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Failed to GetBuffer from RenderTarget to Swapchain\n");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to GetBuffer from RenderTarget to Swapchain\n");
 		}
 
 		D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(i);

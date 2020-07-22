@@ -3,10 +3,10 @@
 struct VS_OUT
 {
 	float4 pos      : SV_Position;
-	float4 worldPos : WPos;
 	float4 uv       : UV;
 	float4 norm     : NORMAL;
 	float4 tang     : TANGENT;
+	float4 worldPos : WPos;
 };
 
 struct vertex

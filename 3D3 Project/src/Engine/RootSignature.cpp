@@ -12,7 +12,7 @@ RootSignature::RootSignature(ID3D12Device5* device)
 
 	if(FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create RootSignature\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create RootSignature\n");
 	}
 }
 
@@ -77,32 +77,21 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::CB_PER_FRAME_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_FRAME) / sizeof(UINT);
 	rootParam[RS::CB_PER_FRAME_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	rootParam[RS::ColorCBV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParam[RS::ColorCBV].Descriptor.ShaderRegister = 2; // b2
-	rootParam[RS::ColorCBV].Descriptor.RegisterSpace = 0; // space0
-	rootParam[RS::ColorCBV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-	rootParam[RS::ColorUAV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_UAV;
-	rootParam[RS::ColorUAV].Descriptor.ShaderRegister = 0; // c0
-	rootParam[RS::ColorUAV].Descriptor.RegisterSpace = 0; // space0
-	rootParam[RS::ColorUAV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 
 	rsDesc.NumParameters = ARRAYSIZE(rootParam);
 	rsDesc.pParameters = rootParam;
-	rsDesc.NumStaticSamplers = 0;
+	rsDesc.NumStaticSamplers = 1;
 
-	// HUR MAN SKA SAMPLA FRÅN TEXTUR: 
-	// D3D12_STATIC_SAMPLER_DESC ssd{};
-	// ssd.ShaderRegister = 0;
-	// ssd.Filter = D3D12_FILTER_ANISOTROPIC;
-	// ssd.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	// ssd.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	// ssd.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	// ssd.ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-	// ssd.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	// rsDesc.pStaticSamplers = &ssd;	// Vad händer här?
+	D3D12_STATIC_SAMPLER_DESC ssd{};
+	ssd.ShaderRegister = 0;
+	ssd.Filter = D3D12_FILTER_ANISOTROPIC;
+	ssd.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	ssd.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	ssd.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	ssd.ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	ssd.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rsDesc.pStaticSamplers = &ssd;
 
 	HRESULT hr = D3D12SerializeRootSignature(
 		&rsDesc,
@@ -112,6 +101,6 @@ void RootSignature::CreateRootSignatureStructure()
 
 	if (hr != S_OK)
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Serialize RootSignature\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Serialize RootSignature\n");
 	}
 }

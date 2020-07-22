@@ -10,21 +10,12 @@ namespace component
 
 	MeshComponent::~MeshComponent()
 	{
-		for (SlotInfo* slotInfo : this->info)
-		{
-			delete slotInfo;
-		}
+
 	}
 
 	void MeshComponent::SetMeshes(std::vector<Mesh*>* meshes)
 	{
 		this->meshes = *meshes;
-
-		for (int i = 0; i < this->meshes.size(); i++)
-		{
-			this->info.push_back(new SlotInfo());
-			this->info[i]->vertexDataIndex = this->meshes[i]->GetDescriptorHeapIndex();
-		}
 	}
 
 	void MeshComponent::SetDrawFlag(UINT drawFlag)
@@ -50,10 +41,5 @@ namespace component
 	unsigned int MeshComponent::GetNrOfMeshes() const
 	{
 		return this->meshes.size();
-	}
-
-	SlotInfo* MeshComponent::GetSlotInfo(unsigned int index) const
-	{
-		return this->info[index];
 	}
 }

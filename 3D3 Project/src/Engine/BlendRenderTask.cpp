@@ -15,8 +15,7 @@ void BlendRenderTask::Execute()
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
 
-	commandAllocator->Reset();
-	commandList->Reset(commandAllocator, NULL);
+	this->commandInterface->Reset(this->commandInterfaceIndex);
 
 	commandList->SetGraphicsRootSignature(this->rootSig);
 	
@@ -66,7 +65,7 @@ void BlendRenderTask::Execute()
 			for (unsigned int j = 0; j < mc->GetNrOfMeshes(); j++)
 			{
 				size_t num_Indices = mc->GetMesh(j)->GetNumIndices();
-				SlotInfo* info = mc->GetSlotInfo(j);
+				const SlotInfo* info = mc->GetMesh(j)->GetSlotInfo();
 
 				Transform* transform = tc->GetTransform();
 				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();

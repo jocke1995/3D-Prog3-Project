@@ -5,9 +5,10 @@
 struct SlotInfo
 {
 	unsigned int vertexDataIndex;
-	float3 padding;
+	float3 padding1;
 	// MaterialIndex
-	// Texture_Diffuse;
+	unsigned int Texture_Diffuse;
+	float3 padding2;
 	// TextureNormal:
 	// Texture Specular;
 };

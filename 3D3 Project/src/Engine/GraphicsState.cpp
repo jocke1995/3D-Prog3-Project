@@ -25,7 +25,7 @@ GraphicsState::GraphicsState(ID3D12Device5* device, RootSignature* rootSignature
 	this->PSO->SetName(this->psoName);
 	if (!SUCCEEDED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to create %S\n", this->psoName);
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create %S\n", this->psoName);
 	}
 }
 
@@ -49,6 +49,6 @@ Shader* GraphicsState::GetShader(ShaderType type) const
 		return this->PS;
 	}
 	
-	Log::PrintError(Log::ErrorType::ENGINE, "There is no ComputeShader in \'%S\'\n", this->psoName);
+	Log::PrintSeverity(Log::Severity::CRITICAL, "There is no ComputeShader in \'%S\'\n", this->psoName);
 	return nullptr;
 }

@@ -37,6 +37,7 @@ Renderer::~Renderer()
 	Log::Print("11\n");
 	delete this->descriptorHeap_CBV_UAV_SRV;
 	Log::Print("12\n");
+
 	for (auto computeTask : this->computeTasks)
 		delete computeTask;
 
@@ -46,19 +47,15 @@ Renderer::~Renderer()
 	for (auto renderTask : this->renderTasks)
 		delete renderTask;
 
-	// Resources -------------
-	delete this->copySourceResource;
-	Log::Print("13\n");
-	delete this->copyDestResource;
-	Log::Print("14\n");
-	// -----------------------
-
 	SAFE_RELEASE(&this->device5);
 	Log::Print("15\n");
 	delete this->camera;
 	Log::Print("16\n");
 	delete this->threadpool;
 	Log::Print("17\n");
+
+	// temp
+	delete this->tempCommandInterface;
 }
 
 void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
@@ -69,7 +66,7 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Create Device
 	if (!this->CreateDevice())
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Device\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create Device\n");
 	}
 
 	// Create CommandQueues (direct and copy)
@@ -92,16 +89,16 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Create Rootsignature
 	this->CreateRootSignature();
 
-	// Create resource for the copy queue (a float4 vector with color)
-	this->copySourceResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::UPLOAD,  L"copySourceResource");
-	this->copyDestResource = new Resource(this->device5, sizeof(float4), RESOURCE_TYPE::RESOURCE_COPY, L"copyDestResource");
-
 	// Create DescriptorHeap
 	this->InitDescriptorHeap();
 
-	AssetLoader::Get()->SetDevice(this->device5);
+	// Init assetloader by giving it a pointer to the device
+	AssetLoader::Get(this->device5);
 
 	this->InitRenderTasks();
+	
+	// temp
+	this->tempCommandInterface = new CommandInterface(this->device5, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
 }
 
 std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
@@ -112,14 +109,47 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 	// Only Create the SRVs if its the first time the model is loaded
 	if (!loadedBefore)
 	{
+		D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+		desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		desc.Buffer.FirstElement = 0;
+		desc.Format = DXGI_FORMAT_UNKNOWN;
+		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
 		for (Mesh* mesh : *meshes)
 		{
+			desc.Buffer.NumElements = mesh->GetNumVertices();
+			desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
+
 			this->CreateShaderResourceView(	mesh->GetDescriptorHeapIndex(),
-											mesh->GetNumVertices(),
+											&desc,
 											mesh->GetResourceVertices());
+
+			// This function wont make a SRV if the texture already has one bound to it. (Safe to use)
+			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::AMBIENT));
+			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::DIFFUSE));
+			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::SPECULAR));
+			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::NORMAL));
+			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::EMISSIVE));
 		}
 	}
 	return meshes;
+}
+
+Texture* Renderer::LoadTexture(std::wstring path)
+{
+	Texture* texture = AssetLoader::Get()->LoadTexture(path);
+
+	if (texture == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (this->CreateSRVForTexture(texture) == false)
+	{
+		return nullptr;
+	}
+
+	return texture;
 }
 
 void Renderer::SetSceneToDraw(Scene* scene)
@@ -137,6 +167,8 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			if (tc != nullptr)
 			{
 				this->renderComponents.push_back(std::make_pair(mc, tc));
+
+				// Send the Textures to GPU here later, so that textures aren't in memory if they aren't used
 			}
 		}
 
@@ -264,69 +296,18 @@ void Renderer::Execute()
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
 	
-	// Fill queue with copytasks and execute them in parallell
-	for (CopyTask* copyTask : this->copyTasks)
-	{
-		copyTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(copyTask, THREAD_FLAG::COPY);
-		copyTask->Execute();
-	}
-
-	// Fill queue with computeTasks and execute them in parallell
-	for (ComputeTask* computeTask : this->computeTasks)
-	{
-		computeTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(computeTask, THREAD_FLAG::COMPUTE);
-		computeTask->Execute();
-	}
-
 	// Fill queue with rendertasks and execute them in parallell
 	for (RenderTask* renderTask : this->renderTasks)
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(renderTask, THREAD_FLAG::DIRECT);
-		renderTask->Execute();
+		this->threadpool->AddTask(renderTask, THREAD_FLAG::DIRECT);
+		//renderTask->Execute();	// Non-multithreaded version of this
 	}
 
-	/* COPY QUEUE --------------------------------------------------------------- */
-	// Wait for CopyTasks to complete
-	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY);
-
-	// Execute copy tasks
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
-		this->copyCommandLists[commandInterfaceIndex].size(),
-		this->copyCommandLists[commandInterfaceIndex].data());
-
-	UINT64 copyFenceValue = this->fenceFrameValue;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
-	this->fenceFrameValue++;
-	/* --------------------------------------------------------------- */
-
-	/* COMPUTE QUEUE --------------------------------------------------------------- */
-	// Wait for ComputeTasks to complete
-	//this->threadpool->WaitForThreads(THREAD_FLAG::COMPUTE);
-
-	// Wait for copyTask to finish
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
-
-	// Execute Compute tasks
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->ExecuteCommandLists(
-		this->computeCommandLists[commandInterfaceIndex].size(),
-		this->computeCommandLists[commandInterfaceIndex].data());
-
-	UINT64 computeFenceValue = this->fenceFrameValue;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->Signal(this->fenceFrame, computeFenceValue + 1);
-	this->fenceFrameValue++;
-
-	/* --------------------------------------------------------------- */
-
 	/* RENDER QUEUE --------------------------------------------------------------- */
-	// Wait for DirectTasks to complete
-	//this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
-
-	// Wait for ComputeTask to finish
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, computeFenceValue + 1);
+	// Wait for the threads which records the c-lists to complete
+	this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
 		this->directCommandLists[commandInterfaceIndex].size(), 
@@ -421,7 +402,7 @@ bool Renderer::CreateDevice()
 		}
 		else
 		{
-			Log::PrintError(Log::ErrorType::ENGINE, "Failed to create Device\n");
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create Device\n");
 		}
 	
 		SAFE_RELEASE(&adapter);
@@ -447,7 +428,7 @@ void Renderer::CreateCommandQueues()
 	hr = device5->CreateCommandQueue(&cqdDirect, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]));
 	if (FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Direct CommandQueue\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create Direct CommandQueue\n");
 	}
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->SetName(L"DirectQueue");
 
@@ -457,7 +438,7 @@ void Renderer::CreateCommandQueues()
 	hr = device5->CreateCommandQueue(&cqdCompute, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]));
 	if (FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Compute CommandQueue\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create Compute CommandQueue\n");
 	}
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]->SetName(L"ComputeQueue");
 
@@ -467,7 +448,7 @@ void Renderer::CreateCommandQueues()
 	hr = device5->CreateCommandQueue(&cqdCopy, IID_PPV_ARGS(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]));
 	if (FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Copy CommandQueue\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create Copy CommandQueue\n");
 	}
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->SetName(L"CopyQueue");
 }
@@ -546,8 +527,6 @@ void Renderer::InitRenderTasks()
 	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
 	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
 
-	// Resources ------------
-	forwardRenderTask->AddResource(this->copyDestResource);
 #pragma endregion ForwardRendering
 #pragma region Blend
 	// ------------------------ TASK 2: BLEND ---------------------------- FRONTCULL
@@ -641,38 +620,18 @@ void Renderer::InitRenderTasks()
 	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
 
 #pragma endregion Blend
-	// :-----------------------------TASK CopyColor:-----------------------------
-	CopyTask* copyTask = new CopyColorTask(this->device5, COMMAND_INTERFACE_TYPE::COPY_TYPE);
-
-	copyTask->AddResource(this->copySourceResource);
-	copyTask->AddResource(this->copyDestResource);
-
-	// :-----------------------------TASK ComputeTest:-----------------------------
-	ComputeTask* computeTestTask = new ComputeTestTask(this->device5,
-		this->rootSignature,
-		L"ComputeTest.hlsl",
-		L"ComputeTestPSO",
-		COMMAND_INTERFACE_TYPE::COMPUTE_TYPE);
-
-	computeTestTask->AddResource(this->copyDestResource);
 
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
 
 
 	/* ------------------------- CopyQueue Tasks ------------------------ */
-	this->copyTasks[COPY_TASK_TYPE::COPY_COLOR] = copyTask;
 
-	// Pushback in the order of execution
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->copyCommandLists[i].push_back(copyTask->GetCommandList(i));
+	// None atm
 
 	/* ------------------------- ComputeQueue Tasks ------------------------ */
-	this->computeTasks[COMPUTE_TASK_TYPE::COMPUTE_TEST] = computeTestTask;
 
-	// Pushback in the order of execution
-	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->computeCommandLists[i].push_back(computeTestTask->GetCommandList(i));
+	// None atm
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
 	this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER] = forwardRenderTask;
@@ -703,20 +662,41 @@ void Renderer::InitDescriptorHeap()
 	this->descriptorHeap_CBV_UAV_SRV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
 }
 
-void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex, unsigned int numElements, Resource* resource)
+void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex,
+	D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
+	Resource* resource)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(descriptorHeapIndex);
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+	this->device5->CreateShaderResourceView(resource->GetID3D12Resource1(), desc, cdh);
+}
 
-	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	desc.Buffer.FirstElement = 0;
-	desc.Buffer.NumElements = numElements;
-	desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
-	desc.Format = DXGI_FORMAT_UNKNOWN;
-	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+bool Renderer::CreateSRVForTexture(Texture* texture)
+{
+	// Check if the texture already has a SRV attached to it
+	if (texture->IsBoundToSRV() == false)
+	{
+		// Tell the texture that it now has a srv binded to it
+		texture->Bind();
 
-	this->device5->CreateShaderResourceView(resource->GetID3D12Resource1(), &desc, cdh);
+		// Upload texturedata
+		texture->UploadTextureData(this->device5,
+			this->tempCommandInterface,
+			this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+		WaitForGpu();
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		desc.Format = *texture->GetGDXIFormat();
+		desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		desc.Texture2D.MipLevels = 1;
+
+		this->CreateShaderResourceView(texture->GetDescriptorHeapIndex(), &desc, texture->GetResource());
+
+		return true;
+	}
+	
+	return false;
 }
 
 void Renderer::CreateConstantBufferView(unsigned int descriptorHeapIndex, unsigned int size, Resource* resource)
@@ -735,7 +715,7 @@ void Renderer::CreateFences()
 
 	if (FAILED(hr))
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "Failed to Create Fence\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create Fence\n");
 	}
 	this->fenceFrameValue = 1;
 
@@ -745,21 +725,33 @@ void Renderer::CreateFences()
 
 void Renderer::WaitForFrame()
 {
-	const UINT64 oldFenceValue = this->fenceFrameValue;
-	const UINT64 newFenceValue = oldFenceValue + 1;
+	const UINT64 oldFenceValue = this->fenceFrameValue; // 1
+	const UINT64 newFenceValue = oldFenceValue + 1; // 2
 	this->fenceFrameValue++;
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
 
-	// Wait for direct to finish before we can copy again 
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Wait(this->fenceFrame, newFenceValue);
-
 	//Wait until command queue is done.
-	int nrOfFenceChanges = 3;
+	int nrOfFenceChanges = 1;
 	int fenceValuesToBeAhead = (NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges;
 	if (this->fenceFrame->GetCompletedValue() < newFenceValue - fenceValuesToBeAhead)
 	{
 		this->fenceFrame->SetEventOnCompletion(newFenceValue - fenceValuesToBeAhead, this->eventHandle);
 		WaitForSingleObject(this->eventHandle, INFINITE);
+	}
+}
+
+void Renderer::WaitForGpu()
+{
+	//Signal and increment the fence value.
+	const UINT64 oldFenceValue = this->fenceFrameValue;
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, oldFenceValue);
+	this->fenceFrameValue++;
+
+	//Wait until command queue is done.
+	if (this->fenceFrame->GetCompletedValue() < oldFenceValue)
+	{
+		this->fenceFrame->SetEventOnCompletion(oldFenceValue, eventHandle);
+		WaitForSingleObject(eventHandle, INFINITE);
 	}
 }

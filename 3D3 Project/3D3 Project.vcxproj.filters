@@ -98,13 +98,7 @@
     <ClCompile Include="src\Engine\RenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\CopyColorTask.cpp">
-      <Filter>Engine\Tasks\Copy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\ComputeTask.cpp">
-      <Filter>Engine\Tasks\Compute</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\ComputeTestTask.cpp">
       <Filter>Engine\Tasks\Compute</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\ForwardRenderTask.cpp">
@@ -229,13 +223,7 @@
     <ClInclude Include="src\Engine\RenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\CopyColorTask.h">
-      <Filter>Engine\Tasks\Copy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\ComputeTask.h">
-      <Filter>Engine\Tasks\Compute</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\ComputeTestTask.h">
       <Filter>Engine\Tasks\Compute</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ForwardRenderTask.h">
@@ -302,9 +290,6 @@
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
-      <Filter>Engine\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Engine\HLSL\ComputeTest.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

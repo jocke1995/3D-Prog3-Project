@@ -35,7 +35,7 @@ private:
 template<class T>
 inline T* Entity::AddComponent()
 {
-	// Check if component allready exists
+	// Check if component already exists
 	T* compInEntity = this->GetComponent<T>();
 	if (compInEntity == nullptr)
 	{

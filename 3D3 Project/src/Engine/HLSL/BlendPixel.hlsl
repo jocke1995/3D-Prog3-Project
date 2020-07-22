@@ -3,13 +3,18 @@
 struct VS_OUT
 {
 	float4 pos      : SV_Position;
-	float4 worldPos : WPos;
 	float4 uv       : UV;
 	float4 norm     : NORMAL;
+	float4 tang     : TANGENT;
+	float4 worldPos : WPos;
 };
 
 ConstantBuffer<CB_PER_FRAME> cbPerFrame : register(b1);
 ConstantBuffer<CB_DirectionalLight> dirLight[] : register(b3);
+
+ConstantBuffer<CB_PER_OBJECT> transform : register(b0);
+Texture2D textures[] : register (t0);
+SamplerState samLinear : register (s0);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
@@ -17,7 +22,7 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 
 	float4 lightPos = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].position;
 	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].color;
-	float4 materialColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float4 materialColor = textures[transform.info.Texture_Diffuse].Sample(samLinear, input.uv);
 
 	// Ambient
 	float4 ambient = materialColor * float4(0.3f, 0.3f, 0.3f, 1.0f);

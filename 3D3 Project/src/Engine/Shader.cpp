@@ -58,13 +58,13 @@ void Shader::CompileShader()
 
 	if (blob == nullptr)
 	{
-		Log::PrintError(Log::ErrorType::ENGINE, "blob is nullptr when loading shader\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "blob is nullptr when loading shader\n");
 	}
 
 	if (FAILED(hr) && errorMessages)
 	{
 		const char* errorMsg = (const char*)errorMessages->GetBufferPointer();
 
-		Log::PrintError(Log::ErrorType::ENGINE, "%s\n", errorMsg);
+		Log::PrintSeverity(Log::Severity::CRITICAL, "%s\n", errorMsg);
 	}
 }
