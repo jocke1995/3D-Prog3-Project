@@ -48,11 +48,11 @@ Renderer::~Renderer()
 		delete renderTask;
 
 	SAFE_RELEASE(&this->device5);
-	Log::Print("15\n");
+	Log::Print("13\n");
 	delete this->camera;
-	Log::Print("16\n");
+	Log::Print("14\n");
 	delete this->threadpool;
-	Log::Print("17\n");
+	Log::Print("15\n");
 
 	// temp
 	delete this->tempCommandInterface;

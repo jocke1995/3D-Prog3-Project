@@ -1,22 +1,17 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-// Indicies of where the data is stored in GPU-memory
+// Indicies of where the descriptors are stored in the descriptorHeap
 struct SlotInfo
 {
 	unsigned int vertexDataIndex;
-	float3 padding1;
-	// MaterialIndex
+	// TextureIndices
 	unsigned int textureAmbient;
-	float3 padding2;
 	unsigned int textureDiffuse;
-	float3 padding3;
 	unsigned int textureSpecular;
-	float3 padding4;
 	unsigned int textureNormal;
-	float3 padding5;
 	unsigned int textureEmissive;
-	float3 padding6;
+	float2 padding;
 };
 
 struct CB_PER_OBJECT
@@ -44,7 +39,5 @@ struct Lights
 	CB_DirectionalLight dirLights[256];
 	float Num_Dir_Lights;
 };
-
-
 
 #endif

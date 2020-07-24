@@ -14,4 +14,4 @@ map_Ka floor0_ambient.png
 map_Kd floor0_diffuse.png
 map_Ks floor0_specular.png
 map_Kn floor0_normal.png
-map_Ke floor0_emissive.png
+# map_Ke floor0_emissive.png

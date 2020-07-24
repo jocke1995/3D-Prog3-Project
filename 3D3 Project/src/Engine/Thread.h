@@ -4,10 +4,11 @@
 
 enum THREAD_FLAG
 {
-	COPY = BIT(1),
-	COMPUTE = BIT(2),
-	DIRECT = BIT(3),
-	ALL = BIT(4)
+	DIRECT = BIT(1),
+	// CopyTextures,
+	// PrepareNextScene ..
+	// etc
+	ALL = BIT(2)
 	// etc..
 };
 

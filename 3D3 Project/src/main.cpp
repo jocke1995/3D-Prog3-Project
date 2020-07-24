@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     SceneHandler* sceneHandler = new SceneHandler();
 
     // This will be loaded once from disk, then the next time the same function is called (with the same filepath),
-    // the function will just return the same pointer to the mesh that was loaded earlier.
+    // the function will just return the same pointer to the model that was loaded earlier.
     std::vector<Mesh*>* floorModel = renderer.LoadModel(L"Resources/Models/Floor/floor.obj");
     std::vector<Mesh*>* stoneModel = renderer.LoadModel(L"Resources/Models/Rock/rock.obj");
 
@@ -131,6 +131,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         renderer.UpdateScene(timer->GetDeltaTime());
 
         renderer.SortEntitiesByDistance();
+
         /* ------ Draw   ------ */
         renderer.Execute();
     }

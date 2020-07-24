@@ -111,7 +111,7 @@ namespace Log
 	{
 		std::vector<char> inputBuffer;
 		inputBuffer.resize(256);
-		char typeBuffer[128] = {};
+		char typeBuffer[32] = {};
 
 		sprintf(inputBuffer.data(), string.c_str(), args...);
 
@@ -138,10 +138,11 @@ namespace Log
 	template <typename... Args>
 	inline void Print(const std::string string, const Args&... args)
 	{
-		char inputBuffer[512] = {};
+		std::vector<char> inputBuffer;
+		inputBuffer.resize(256);
 
-		sprintf(inputBuffer, string.c_str(), args...);
+		sprintf(inputBuffer.data(), string.c_str(), args...);
 
-		OutputDebugStringA(inputBuffer);
+		OutputDebugStringA(inputBuffer.data());
 	}
 }

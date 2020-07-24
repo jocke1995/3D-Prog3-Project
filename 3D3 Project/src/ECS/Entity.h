@@ -45,7 +45,7 @@ inline T* Entity::AddComponent()
 
 		return finalComponent;
 	}
-	return nullptr;
+	return compInEntity;
 }
 
 template<class T>
