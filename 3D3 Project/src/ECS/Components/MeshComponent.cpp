@@ -24,7 +24,7 @@ namespace component
 		}
 	}
 
-	void MeshComponent::SetDrawFlag(UINT drawFlag)
+	void MeshComponent::SetDrawFlag(unsigned int drawFlag)
 	{
 		this->drawFlag = drawFlag;
 	}
@@ -39,7 +39,7 @@ namespace component
 		return this->meshes[index];
 	}
 
-	UINT MeshComponent::GetDrawFlag() const
+	unsigned int MeshComponent::GetDrawFlag() const
 	{
 		return this->drawFlag;
 	}

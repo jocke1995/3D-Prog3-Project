@@ -52,9 +52,9 @@ void BlendRenderTask::Execute()
 
 	// Create a CB_PER_FRAME struct
 	CB_PER_FRAME_STRUCT perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
-	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME_STRUCT) / sizeof(UINT), &perFrame, 0);
+	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_FRAME, this->resources["cbPerFrame"]->GetGPUVirtualAdress());
 
-	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources[0]->GetGPUVirtualAdress());
+	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
 	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);

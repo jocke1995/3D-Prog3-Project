@@ -149,9 +149,6 @@
     <ClCompile Include="src\Engine\Texture.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\CopyLightsTask.cpp">
-      <Filter>Engine\Tasks\Copy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\ConstantBufferUpload.cpp">
       <Filter>Engine\ConstantBuffer</Filter>
     </ClCompile>
@@ -187,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="src\Engine\stdafx.cpp">
       <Filter>Engine\Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\CopyPerFrameTask.cpp">
+      <Filter>Engine\Tasks\Copy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -286,9 +286,6 @@
     <ClInclude Include="src\Engine\Texture.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\CopyLightsTask.h">
-      <Filter>Engine\Tasks\Copy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\ConstantBufferUpload.h">
       <Filter>Engine\ConstantBuffer</Filter>
     </ClInclude>
@@ -330,6 +327,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\stdafx.h">
       <Filter>Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\CopyPerFrameTask.h">
+      <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

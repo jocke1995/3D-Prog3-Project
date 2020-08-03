@@ -16,16 +16,16 @@ namespace component
 
         // Sets
         void SetMeshes(std::vector<Mesh*>* meshes);
-        void SetDrawFlag(UINT drawFlag);
+        void SetDrawFlag(unsigned int drawFlag);
 
         // Gets
         Mesh* GetMesh(unsigned int index) const;
-        UINT GetDrawFlag() const;
+        unsigned int GetDrawFlag() const;
         unsigned int GetNrOfMeshes() const;
 
     private:
         std::vector<Mesh*> meshes;
-        UINT drawFlag = 0;
+        unsigned int drawFlag = 0;
     };
 }
 #endif

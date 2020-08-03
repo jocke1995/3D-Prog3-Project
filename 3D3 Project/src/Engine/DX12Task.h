@@ -21,7 +21,7 @@ enum COMPUTE_TASK_TYPE
 
 enum COPY_TASK_TYPE
 {
-	COPY_LIGHTS,
+	COPY_PER_FRAME,
 	NR_OF_COPYTASKS
 };
 
@@ -31,13 +31,11 @@ public:
 	DX12Task(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType);
 	~DX12Task();
 
-	void AddResource(Resource* resource);
 	void SetBackBufferIndex(int backBufferIndex);
 	void SetCommandInterfaceIndex(int index);
 
 	ID3D12GraphicsCommandList5* GetCommandList(unsigned int index) const;
 protected:
-	std::vector<Resource*> resources;
 
 	CommandInterface* commandInterface = nullptr;
 	int backBufferIndex = -1;

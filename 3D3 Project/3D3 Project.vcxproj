@@ -190,7 +190,7 @@
     <ClCompile Include="src\ECS\Components\Lights\Light.cpp" />
     <ClCompile Include="src\Engine\ConstantBufferUpload.cpp" />
     <ClCompile Include="src\Engine\ConstantBufferDefault.cpp" />
-    <ClCompile Include="src\Engine\CopyLightsTask.cpp" />
+    <ClCompile Include="src\Engine\CopyPerFrameTask.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
     <ClCompile Include="src\Engine\LightConstantBufferPool.cpp" />
     <ClCompile Include="src\ECS\Components\MeshComponent.cpp" />
@@ -243,7 +243,7 @@
     <ClInclude Include="src\ECS\Components\Lights\Light.h" />
     <ClInclude Include="src\Engine\ConstantBufferUpload.h" />
     <ClInclude Include="src\Engine\ConstantBufferDefault.h" />
-    <ClInclude Include="src\Engine\CopyLightsTask.h" />
+    <ClInclude Include="src\Engine\CopyPerFrameTask.h" />
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
     <ClInclude Include="src\Engine\LightConstantBufferPool.h" />
     <ClInclude Include="src\ECS\Components\MeshComponent.h" />

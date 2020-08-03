@@ -75,6 +75,19 @@ XMFLOAT3 Camera::GetPosition() const
 	return DXfloat3;
 }
 
+float3 Camera::GetPositionFloat3() const
+{
+	XMFLOAT3 DXfloat3;
+	XMStoreFloat3(&DXfloat3, this->eyeVector);
+
+	float3 temp = {};
+	temp.x = DXfloat3.x;
+	temp.y = DXfloat3.y;
+	temp.z = DXfloat3.z;
+
+	return temp;
+}
+
 XMFLOAT3 Camera::GetLookAt() const
 {
 	XMFLOAT3 DXfloat3;

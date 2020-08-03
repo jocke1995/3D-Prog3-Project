@@ -25,6 +25,7 @@ public:
 
     const XMFLOAT4X4* const GetViewProjMatrix() const;
     XMFLOAT3 GetPosition() const;
+    float3 GetPositionFloat3() const;
     XMFLOAT3 GetLookAt() const;
 
 private:

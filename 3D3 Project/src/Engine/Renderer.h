@@ -10,12 +10,17 @@
 #include "ConstantBufferUpload.h"
 #include "../ECS/Scene.h"
 
+// lights
+#include "../ECS/Components/Lights/DirectionalLightComponent.h"
+#include "../ECS/Components/Lights/PointLightComponent.h"
+#include "../ECS/Components/Lights/SpotLightComponent.h"
+
 // Graphics
 #include "ForwardRenderTask.h"
 #include "BlendRenderTask.h"
 
 // Copy
-#include "CopyLightsTask.h"
+#include "CopyPerFrameTask.h"
 
 // Compute (Later include the specific task, not this)
 #include "ComputeTask.h"
@@ -38,7 +43,7 @@ public:
 	void SetSceneToDraw(Scene* scene);
 
 	// Call each frame
-	void UpdateScene(double dt);
+	void Update(double dt);
 	void SortObjectsByDistance();
 	void Execute();
 
@@ -84,13 +89,18 @@ private:
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	void SetRenderTasksRenderComponents();
 
+	LightConstantBufferPool* lightCBPool = nullptr;
 	std::vector<std::pair<component::DirectionalLightComponent*, ConstantBufferDefault*>> directionalLights;
 	std::vector<std::pair<component::PointLightComponent*, ConstantBufferDefault*>> pointLights;
 	std::vector<std::pair<component::SpotLightComponent*, ConstantBufferDefault*>> spotLights;
 
 	// Current scene to be drawn
 	Scene* currActiveScene = nullptr;
-	ConstantBufferUpload* CB_PER_SCENE = nullptr;
+	ConstantBufferDefault* cbPerScene = nullptr;
+
+	// update per frame
+	ConstantBufferDefault* cbPerFrame = nullptr;
+	CB_PER_FRAME_STRUCT* cbPerFrameData = nullptr;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
@@ -102,9 +112,10 @@ private:
 	void InitDescriptorHeap();
 
 	// Views
-	void CreateShaderResourceView(	unsigned int descriptorHeapIndex,
-									D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
-									const Resource* resource);
+	void CreateShaderResourceView(	
+		unsigned int descriptorHeapIndex,
+		D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
+		const Resource* resource);
 
 	bool CreateSRVForTexture(Texture* texture);
 
@@ -114,13 +125,12 @@ private:
 	UINT64 fenceFrameValue = 0;
 	void CreateFences();
 
-	LightConstantBufferPool* lightCBPool = nullptr;
-
 	void WaitForFrame(unsigned int framesToBeAhead = NUM_SWAP_BUFFERS - 1);
 
-	// Temp
+	// Temporary.. these functions and variables are used to copy data to GPU on initialization
 	void WaitForGpu();
 	CommandInterface* tempCommandInterface = nullptr;
+	void TempCopyResource(Resource* uploadResource, Resource* defaultResource, void* data);
 };
 
 #endif

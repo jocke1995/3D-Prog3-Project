@@ -8,15 +8,15 @@ struct VS_OUT
 	float3x3 tbn	: TBN;
 };
 
-ConstantBuffer<CB_PER_OBJECT_STRUCT> perObject : register(b0);	// Texture-ids is stored here
-ConstantBuffer<CB_PER_FRAME_STRUCT> cbPerFrame : register(b1);
-ConstantBuffer<CB_PER_SCENE_STRUCT> cbPerScene : register(b2);
+ConstantBuffer<DirectionalLight> dirLight[]	: register(b0, space0);
+ConstantBuffer<PointLight> pointLight[]		: register(b0, space1);
+ConstantBuffer<SpotLight> spotLight[]		: register(b0, space2);
 
-ConstantBuffer<DirectionalLight> dirLight[]    : register(b3, space0);
-ConstantBuffer<PointLight> pointLight[]		   : register(b3, space1);
-ConstantBuffer<SpotLight> spotLight[]		   : register(b3, space2);
+ConstantBuffer<CB_PER_OBJECT_STRUCT> cbPerObject : register(b1, space3);
+ConstantBuffer<CB_PER_FRAME_STRUCT>  cbPerFrame  : register(b2, space3);
+ConstantBuffer<CB_PER_SCENE_STRUCT>  cbPerScene  : register(b3, space3);
 
-Texture2D textures[] : register (t0);
+Texture2D textures[]   : register (t0);
 SamplerState samLinear : register (s0);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
@@ -25,11 +25,11 @@ float4 PS_main(VS_OUT input) : SV_TARGET0
 	float3 finalColor = float3(0.0f, 0.0f, 0.0f);
 
 	// Sample from textures
-	float4 ambientMap  = textures[perObject.info.textureAmbient ].Sample(samLinear, input.uv);
-	float4 diffuseMap  = textures[perObject.info.textureDiffuse ].Sample(samLinear, input.uv);
-	float4 specularMap = textures[perObject.info.textureSpecular].Sample(samLinear, input.uv);
-	float4 emissiveMap = textures[perObject.info.textureEmissive].Sample(samLinear, input.uv);
-	float4 normalMap   = textures[perObject.info.textureNormal  ].Sample(samLinear, input.uv);
+	float4 ambientMap  = textures[cbPerObject.info.textureAmbient ].Sample(samLinear, input.uv);
+	float4 diffuseMap  = textures[cbPerObject.info.textureDiffuse ].Sample(samLinear, input.uv);
+	float4 specularMap = textures[cbPerObject.info.textureSpecular].Sample(samLinear, input.uv);
+	float4 emissiveMap = textures[cbPerObject.info.textureEmissive].Sample(samLinear, input.uv);
+	float4 normalMap   = textures[cbPerObject.info.textureNormal  ].Sample(samLinear, input.uv);
 
 	
 	normalMap = (2.0f * normalMap) - 1.0f;

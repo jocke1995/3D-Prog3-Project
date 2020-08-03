@@ -16,6 +16,12 @@ RenderTask::RenderTask(
 
 RenderTask::~RenderTask()
 {
+	for (auto pair : this->resources)
+	{
+		ID3D12Resource1* res = pair.second->GetID3D12Resource1();
+		SAFE_RELEASE(&res);
+	}
+
 	for (auto pipelineState : this->pipelineStates)
 		delete pipelineState;
 }
@@ -23,6 +29,22 @@ RenderTask::~RenderTask()
 PipelineState* RenderTask::GetPipelineState(unsigned int index)
 {
 	return this->pipelineStates[index];
+}
+
+void RenderTask::AddResource(std::string id, Resource* resource)
+{
+	if (this->resources[id] == nullptr)
+	{
+		this->resources[id] = resource;
+		resource->GetID3D12Resource1()->AddRef();
+		return;
+	}
+	else
+	{
+		Log::PrintSeverity(
+			Log::Severity::CRITICAL,
+			"Trying to add Resource with name: \'%s\' that already exists.\n", id);
+	}
 }
 
 void RenderTask::AddRenderTarget(RenderTarget* renderTarget)

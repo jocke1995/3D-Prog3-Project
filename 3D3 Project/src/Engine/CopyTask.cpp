@@ -10,3 +10,13 @@ CopyTask::CopyTask(ID3D12Device5* device)
 CopyTask::~CopyTask()
 {
 }
+
+void CopyTask::AddDataToUpdate(std::pair<void*, ConstantBufferDefault*>* data_CBD)
+{
+	this->data_CBDs.push_back(*data_CBD);
+}
+
+void CopyTask::Clear()
+{
+	this->data_CBDs.clear();
+}

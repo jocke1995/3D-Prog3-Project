@@ -1,63 +1,36 @@
-#include "CopyLightsTask.h"
+#include "CopyPerFrameTask.h"
 
-CopyLightsTask::CopyLightsTask(
-	ID3D12Device5* device, 
-	std::vector<std::pair<component::DirectionalLightComponent*,ConstantBufferDefault*>>* directionalLights,
-	std::vector<std::pair<component::PointLightComponent*, ConstantBufferDefault*>>* pointLights,
-	std::vector<std::pair<component::SpotLightComponent*, ConstantBufferDefault*>>* spotLights)
+CopyPerFrameTask::CopyPerFrameTask(ID3D12Device5* device)
 	:CopyTask(device)
 {
-	this->directionalLights = directionalLights;
-	this->pointLights = pointLights;
-	this->spotLights = spotLights;
+
 }
 
-CopyLightsTask::~CopyLightsTask()
+CopyPerFrameTask::~CopyPerFrameTask()
 {
 
 }
 
-void CopyLightsTask::Execute()
+void CopyPerFrameTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
 
 	this->commandInterface->Reset(this->commandInterfaceIndex);
 
-	// Copy DirectionalLights
-	for (auto& pair : *this->directionalLights)
+	for (auto& pair : this->data_CBDs)
 	{
 		this->CopyResource(
 			commandList,
 			pair.second->GetUploadResource(),
 			pair.second->GetDefaultResource(),
-			pair.first->GetDirectionalLight());
-	}
-
-	// Copy PointLights
-	for (auto& pair : *this->pointLights)
-	{
-		this->CopyResource(
-			commandList,
-			pair.second->GetUploadResource(),
-			pair.second->GetDefaultResource(),
-			pair.first->GetPointLight());
-	}
-
-	// Copy SpotLights
-	for (auto& pair : *this->spotLights)
-	{
-		this->CopyResource(
-			commandList,
-			pair.second->GetUploadResource(),
-			pair.second->GetDefaultResource(),
-			pair.first->GetSpotLight());
+			pair.first);	// Data
 	}
 
 	commandList->Close();
 }
 
-void CopyLightsTask::CopyResource(
+void CopyPerFrameTask::CopyResource(
 	ID3D12GraphicsCommandList5* commandList,
 	Resource* uploadResource, Resource* defaultResource,
 	void* data)

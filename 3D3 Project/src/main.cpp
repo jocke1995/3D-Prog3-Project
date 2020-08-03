@@ -2,9 +2,6 @@
 #include "Engine/Timer.h"
 #include "Window.h"
 
-// TODO: Problem med precompiled header eller liknande.. Intellisense problemet
-// #include "Engine/stdafx.h"
-
 #include "ECS/SceneHandler.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
@@ -190,7 +187,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
         /* ------ Update ------ */
         timer->Update();
-        renderer.UpdateScene(timer->GetDeltaTime());
+        renderer.Update(timer->GetDeltaTime());
+
+        // Test to update the spotlight color
+        static double red = 0.0f;
+        static double blue = 0.0f;
+        red += 0.005f;
+        blue += 0.025f;
+        sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { float(abs(sin(red))), 0.0f, float(abs(sin(blue))), 1.0f });
 
         /* ------ Sort ------ */
         renderer.SortObjectsByDistance();

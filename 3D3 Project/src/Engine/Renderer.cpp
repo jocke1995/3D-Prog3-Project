@@ -57,8 +57,12 @@ Renderer::~Renderer()
 
 	delete this->lightCBPool;
 	Log::Print("16\n");
-	delete this->CB_PER_SCENE;
+	delete this->cbPerScene;
 	Log::Print("17\n");
+
+	delete this->cbPerFrameData;
+	delete this->cbPerFrame;
+	Log::Print("18\n");
 
 	// temp
 	delete this->tempCommandInterface;
@@ -104,15 +108,28 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Pool to handle constantBuffers for the lights
 	this->lightCBPool = new LightConstantBufferPool(this->device5, this->descriptorHeap_CBV_UAV_SRV);
 
-	// Allocate memory for CB_PER_SCENE
+	// Allocate memory for cbPerScene
 	unsigned int CB_PER_SCENE_SizeAligned = (sizeof(CB_PER_SCENE_STRUCT) + 255) & ~255;
-	this->CB_PER_SCENE = new ConstantBufferUpload(
+	this->cbPerScene = new ConstantBufferDefault(
 		this->device5, 
 		CB_PER_SCENE_SizeAligned,
-		L"CB_PER_SCENE_UPLOAD",
+		L"CB_PER_SCENE_DEFAULT",
 		globalDescriptorHeapIndex++,
 		this->descriptorHeap_CBV_UAV_SRV
 		);
+
+	// Allocate memory for cbPerFrame
+	unsigned int CB_PER_Frame_SizeAligned = (sizeof(CB_PER_FRAME_STRUCT) + 255) & ~255;
+	this->cbPerFrame = new ConstantBufferDefault(
+		this->device5,
+		CB_PER_Frame_SizeAligned,
+		L"CB_PER_FRAME_DEFAULT",
+		globalDescriptorHeapIndex++,
+		this->descriptorHeap_CBV_UAV_SRV
+	);
+
+	this->cbPerFrameData = new CB_PER_FRAME_STRUCT();
+	this->cbPerFrameData->camPos = this->camera->GetPositionFloat3();
 
 	this->InitRenderTasks();
 
@@ -144,11 +161,11 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 											mesh->GetResourceVertices());
 
 			// This function wont make a SRV if the texture already has one bound to it. (Safe to use)
-			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::AMBIENT));
-			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::DIFFUSE));
-			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::SPECULAR));
-			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::NORMAL));
-			this->CreateSRVForTexture(mesh->GetTexture(TEXTURE_TYPE::EMISSIVE));
+			for (unsigned int i = 0; i < TEXTURE_TYPE::NUM_TEXTURE_TYPES; i++)
+			{
+				TEXTURE_TYPE type = static_cast<TEXTURE_TYPE>(i);
+				this->CreateSRVForTexture(mesh->GetTexture(type));
+			}
 		}
 	}
 	return meshes;
@@ -174,13 +191,16 @@ Texture* Renderer::LoadTexture(std::wstring path)
 // Handle the components thats used for rendering
 void Renderer::SetSceneToDraw(Scene* scene)
 {
+	// Reset
 	this->renderComponents.clear();
 	this->directionalLights.clear();
 	this->pointLights.clear();
 	this->spotLights.clear();
 	this->lightCBPool->FreeConstantBuffers();
+	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Clear();
 
 	// Handle and structure the components in the scene
+#pragma region HandleComponents
 	std::map<std::string, Entity*> entities = *scene->GetEntities();
 	for (auto const& [entityName, entity] : entities)
 	{
@@ -228,9 +248,10 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			this->spotLights.push_back(std::make_pair(slc, cbd));
 		}
 	}
-
-
-	// ------------------------------ Prepare CB_PER_SCENE START ------------------------------
+#pragma endregion HandleComponents
+	
+	// Setup Per-scene data and send to GPU
+#pragma region Prepare_CbPerScene
 	CB_PER_SCENE_STRUCT cps = {};
 		// ----- directional lights -----
 		cps.Num_Dir_Lights = this->directionalLights.size();
@@ -262,8 +283,38 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		}
 		// ----- spot lights -----
 
-	this->CB_PER_SCENE->GetUploadResource()->SetData(&cps, 0);
-	// ------------------------------ Prepare CB_PER_SCENE END ------------------------------
+	// Upload CB_PER_SCENE to defaultheap
+	this->TempCopyResource( 
+		this->cbPerScene->GetUploadResource(),
+		this->cbPerScene->GetDefaultResource(),
+		&cps);
+#pragma endregion Prepare_CbPerScene
+
+	// Add Per-frame data to the copy queue
+#pragma region Prepare_CbPerFrame
+	for (auto& pair : this->directionalLights)
+	{
+		void* data = pair.first->GetDirectionalLight();
+		ConstantBufferDefault* cbd = pair.second;
+		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
+	}
+	for (auto& pair : this->pointLights)
+	{
+		void* data = pair.first->GetPointLight();
+		ConstantBufferDefault* cbd = pair.second;
+		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
+	}
+	for (auto& pair : this->spotLights)
+	{
+		void* data = pair.first->GetSpotLight();
+		ConstantBufferDefault* cbd = pair.second;
+		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
+	}
+
+	// CB_PER_FRAME_STRUCT
+	void* perFrameData = this->cbPerFrameData;
+	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(perFrameData, this->cbPerFrame));
+#pragma endregion Prepare_CbPerFrame
 
 	this->SetRenderTasksRenderComponents();
 	this->SetRenderTasksMainCamera(scene->GetMainCamera());
@@ -271,8 +322,12 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	this->currActiveScene = scene;
 }
 
-void Renderer::UpdateScene(double dt)
+void Renderer::Update(double dt)
 {
+	// Update CB_PER_FRAME data
+	this->cbPerFrameData->camPos = this->camera->GetPositionFloat3();
+
+	// Update scene
 	this->currActiveScene->UpdateScene(dt);
 }
 
@@ -438,7 +493,7 @@ bool Renderer::CreateDevice()
 
 	CreateDXGIFactory(IID_PPV_ARGS(&factory));
 	
-	for (UINT adapterIndex = 0;; ++adapterIndex)
+	for (unsigned int adapterIndex = 0;; ++adapterIndex)
 	{
 		adapter = nullptr;
 		if (DXGI_ERROR_NOT_FOUND == factory->EnumAdapters1(adapterIndex, &adapter))
@@ -556,7 +611,7 @@ void Renderer::InitRenderTasks()
 		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
 		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
 		D3D12_LOGIC_OP_NOOP, D3D12_COLOR_WRITE_ENABLE_ALL };
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
 		gpsdForwardRender.BlendState.RenderTarget[i] = defaultRTdesc;
 
 	// Depth descriptor
@@ -588,7 +643,8 @@ void Renderer::InitRenderTasks()
 	forwardRenderTask->AddRenderTarget(this->swapChain);
 	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
 	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
-	forwardRenderTask->AddResource(this->CB_PER_SCENE->GetUploadResource());
+	forwardRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
+	forwardRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
 
 #pragma endregion ForwardRendering
 #pragma region Blend
@@ -622,7 +678,7 @@ void Renderer::InitRenderTasks()
 	blendRTdesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
 
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
 		gpsdBlendFrontCull.BlendState.RenderTarget[i] = blendRTdesc;
 
 
@@ -657,7 +713,7 @@ void Renderer::InitRenderTasks()
 	gpsdBlendBackCull.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	gpsdBlendBackCull.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
 		gpsdBlendBackCull.BlendState.RenderTarget[i] = blendRTdesc;
 
 	// DepthStencil
@@ -680,28 +736,25 @@ void Renderer::InitRenderTasks()
 	blendRenderTask->AddRenderTarget(this->swapChain);
 	blendRenderTask->SetDepthBuffer(this->depthBuffer);
 	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
-	blendRenderTask->AddResource(this->CB_PER_SCENE->GetUploadResource());
+	blendRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
+	blendRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
 
 #pragma endregion Blend
 
-#pragma region CopyLights
-	CopyTask* copyLightsTask = new CopyLightsTask(
-		this->device5,
-		&this->directionalLights,
-		&this->pointLights,
-		&this->spotLights);
+#pragma region CopyPerFrameTask
+	CopyTask* copyPerFrameTask = new CopyPerFrameTask(this->device5);
 	
-#pragma endregion CopyLights
+#pragma endregion CopyPerFrameTask
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
 
 
 	/* ------------------------- CopyQueue Tasks ------------------------ */
 
-	this->copyTasks[COPY_TASK_TYPE::COPY_LIGHTS] = copyLightsTask;
+	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME] = copyPerFrameTask;
 
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
-		this->copyCommandLists[i].push_back(copyLightsTask->GetCommandList(i));
+		this->copyCommandLists[i].push_back(copyPerFrameTask->GetCommandList(i));
 
 	/* ------------------------- ComputeQueue Tasks ------------------------ */
 
@@ -809,4 +862,31 @@ void Renderer::WaitForGpu()
 		this->fenceFrame->SetEventOnCompletion(oldFenceValue, eventHandle);
 		WaitForSingleObject(eventHandle, INFINITE);
 	}
+}
+
+void Renderer::TempCopyResource(Resource* uploadResource, Resource* defaultResource, void* data)
+{
+	this->tempCommandInterface->Reset(0);
+	// Set the data into the upload heap
+	uploadResource->SetData(data);
+
+	this->tempCommandInterface->GetCommandList(0)->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		defaultResource->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COMMON,
+		D3D12_RESOURCE_STATE_COPY_DEST));
+
+	// To Defaultheap from Uploadheap
+	this->tempCommandInterface->GetCommandList(0)->CopyResource(
+		defaultResource->GetID3D12Resource1(),	// Receiever
+		uploadResource->GetID3D12Resource1());	// Sender
+
+	this->tempCommandInterface->GetCommandList(0)->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		defaultResource->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		D3D12_RESOURCE_STATE_COMMON));
+
+	this->tempCommandInterface->GetCommandList(0)->Close();
+	ID3D12CommandList* ppCommandLists[] = { this->tempCommandInterface->GetCommandList(0) };
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(ARRAYSIZE(ppCommandLists), ppCommandLists);
+	this->WaitForGpu();
 }

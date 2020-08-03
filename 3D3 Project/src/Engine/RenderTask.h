@@ -26,6 +26,7 @@ public:
 
 	PipelineState* GetPipelineState(unsigned int index);
 
+	void AddResource(std::string id, Resource* resource);
 	void AddRenderTarget(RenderTarget* renderTarget);
 
 	void SetRenderComponents(std::vector<std::pair<	component::MeshComponent*,
@@ -38,11 +39,13 @@ public:
 protected:
 	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
 
+	std::map<std::string, Resource*> resources;
 	std::vector<RenderTarget*> renderTargets;
+	std::vector<PipelineState*> pipelineStates;
+
 	DepthBuffer* depthBuffer = nullptr;
 	ID3D12RootSignature* rootSig = nullptr;
 	
-	std::vector<PipelineState*> pipelineStates;
 	Camera* camera = nullptr;
 
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
