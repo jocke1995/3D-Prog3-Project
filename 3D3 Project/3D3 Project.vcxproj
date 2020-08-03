@@ -201,7 +201,6 @@
     <ClCompile Include="src\ECS\Entity.cpp" />
     <ClCompile Include="src\ECS\Components\Component.cpp" />
     <ClCompile Include="src\Engine\AssetLoader.cpp" />
-    <ClCompile Include="src\Engine\D3D12TimerCopy.cpp" />
     <ClCompile Include="src\Engine\CommandInterface.cpp" />
     <ClCompile Include="src\Engine\ComputeTask.cpp" />
     <ClCompile Include="src\Engine\CopyTask.cpp" />
@@ -248,7 +247,6 @@
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
     <ClInclude Include="src\Engine\LightConstantBufferPool.h" />
     <ClInclude Include="src\ECS\Components\MeshComponent.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Engine\ComputeState.h" />
     <ClInclude Include="src\Engine\GraphicsState.h" />
     <ClInclude Include="src\ECS\Components\Lights\DirectionalLightComponent.h" />
@@ -256,7 +254,6 @@
     <ClInclude Include="src\ECS\Entity.h" />
     <ClInclude Include="src\ECS\Components\Component.h" />
     <ClInclude Include="src\Engine\AssetLoader.h" />
-    <ClInclude Include="src\Engine\D3D12TimerCopy.h" />
     <ClInclude Include="src\Engine\CommandInterface.h" />
     <ClInclude Include="src\Engine\ComputeTask.h" />
     <ClInclude Include="src\Engine\CopyTask.h" />
@@ -320,12 +317,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="3D3 Project.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

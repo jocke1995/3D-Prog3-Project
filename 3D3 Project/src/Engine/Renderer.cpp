@@ -11,7 +11,7 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 	Log::Print("----------------------------  Renderer Destructor  ----------------------------------\n");
-	this->WaitForFrame();
+	this->WaitForFrame(0);
 	Log::Print("1\n");
 	this->threadpool->WaitForThreads(THREAD_FLAG::ALL);
 	Log::Print("2\n");
@@ -356,8 +356,8 @@ void Renderer::Execute()
 		this->copyCommandLists[commandInterfaceIndex].size(),
 		this->copyCommandLists[commandInterfaceIndex].data());
 
-	UINT64 copyFenceValue = this->fenceFrameValue++;
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
+	UINT64 copyFenceValue = ++this->fenceFrameValue;
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue);
 
 	// Fill queue with rendertasks and execute them in parallell
 	for (RenderTask* renderTask : this->renderTasks)
@@ -370,7 +370,7 @@ void Renderer::Execute()
 	/* RENDER QUEUE --------------------------------------------------------------- */
 	// Wait for the threads which records the commandlists to complete
 	this->threadpool->WaitForThreads(THREAD_FLAG::RENDER | THREAD_FLAG::ALL);
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, copyFenceValue);
 
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
@@ -380,6 +380,10 @@ void Renderer::Execute()
 	/* --------------------------------------------------------------- */
 
 	// Wait if the CPU is to far ahead of the gpu
+	this->fenceFrameValue++;
+
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, this->fenceFrameValue);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Wait(this->fenceFrame, this->fenceFrameValue);
 	WaitForFrame();
 
 	dx12SwapChain->Present(0, 0);
@@ -779,22 +783,15 @@ void Renderer::CreateFences()
 	this->eventHandle = CreateEvent(0, false, false, 0);
 }
 
-void Renderer::WaitForFrame()
+void Renderer::WaitForFrame(unsigned int framesToBeAhead)
 {
-	const UINT64 oldFenceValue = this->fenceFrameValue; // 12
-	const UINT64 newFenceValue = oldFenceValue + 1;	// 13
-	this->fenceFrameValue++;	// 13
+	static constexpr unsigned int nrOfFenceChangesPerFrame = 2;
+	unsigned int fenceValuesToBeAhead = framesToBeAhead * nrOfFenceChangesPerFrame;
 
-	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
-
-	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Wait(this->fenceFrame, newFenceValue);
-
-	//Wait until command queue is done.
-	int nrOfFenceChanges = 2;
-	int fenceValuesToBeAhead = (NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges;
-	if (this->fenceFrame->GetCompletedValue() < newFenceValue - fenceValuesToBeAhead)
+	//Wait if the CPU is "framesToBeAhead" number of frames ahead of the GPU
+	if (this->fenceFrame->GetCompletedValue() < this->fenceFrameValue - fenceValuesToBeAhead)
 	{
-		this->fenceFrame->SetEventOnCompletion(newFenceValue - fenceValuesToBeAhead, this->eventHandle);
+		this->fenceFrame->SetEventOnCompletion(this->fenceFrameValue - fenceValuesToBeAhead, this->eventHandle);
 		WaitForSingleObject(this->eventHandle, INFINITE);
 	}
 }

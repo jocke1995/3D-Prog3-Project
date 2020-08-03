@@ -154,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         {
             // Test to change scene during runtime
             char sceneName[10];
-            static int sceneSwapper = 0;
+            static int sceneSwapper = 1;
             sceneSwapper %= 2;
             sprintf(sceneName, "scene%d", sceneSwapper);
             renderer.SetSceneToDraw(sceneHandler->GetScene(sceneName));

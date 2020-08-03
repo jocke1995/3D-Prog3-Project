@@ -116,7 +116,7 @@ private:
 
 	LightConstantBufferPool* lightCBPool = nullptr;
 
-	void WaitForFrame();
+	void WaitForFrame(unsigned int framesToBeAhead = NUM_SWAP_BUFFERS - 1);
 
 	// Temp
 	void WaitForGpu();

@@ -45,6 +45,9 @@
     <Filter Include="ECS\Components\Lights">
       <UniqueIdentifier>{65526731-b2f7-4c7b-b7d5-4f80f8432d0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Headers">
+      <UniqueIdentifier>{c18803ab-0e6a-4a5b-9a8a-f5fdac835992}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -113,9 +116,6 @@
     <ClCompile Include="src\Engine\BlendRenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\D3D12TimerCopy.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\AssetLoader.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -123,9 +123,6 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Camera.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\stdafx.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Timer.cpp">
@@ -188,13 +185,13 @@
     <ClCompile Include="src\ECS\Components\Lights\PointLightComponent.cpp">
       <Filter>ECS\Components\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\stdafx.cpp">
+      <Filter>Engine\Headers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\d3dx12.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\DepthBuffer.h">
       <Filter>Engine</Filter>
@@ -215,12 +212,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Shader.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\stdafx.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\structs.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\SwapChain.h">
@@ -262,9 +253,6 @@
     <ClInclude Include="src\Engine\BlendRenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\D3D12TimerCopy.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\AssetLoader.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -289,7 +277,6 @@
     <ClInclude Include="src\ECS\SceneHandler.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\ECS\Components\MeshComponent.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
@@ -335,6 +322,15 @@
     <ClInclude Include="src\ECS\Components\Lights\PointLightComponent.h">
       <Filter>ECS\Components\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\d3dx12.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\structs.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\stdafx.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
@@ -352,15 +348,5 @@
     <FxCompile Include="src\Engine\HLSL\LightCalculations.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="3D3 Project.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

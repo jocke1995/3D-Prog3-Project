@@ -1,8 +1,11 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+// Render
 class MeshComponent;
 class TransformComponent;
+
+// Lights
 class DirectionalLightComponent;
 class PointLightComponent;
 class SpotLightComponent;
@@ -85,4 +88,4 @@ inline bool Entity::HasComponent() const
 	return false;
 }
 
-#endif // !ENTITY_H
+#endif
