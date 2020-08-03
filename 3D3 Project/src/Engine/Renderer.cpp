@@ -153,12 +153,18 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 
 		for (Mesh* mesh : *meshes)
 		{
+			// Upload to Default heap
+			mesh->UploadToDefault(
+				this->device5,
+				this->tempCommandInterface,
+				this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+			this->WaitForGpu();
+			// SRV
 			desc.Buffer.NumElements = mesh->GetNumVertices();
 			desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
-
 			this->CreateShaderResourceView(	mesh->GetDescriptorHeapIndex(),
 											&desc,
-											mesh->GetResourceVertices());
+											mesh->GetDefaultResourceVertices());
 
 			// This function wont make a SRV if the texture already has one bound to it. (Safe to use)
 			for (unsigned int i = 0; i < TEXTURE_TYPE::NUM_TEXTURE_TYPES; i++)

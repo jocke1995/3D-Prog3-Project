@@ -22,15 +22,17 @@ public:
     Mesh(const Mesh* other);
     ~Mesh();
 
+    void UploadToDefault(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue);
+
     // Sets
     void SetTexture(TEXTURE_TYPE textureType, Texture* texture);
 
     // Gets
-    Resource* GetResourceVertices() const;
+    Resource* GetDefaultResourceVertices() const;
     const size_t GetSizeOfVertices() const;
     const size_t GetNumVertices() const;
 
-    Resource* GetResourceIndices() const;
+    Resource* GetDefaultResourceIndices() const;
     const size_t GetSizeOfIndices() const;
     const size_t GetNumIndices() const;
     const D3D12_INDEX_BUFFER_VIEW* GetIndexBufferView() const;
@@ -49,8 +51,10 @@ private:
 
     std::map<TEXTURE_TYPE,Texture*> textures;
 
-    Resource* resourceVertices = nullptr;
-    Resource* resourceIndices = nullptr;
+    Resource* uploadResourceVertices = nullptr;
+    Resource* uploadResourceIndices = nullptr;
+    Resource* defaultResourceVertices = nullptr;
+    Resource* defaultResourceIndices = nullptr;
 
     D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
     void CreateIndexBufferView();

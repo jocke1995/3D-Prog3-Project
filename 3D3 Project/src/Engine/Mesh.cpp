@@ -13,12 +13,15 @@ Mesh::Mesh(	ID3D12Device5* device,
 	this->slotInfo->vertexDataIndex = this->descriptorHeapIndex_SRV;
 
 	// Set vertices
-	this->resourceVertices = new Resource(device, this->GetSizeOfVertices(), RESOURCE_TYPE::UPLOAD, L"Vertex Resource");
-	this->resourceVertices->SetData(this->vertices.data());
+	this->uploadResourceVertices = new Resource(device, this->GetSizeOfVertices(), RESOURCE_TYPE::UPLOAD, L"Vertex_Upload_Resource");
+	this->uploadResourceVertices->SetData(this->vertices.data());
+
+	this->defaultResourceVertices = new Resource(device, this->GetSizeOfVertices(), RESOURCE_TYPE::DEFAULT, L"Vertex_Default_Resource");
 
 	// Set indices
-	this->resourceIndices = new Resource(device, this->GetSizeOfIndices(), RESOURCE_TYPE::UPLOAD, L"Index Resource");
-	this->resourceIndices->SetData(this->indices.data());
+	this->uploadResourceIndices = new Resource(device, this->GetSizeOfIndices(), RESOURCE_TYPE::UPLOAD, L"Index_Upload_Resource");
+	this->uploadResourceIndices->SetData(this->indices.data());
+	this->defaultResourceIndices = new Resource(device, this->GetSizeOfIndices(), RESOURCE_TYPE::DEFAULT, L"Index_Default_Resource");
 	this->CreateIndexBufferView();
 }
 
@@ -41,8 +44,8 @@ Mesh::Mesh(const Mesh* other)
 	this->descriptorHeapIndex_SRV = other->descriptorHeapIndex_SRV;
 	this->slotInfo->vertexDataIndex = other->descriptorHeapIndex_SRV;
 
-	this->resourceVertices = other->resourceVertices;
-	this->resourceIndices = other->resourceIndices;
+	this->defaultResourceVertices = other->defaultResourceVertices;
+	this->defaultResourceIndices = other->defaultResourceIndices;
 
 	this->indexBufferView = other->indexBufferView;
 }
@@ -53,9 +56,54 @@ Mesh::~Mesh()
 
 	if (this->isCopied == false)
 	{
-		delete this->resourceVertices;
-		delete this->resourceIndices;
+		delete this->uploadResourceVertices;
+		delete this->defaultResourceVertices;
+
+		delete this->uploadResourceIndices;
+		delete this->defaultResourceIndices;
 	}
+}
+
+void Mesh::UploadToDefault(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue)
+{
+	commandInterface->Reset(0);
+	ID3D12GraphicsCommandList5* commandList = commandInterface->GetCommandList(0);
+
+	/* ------------------------------------- Vertices ------------------------------------- */
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		this->defaultResourceVertices->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COMMON,
+		D3D12_RESOURCE_STATE_COPY_DEST));
+
+	// To Defaultheap from Uploadheap
+	commandList->CopyResource(
+		this->defaultResourceVertices->GetID3D12Resource1(),	// Receiever
+		this->uploadResourceVertices->GetID3D12Resource1());	// Sender
+
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		this->defaultResourceVertices->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		D3D12_RESOURCE_STATE_COMMON));
+
+	/* ------------------------------------- Indices ------------------------------------- */
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		this->defaultResourceIndices->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COMMON,
+		D3D12_RESOURCE_STATE_COPY_DEST));
+
+	// To Defaultheap from Uploadheap
+	commandList->CopyResource(
+		this->defaultResourceIndices->GetID3D12Resource1(),	// Receiever
+		this->uploadResourceIndices->GetID3D12Resource1());	// Sender
+
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		this->defaultResourceIndices->GetID3D12Resource1(),
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		D3D12_RESOURCE_STATE_COMMON));
+
+	commandList->Close();
+	ID3D12CommandList* ppCommandLists[] = { commandList };
+	cmdQueue->ExecuteCommandLists(ARRAYSIZE(ppCommandLists), ppCommandLists);
 }
 
 void Mesh::SetTexture(TEXTURE_TYPE textureType, Texture* texture)
@@ -82,9 +130,9 @@ void Mesh::SetTexture(TEXTURE_TYPE textureType, Texture* texture)
 	}
 }
 
-Resource* Mesh::GetResourceVertices() const
+Resource* Mesh::GetDefaultResourceVertices() const
 {
-	return this->resourceVertices;
+	return this->defaultResourceVertices;
 }
 
 const size_t Mesh::GetSizeOfVertices() const
@@ -97,9 +145,9 @@ const size_t Mesh::GetNumVertices() const
 	return this->vertices.size();
 }
 
-Resource* Mesh::GetResourceIndices() const
+Resource* Mesh::GetDefaultResourceIndices() const
 {
-	return this->resourceIndices;
+	return this->defaultResourceIndices;
 }
 
 const size_t Mesh::GetSizeOfIndices() const
@@ -134,7 +182,7 @@ Texture* Mesh::GetTexture(TEXTURE_TYPE textureType)
 
 void Mesh::CreateIndexBufferView()
 {
-	this->indexBufferView.BufferLocation = this->resourceIndices->GetGPUVirtualAdress();
+	this->indexBufferView.BufferLocation = this->defaultResourceIndices->GetGPUVirtualAdress();
 	this->indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	this->indexBufferView.SizeInBytes = this->GetSizeOfIndices();
 }
