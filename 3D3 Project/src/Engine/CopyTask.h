@@ -8,7 +8,7 @@
 class CopyTask : public DX12Task
 {
 public:
-	CopyTask(ID3D12Device5* device, COMMAND_INTERFACE_TYPE interfaceType);
-	~CopyTask();
+	CopyTask(ID3D12Device5* device);
+	virtual ~CopyTask();
 };
 #endif

@@ -34,12 +34,20 @@ ID3DBlob* RootSignature::GetBlob() const
 
 void RootSignature::CreateRootSignatureStructure()
 {
-	// DescriptorTable for CBV's (lights with 256 max lights in scene)
-	D3D12_DESCRIPTOR_RANGE dtRangesCBV[1]{};
+	// DescriptorTable for CBV's (bindless)
+	D3D12_DESCRIPTOR_RANGE dtRangesCBV[3]{};
 	dtRangesCBV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	dtRangesCBV[0].NumDescriptors = 256;
+	dtRangesCBV[0].NumDescriptors = -1;
 	dtRangesCBV[0].BaseShaderRegister = 3;	// b3
-	dtRangesCBV[0].RegisterSpace = 0;
+	dtRangesCBV[0].RegisterSpace = 0;		// space0
+	dtRangesCBV[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	dtRangesCBV[1].NumDescriptors = -1;
+	dtRangesCBV[1].BaseShaderRegister = 3;	// b3
+	dtRangesCBV[1].RegisterSpace = 1;		// space1
+	dtRangesCBV[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	dtRangesCBV[2].NumDescriptors = -1;
+	dtRangesCBV[2].BaseShaderRegister = 3;	// b3
+	dtRangesCBV[2].RegisterSpace = 2;		// space2
 	D3D12_ROOT_DESCRIPTOR_TABLE dtCBV = {};
 	dtCBV.NumDescriptorRanges = ARRAYSIZE(dtRangesCBV);
 	dtCBV.pDescriptorRanges = dtRangesCBV;
@@ -68,14 +76,21 @@ void RootSignature::CreateRootSignatureStructure()
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.ShaderRegister = 0; // b0
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.RegisterSpace = 0; // space0
-	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_OBJECT) / sizeof(UINT);
+	rootParam[RS::CB_PER_OBJECT_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_OBJECT_STRUCT) / sizeof(UINT);
 	rootParam[RS::CB_PER_OBJECT_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
+	// TODO: Make this a descriptor instead, and update once each frame..
+	// Will include stuff like deltaTime.. cameraPosition etc..
 	rootParam[RS::CB_PER_FRAME_CONSTANTS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	rootParam[RS::CB_PER_FRAME_CONSTANTS].Constants.ShaderRegister = 1; // b1
 	rootParam[RS::CB_PER_FRAME_CONSTANTS].Constants.RegisterSpace = 0; // space0
-	rootParam[RS::CB_PER_FRAME_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_FRAME) / sizeof(UINT);
+	rootParam[RS::CB_PER_FRAME_CONSTANTS].Constants.Num32BitValues = sizeof(CB_PER_FRAME_STRUCT) / sizeof(UINT);
 	rootParam[RS::CB_PER_FRAME_CONSTANTS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	rootParam[RS::CB_PER_SCENE].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam[RS::CB_PER_SCENE].Descriptor.ShaderRegister = 2;	// b2
+	rootParam[RS::CB_PER_SCENE].Descriptor.RegisterSpace = 0;	// space 0
+	rootParam[RS::CB_PER_SCENE].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_DESC rsDesc;
 	rsDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;	// We dont use input layout... 
@@ -93,14 +108,22 @@ void RootSignature::CreateRootSignatureStructure()
 	ssd.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	rsDesc.pStaticSamplers = &ssd;
 
+	ID3DBlob* errorMessages = nullptr;
 	HRESULT hr = D3D12SerializeRootSignature(
 		&rsDesc,
 		D3D_ROOT_SIGNATURE_VERSION_1,
 		&this->sBlob,
-		nullptr);
+		&errorMessages);
 
 	if (hr != S_OK)
 	{
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Serialize RootSignature\n");
+	}
+
+	if (FAILED(hr) && errorMessages)
+	{
+		const char* errorMsg = (const char*)errorMessages->GetBufferPointer();
+
+		Log::PrintSeverity(Log::Severity::CRITICAL, "%s\n", errorMsg);
 	}
 }

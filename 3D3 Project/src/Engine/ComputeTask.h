@@ -10,9 +10,8 @@ public:
 	ComputeTask(ID3D12Device5* device,
 		RootSignature* rootSignature,
 		LPCWSTR CSName,
-		LPCTSTR psoName,
-		COMMAND_INTERFACE_TYPE interfaceType);
-	~ComputeTask();
+		LPCTSTR psoName);
+	virtual ~ComputeTask();
 
 protected:
 	ID3D12RootSignature* rootSig = nullptr;

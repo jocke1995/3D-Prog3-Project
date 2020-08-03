@@ -16,26 +16,26 @@ struct vertex
 	float4 tang;
 };
 
-StructuredBuffer<vertex> meshes[] : register(t0);
+ConstantBuffer<CB_PER_OBJECT_STRUCT> perObject : register(b0);
 
-ConstantBuffer<CB_PER_OBJECT> transform : register(b0);
+StructuredBuffer<vertex> meshes[] : register(t0);
 
 VS_OUT VS_main(uint vID : SV_VertexID)
 {
 	// 0:ar output
 	VS_OUT output = (VS_OUT)0;
 
-	vertex mesh = meshes[transform.info.vertexDataIndex][vID];
+	vertex mesh = meshes[perObject.info.vertexDataIndex][vID];
 	float4 vertexPosition = float4(mesh.pos.xyz, 1.0f);
 
-	output.pos = mul(vertexPosition, transform.WVP);
-	output.worldPos = mul(vertexPosition, transform.worldMatrix);
+	output.pos = mul(vertexPosition, perObject.WVP);
+	output.worldPos = mul(vertexPosition, perObject.worldMatrix);
 
 	output.uv = float4(mesh.uv);
 
 	// Create TBN-Matrix
-	float3 T = normalize(mul(float4(mesh.tang), transform.worldMatrix)).xyz;
-	float3 N = normalize(mul(float4(mesh.norm), transform.worldMatrix)).xyz;
+	float3 T = normalize(mul(float4(mesh.tang), perObject.worldMatrix)).xyz;
+	float3 N = normalize(mul(float4(mesh.norm), perObject.worldMatrix)).xyz;
 
 	// Gram schmidt
 	T = normalize(T - dot(T, N) * N);

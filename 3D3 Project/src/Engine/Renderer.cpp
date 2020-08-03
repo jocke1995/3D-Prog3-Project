@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+extern unsigned int globalDescriptorHeapIndex;
 Renderer::Renderer()
 {
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
@@ -54,6 +55,11 @@ Renderer::~Renderer()
 	delete this->threadpool;
 	Log::Print("15\n");
 
+	delete this->lightCBPool;
+	Log::Print("16\n");
+	delete this->CB_PER_SCENE;
+	Log::Print("17\n");
+
 	// temp
 	delete this->tempCommandInterface;
 }
@@ -94,10 +100,23 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 
 	// Init assetloader by giving it a pointer to the device
 	AssetLoader::Get(this->device5);
+	
+	// Pool to handle constantBuffers for the lights
+	this->lightCBPool = new LightConstantBufferPool(this->device5, this->descriptorHeap_CBV_UAV_SRV);
+
+	// Allocate memory for CB_PER_SCENE
+	unsigned int CB_PER_SCENE_SizeAligned = (sizeof(CB_PER_SCENE_STRUCT) + 255) & ~255;
+	this->CB_PER_SCENE = new ConstantBufferUpload(
+		this->device5, 
+		CB_PER_SCENE_SizeAligned,
+		L"CB_PER_SCENE_UPLOAD",
+		globalDescriptorHeapIndex++,
+		this->descriptorHeap_CBV_UAV_SRV
+		);
 
 	this->InitRenderTasks();
-	
-	// temp
+
+	// temp, used to transmit textures/meshes to the default memory on GPU when loaded
 	this->tempCommandInterface = new CommandInterface(this->device5, COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
 }
 
@@ -152,10 +171,16 @@ Texture* Renderer::LoadTexture(std::wstring path)
 	return texture;
 }
 
+// Handle the components thats used for rendering
 void Renderer::SetSceneToDraw(Scene* scene)
 {
 	this->renderComponents.clear();
+	this->directionalLights.clear();
+	this->pointLights.clear();
+	this->spotLights.clear();
+	this->lightCBPool->FreeConstantBuffers();
 
+	// Handle and structure the components in the scene
 	std::map<std::string, Entity*> entities = *scene->GetEntities();
 	for (auto const& [entityName, entity] : entities)
 	{
@@ -169,15 +194,76 @@ void Renderer::SetSceneToDraw(Scene* scene)
 				this->renderComponents.push_back(std::make_pair(mc, tc));
 
 				// Send the Textures to GPU here later, so that textures aren't in memory if they aren't used
+				// or save index to a queue and then submit all textures together later..
 			}
 		}
 
 		component::DirectionalLightComponent* dlc = entity->GetComponent<component::DirectionalLightComponent>();
 		if (dlc != nullptr)
 		{
-			this->dirLightComponents.push_back(dlc);
+			// Assign resource from resourcePool
+			ConstantBufferDefault* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+
+			// Save in renderer
+			this->directionalLights.push_back(std::make_pair(dlc, cbd));
+		}
+
+		component::PointLightComponent* plc = entity->GetComponent<component::PointLightComponent>();
+		if (plc != nullptr)
+		{
+			// Assign resource from resourcePool
+			ConstantBufferDefault* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::POINT_LIGHT);
+
+			// Save in renderer
+			this->pointLights.push_back(std::make_pair(plc, cbd));
+		}
+
+		component::SpotLightComponent* slc = entity->GetComponent<component::SpotLightComponent>();
+		if (slc != nullptr)
+		{
+			// Assign resource from resourcePool
+			ConstantBufferDefault* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::SPOT_LIGHT);
+
+			// Save in renderer
+			this->spotLights.push_back(std::make_pair(slc, cbd));
 		}
 	}
+
+
+	// ------------------------------ Prepare CB_PER_SCENE START ------------------------------
+	CB_PER_SCENE_STRUCT cps = {};
+		// ----- directional lights -----
+		cps.Num_Dir_Lights = this->directionalLights.size();
+		unsigned int index = 0;
+		for (auto& pair : this->directionalLights)
+		{
+			cps.dirLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
+			index++;
+		}
+		// ----- directional lights -----
+
+		// ----- point lights -----
+		cps.Num_Point_Lights = this->pointLights.size();
+		index = 0;
+		for (auto& pair : this->pointLights)
+		{
+			cps.pointLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
+			index++;
+		}
+		// ----- point lights -----
+
+		// ----- spot lights -----
+		cps.Num_Spot_Lights = this->spotLights.size();
+		index = 0;
+		for (auto& pair : this->spotLights)
+		{
+			cps.spotLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
+			index++;
+		}
+		// ----- spot lights -----
+
+	this->CB_PER_SCENE->GetUploadResource()->SetData(&cps, 0);
+	// ------------------------------ Prepare CB_PER_SCENE END ------------------------------
 
 	this->SetRenderTasksRenderComponents();
 	this->SetRenderTasksMainCamera(scene->GetMainCamera());
@@ -185,52 +271,12 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	this->currActiveScene = scene;
 }
 
-//bool Renderer::AddEntityToDraw(Entity* entity)
-//{
-//	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
-//	if (rc != nullptr)
-//	{
-//		this->renderComponents.push_back(entity);
-//		this->SetRenderTasksRenderComponents();
-//		return true;
-//	}
-//	return false;	
-//}
-//
-//bool Renderer::RemoveEntityToDraw(Entity* entity)
-//{
-//	component::RenderComponent* rc = entity->GetComponent<component::RenderComponent>();
-//	if (rc != nullptr)
-//	{
-//		for (int i = 0; i < this->renderComponents.size(); i++)
-//		{
-//			if (*entity == this->renderComponents[i])
-//			{
-//				this->renderComponents.erase(this->renderComponents.begin() + i);
-//				this->SetRenderTasksRenderComponents();
-//				return true;
-//			}
-//		}
-//	}
-//	return false;
-//}
-
-int Compare(const void* a, const void* b)
-{
-	if (*(double*)a > * (double*)b)
-		return 1;
-	else if (*(double*)a < *(double*)b)
-		return -1;
-	else
-		return 0;
-}
-
 void Renderer::UpdateScene(double dt)
 {
 	this->currActiveScene->UpdateScene(dt);
 }
 
-void Renderer::SortEntitiesByDistance()
+void Renderer::SortObjectsByDistance()
 {
 	struct DistFromCamera
 	{
@@ -239,13 +285,13 @@ void Renderer::SortEntitiesByDistance()
 		component::TransformComponent* tc;
 	};
 
-	int nrOfRenderComponents = this->renderComponents.size();
+	int numRenderComponents = this->renderComponents.size();
 
-	DistFromCamera* distFromCamArr = new DistFromCamera[nrOfRenderComponents];
+	DistFromCamera* distFromCamArr = new DistFromCamera[numRenderComponents];
 
 	// Get all the distances of each objects and store them by ID and distance
 	XMFLOAT3 camPos = this->camera->GetPosition();
-	for (int i = 0; i < nrOfRenderComponents; i++)
+	for (int i = 0; i < numRenderComponents; i++)
 	{
 		XMFLOAT3 objectPos = this->renderComponents.at(i).second->GetTransform()->GetPositionXMFLOAT3();
 
@@ -263,7 +309,7 @@ void Renderer::SortEntitiesByDistance()
 	// and since this is sorted ((((((EVERY FRAME)))))) this is a good choice of sorting algorithm
 	int j = 0;
 	DistFromCamera distFromCamArrTemp = {};
-	for (int i = 1; i < nrOfRenderComponents; i++)
+	for (int i = 1; i < numRenderComponents; i++)
 	{
 		j = i;
 		while (j > 0 && (distFromCamArr[j - 1].distance > distFromCamArr[j].distance))
@@ -278,7 +324,7 @@ void Renderer::SortEntitiesByDistance()
 
 	// Fill the vector with sorted array
 	this->renderComponents.clear();
-	for (int i = 0; i < nrOfRenderComponents; i++)
+	for (int i = 0; i < numRenderComponents; i++)
 	{
 		this->renderComponents.push_back(std::make_pair(distFromCamArr[i].mc, distFromCamArr[i].tc));
 	}
@@ -295,19 +341,37 @@ void Renderer::Execute()
 	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
-	
+
+	// Currently there is only 1 copy task.. but later there will be more
+	for (CopyTask* copytask : this->copyTasks)
+	{
+		copytask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		//this->threadpool->AddTask(copytask, THREAD_FLAG::COPY_DATA);
+		copytask->Execute();	// Non-multithreaded version
+	}
+
+	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA | THREAD_FLAG::ALL);
+
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
+		this->copyCommandLists[commandInterfaceIndex].size(),
+		this->copyCommandLists[commandInterfaceIndex].data());
+
+	UINT64 copyFenceValue = this->fenceFrameValue++;
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue + 1);
+
 	// Fill queue with rendertasks and execute them in parallell
 	for (RenderTask* renderTask : this->renderTasks)
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(renderTask, THREAD_FLAG::DIRECT);
-		//renderTask->Execute();	// Non-multithreaded version of this
+		this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
 	}
 
 	/* RENDER QUEUE --------------------------------------------------------------- */
-	// Wait for the threads which records the c-lists to complete
-	this->threadpool->WaitForThreads(THREAD_FLAG::DIRECT | THREAD_FLAG::ALL);
+	// Wait for the threads which records the commandlists to complete
+	this->threadpool->WaitForThreads(THREAD_FLAG::RENDER | THREAD_FLAG::ALL);
+	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, copyFenceValue + 1);
+
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
 		this->directCommandLists[commandInterfaceIndex].size(), 
@@ -329,11 +393,6 @@ ThreadPool* Renderer::GetThreadPool() const
 Camera* Renderer::GetCamera() const
 {
 	return this->camera;
-}
-
-ID3D12Device5* Renderer::GetDevice() const
-{
-	return this->device5;
 }
 
 void Renderer::SetRenderTasksMainCamera(Camera* camera)
@@ -520,12 +579,12 @@ void Renderer::InitRenderTasks()
 		this->rootSignature, 
 		L"VertexShader.hlsl", L"PixelShader.hlsl", 
 		&gpsdForwardRenderVector, 
-		L"ForwardRenderingPSO",
-		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+		L"ForwardRenderingPSO");
 
 	forwardRenderTask->AddRenderTarget(this->swapChain);
 	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
 	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
+	forwardRenderTask->AddResource(this->CB_PER_SCENE->GetUploadResource());
 
 #pragma endregion ForwardRendering
 #pragma region Blend
@@ -612,22 +671,33 @@ void Renderer::InitRenderTasks()
 		L"BlendVertex.hlsl",
 		L"BlendPixel.hlsl",
 		&gpsdBlendVector,
-		L"BlendPSO",
-		COMMAND_INTERFACE_TYPE::DIRECT_TYPE);
+		L"BlendPSO");
 
 	blendRenderTask->AddRenderTarget(this->swapChain);
 	blendRenderTask->SetDepthBuffer(this->depthBuffer);
 	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
+	blendRenderTask->AddResource(this->CB_PER_SCENE->GetUploadResource());
 
 #pragma endregion Blend
 
+#pragma region CopyLights
+	CopyTask* copyLightsTask = new CopyLightsTask(
+		this->device5,
+		&this->directionalLights,
+		&this->pointLights,
+		&this->spotLights);
+	
+#pragma endregion CopyLights
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
 
 
 	/* ------------------------- CopyQueue Tasks ------------------------ */
 
-	// None atm
+	this->copyTasks[COPY_TASK_TYPE::COPY_LIGHTS] = copyLightsTask;
+
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->copyCommandLists[i].push_back(copyLightsTask->GetCommandList(i));
 
 	/* ------------------------- ComputeQueue Tasks ------------------------ */
 
@@ -653,10 +723,6 @@ void Renderer::SetRenderTasksRenderComponents()
 	}
 }
 
-void Renderer::SetRenderTasksDirLightComponents()
-{
-}
-
 void Renderer::InitDescriptorHeap()
 {
 	this->descriptorHeap_CBV_UAV_SRV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
@@ -664,7 +730,7 @@ void Renderer::InitDescriptorHeap()
 
 void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex,
 	D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
-	Resource* resource)
+	const Resource* resource)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(descriptorHeapIndex);
 
@@ -699,16 +765,6 @@ bool Renderer::CreateSRVForTexture(Texture* texture)
 	return false;
 }
 
-void Renderer::CreateConstantBufferView(unsigned int descriptorHeapIndex, unsigned int size, Resource* resource)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(descriptorHeapIndex);
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvd = {};
-	cbvd.BufferLocation = resource->GetGPUVirtualAdress();
-	cbvd.SizeInBytes = size;
-	this->device5->CreateConstantBufferView(&cbvd, cdh);
-}
-
 void Renderer::CreateFences()
 {
 	HRESULT hr = device5->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fenceFrame));
@@ -725,14 +781,16 @@ void Renderer::CreateFences()
 
 void Renderer::WaitForFrame()
 {
-	const UINT64 oldFenceValue = this->fenceFrameValue; // 1
-	const UINT64 newFenceValue = oldFenceValue + 1; // 2
-	this->fenceFrameValue++;
+	const UINT64 oldFenceValue = this->fenceFrameValue; // 12
+	const UINT64 newFenceValue = oldFenceValue + 1;	// 13
+	this->fenceFrameValue++;	// 13
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Signal(this->fenceFrame, newFenceValue);
 
+	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Wait(this->fenceFrame, newFenceValue);
+
 	//Wait until command queue is done.
-	int nrOfFenceChanges = 1;
+	int nrOfFenceChanges = 2;
 	int fenceValuesToBeAhead = (NUM_SWAP_BUFFERS - 1) * nrOfFenceChanges;
 	if (this->fenceFrame->GetCompletedValue() < newFenceValue - fenceValuesToBeAhead)
 	{

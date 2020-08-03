@@ -1,4 +1,6 @@
-#pragma once
+#ifndef STDAFX_H
+#define STDAFX_H
+
 #define NOMINMAX	// Assimp is using a function called "min"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers.
@@ -14,7 +16,6 @@
 #include "d3dx12.h"
 
 // Windows stuff
-
 #include <Windows.h>
 
 // Time
@@ -47,9 +48,17 @@
 #include <locale>
 #include <codecvt>
 
-std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
-std::string to_string(std::wstring wstr);
-std::wstring to_wstring(std::string str);
+static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
+inline std::string to_string(std::wstring wstr)
+{
+	return strconverter.to_bytes(wstr);
+}
+inline std::wstring to_wstring(std::string str)
+{
+	return strconverter.from_bytes(str);
+}
+
+typedef DirectX::XMFLOAT4X4 float4x4;
 
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
 #define SAFE_RELEASE(p)			\
@@ -64,9 +73,6 @@ std::wstring to_wstring(std::string str);
 
 #define NUM_SWAP_BUFFERS 2
 #define BIT(x) (1 << x)
-
-// Need to declare before including structs.h
-typedef DirectX::XMFLOAT4X4 float4x4;
 
 typedef union
 {
@@ -86,16 +92,17 @@ typedef union
 	struct { float u; float v; };
 } float2;
 
-enum DrawOptions
+#include "structs.h"
+
+enum DRAW_FLAG
 {
 	ForwardRendering = BIT(1),
 	Blend = BIT(2),
 	// Shadow = BIT(3),
 	// animation = BIT(4),
+	// WireFrame
 	// etc..
 };
-
-#include "structs.h"
 
 namespace Log
 {
@@ -146,3 +153,5 @@ namespace Log
 		OutputDebugStringA(inputBuffer.data());
 	}
 }
+
+#endif

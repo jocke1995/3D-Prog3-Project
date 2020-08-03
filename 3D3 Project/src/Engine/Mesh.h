@@ -18,7 +18,8 @@ public:
     Mesh(   ID3D12Device5* device,
             std::vector<Vertex> vertices,
             std::vector<unsigned int> indices,
-            UINT descriptorHeapIndex_SRV);
+            unsigned int descriptorHeapIndex_SRV);
+    Mesh(const Mesh* other);
     ~Mesh();
 
     // Sets
@@ -53,6 +54,9 @@ private:
 
     D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
     void CreateIndexBufferView();
+
+    // Temporay solution to make sure each "new" mesh only gets deleted once
+    bool isCopied = false;
 };
 
 #endif

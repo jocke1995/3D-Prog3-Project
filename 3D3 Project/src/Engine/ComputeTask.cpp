@@ -1,7 +1,7 @@
 #include "ComputeTask.h"
 
-ComputeTask::ComputeTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, LPCTSTR psoName, COMMAND_INTERFACE_TYPE interfaceType)
-	:DX12Task(device, interfaceType)
+ComputeTask::ComputeTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR CSName, LPCTSTR psoName)
+	:DX12Task(device, COMMAND_INTERFACE_TYPE::COMPUTE_TYPE)
 {
 	this->pipelineState = new ComputeState(device, rootSignature, CSName, psoName);
 

@@ -10,12 +10,18 @@ namespace component
 
 	MeshComponent::~MeshComponent()
 	{
-
+		for (Mesh* mesh : this->meshes)
+		{
+			delete mesh;
+		}
 	}
 
 	void MeshComponent::SetMeshes(std::vector<Mesh*>* meshes)
 	{
-		this->meshes = *meshes;
+		for (Mesh* mesh : *meshes)
+		{
+			this->meshes.push_back(new Mesh(mesh));
+		}
 	}
 
 	void MeshComponent::SetDrawFlag(UINT drawFlag)

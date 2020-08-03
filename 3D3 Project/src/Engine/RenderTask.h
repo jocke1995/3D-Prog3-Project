@@ -9,7 +9,6 @@
 #include "GraphicsState.h"
 #include "DescriptorHeap.h"
 
-#include "../ECS/Components/DirectionalLightComponent.h"
 #include "../ECS/Components/MeshComponent.h"
 #include "../ECS/Components/TransformComponent.h"
 
@@ -21,8 +20,7 @@ public:
 		RootSignature* rootSignature, 
 		LPCWSTR VSName, LPCWSTR PSName, 
 		std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> *gpsds,
-		LPCTSTR psoName,
-		COMMAND_INTERFACE_TYPE interfaceType);
+		LPCTSTR psoName);
 	
 	virtual ~RenderTask();
 
@@ -32,7 +30,6 @@ public:
 
 	void SetRenderComponents(std::vector<std::pair<	component::MeshComponent*,
 													component::TransformComponent*>>* renderComponents);
-	void SetdirectionalLightComponents(std::vector<component::DirectionalLightComponent*>* dirLightComponents);
 
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap_CBV_UAV_SRV(DescriptorHeap* dh);
@@ -49,7 +46,6 @@ protected:
 	Camera* camera = nullptr;
 
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
-	std::vector<component::DirectionalLightComponent*> dirLightComponents;
 
 };
 

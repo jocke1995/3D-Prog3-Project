@@ -15,10 +15,6 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 		break;
 	case RESOURCE_TYPE::DEFAULT:
 		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
-		startState = D3D12_RESOURCE_STATE_COPY_DEST;
-		break;
-	case RESOURCE_TYPE::RESOURCE_COPY:
-		d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
 		startState = D3D12_RESOURCE_STATE_COMMON;
 		break;
 	}
@@ -92,6 +88,18 @@ D3D12_GPU_VIRTUAL_ADDRESS Resource::GetGPUVirtualAdress() const
 }
 
 void Resource::SetData(const void* data, unsigned int subResourceIndex)
+{
+	void* dataBegin = nullptr;
+
+	// Set up the heap data
+	D3D12_RANGE range = { 0, 0 }; // We do not intend to read this resource on the CPU.
+
+	this->resource->Map(subResourceIndex, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
+	memcpy(dataBegin, data, this->entrySize);
+	this->resource->Unmap(subResourceIndex, nullptr);
+}
+
+void Resource::SetData(const void* data, unsigned int subResourceIndex) const
 {
 	void* dataBegin = nullptr;
 

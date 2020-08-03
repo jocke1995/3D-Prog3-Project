@@ -134,7 +134,7 @@ const DXGI_FORMAT* Texture::GetGDXIFormat() const
 	return &this->resourceDescription.Format;
 }
 
-bool Texture::Init(std::wstring filePath, ID3D12Device1* device, UINT descriptorHeapIndex_SRV)
+bool Texture::Init(std::wstring filePath, ID3D12Device5* device, UINT descriptorHeapIndex_SRV)
 {
 	this->filePath = filePath;
 	this->descriptorHeapIndex_SRV = descriptorHeapIndex_SRV;
@@ -166,7 +166,7 @@ bool Texture::Init(std::wstring filePath, ID3D12Device1* device, UINT descriptor
 	return true;
 }
 
-void Texture::UploadTextureData(ID3D12Device1* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue)
+void Texture::UploadTextureData(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue)
 {
 	D3D12_SUBRESOURCE_DATA textureData = {};
 	textureData.pData = &imageData[0]; // pointer to our image data
@@ -197,7 +197,7 @@ bool Texture::IsBoundToSRV()
 	return this->hasSRV;
 }
 
-bool Texture::CreateTexture(std::wstring filePath, ID3D12Device1* device, UINT descriptorHeapIndex_SRV)
+bool Texture::CreateTexture(std::wstring filePath, ID3D12Device5* device, UINT descriptorHeapIndex_SRV)
 {
 	static IWICImagingFactory* wicFactory;
 
@@ -347,4 +347,6 @@ bool Texture::CreateTexture(std::wstring filePath, ID3D12Device1* device, UINT d
 	this->resourceDescription.SampleDesc.Quality = 0; // The quality level of the samples. Higher is better quality, but worse performance
 	this->resourceDescription.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN; // The arrangement of the pixels. Setting to unknown lets the driver choose the most efficient one
 	this->resourceDescription.Flags = D3D12_RESOURCE_FLAG_NONE; // no flags
+
+	return true;
 }

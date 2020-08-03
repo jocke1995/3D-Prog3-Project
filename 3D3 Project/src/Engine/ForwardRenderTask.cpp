@@ -1,7 +1,12 @@
 #include "ForwardRenderTask.h"
 
-FowardRenderTask::FowardRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, LPCTSTR psoName, COMMAND_INTERFACE_TYPE interfaceType)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsds, psoName, interfaceType)
+FowardRenderTask::FowardRenderTask(
+	ID3D12Device5* device,
+	RootSignature* rootSignature,
+	LPCWSTR VSName, LPCWSTR PSName,
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds,
+	LPCTSTR psoName)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds, psoName)
 {
 	
 }
@@ -22,7 +27,7 @@ void FowardRenderTask::Execute()
 	ID3D12DescriptorHeap* descriptorHeap_CBV_UAV_SRV = this->descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
 	commandList->SetDescriptorHeaps(1, &descriptorHeap_CBV_UAV_SRV);
 
-	//commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
+	commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 
 	// Change state on front/backbuffer
@@ -35,7 +40,6 @@ void FowardRenderTask::Execute()
 	DescriptorHeap* renderTargetHeap = this->renderTargets[0]->GetDescriptorHeap();
 	DescriptorHeap* depthBufferHeap = this->depthBuffer->GetDescriptorHeap();
 
-	
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = renderTargetHeap->GetCPUHeapAt(this->backBufferIndex);
 	D3D12_CPU_DESCRIPTOR_HANDLE dsh = depthBufferHeap->GetCPUHeapAt(0);
 
@@ -54,8 +58,10 @@ void FowardRenderTask::Execute()
 	commandList->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
 	// Create a CB_PER_FRAME struct
-	CB_PER_FRAME perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
-	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME) / sizeof(UINT), &perFrame, 0);
+	CB_PER_FRAME_STRUCT perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
+	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME_STRUCT) / sizeof(UINT), &perFrame, 0);
+
+	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources[0]->GetGPUVirtualAdress());
 
 	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
@@ -66,8 +72,8 @@ void FowardRenderTask::Execute()
 		component::MeshComponent* mc = this->renderComponents.at(i).first;
 		component::TransformComponent* tc = this->renderComponents.at(i).second;
 
-		// Check if the entity is to be drawn in forwardRendering
-		if (mc->GetDrawFlag() & DrawOptions::ForwardRendering)
+		// Check if the object is to be drawn in forwardRendering
+		if (mc->GetDrawFlag() & DRAW_FLAG::ForwardRendering)
 		{
 			// Draw for every mesh the meshComponent has
 			for (unsigned int i = 0; i < mc->GetNrOfMeshes(); i++)
@@ -87,10 +93,10 @@ void FowardRenderTask::Execute()
 				XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
 				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
-				// Create a CB_PER_ENTITY struct
-				CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
+				// Create a CB_PER_OBJECT struct
+				CB_PER_OBJECT_STRUCT perObject = { wTransposed, WVPTransposed, *info };
 
-				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
+				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT_STRUCT) / sizeof(UINT), &perObject, 0);
 
 				commandList->IASetIndexBuffer(mc->GetMesh(i)->GetIndexBufferView());
 				commandList->DrawIndexedInstanced(num_Indices, 1, 0, 0, 0);

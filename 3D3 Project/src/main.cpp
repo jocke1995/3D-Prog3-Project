@@ -3,7 +3,7 @@
 #include "Window.h"
 
 // TODO: Problem med precompiled header eller liknande.. Intellisense problemet
-#include "Engine/stdafx.h"
+// #include "Engine/stdafx.h"
 
 #include "ECS/SceneHandler.h"
 
@@ -31,71 +31,136 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // the function will just return the same pointer to the model that was loaded earlier.
     std::vector<Mesh*>* floorModel = renderer.LoadModel(L"Resources/Models/Floor/floor.obj");
     std::vector<Mesh*>* stoneModel = renderer.LoadModel(L"Resources/Models/Rock/rock.obj");
-
-#pragma region CreateScene1
+    std::vector<Mesh*>* cubeModel  = renderer.LoadModel(L"Resources/Models/Cube/crate.obj");
+    
+#pragma region CreateScene0
     // Create Scene
-    sceneHandler->CreateScene("scene1", renderer.GetCamera());
+    sceneHandler->CreateScene("scene0", renderer.GetCamera());
 
-    Scene* scene = sceneHandler->GetScene("scene1");
+    Scene* scene = sceneHandler->GetScene("scene0");
     
     // Add Entity to Scene
     scene->AddEntity("floor");
     scene->AddEntity("stone");
-    scene->AddEntity("light");
+    scene->AddEntity("transparentTestObject");
+    scene->AddEntity("directionalLight");
+    scene->AddEntity("spotLight");
     
-    // Add Components to Entity
+    // Add Components to Entities
     scene->GetEntity("floor")->AddComponent<component::MeshComponent>();
     scene->GetEntity("floor")->AddComponent<component::TransformComponent>();
     scene->GetEntity("stone")->AddComponent<component::MeshComponent>();
     scene->GetEntity("stone")->AddComponent<component::TransformComponent>();
-    //scene->GetEntity("light")->AddComponent<component::MeshComponent>();
-    //scene->GetEntity("light")->AddComponent<component::TransformComponent>();
-    //scene->GetEntity("light")->AddComponent<component::DirectionalLightComponent>();
+    scene->GetEntity("transparentTestObject")->AddComponent<component::MeshComponent>();
+    scene->GetEntity("transparentTestObject")->AddComponent<component::TransformComponent>();
+    scene->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>();
+    scene->GetEntity("spotLight")->AddComponent<component::MeshComponent>();
+    scene->GetEntity("spotLight")->AddComponent<component::TransformComponent>();
+    scene->GetEntity("spotLight")->AddComponent<component::SpotLightComponent>(LIGHT_FLAG::USE_TRANSFORM_POSITION);
     
     // Set the components
     component::MeshComponent* mc = scene->GetEntity("floor")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(floorModel);
-    mc->SetDrawFlag(DrawOptions::ForwardRendering);
+    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering);
     component::TransformComponent* tc = scene->GetEntity("floor")->GetComponent<component::TransformComponent>();
-    tc->GetTransform()->SetScale(10);
+    tc->GetTransform()->SetScale(10, 1, 10);
     tc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
-    
+
     mc = scene->GetEntity("stone")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(stoneModel);
-    mc->SetDrawFlag(DrawOptions::ForwardRendering);
+    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering);
     tc = scene->GetEntity("stone")->GetComponent<component::TransformComponent>();
-    tc->GetTransform()->SetScale(0.005);
+    tc->GetTransform()->SetScale(0.005f);
     tc->GetTransform()->SetPosition(-8.0f, 0.0f, 0.0f);
 
-    // --------------------------- Set Light components START---------------------------
-    //mc = scene->GetEntity("light")->GetComponent<component::MeshComponent>();
-    //mc->SetMeshes(cubeModel);
-    //mc->SetDrawFlag(DrawOptions::ForwardRendering);
-    //tc = scene->GetEntity("light")->GetComponent<component::TransformComponent>();
-    //tc->GetTransform()->SetScale(0.2);
-    //tc->GetTransform()->SetPosition(0.0f, 5.0f, -5.0f);
-    //
-    //component::DirectionalLightComponent* dl = scene->GetEntity("light")->GetComponent<component::DirectionalLightComponent>();
-    //dl->SetLightFlag(LIGHT_FLAG::USE_MESH_POSITION);
-    //dl->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-    //dl->CreateResource(renderer->GetDevice());
-    //renderer->CreateConstantBufferView( dl->GetDescriptorHeapIndex(), 
-    //                                    dl->GetCbSizeAligned(), 
-    //                                    dl->GetResource());
-    // --------------------------- Set Light components END---------------------------
+    mc = scene->GetEntity("transparentTestObject")->GetComponent<component::MeshComponent>();
+    mc->SetMeshes(floorModel);
+    mc->SetDrawFlag(DRAW_FLAG::Blend);
+
+    Texture* ambientDefault = renderer.LoadTexture(L"Resources/Textures/Default/default_diffuse.jpg");
+    Texture* normalDefault = renderer.LoadTexture(L"Resources/Textures/Default/default_normal.png");
+    mc->GetMesh(0)->SetTexture(TEXTURE_TYPE::AMBIENT , ambientDefault);
+    mc->GetMesh(0)->SetTexture(TEXTURE_TYPE::DIFFUSE , ambientDefault);
+    mc->GetMesh(0)->SetTexture(TEXTURE_TYPE::SPECULAR, ambientDefault);
+    mc->GetMesh(0)->SetTexture(TEXTURE_TYPE::NORMAL  , normalDefault);
 
 
+    tc = scene->GetEntity("transparentTestObject")->GetComponent<component::TransformComponent>();
+    tc->GetTransform()->SetScale(5.f);
+    tc->GetTransform()->SetPosition(0.0f, 5.0f, 1.0f);
+    tc->GetTransform()->RotateZ(3.141572f / 2.0f);
+    tc->GetTransform()->RotateX(3.141572f / 2.0f);
+
+    component::DirectionalLightComponent* dl = scene->GetEntity("directionalLight")->GetComponent<component::DirectionalLightComponent>();
+    dl->SetDirection({ -1.0f, -0.5f, -0.5f });
+
+    mc = scene->GetEntity("spotLight")->GetComponent<component::MeshComponent>();
+    mc->SetMeshes(cubeModel);
+    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering);
+
+    tc = scene->GetEntity("spotLight")->GetComponent<component::TransformComponent>();
+    tc->GetTransform()->SetScale(0.5f);
+    tc->GetTransform()->SetPosition(-15.0f, 1.0f, 0.0f);
+
+    component::SpotLightComponent* sl = scene->GetEntity("spotLight")->GetComponent<component::SpotLightComponent>();
+    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE,  { 0.8f, 0.0f, 0.0f, 1.0f });
+    sl->SetDirection({ 1.0f, 0.0f, 0.0f });
+
+#pragma endregion CreateScene0
+#pragma region CreateScene1
+    // Create Scene
+    sceneHandler->CreateScene("scene1", renderer.GetCamera());
+    scene = sceneHandler->GetScene("scene1");
+    scene->AddEntity("cube1");
+    scene->AddEntity("cube2");
+    scene->AddEntity("cube3");
+    scene->GetEntity("cube1")->AddComponent<component::MeshComponent>();
+    scene->GetEntity("cube1")->AddComponent<component::TransformComponent>();
+    scene->GetEntity("cube2")->AddComponent<component::MeshComponent>();
+    scene->GetEntity("cube2")->AddComponent<component::TransformComponent>();
+    scene->GetEntity("cube3")->AddComponent<component::MeshComponent>();
+    scene->GetEntity("cube3")->AddComponent<component::TransformComponent>();
+    scene->GetEntity("cube3")->AddComponent<component::DirectionalLightComponent>();
+
+    mc = scene->GetEntity("cube1")->GetComponent<component::MeshComponent>();
+    mc->SetMeshes(cubeModel);
+    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering);
+
+    tc = scene->GetEntity("cube1")->GetComponent<component::TransformComponent>();
+    tc->GetTransform()->SetScale(0.5f);
+    tc->GetTransform()->SetPosition(-15.0f, 1.0f, 0.0f);
+
+    mc = scene->GetEntity("cube2")->GetComponent<component::MeshComponent>();
+    mc->SetMeshes(cubeModel);
+    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering);
+
+    tc = scene->GetEntity("cube2")->GetComponent<component::TransformComponent>();
+    tc->GetTransform()->SetScale(0.5f);
+    tc->GetTransform()->SetPosition(-5.0f, 1.0f, 0.0f);
+
+    mc = scene->GetEntity("cube3")->GetComponent<component::MeshComponent>();
+    mc->SetMeshes(cubeModel);
+    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering);
+
+    tc = scene->GetEntity("cube3")->GetComponent<component::TransformComponent>();
+    tc->GetTransform()->SetScale(0.5f);
+    tc->GetTransform()->SetPosition(5.0f, 1.0f, 0.0f);
+    static int testA = 0;
 #pragma endregion CreateScene1
-    renderer.SetSceneToDraw(sceneHandler->GetScene("scene1"));
-
+    renderer.SetSceneToDraw(sceneHandler->GetScene("scene0"));
     while (!window->ExitWindow())
-    {  
-        /* ------ Timer  ------ */
-        timer->Update();
+    {
+        if (window->WasSpacePressed())
+        {
+            // Test to change scene during runtime
+            char sceneName[10];
+            static int sceneSwapper = 0;
+            sceneSwapper %= 2;
+            sprintf(sceneName, "scene%d", sceneSwapper);
+            renderer.SetSceneToDraw(sceneHandler->GetScene(sceneName));
+            sceneSwapper++;
 
         // Test to add objects during runtime
-        //if (window->WasSpacePressed())
-        //{
         //    char entityName[10];
         //    static int entityCounter = 0;
         //    sprintf(entityName, "cube%d", entityCounter);
@@ -121,18 +186,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         //    //char entityName2[10];
         //    //sprintf(entityName2, "mino%d", entityCounter);
         //    //scene1->RemoveEntity(entityName2);
-        //} 
+        } 
 
         /* ------ Update ------ */
-        //static double x = 0.0;
-        //x += 0.005f;
-        //Transform* lt = scene->GetEntity("light")->GetComponent<component::TransformComponent>()->GetTransform();
-        //lt->SetPosition(lt->GetPositionFloat3().x + sin(x) * timer->GetDeltaTime() * 10, lt->GetPositionFloat3().y, lt->GetPositionFloat3().z);
+        timer->Update();
         renderer.UpdateScene(timer->GetDeltaTime());
 
-        renderer.SortEntitiesByDistance();
+        /* ------ Sort ------ */
+        renderer.SortObjectsByDistance();
 
-        /* ------ Draw   ------ */
+        /* ------ Draw ------ */
         renderer.Execute();
     }
 

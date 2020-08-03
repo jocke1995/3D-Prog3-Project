@@ -1,5 +1,7 @@
 #include "AssetLoader.h"
 
+extern unsigned int globalDescriptorHeapIndex;
+
 AssetLoader::AssetLoader(ID3D12Device5* device)
 {
 	this->device = device;
@@ -84,14 +86,15 @@ Texture* AssetLoader::LoadTexture(std::wstring path)
 	}
 
 	Texture* texture = new Texture();
-	if (texture->Init(path, this->device, descriptorHeapIndex_SRV) == false)
+
+	if (texture->Init(path, this->device, globalDescriptorHeapIndex) == false)
 	{
 		delete texture;
 		return nullptr;
 	}
-
-	descriptorHeapIndex_SRV++;
 	this->loadedTextures[path] = texture;
+
+	globalDescriptorHeapIndex++;
 
 	return this->loadedTextures[path];
 }
@@ -207,9 +210,9 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 	}
 
 	// Create Mesh
-	Mesh* mesh = new Mesh(this->device, vertices, indices, descriptorHeapIndex_SRV++);
+	Mesh* mesh = new Mesh(this->device, vertices, indices, globalDescriptorHeapIndex++);
 
-	// Get Textures and set them to the mesh
+	// ---------- Get Textures and set them to the mesh START----------
 	aiMaterial* mat = assimpScene->mMaterials[assimpMesh->mMaterialIndex];
 	
 	// Split filepath
@@ -225,7 +228,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 		texture = ProcessTexture(mat, type, filePathWithoutTexture);
 		mesh->SetTexture(type, texture);
 	}
-	
+	// ---------- Get Textures and set them to the mesh END----------
 	return mesh;
 }
 
@@ -247,27 +250,27 @@ Texture* AssetLoader::ProcessTexture(aiMaterial* mat,
 	case::TEXTURE_TYPE::AMBIENT:
 		type = aiTextureType_AMBIENT;
 		defaultPath = this->filePathDefaultTextures + L"default_ambient.png";
-		warningMessageTextureType = "ambient";
+		warningMessageTextureType = "Ambient";
 		break;
 	case::TEXTURE_TYPE::DIFFUSE:
 		type = aiTextureType_DIFFUSE;
 		defaultPath = this->filePathDefaultTextures + L"default_diffuse.jpg";
-		warningMessageTextureType = "diffuse";
+		warningMessageTextureType = "Diffuse";
 		break;
 	case::TEXTURE_TYPE::SPECULAR:
 		type = aiTextureType_SPECULAR;
 		defaultPath = this->filePathDefaultTextures + L"default_specular.png";
-		warningMessageTextureType = "specular";
+		warningMessageTextureType = "Specular";
 		break;
 	case::TEXTURE_TYPE::NORMAL:
 		type = aiTextureType_NORMALS;
 		defaultPath = this->filePathDefaultTextures + L"default_normal.png";
-		warningMessageTextureType = "normal";
+		warningMessageTextureType = "Normal";
 		break;
 	case::TEXTURE_TYPE::EMISSIVE:
 		type = aiTextureType_EMISSIVE;
 		defaultPath = this->filePathDefaultTextures + L"default_emissive.png";
-		warningMessageTextureType = "emissive";
+		warningMessageTextureType = "Emissive";
 		break;
 	}
 

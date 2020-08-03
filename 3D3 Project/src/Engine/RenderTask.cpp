@@ -1,7 +1,12 @@
 #include "RenderTask.h"
 
-RenderTask::RenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, LPCTSTR psoName, COMMAND_INTERFACE_TYPE interfaceType)
-	:DX12Task(device, interfaceType)
+RenderTask::RenderTask(
+	ID3D12Device5* device,
+	RootSignature* rootSignature,
+	LPCWSTR VSName, LPCWSTR PSName,
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds,
+	LPCTSTR psoName)
+	:DX12Task(device, COMMAND_INTERFACE_TYPE::DIRECT_TYPE)
 {
 	for (auto gpsd : *gpsds)
 		this->pipelineStates.push_back(new GraphicsState(device, rootSignature, VSName, PSName, gpsd, psoName));
@@ -29,11 +34,6 @@ void RenderTask::SetRenderComponents(std::vector<std::pair<	component::MeshCompo
 															component::TransformComponent*>>*renderComponents)
 {
 	this->renderComponents = *renderComponents;
-}
-
-void RenderTask::SetdirectionalLightComponents(std::vector<component::DirectionalLightComponent*>* dirLightComponents)
-{
-	this->dirLightComponents = *dirLightComponents;
 }
 
 void RenderTask::SetCamera(Camera* camera)

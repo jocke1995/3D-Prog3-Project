@@ -3,7 +3,7 @@
 Mesh::Mesh(	ID3D12Device5* device,
 			std::vector<Vertex> vertices,
 			std::vector<unsigned int> indices,
-			UINT descriptorHeapIndex_SRV)
+			unsigned int descriptorHeapIndex_SRV)
 {
 	this->vertices = vertices;
 	this->indices = indices;
@@ -22,11 +22,40 @@ Mesh::Mesh(	ID3D12Device5* device,
 	this->CreateIndexBufferView();
 }
 
+Mesh::Mesh(const Mesh* other)
+{
+	this->isCopied = true;
+
+	// TODO: use the same vertices instead of copy
+	this->vertices = other->vertices;
+	this->indices = other->indices;
+
+	this->slotInfo = new SlotInfo();
+	this->slotInfo->vertexDataIndex = other->slotInfo->vertexDataIndex;
+	this->slotInfo->textureAmbient  = other->slotInfo->textureAmbient;
+	this->slotInfo->textureDiffuse  = other->slotInfo->textureDiffuse;
+	this->slotInfo->textureSpecular = other->slotInfo->textureSpecular;
+	this->slotInfo->textureNormal   = other->slotInfo->textureNormal;
+	this->slotInfo->textureEmissive = other->slotInfo->textureEmissive;
+
+	this->descriptorHeapIndex_SRV = other->descriptorHeapIndex_SRV;
+	this->slotInfo->vertexDataIndex = other->descriptorHeapIndex_SRV;
+
+	this->resourceVertices = other->resourceVertices;
+	this->resourceIndices = other->resourceIndices;
+
+	this->indexBufferView = other->indexBufferView;
+}
+
 Mesh::~Mesh()
 {
 	delete this->slotInfo;
-	delete this->resourceVertices;
-	delete this->resourceIndices;
+
+	if (this->isCopied == false)
+	{
+		delete this->resourceVertices;
+		delete this->resourceIndices;
+	}
 }
 
 void Mesh::SetTexture(TEXTURE_TYPE textureType, Texture* texture)

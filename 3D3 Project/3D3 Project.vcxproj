@@ -185,10 +185,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ECS\Components\Lights\PointLightComponent.cpp" />
+    <ClCompile Include="src\ECS\Components\Lights\SpotLightComponent.cpp" />
+    <ClCompile Include="src\ECS\Components\Lights\Light.cpp" />
+    <ClCompile Include="src\Engine\ConstantBufferUpload.cpp" />
+    <ClCompile Include="src\Engine\ConstantBufferDefault.cpp" />
+    <ClCompile Include="src\Engine\CopyLightsTask.cpp" />
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Engine\LightConstantBufferPool.cpp" />
     <ClCompile Include="src\ECS\Components\MeshComponent.cpp" />
     <ClCompile Include="src\Engine\ComputeState.cpp" />
     <ClCompile Include="src\Engine\GraphicsState.cpp" />
-    <ClCompile Include="src\ECS\Components\DirectionalLightComponent.cpp" />
+    <ClCompile Include="src\ECS\Components\Lights\DirectionalLightComponent.cpp" />
     <ClCompile Include="src\ECS\Scene.cpp" />
     <ClCompile Include="src\ECS\Entity.cpp" />
     <ClCompile Include="src\ECS\Components\Component.cpp" />
@@ -231,11 +239,19 @@
     <ClCompile Include="src\Engine\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\Components\Lights\PointLightComponent.h" />
+    <ClInclude Include="src\ECS\Components\Lights\SpotLightComponent.h" />
+    <ClInclude Include="src\ECS\Components\Lights\Light.h" />
+    <ClInclude Include="src\Engine\ConstantBufferUpload.h" />
+    <ClInclude Include="src\Engine\ConstantBufferDefault.h" />
+    <ClInclude Include="src\Engine\CopyLightsTask.h" />
+    <ClInclude Include="src\Engine\ConstantBuffer.h" />
+    <ClInclude Include="src\Engine\LightConstantBufferPool.h" />
     <ClInclude Include="src\ECS\Components\MeshComponent.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Engine\ComputeState.h" />
     <ClInclude Include="src\Engine\GraphicsState.h" />
-    <ClInclude Include="src\ECS\Components\DirectionalLightComponent.h" />
+    <ClInclude Include="src\ECS\Components\Lights\DirectionalLightComponent.h" />
     <ClInclude Include="src\ECS\Scene.h" />
     <ClInclude Include="src\ECS\Entity.h" />
     <ClInclude Include="src\ECS\Components\Component.h" />
@@ -279,6 +295,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\LightCalculations.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

@@ -1,7 +1,12 @@
 #include "BlendRenderTask.h"
 
-BlendRenderTask::BlendRenderTask(ID3D12Device5* device, RootSignature* rootSignature, LPCWSTR VSName, LPCWSTR PSName, std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds, LPCTSTR psoName, COMMAND_INTERFACE_TYPE interfaceType)
-	:RenderTask(device, rootSignature, VSName, PSName, gpsds, psoName, interfaceType)
+BlendRenderTask::BlendRenderTask(	
+	ID3D12Device5* device,
+	RootSignature* rootSignature,
+	LPCWSTR VSName, LPCWSTR PSName,
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*>* gpsds,
+	LPCTSTR psoName)
+	:RenderTask(device, rootSignature, VSName, PSName, gpsds, psoName)
 {
 	
 }
@@ -46,8 +51,10 @@ void BlendRenderTask::Execute()
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create a CB_PER_FRAME struct
-	CB_PER_FRAME perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
-	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME) / sizeof(UINT), &perFrame, 0);
+	CB_PER_FRAME_STRUCT perFrame = { camera->GetPosition().x, camera->GetPosition().y, camera->GetPosition().z };
+	commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_FRAME_CONSTANTS, sizeof(CB_PER_FRAME_STRUCT) / sizeof(UINT), &perFrame, 0);
+
+	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources[0]->GetGPUVirtualAdress());
 
 	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
 	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
@@ -59,7 +66,7 @@ void BlendRenderTask::Execute()
 		component::TransformComponent* tc = this->renderComponents.at(i).second;
 
 		// Check if the renderComponent is to be drawn in Blend
-		if (mc->GetDrawFlag() & DrawOptions::Blend)
+		if (mc->GetDrawFlag() & DRAW_FLAG::Blend)
 		{
 			// Draw for every mesh the MeshComponent has
 			for (unsigned int j = 0; j < mc->GetNrOfMeshes(); j++)
@@ -80,9 +87,9 @@ void BlendRenderTask::Execute()
 				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
 
 				// Create a CB_PER_OBJECT struct
-				CB_PER_OBJECT perObject = { wTransposed, WVPTransposed, *info };
+				CB_PER_OBJECT_STRUCT perObject = { wTransposed, WVPTransposed, *info };
 
-				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT) / sizeof(UINT), &perObject, 0);
+				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT_STRUCT) / sizeof(UINT), &perObject, 0);
 
 				commandList->IASetIndexBuffer(mc->GetMesh(j)->GetIndexBufferView());
 				// Draw each object twice with different PSO 

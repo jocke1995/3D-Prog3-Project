@@ -21,8 +21,8 @@ public:
 	Texture();
 	~Texture();
 	
-	bool Init(std::wstring filePath, ID3D12Device1* device, UINT descriptorHeapIndex_SRV);
-	void UploadTextureData(ID3D12Device1* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue);
+	bool Init(std::wstring filePath, ID3D12Device5* device, UINT descriptorHeapIndex_SRV);
+	void UploadTextureData(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue);
 
 	// Call only once! Todo: bad code, fix fix fix
 	void Bind();
@@ -45,7 +45,7 @@ private:
 	D3D12_RESOURCE_DESC resourceDescription = {};
 	Resource* resourceDefaultHeap = nullptr;
 	Resource* resourceUploadHeap = nullptr;
-	bool CreateTexture(std::wstring filePath, ID3D12Device1* device, UINT descriptorHeapIndex_SRV);
+	bool CreateTexture(std::wstring filePath, ID3D12Device5* device, UINT descriptorHeapIndex_SRV);
 };
 
 #endif

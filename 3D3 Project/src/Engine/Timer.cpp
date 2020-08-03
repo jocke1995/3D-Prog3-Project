@@ -23,7 +23,7 @@ void Timer::Update()
 
     // Set limit to the updates on the window title
     std::chrono::duration<double> elapsed_timeFps = this->timeNow - this->timeLastTitleUpdate;
-    if (elapsed_timeFps.count() >= 1.0)
+    if (elapsed_timeFps.count() >= 0.1)
     {
         std::string fpsString = std::to_string(int(1.0 / this->dt));
         std::wstring tmp = std::wstring(fpsString.begin(), fpsString.end());

@@ -1,4 +1,4 @@
-#include "../structs.h"
+#include "LightCalculations.hlsl"
 
 struct VS_OUT
 {
@@ -8,48 +8,64 @@ struct VS_OUT
 	float3x3 tbn	: TBN;
 };
 
-ConstantBuffer<CB_PER_FRAME> cbPerFrame : register(b1);
-ConstantBuffer<CB_DirectionalLight> dirLight[] : register(b3);
+ConstantBuffer<CB_PER_OBJECT_STRUCT> perObject : register(b0);
+ConstantBuffer<CB_PER_FRAME_STRUCT> cbPerFrame : register(b1);
+ConstantBuffer<CB_PER_SCENE_STRUCT> cbPerScene : register(b2);
 
-ConstantBuffer<CB_PER_OBJECT> transform : register(b0);
+ConstantBuffer<DirectionalLight> dirLight[]    : register(b3, space0);
+ConstantBuffer<PointLight> pointLight[]		   : register(b3, space1);
+ConstantBuffer<SpotLight> spotLight[]		   : register(b3, space2);
+
 Texture2D textures[] : register (t0);
 SamplerState samLinear : register (s0);
 
 float4 PS_main(VS_OUT input) : SV_TARGET0
 {
 	float3 camPos = cbPerFrame.camPos;
+	float3 finalColor = float3(0.0f, 0.0f, 0.0f);
 
-	float4 lightPos = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].position;
-	float4 lightColor = float4(1.0f, 1.0f, 1.0f, 1.0f); //dirLight[10].color;
-	float4 materialColor = textures[transform.info.textureDiffuse].Sample(samLinear, input.uv);
+	// Sample from textures
+	float4 ambientMap  = textures[perObject.info.textureAmbient ].Sample(samLinear, input.uv);
+	float4 diffuseMap  = textures[perObject.info.textureDiffuse ].Sample(samLinear, input.uv);
+	float4 specularMap = textures[perObject.info.textureSpecular].Sample(samLinear, input.uv);
+	float4 emissiveMap = textures[perObject.info.textureEmissive].Sample(samLinear, input.uv);
+	float4 normalMap   = textures[perObject.info.textureNormal  ].Sample(samLinear, input.uv);
 
-	// Sample from normalMap
-	float4 normalMap = textures[transform.info.textureNormal].Sample(samLinear, input.uv);
 	normalMap = (2.0f * normalMap) - 1.0f;
-	float3 normal = normalize(mul(normalMap.xyz, input.tbn));
+	float4 normal = float4(normalize(mul(normalMap.xyz, input.tbn)), 1.0f);
 
-	// Ambient
-	float4 ambient = materialColor * float4(0.3f, 0.3f, 0.3f, 1.0f);
+	// DirectionalLight contributions
+	for (unsigned int i = 0; i < cbPerScene.Num_Dir_Lights; i++)
+	{
+		finalColor += CalcDirLight(dirLight[cbPerScene.dirLightIndices[i].x], camPos, input.worldPos.xyz,
+			ambientMap.rgb,
+			diffuseMap.rgb,
+			specularMap.rgb,
+			normal.rgb);
+	}
 
-	// Diffuse
-	float4 lightDir = normalize(lightPos - input.worldPos);
-	float alpha = max(dot(normal, lightDir), 0.0f);
-	float4 diffuse = materialColor * lightColor * alpha;
+	// PointLight contributions
+	for (unsigned int i = 0; i < cbPerScene.Num_Point_Lights; i++)
+	{
+		finalColor += CalcPointLight(pointLight[cbPerScene.pointLightIndices[i].x], camPos, input.worldPos.xyz,
+			ambientMap.rgb,
+			diffuseMap.rgb,
+			specularMap.rgb,
+			normal.rgb);
+	}
 
-	// Specular
-	float3 vecToCam = normalize(camPos - input.worldPos.xyz);
-	float3 reflection = normalize(reflect(normalize(-lightDir.xyz), normalize(normal)));
-	float spec = pow(max(dot(reflection, vecToCam), 0.0), 100);
-	float3 finalSpecular = materialColor * lightColor * spec;
+	// SpotLight  contributions
+	for (unsigned int i = 0; i < cbPerScene.Num_Spot_Lights; i++)
+	{
+		finalColor += CalcSpotLight(spotLight[cbPerScene.spotLightIndices[i].x], camPos, input.worldPos.xyz,
+			ambientMap.rgb,
+			diffuseMap.rgb,
+			specularMap.rgb,
+			normal.rgb);
+	}
 
-	// Attenuation
-	float distancePixelToLight = length(lightPos - input.worldPos.xyz);
-	float attenuation = 1.0f / (1.0f + (0.1 * distancePixelToLight) + (0.01 * pow(distancePixelToLight, 2)));
-
-	// FinalColor
-	float blendFactor = 0.2f;
-	float4 finalColor = float4(ambient.rgb + attenuation * (diffuse.rgb + finalSpecular.rgb), blendFactor);
-
+	finalColor += emissiveMap.rgb;
 	finalColor = saturate(finalColor);
-	return finalColor;
+	float blendFactor = 0.4f;
+	return float4(finalColor.rgb, blendFactor);
 }

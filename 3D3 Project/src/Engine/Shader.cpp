@@ -39,6 +39,8 @@ void Shader::CompileShader()
 		shaderModelTarget = "cs_5_1";
 	}
 
+	// shadelModelTarget = fx_5_0
+
 	ID3DBlob* errorMessages = nullptr;
 
 
@@ -58,7 +60,7 @@ void Shader::CompileShader()
 
 	if (blob == nullptr)
 	{
-		Log::PrintSeverity(Log::Severity::CRITICAL, "blob is nullptr when loading shader\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "blob is nullptr when loading shader with path: %S\n", this->path);
 	}
 
 	if (FAILED(hr) && errorMessages)

@@ -36,6 +36,15 @@
     <Filter Include="ECS\Components">
       <UniqueIdentifier>{39b6045e-c787-43ee-ae90-aa98ce583844}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ConstantBuffer">
+      <UniqueIdentifier>{f1997ab7-f2fc-4a98-9f27-40ee11f527c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PipelineState">
+      <UniqueIdentifier>{c4815bf9-13b9-441b-b453-86fd01d92d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ECS\Components\Lights">
+      <UniqueIdentifier>{65526731-b2f7-4c7b-b7d5-4f80f8432d0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -48,9 +57,6 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\DescriptorHeap.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\PipelineState.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer.cpp">
@@ -125,16 +131,7 @@
     <ClCompile Include="src\Engine\Timer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\ComputeState.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\GraphicsState.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\ECS\Components\Component.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ECS\Components\DirectionalLightComponent.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\ECS\Entity.cpp">
@@ -155,6 +152,42 @@
     <ClCompile Include="src\Engine\Texture.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\CopyLightsTask.cpp">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBufferUpload.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBufferDefault.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ComputeState.cpp">
+      <Filter>Engine\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\GraphicsState.cpp">
+      <Filter>Engine\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\PipelineState.cpp">
+      <Filter>Engine\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\LightConstantBufferPool.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\Lights\DirectionalLightComponent.cpp">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\Lights\Light.cpp">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\Lights\SpotLightComponent.cpp">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\Lights\PointLightComponent.cpp">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -167,9 +200,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\DescriptorHeap.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\PipelineState.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer.h">
@@ -247,16 +277,7 @@
     <ClInclude Include="src\Engine\Timer.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\GraphicsState.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\ComputeState.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\ECS\Components\Component.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ECS\Components\DirectionalLightComponent.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\ECS\Entity.h">
@@ -278,6 +299,42 @@
     <ClInclude Include="src\Engine\Texture.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\CopyLightsTask.h">
+      <Filter>Engine\Tasks\Copy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ConstantBufferUpload.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ConstantBufferDefault.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ConstantBuffer.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ComputeState.h">
+      <Filter>Engine\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\GraphicsState.h">
+      <Filter>Engine\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\PipelineState.h">
+      <Filter>Engine\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\LightConstantBufferPool.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\Lights\DirectionalLightComponent.h">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\Lights\Light.h">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\Lights\SpotLightComponent.h">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\Lights\PointLightComponent.h">
+      <Filter>ECS\Components\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
@@ -290,6 +347,9 @@
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\BlendVertex.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\LightCalculations.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

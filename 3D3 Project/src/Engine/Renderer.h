@@ -6,17 +6,21 @@
 #include "SwapChain.h"
 #include "ThreadPool.h"
 #include "Camera.h"
+#include "LightConstantBufferPool.h"
+#include "ConstantBufferUpload.h"
 #include "../ECS/Scene.h"
 
 // Graphics
 #include "ForwardRenderTask.h"
 #include "BlendRenderTask.h"
 
-// Copy (Later include the specific task, not this)
-#include "CopyTask.h"
+// Copy
+#include "CopyLightsTask.h"
 
 // Compute (Later include the specific task, not this)
 #include "ComputeTask.h"
+
+extern unsigned int globalDescriptorHeapIndex;
 
 class Renderer
 {
@@ -24,23 +28,22 @@ public:
 	Renderer();
 	~Renderer();
 
+	// Call once
 	void InitD3D12(const HWND *hwnd, HINSTANCE hInstance);
 
 	std::vector<Mesh*>* LoadModel(std::wstring path);
 	Texture* LoadTexture(std::wstring path);
-	void CreateConstantBufferView(unsigned int descriptorHeapIndex, unsigned int size, Resource* resource);
 
+	// Change active scene
 	void SetSceneToDraw(Scene* scene);
-	//bool AddEntityToDraw(Entity* entity);
-	//bool RemoveEntityToDraw(Entity* entity);
 
+	// Call each frame
 	void UpdateScene(double dt);
-	void SortEntitiesByDistance();
+	void SortObjectsByDistance();
 	void Execute();
 
 	ThreadPool* GetThreadPool() const;
 	Camera* GetCamera() const;
-	ID3D12Device5* GetDevice() const;
 private:
 	// Camera
 	Camera* camera = nullptr;
@@ -80,11 +83,14 @@ private:
 	// Group of components that's needed for rendering:
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	void SetRenderTasksRenderComponents();
-	std::vector<component::DirectionalLightComponent*> dirLightComponents;
-	void SetRenderTasksDirLightComponents();
+
+	std::vector<std::pair<component::DirectionalLightComponent*, ConstantBufferDefault*>> directionalLights;
+	std::vector<std::pair<component::PointLightComponent*, ConstantBufferDefault*>> pointLights;
+	std::vector<std::pair<component::SpotLightComponent*, ConstantBufferDefault*>> spotLights;
 
 	// Current scene to be drawn
 	Scene* currActiveScene = nullptr;
+	ConstantBufferUpload* CB_PER_SCENE = nullptr;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
@@ -98,7 +104,7 @@ private:
 	// Views
 	void CreateShaderResourceView(	unsigned int descriptorHeapIndex,
 									D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
-									Resource* resource);
+									const Resource* resource);
 
 	bool CreateSRVForTexture(Texture* texture);
 
@@ -107,6 +113,8 @@ private:
 	ID3D12Fence1* fenceFrame = nullptr;
 	UINT64 fenceFrameValue = 0;
 	void CreateFences();
+
+	LightConstantBufferPool* lightCBPool = nullptr;
 
 	void WaitForFrame();
 
