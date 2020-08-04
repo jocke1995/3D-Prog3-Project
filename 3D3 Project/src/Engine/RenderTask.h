@@ -33,11 +33,11 @@ public:
 													component::TransformComponent*>>* renderComponents);
 
 	void SetCamera(Camera* camera);
-	void SetDescriptorHeap_CBV_UAV_SRV(DescriptorHeap* dh);
-	void SetDepthBuffer(DepthBuffer* depthBuffer);
+	void SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE type, DescriptorHeap* dh);
+
 
 protected:
-	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
+	std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> descriptorHeaps;
 
 	std::map<std::string, Resource*> resources;
 	std::vector<RenderTarget*> renderTargets;

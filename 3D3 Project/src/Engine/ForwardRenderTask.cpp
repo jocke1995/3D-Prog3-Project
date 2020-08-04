@@ -24,11 +24,12 @@ void FowardRenderTask::Execute()
 
 	commandList->SetGraphicsRootSignature(this->rootSig);
 	
-	ID3D12DescriptorHeap* descriptorHeap_CBV_UAV_SRV = this->descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
-	commandList->SetDescriptorHeaps(1, &descriptorHeap_CBV_UAV_SRV);
+	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV];
+	ID3D12DescriptorHeap* d3d12DescriptorHeap = descriptorHeap_CBV_UAV_SRV->GetID3D12DescriptorHeap();
+	commandList->SetDescriptorHeaps(1, &d3d12DescriptorHeap);
 
-	commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
-	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, this->descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
+	commandList->SetGraphicsRootDescriptorTable(RS::dtCBV, descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
+	commandList->SetGraphicsRootDescriptorTable(RS::dtSRV, descriptorHeap_CBV_UAV_SRV->GetGPUHeapAt(0));
 
 	// Change state on front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
@@ -36,9 +37,8 @@ void FowardRenderTask::Execute()
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	// 0 is the swapchain (which is a renderTarget)
-	DescriptorHeap* renderTargetHeap = this->renderTargets[0]->GetDescriptorHeap();
-	DescriptorHeap* depthBufferHeap = this->depthBuffer->GetDescriptorHeap();
+	DescriptorHeap* renderTargetHeap = this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV];
+	DescriptorHeap* depthBufferHeap  = this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV];
 
 	D3D12_CPU_DESCRIPTOR_HANDLE cdh = renderTargetHeap->GetCPUHeapAt(this->backBufferIndex);
 	D3D12_CPU_DESCRIPTOR_HANDLE dsh = depthBufferHeap->GetCPUHeapAt(0);

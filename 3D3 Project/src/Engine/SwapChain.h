@@ -6,7 +6,11 @@
 class SwapChain : public RenderTarget
 {
 public:
-	SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue* commandQueue);
+	SwapChain(
+		ID3D12Device5* device,
+		const HWND* hwnd,
+		ID3D12CommandQueue* commandQueue,
+		DescriptorHeap* descriptorHeap_RTV);
 	~SwapChain();
 	
 

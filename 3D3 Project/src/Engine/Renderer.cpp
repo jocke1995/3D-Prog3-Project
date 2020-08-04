@@ -37,6 +37,10 @@ Renderer::~Renderer()
 	delete this->depthBuffer;
 	Log::Print("11\n");
 	delete this->descriptorHeap_CBV_UAV_SRV;
+	Log::Print("11.5\n");
+	delete this->descriptorHeap_RTV;
+	Log::Print("11.75\n");
+	delete this->descriptorHeap_DSV;
 	Log::Print("12\n");
 
 	for (auto computeTask : this->computeTasks)
@@ -82,6 +86,9 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Create CommandQueues (direct and copy)
 	this->CreateCommandQueues();
 
+	// Create DescriptorHeap
+	this->InitDescriptorHeaps();
+
 	// Fence for WaitForFrame();
 	this->CreateFences();
 
@@ -98,9 +105,6 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	
 	// Create Rootsignature
 	this->CreateRootSignature();
-
-	// Create DescriptorHeap
-	this->InitDescriptorHeap();
 
 	// Init assetloader by giving it a pointer to the device
 	AssetLoader::Get(this->device5);
@@ -425,7 +429,8 @@ void Renderer::Execute()
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
+		//this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
+		renderTask->Execute();
 	}
 
 	/* RENDER QUEUE --------------------------------------------------------------- */
@@ -579,12 +584,19 @@ void Renderer::CreateCommandQueues()
 
 void Renderer::CreateSwapChain(const HWND *hwnd)
 {
-	this->swapChain = new SwapChain(device5, hwnd, this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+	this->swapChain = new SwapChain(
+		device5,
+		hwnd,
+		this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE],
+		this->descriptorHeap_RTV);
 }
 
 void Renderer::CreateDepthBuffer()
 {
-	this->depthBuffer = new DepthBuffer(this->device5, 800, 600);
+	this->depthBuffer = new DepthBuffer(
+		this->device5,
+		800, 600,	// width, height
+		this->descriptorHeap_DSV);
 	//this->depthBuffer = new DepthBuffer(this->device5, 1920, 1080);
 }
 
@@ -647,8 +659,9 @@ void Renderer::InitRenderTasks()
 		L"ForwardRenderingPSO");
 
 	forwardRenderTask->AddRenderTarget(this->swapChain);
-	forwardRenderTask->SetDepthBuffer(this->depthBuffer);
-	forwardRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
+	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV, this->descriptorHeap_CBV_UAV_SRV);
+	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::RTV, this->descriptorHeap_RTV);
+	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::DSV, this->descriptorHeap_DSV);
 	forwardRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
 	forwardRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
 
@@ -740,8 +753,9 @@ void Renderer::InitRenderTasks()
 		L"BlendPSO");
 
 	blendRenderTask->AddRenderTarget(this->swapChain);
-	blendRenderTask->SetDepthBuffer(this->depthBuffer);
-	blendRenderTask->SetDescriptorHeap_CBV_UAV_SRV(this->descriptorHeap_CBV_UAV_SRV);
+	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV, this->descriptorHeap_CBV_UAV_SRV);
+	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::RTV, this->descriptorHeap_RTV);
+	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::DSV, this->descriptorHeap_DSV);
 	blendRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
 	blendRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
 
@@ -786,9 +800,11 @@ void Renderer::SetRenderTasksRenderComponents()
 	}
 }
 
-void Renderer::InitDescriptorHeap()
+void Renderer::InitDescriptorHeaps()
 {
 	this->descriptorHeap_CBV_UAV_SRV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
+	this->descriptorHeap_RTV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::RTV);
+	this->descriptorHeap_DSV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::DSV);
 }
 
 void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex,

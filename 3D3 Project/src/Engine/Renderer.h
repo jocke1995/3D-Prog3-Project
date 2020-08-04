@@ -65,7 +65,7 @@ private:
 	void CreateCommandQueues();
 
 	// Swapchain
-	RenderTarget* swapChain = nullptr;
+	SwapChain* swapChain = nullptr;
 	void CreateSwapChain(const HWND *hwnd);
 
 	// Depthbuffer
@@ -109,7 +109,9 @@ private:
 	
 	// DescriptorHeap
 	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
-	void InitDescriptorHeap();
+	DescriptorHeap* descriptorHeap_RTV = nullptr;
+	DescriptorHeap* descriptorHeap_DSV = nullptr;
+	void InitDescriptorHeaps();
 
 	// Views
 	void CreateShaderResourceView(	

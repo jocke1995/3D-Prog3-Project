@@ -11,7 +11,6 @@ public:
 	RenderTarget();
 	virtual ~RenderTarget();
 
-	DescriptorHeap* GetDescriptorHeap() const;
 	ID3D12Resource1* GetResource(UINT index) const;
 	const D3D12_VIEWPORT* GetViewPort() const;
 	const D3D12_RECT* GetScissorRect() const;
@@ -19,8 +18,6 @@ public:
 protected:
 	void CreateViewport(unsigned int width, unsigned int height);
 	void CreateScissorRect(unsigned int width, unsigned int height);
-	
-	DescriptorHeap* descriptorHeap = nullptr;
 
 	std::vector<ID3D12Resource1*> resources;
 

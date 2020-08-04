@@ -1,7 +1,13 @@
 #include "Resource.h"
 
-Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_TYPE type, std::wstring name, D3D12_RESOURCE_DESC* resourceDescInput)
+Resource::Resource(
+	ID3D12Device* device,
+	unsigned long long entrySize,
+	RESOURCE_TYPE type,
+	std::wstring name)
 {
+	this->entrySize = entrySize;
+	this->type = type;
 	this->name = name;
 
 	D3D12_HEAP_TYPE d3d12HeapType;
@@ -19,52 +25,36 @@ Resource::Resource(ID3D12Device* device, unsigned long long entrySize, RESOURCE_
 		break;
 	}
 
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = d3d12HeapType;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.CreationNodeMask = 1; //used when multi-gpu
-	heapProperties.VisibleNodeMask = 1; //used when multi-gpu
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	this->SetupHeapProperties(d3d12HeapType);
 
 	D3D12_RESOURCE_DESC resourceDesc = {};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resourceDesc.Width = this->entrySize;
+	resourceDesc.Height = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	// if the input parameter was unspecified
-	if (resourceDescInput == nullptr)
-	{
-		// Apply default settings
-		this->entrySize = entrySize;
-		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		resourceDesc.Width = this->entrySize;
-		resourceDesc.Height = 1;
-		resourceDesc.DepthOrArraySize = 1;
-		resourceDesc.MipLevels = 1;
-		resourceDesc.SampleDesc.Count = 1;
-		resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	}
-	else
-	{
-		// Use specified resource description
-		this->entrySize = resourceDescInput->Width;
-		resourceDesc = *resourceDescInput;
-	}
-	
+	this->CreateResource(device, &resourceDesc, nullptr, startState);
+}
 
-	HRESULT hr = device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		startState,
-		nullptr,
-		IID_PPV_ARGS(&this->resource)
-	);
+Resource::Resource(
+	ID3D12Device* device,
+	D3D12_RESOURCE_DESC* resourceDesc,
+	D3D12_CLEAR_VALUE* clearValue,
+	std::wstring name,
+	D3D12_RESOURCE_STATES startState)
+{
+	this->type = RESOURCE_TYPE::DEFAULT;
+	this->entrySize = resourceDesc->Width * resourceDesc->Height;
+	this->name = name;
 
-	if (FAILED(hr))
-	{
-		std::string cbName(this->name.begin(), this->name.end());
-		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create Resource with name: \'%s\'\n", cbName.c_str());
-	}
+	D3D12_HEAP_TYPE d3d12HeapType = D3D12_HEAP_TYPE_DEFAULT;
 
-	this->resource->SetName(name.c_str());
+	this->SetupHeapProperties(d3d12HeapType);
+
+	this->CreateResource(device, resourceDesc, clearValue, startState);
 }
 
 Resource::~Resource()
@@ -72,7 +62,7 @@ Resource::~Resource()
 	SAFE_RELEASE(&this->resource);
 }
 
-size_t Resource::GetSize() const
+unsigned int Resource::GetSize() const
 {
 	return this->entrySize;
 }
@@ -89,6 +79,12 @@ D3D12_GPU_VIRTUAL_ADDRESS Resource::GetGPUVirtualAdress() const
 
 void Resource::SetData(const void* data, unsigned int subResourceIndex)
 {
+	if (type == RESOURCE_TYPE::DEFAULT)
+	{
+		Log::PrintSeverity(Log::Severity::WARNING, "Trying to Map into default heap\n");
+		return;
+	}
+
 	void* dataBegin = nullptr;
 
 	// Set up the heap data
@@ -101,6 +97,12 @@ void Resource::SetData(const void* data, unsigned int subResourceIndex)
 
 void Resource::SetData(const void* data, unsigned int subResourceIndex) const
 {
+	if (type == RESOURCE_TYPE::DEFAULT)
+	{
+		Log::PrintSeverity(Log::Severity::WARNING, "Trying to Map into default heap\n");
+		return;
+	}
+
 	void* dataBegin = nullptr;
 
 	// Set up the heap data
@@ -109,4 +111,37 @@ void Resource::SetData(const void* data, unsigned int subResourceIndex) const
 	this->resource->Map(subResourceIndex, &range, &dataBegin); // Get a dataBegin pointer where we can copy data to
 	memcpy(dataBegin, data, this->entrySize);
 	this->resource->Unmap(subResourceIndex, nullptr);
+}
+
+void Resource::SetupHeapProperties(D3D12_HEAP_TYPE heapType)
+{
+	this->heapProperties.Type = heapType;
+	this->heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	this->heapProperties.CreationNodeMask = 1; //used when multi-gpu
+	this->heapProperties.VisibleNodeMask = 1; //used when multi-gpu
+	this->heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+}
+
+void Resource::CreateResource(
+	ID3D12Device* device,
+	D3D12_RESOURCE_DESC* resourceDesc,
+	D3D12_CLEAR_VALUE* clearValue,
+	D3D12_RESOURCE_STATES startState)
+{
+	HRESULT hr = device->CreateCommittedResource(
+		&this->heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		resourceDesc,
+		startState,
+		clearValue,
+		IID_PPV_ARGS(&this->resource)
+	);
+
+	if (FAILED(hr))
+	{
+		std::string cbName(this->name.begin(), this->name.end());
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create Resource with name: \'%s\'\n", cbName.c_str());
+	}
+
+	this->resource->SetName(name.c_str());
 }

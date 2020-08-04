@@ -3,9 +3,10 @@
 
 enum class DESCRIPTOR_HEAP_TYPE
 {
+	CBV_UAV_SRV,
 	RTV,
 	DSV,
-	CBV_UAV_SRV
+	NUM_DESCRIPTORHEAP_TYPES
 };
 
 class DescriptorHeap

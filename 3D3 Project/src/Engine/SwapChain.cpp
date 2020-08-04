@@ -1,8 +1,11 @@
 #include "SwapChain.h"
 
-SwapChain::SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue* commandQueue)
+SwapChain::SwapChain(
+	ID3D12Device5* device,
+	const HWND* hwnd,
+	ID3D12CommandQueue* commandQueue,
+	DescriptorHeap* descriptorHeap_RTV)
 {
-	this->descriptorHeap = new DescriptorHeap(device, DESCRIPTOR_HEAP_TYPE::RTV);
 	this->resources.resize(NUM_SWAP_BUFFERS);
 
 	RECT rect;
@@ -65,7 +68,7 @@ SwapChain::SwapChain(ID3D12Device5* device, const HWND* hwnd, ID3D12CommandQueue
 			Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to GetBuffer from RenderTarget to Swapchain\n");
 		}
 
-		D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(i);
+		D3D12_CPU_DESCRIPTOR_HANDLE cdh = descriptorHeap_RTV->GetCPUHeapAt(i);
 		device->CreateRenderTargetView(this->resources[i], nullptr, cdh);
 	}
 

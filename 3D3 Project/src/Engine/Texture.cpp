@@ -147,10 +147,9 @@ bool Texture::Init(std::wstring filePath, ID3D12Device5* device, UINT descriptor
 
 	this->resourceDefaultHeap = new Resource(
 		device,
-		-1,	// Using specified resource Description, so this parameter wont be used
-		RESOURCE_TYPE::DEFAULT,
-		L"Resource_" + this->filePath,
-		&this->resourceDescription);
+		&this->resourceDescription,
+		nullptr,
+		L"Resource_" + this->filePath);
 
 	UINT64 textureUploadBufferSize;
 	device->GetCopyableFootprints(&this->resourceDescription,

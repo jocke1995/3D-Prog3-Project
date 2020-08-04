@@ -1,8 +1,10 @@
 #include "DepthBuffer.h"
 
-DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int height)
+DepthBuffer::DepthBuffer(
+	ID3D12Device5* device,
+	unsigned int width, unsigned int height,
+	DescriptorHeap* descriptorHeap_DSV)
 {
-	this->descriptorHeap = new DescriptorHeap(device, DESCRIPTOR_HEAP_TYPE::DSV);
 	this->width = width;
 	this->height = height;
 
@@ -48,7 +50,7 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create DepthBuffer!\n");
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap->GetCPUHeapAt(0);
+	D3D12_CPU_DESCRIPTOR_HANDLE cdh = descriptorHeap_DSV->GetCPUHeapAt(0);
 	device->CreateDepthStencilView(this->resource, &depthStencilDesc, cdh);
 
 	this->CreateViewport(width, height);
@@ -58,12 +60,6 @@ DepthBuffer::DepthBuffer(ID3D12Device5* device, unsigned int width, unsigned int
 DepthBuffer::~DepthBuffer()
 {
 	SAFE_RELEASE(&this->resource);
-	delete this->descriptorHeap;
-}
-
-DescriptorHeap* DepthBuffer::GetDescriptorHeap() const
-{
-	return this->descriptorHeap;
 }
 
 const D3D12_VIEWPORT* DepthBuffer::GetViewPort() const
