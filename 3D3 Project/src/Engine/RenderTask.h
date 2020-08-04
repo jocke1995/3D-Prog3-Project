@@ -7,7 +7,7 @@
 #include "RenderTarget.h"
 #include "Camera.h"
 #include "GraphicsState.h"
-#include "DescriptorHeap.h"
+#include "SwapChain.h"
 
 #include "../ECS/Components/MeshComponent.h"
 #include "../ECS/Components/TransformComponent.h"
@@ -34,22 +34,21 @@ public:
 
 	void SetCamera(Camera* camera);
 	void SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE type, DescriptorHeap* dh);
-
+	void SetSwapChain(SwapChain* swapChain);
 
 protected:
-	std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> descriptorHeaps;
+	
 
 	std::map<std::string, Resource*> resources;
 	std::vector<RenderTarget*> renderTargets;
-	std::vector<PipelineState*> pipelineStates;
-
-	DepthBuffer* depthBuffer = nullptr;
-	ID3D12RootSignature* rootSig = nullptr;
+	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	
 	Camera* camera = nullptr;
+	std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> descriptorHeaps;
+	SwapChain* swapChain = nullptr;
 
-	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
-
+	ID3D12RootSignature* rootSig = nullptr;
+	std::vector<PipelineState*> pipelineStates;
 };
 
 #endif

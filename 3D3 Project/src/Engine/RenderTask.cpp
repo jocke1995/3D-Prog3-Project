@@ -68,3 +68,8 @@ void RenderTask::SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE type, DescriptorHeap* dh
 	this->descriptorHeaps[type] = dh;
 }
 
+void RenderTask::SetSwapChain(SwapChain* swapChain)
+{
+	this->swapChain = swapChain;
+}
+

@@ -402,7 +402,7 @@ void Renderer::SortObjectsByDistance()
 
 void Renderer::Execute()
 {
-	IDXGISwapChain4* dx12SwapChain = ((SwapChain*)this->swapChain)->GetDX12SwapChain();
+	IDXGISwapChain4* dx12SwapChain = this->swapChain->GetDX12SwapChain();
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
 
@@ -583,9 +583,19 @@ void Renderer::CreateCommandQueues()
 
 void Renderer::CreateSwapChain(const HWND *hwnd)
 {
+	RECT rect;
+	unsigned int width = 0;
+	unsigned int height = 0;
+	if (GetWindowRect(*hwnd, &rect))
+	{
+		width = rect.right - rect.left;
+		height = rect.bottom - rect.top;
+	}
+
 	this->swapChain = new SwapChain(
 		device5,
 		hwnd,
+		width, height,
 		this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE],
 		this->descriptorHeap_RTV);
 }
@@ -657,7 +667,7 @@ void Renderer::InitRenderTasks()
 		&gpsdForwardRenderVector, 
 		L"ForwardRenderingPSO");
 
-	forwardRenderTask->AddRenderTarget(this->swapChain);
+	forwardRenderTask->SetSwapChain(this->swapChain);
 	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV, this->descriptorHeap_CBV_UAV_SRV);
 	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::RTV, this->descriptorHeap_RTV);
 	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::DSV, this->descriptorHeap_DSV);
@@ -751,7 +761,7 @@ void Renderer::InitRenderTasks()
 		&gpsdBlendVector,
 		L"BlendPSO");
 
-	blendRenderTask->AddRenderTarget(this->swapChain);
+	blendRenderTask->SetSwapChain(this->swapChain);
 	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV, this->descriptorHeap_CBV_UAV_SRV);
 	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::RTV, this->descriptorHeap_RTV);
 	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::DSV, this->descriptorHeap_DSV);

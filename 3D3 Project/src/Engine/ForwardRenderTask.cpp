@@ -19,6 +19,7 @@ void FowardRenderTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
+	ID3D12Resource1* swapChainResource = this->swapChain->GetDX12Resource(this->backBufferIndex);
 
 	this->commandInterface->Reset(this->commandInterfaceIndex);
 
@@ -33,7 +34,7 @@ void FowardRenderTask::Execute()
 
 	// Change state on front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-		this->renderTargets[0]->GetResource(this->backBufferIndex),
+		swapChainResource,
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
@@ -47,10 +48,12 @@ void FowardRenderTask::Execute()
 
 	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	commandList->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
+
+	int a = 15;
 	commandList->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	const D3D12_VIEWPORT* viewPort = this->renderTargets[0]->GetViewPort();
-	const D3D12_RECT* rect = this->renderTargets[0]->GetScissorRect();
+	const D3D12_VIEWPORT* viewPort = this->swapChain->GetViewPort();
+	const D3D12_RECT* rect = this->swapChain->GetScissorRect();
 	commandList->RSSetViewports(1, viewPort);
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -104,7 +107,7 @@ void FowardRenderTask::Execute()
 
 	// Ändra state på front/backbuffer
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-		this->renderTargets[0]->GetResource(this->backBufferIndex),
+		swapChainResource,
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT));
 

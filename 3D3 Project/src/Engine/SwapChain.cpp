@@ -3,24 +3,21 @@
 SwapChain::SwapChain(
 	ID3D12Device5* device,
 	const HWND* hwnd,
+	unsigned int width, unsigned int height,
 	ID3D12CommandQueue* commandQueue,
 	DescriptorHeap* descriptorHeap_RTV)
 {
-	this->resources.resize(NUM_SWAP_BUFFERS);
-
-	RECT rect;
-	if (GetWindowRect(*hwnd, &rect))
-	{
-		this->width = rect.right - rect.left;
-		this->height = rect.bottom - rect.top;
-	}
+	// Init resources (make sure they exist)
+	this->dx12Resources.resize(NUM_SWAP_BUFFERS);
+	this->width = width;
+	this->height = height;
 
 	IDXGIFactory4* factory = nullptr;
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&factory));
 
 	if (hr != S_OK)
 	{
-		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create DXGIFactory\n");
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create DXGIFactory for SwapChain\n");
 	}
 
 	//Create descriptor
@@ -60,29 +57,67 @@ SwapChain::SwapChain(
 	SAFE_RELEASE(&factory);
 
 	// Connect the renderTargets to the swapchain, so that the swapchain can easily swap between these two renderTargets
-	for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
+	for (unsigned int i = 0; i < NUM_SWAP_BUFFERS; i++)
 	{
-		HRESULT hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(&this->resources[i]));
-		if (hr != S_OK)
+		HRESULT hr = swapChain4->GetBuffer(i, IID_PPV_ARGS(&this->dx12Resources[i]));
+		if (FAILED(hr))
 		{
 			Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to GetBuffer from RenderTarget to Swapchain\n");
 		}
 
-		D3D12_CPU_DESCRIPTOR_HANDLE cdh = descriptorHeap_RTV->GetCPUHeapAt(i);
-		device->CreateRenderTargetView(this->resources[i], nullptr, cdh);
+		unsigned int dhIndex = descriptorHeap_RTV->GetNextDescriptorHeapIndex(1);
+		D3D12_CPU_DESCRIPTOR_HANDLE cdh = descriptorHeap_RTV->GetCPUHeapAt(dhIndex);
+		device->CreateRenderTargetView(this->dx12Resources[i], nullptr, cdh);
 	}
 
-	
-	this->CreateViewport(this->width, this->height);
-	this->CreateScissorRect(this->width, this->height);
+	this->CreateViewport();
+	this->CreateScissorRect();
 }
 
 SwapChain::~SwapChain()
 {
 	SAFE_RELEASE(&this->swapChain4);
+
+	for (unsigned int i = 0; i < NUM_SWAP_BUFFERS; i++)
+	{
+		SAFE_RELEASE(&this->dx12Resources[i]);
+	}
 }
 
 IDXGISwapChain4* SwapChain::GetDX12SwapChain() const
 {
 	return this->swapChain4;
+}
+
+ID3D12Resource1* SwapChain::GetDX12Resource(unsigned int index) const
+{
+	return this->dx12Resources[index];
+}
+
+const D3D12_VIEWPORT* SwapChain::GetViewPort() const
+{
+	return &this->viewport;
+}
+
+const D3D12_RECT* SwapChain::GetScissorRect() const
+{
+	return &this->scissorRect;
+}
+
+void SwapChain::CreateViewport()
+{
+	this->viewport.TopLeftX = 0.0f;
+	this->viewport.TopLeftY = 0.0f;
+	this->viewport.Width = (float)this->width;
+	this->viewport.Height = (float)this->height;
+	this->viewport.MinDepth = 0.0f;
+	this->viewport.MaxDepth = 1.0f;
+}
+
+void SwapChain::CreateScissorRect()
+{
+	this->scissorRect.left = (long)0;
+	this->scissorRect.right = (long)this->width;
+	this->scissorRect.top = (long)0;
+	this->scissorRect.bottom = (long)this->height;
 }

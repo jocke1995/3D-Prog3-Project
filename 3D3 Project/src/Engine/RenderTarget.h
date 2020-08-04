@@ -7,25 +7,28 @@
 class RenderTarget
 {
 public:
-	RenderTarget(ID3D12Device5* device, unsigned int width, unsigned int height, unsigned int nrOf = 1);
-	RenderTarget();
+	// Use when creating renderTargets
+	RenderTarget(
+		ID3D12Device5* device,
+		unsigned int width, unsigned int height,
+		DescriptorHeap* descriptorHeap_RTV);
+
 	virtual ~RenderTarget();
 
-	ID3D12Resource1* GetResource(UINT index) const;
+	Resource* GetResource(unsigned int index) const;
 	const D3D12_VIEWPORT* GetViewPort() const;
 	const D3D12_RECT* GetScissorRect() const;
 
-protected:
-	void CreateViewport(unsigned int width, unsigned int height);
-	void CreateScissorRect(unsigned int width, unsigned int height);
-
-	std::vector<ID3D12Resource1*> resources;
+private:
+	std::vector<Resource*> resources;
 
 	unsigned int width = 0;
 	unsigned int height = 0;
 
 	D3D12_VIEWPORT viewport = {};
 	D3D12_RECT scissorRect = {};
+	void CreateViewport();
+	void CreateScissorRect();
 };
 
 #endif

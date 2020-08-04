@@ -26,6 +26,8 @@ public:
         std::wstring name = L"RESOURCE_NONAME",
         D3D12_RESOURCE_STATES startState = D3D12_RESOURCE_STATE_COMMON);
 
+    // Default Constructor
+    Resource() {};
     virtual ~Resource();
 
     virtual unsigned int GetSize() const;
