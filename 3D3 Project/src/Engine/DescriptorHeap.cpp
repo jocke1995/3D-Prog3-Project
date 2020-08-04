@@ -38,6 +38,26 @@ DescriptorHeap::~DescriptorHeap()
 	SAFE_RELEASE(&this->descriptorHeap);
 }
 
+void DescriptorHeap::SetCPUGPUHeapStart()
+{
+	this->CPUHeapStart = this->descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	this->GPUHeapStart = this->descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+}
+
+void DescriptorHeap::IncrementDescriptorHeapIndex()
+{
+	this->descriptorHeapIndex++;
+}
+
+unsigned int DescriptorHeap::GetNextDescriptorHeapIndex(unsigned int increment)
+{
+	unsigned int indexToReturn = this->descriptorHeapIndex;
+
+	this->descriptorHeapIndex += increment;
+
+	return indexToReturn;
+}
+
 const D3D12_DESCRIPTOR_HEAP_DESC* DescriptorHeap::GetDesc() const
 {
 	return &this->desc;
@@ -64,10 +84,4 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGPUHeapAt(UINT descriptorIndex)
 const UINT DescriptorHeap::GetHandleIncrementSize() const
 {
 	return this->handleIncrementSize;
-}
-
-void DescriptorHeap::SetCPUGPUHeapStart()
-{
-	this->CPUHeapStart = this->descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	this->GPUHeapStart = this->descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 }

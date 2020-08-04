@@ -25,8 +25,6 @@
 // Compute (Later include the specific task, not this)
 #include "ComputeTask.h"
 
-extern unsigned int globalDescriptorHeapIndex;
-
 class Renderer
 {
 public:
@@ -64,7 +62,7 @@ private:
 	std::map<COMMAND_INTERFACE_TYPE, ID3D12CommandQueue*> commandQueues;
 	void CreateCommandQueues();
 
-	// Swapchain
+	// Swapchain (RenderTargets)
 	SwapChain* swapChain = nullptr;
 	void CreateSwapChain(const HWND *hwnd);
 

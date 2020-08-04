@@ -1,6 +1,5 @@
 #include "Renderer.h"
 
-extern unsigned int globalDescriptorHeapIndex;
 Renderer::Renderer()
 {
 	this->renderTasks.resize(RENDER_TASK_TYPE::NR_OF_RENDERTASKS);
@@ -107,7 +106,7 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	this->CreateRootSignature();
 
 	// Init assetloader by giving it a pointer to the device
-	AssetLoader::Get(this->device5);
+	AssetLoader::Get(this->device5, this->descriptorHeap_CBV_UAV_SRV);
 	
 	// Pool to handle constantBuffers for the lights
 	this->lightCBPool = new LightConstantBufferPool(this->device5, this->descriptorHeap_CBV_UAV_SRV);
@@ -118,7 +117,7 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 		this->device5, 
 		CB_PER_SCENE_SizeAligned,
 		L"CB_PER_SCENE_DEFAULT",
-		globalDescriptorHeapIndex++,
+		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1),
 		this->descriptorHeap_CBV_UAV_SRV
 		);
 
@@ -128,7 +127,7 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 		this->device5,
 		CB_PER_Frame_SizeAligned,
 		L"CB_PER_FRAME_DEFAULT",
-		globalDescriptorHeapIndex++,
+		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1),
 		this->descriptorHeap_CBV_UAV_SRV
 	);
 

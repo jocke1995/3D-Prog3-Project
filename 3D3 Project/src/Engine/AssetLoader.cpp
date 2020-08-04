@@ -1,10 +1,9 @@
 #include "AssetLoader.h"
 
-extern unsigned int globalDescriptorHeapIndex;
-
-AssetLoader::AssetLoader(ID3D12Device5* device)
+AssetLoader::AssetLoader(ID3D12Device5* device, DescriptorHeap* descriptorHeap_CBV_UAV_SRV)
 {
 	this->device = device;
+	this->descriptorHeap_CBV_UAV_SRV = descriptorHeap_CBV_UAV_SRV;
 
 	// Load default textures
 	LoadTexture(this->filePathDefaultTextures + L"default_ambient.png");
@@ -38,9 +37,9 @@ AssetLoader::~AssetLoader()
 		delete shader.second;
 }
 
-AssetLoader* AssetLoader::Get(ID3D12Device5* device)
+AssetLoader* AssetLoader::Get(ID3D12Device5* device, DescriptorHeap* descriptorHeap_CBV_UAV_SRV)
 {
-	static AssetLoader instance(device);
+	static AssetLoader instance(device, descriptorHeap_CBV_UAV_SRV);
 
 	return &instance;
 }
@@ -87,14 +86,14 @@ Texture* AssetLoader::LoadTexture(std::wstring path)
 
 	Texture* texture = new Texture();
 
-	if (texture->Init(path, this->device, globalDescriptorHeapIndex) == false)
+	if (texture->Init(path, this->device, this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex()) == false)
 	{
 		delete texture;
 		return nullptr;
 	}
 	this->loadedTextures[path] = texture;
 
-	globalDescriptorHeapIndex++;
+	this->descriptorHeap_CBV_UAV_SRV->IncrementDescriptorHeapIndex();
 
 	return this->loadedTextures[path];
 }
@@ -210,7 +209,10 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 	}
 
 	// Create Mesh
-	Mesh* mesh = new Mesh(this->device, vertices, indices, globalDescriptorHeapIndex++);
+	Mesh* mesh = new Mesh(
+		this->device,
+		vertices, indices,
+		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1));
 
 	// ---------- Get Textures and set them to the mesh START----------
 	aiMaterial* mat = assimpScene->mMaterials[assimpMesh->mMaterialIndex];

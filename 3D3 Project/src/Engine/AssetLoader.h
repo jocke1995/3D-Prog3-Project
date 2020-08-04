@@ -1,6 +1,8 @@
 #ifndef ASSETLOADER_H
 #define ASSETLOADER_H
 
+#include "DescriptorHeap.h"
+
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -14,7 +16,7 @@ class AssetLoader
 public:
     ~AssetLoader();
 
-    static AssetLoader* Get(ID3D12Device5* device = nullptr);
+    static AssetLoader* Get(ID3D12Device5* device = nullptr, DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr);
 
     /* Load Functions */
     // Mesh ---------------
@@ -31,11 +33,12 @@ public:
     Shader* LoadShader(std::wstring fileName, ShaderType type);
 
 private:
-    AssetLoader(ID3D12Device5* device = nullptr);
+    AssetLoader(ID3D12Device5* device = nullptr, DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr);
     AssetLoader(AssetLoader const&) = delete;
     void operator=(AssetLoader const&) = delete;
 
-    ID3D12Device5* device;
+    ID3D12Device5* device = nullptr;
+    DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
 
     std::map<std::wstring, std::vector<Mesh*>*> loadedModels;
     void ProcessNode(aiNode* node, const aiScene* assimpScene, std::vector<Mesh*> *meshes, const std::string* filePath);

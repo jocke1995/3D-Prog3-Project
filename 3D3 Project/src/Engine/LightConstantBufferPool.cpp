@@ -1,6 +1,5 @@
 #include "LightConstantBufferPool.h"
 
-extern unsigned int globalDescriptorHeapIndex;
 LightConstantBufferPool::LightConstantBufferPool(ID3D12Device5* device, DescriptorHeap* descriptorHeap_CBV_UAV_SRV)
 {
 	this->device = device;
@@ -73,7 +72,7 @@ ConstantBufferDefault* LightConstantBufferPool::CreateConstantBufferDefault(LIGH
 		device,
 		entrySize,
 		resourceName,
-		globalDescriptorHeapIndex++,
+		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1),
 		this->descriptorHeap_CBV_UAV_SRV);
 
 	return cbd;
