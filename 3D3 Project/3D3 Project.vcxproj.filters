@@ -56,9 +56,6 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\DepthBuffer.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\DescriptorHeap.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -191,13 +188,13 @@
     <ClCompile Include="src\Engine\ShaderResourceView.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\DepthStencilView.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\DepthBuffer.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\DescriptorHeap.h">
       <Filter>Engine</Filter>
@@ -335,6 +332,9 @@
       <Filter>Engine\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ShaderResourceView.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DepthStencilView.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

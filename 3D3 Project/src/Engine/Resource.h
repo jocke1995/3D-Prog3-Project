@@ -27,11 +27,12 @@ public:
         D3D12_RESOURCE_STATES startState = D3D12_RESOURCE_STATE_COMMON);
 
     // Default Constructor
-    Resource() {};
+    Resource() = default;
     virtual ~Resource();
 
     virtual unsigned int GetSize() const;
     ID3D12Resource1* GetID3D12Resource1() const;
+    ID3D12Resource1** GetID3D12Resource1PP();
     D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAdress() const;
 
     // Only to be used if the resource is of type: UPLOAD

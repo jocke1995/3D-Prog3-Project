@@ -19,7 +19,7 @@ void BlendRenderTask::Execute()
 {
 	ID3D12CommandAllocator* commandAllocator = this->commandInterface->GetCommandAllocator(this->commandInterfaceIndex);
 	ID3D12GraphicsCommandList5* commandList = this->commandInterface->GetCommandList(this->commandInterfaceIndex);
-	ID3D12Resource1* swapChainResource = this->swapChain->GetDX12Resource(this->backBufferIndex);
+	ID3D12Resource1* swapChainResource = this->renderTargets["swapChain"]->GetResource(this->backBufferIndex)->GetID3D12Resource1();
 
 	this->commandInterface->Reset(this->commandInterfaceIndex);
 
@@ -46,8 +46,9 @@ void BlendRenderTask::Execute()
 
 	commandList->OMSetRenderTargets(1, &cdh, true, &dsh);
 
-	const D3D12_VIEWPORT* viewPort = this->swapChain->GetViewPort();
-	const D3D12_RECT* rect = this->swapChain->GetScissorRect();
+	SwapChain* sc = static_cast<SwapChain*>(this->renderTargets["swapChain"]);
+	const D3D12_VIEWPORT* viewPort = sc->GetViewPort();
+	const D3D12_RECT* rect = sc->GetScissorRect();
 	commandList->RSSetViewports(1, viewPort);
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

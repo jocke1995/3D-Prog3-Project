@@ -2,8 +2,8 @@
 #define RENDERER_H
 
 #include "RootSignature.h"
-#include "RenderTask.h"
 #include "SwapChain.h"
+#include "DepthStencilView.h"
 #include "ThreadPool.h"
 #include "Camera.h"
 #include "LightCBVPool.h"
@@ -21,7 +21,7 @@
 // Copy
 #include "CopyPerFrameTask.h"
 
-// Compute (Later include the specific task, not this)
+// Compute (Later include the specific tasks instead of this)
 #include "ComputeTask.h"
 
 class Renderer
@@ -61,13 +61,13 @@ private:
 	std::map<COMMAND_INTERFACE_TYPE, ID3D12CommandQueue*> commandQueues;
 	void CreateCommandQueues();
 
-	// Swapchain (RenderTargets)
+	// Swapchain (inheriting from 'RenderTarget')
 	SwapChain* swapChain = nullptr;
 	void CreateSwapChain(const HWND *hwnd);
 
 	// Depthbuffer
-	DepthBuffer* depthBuffer = nullptr;
-	void CreateDepthBuffer();
+	DepthStencilView* mainDSV = nullptr;
+	void CreateMainDSV();
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;

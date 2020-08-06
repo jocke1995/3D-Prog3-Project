@@ -46,6 +46,20 @@ RenderTarget::RenderTarget(
 	this->CreateScissorRect();
 }
 
+RenderTarget::RenderTarget(unsigned int width, unsigned int height)
+{
+	this->width = width;
+	this->height = height;
+
+	for (unsigned int i = 0; i < NUM_SWAP_BUFFERS; i++)
+	{
+		this->resources.push_back(new Resource());
+	}
+
+	this->CreateViewport();
+	this->CreateScissorRect();
+}
+
 RenderTarget::~RenderTarget()
 {
 	for (Resource* resource : this->resources)

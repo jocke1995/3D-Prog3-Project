@@ -12,7 +12,7 @@ enum LIGHT_FLAG
 	// Set flag to make the light position inherit the position of the corresponding mesh
 	USE_TRANSFORM_POSITION = BIT(1),
 
-	// Option to make the light cast shadows or not. Disable to save performance
+	// Option to make the light cast shadows or not.
 	// CastShadows.. = BIT(2),		
 
 	// If this is set, renderer only need to copy data once to GPU

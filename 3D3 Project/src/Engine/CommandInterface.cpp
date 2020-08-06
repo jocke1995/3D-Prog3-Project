@@ -50,7 +50,7 @@ void CommandInterface::CreateCommandInterfaces(ID3D12Device5* device, COMMAND_IN
 		break;
 	}
 
-	for (UINT i = 0; i < NUM_SWAP_BUFFERS; i++)
+	for (unsigned int i = 0; i < NUM_SWAP_BUFFERS; i++)
 	{
 		HRESULT hr = device->CreateCommandAllocator(D3D12type, IID_PPV_ARGS(&this->commandAllocators[i]));
 

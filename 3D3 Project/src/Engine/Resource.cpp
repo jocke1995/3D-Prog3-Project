@@ -72,6 +72,11 @@ ID3D12Resource1* Resource::GetID3D12Resource1() const
 	return this->resource;
 }
 
+ID3D12Resource1** Resource::GetID3D12Resource1PP()
+{
+	return &this->resource;
+}
+
 D3D12_GPU_VIRTUAL_ADDRESS Resource::GetGPUVirtualAdress() const
 {
 	return this->resource->GetGPUVirtualAddress();
@@ -81,7 +86,7 @@ void Resource::SetData(const void* data, unsigned int subResourceIndex)
 {
 	if (type == RESOURCE_TYPE::DEFAULT)
 	{
-		Log::PrintSeverity(Log::Severity::WARNING, "Trying to Map into default heap\n");
+		Log::PrintSeverity(Log::Severity::WARNING, "Trying to SetData into default heap\n");
 		return;
 	}
 

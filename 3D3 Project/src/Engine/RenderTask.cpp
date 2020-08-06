@@ -47,9 +47,14 @@ void RenderTask::AddResource(std::string id, Resource* resource)
 	}
 }
 
-void RenderTask::AddRenderTarget(RenderTarget* renderTarget)
+void RenderTask::AddRenderTarget(std::string name, RenderTarget* renderTarget)
 {
-	this->renderTargets.push_back(renderTarget);
+	this->renderTargets[name] = renderTarget;
+}
+
+void RenderTask::SetDescriptorHeaps(std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> dhs)
+{
+	this->descriptorHeaps = dhs;
 }
 
 void RenderTask::SetRenderComponents(std::vector<std::pair<	component::MeshComponent*,
@@ -63,13 +68,5 @@ void RenderTask::SetCamera(Camera* camera)
 	this->camera = camera;
 }
 
-void RenderTask::SetDescriptorHeaps(std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> dhs)
-{
-	this->descriptorHeaps = dhs;
-}
 
-void RenderTask::SetSwapChain(SwapChain* swapChain)
-{
-	this->swapChain = swapChain;
-}
 

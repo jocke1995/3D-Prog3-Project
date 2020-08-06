@@ -33,7 +33,7 @@ Renderer::~Renderer()
 	Log::Print("9\n");
 	delete this->swapChain;
 	Log::Print("10\n");
-	delete this->depthBuffer;
+	delete this->mainDSV;
 	Log::Print("11\n");
 	for (auto& pair : this->descriptorHeaps)
 	{
@@ -98,7 +98,7 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	this->threadpool = new ThreadPool(numCPUs); // Set num threads to number of cores of the cpu
 
 	// Create Main DepthBuffer
-	this->CreateDepthBuffer();
+	this->CreateMainDSV();
 	
 	// Create Rootsignature
 	this->CreateRootSignature();
@@ -423,8 +423,8 @@ void Renderer::Execute()
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
-		//renderTask->Execute();
+		//this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
+		renderTask->Execute();
 	}
 
 	/* RENDER QUEUE --------------------------------------------------------------- */
@@ -595,13 +595,17 @@ void Renderer::CreateSwapChain(const HWND *hwnd)
 		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV]);
 }
 
-void Renderer::CreateDepthBuffer()
+void Renderer::CreateMainDSV()
 {
-	this->depthBuffer = new DepthBuffer(
+	//this->mainDSV = new DepthStencilView(
+	//	this->device5,
+	//	800, 600,	// width, height
+	//	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
+
+	this->mainDSV = new DepthStencilView(
 		this->device5,
-		800, 600,	// width, height
+		1920, 1080,	// width, height
 		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
-	//this->depthBuffer = new DepthBuffer(this->device5, 1920, 1080);
 }
 
 void Renderer::CreateRootSignature()
@@ -662,10 +666,11 @@ void Renderer::InitRenderTasks()
 		&gpsdForwardRenderVector, 
 		L"ForwardRenderingPSO");
 
-	forwardRenderTask->SetSwapChain(this->swapChain);
-	forwardRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
 	forwardRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
 	forwardRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
+	forwardRenderTask->AddRenderTarget("swapChain", this->swapChain);
+	forwardRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
+	
 
 #pragma endregion ForwardRendering
 #pragma region Blend
@@ -754,10 +759,11 @@ void Renderer::InitRenderTasks()
 		&gpsdBlendVector,
 		L"BlendPSO");
 
-	blendRenderTask->SetSwapChain(this->swapChain);
-	blendRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
 	blendRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
 	blendRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
+	blendRenderTask->AddRenderTarget("swapChain", this->swapChain);
+	blendRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
+	
 
 #pragma endregion Blend
 

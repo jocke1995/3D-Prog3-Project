@@ -207,7 +207,7 @@
     <ClCompile Include="src\Engine\CopyTask.cpp" />
     <ClCompile Include="src\Engine\D3D12Timer.cpp" />
     <ClCompile Include="src\Engine\Camera.cpp" />
-    <ClCompile Include="src\Engine\DepthBuffer.cpp" />
+    <ClCompile Include="src\Engine\DepthStencilView.cpp" />
     <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
     <ClCompile Include="src\Engine\DX12Task.cpp" />
     <ClCompile Include="src\Engine\Mesh.cpp" />
@@ -262,7 +262,7 @@
     <ClInclude Include="src\Engine\D3D12Timer.h" />
     <ClInclude Include="src\Engine\Camera.h" />
     <ClInclude Include="src\Engine\d3dx12.h" />
-    <ClInclude Include="src\Engine\DepthBuffer.h" />
+    <ClInclude Include="src\Engine\DepthStencilView.h" />
     <ClInclude Include="src\Engine\DescriptorHeap.h" />
     <ClInclude Include="src\Engine\DX12Task.h" />
     <ClInclude Include="src\Engine\Mesh.h" />

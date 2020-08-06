@@ -21,7 +21,6 @@ Mesh::Mesh(	ID3D12Device5* device,
 	this->CreateIndexBufferView();
 
 	// Create SRV
-
 	D3D12_SHADER_RESOURCE_VIEW_DESC dsrv = {};
 	dsrv.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	dsrv.Buffer.FirstElement = 0;
