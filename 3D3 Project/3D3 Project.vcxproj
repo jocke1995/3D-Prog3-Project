@@ -185,14 +185,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\ShaderResourceView.cpp" />
     <ClCompile Include="src\ECS\Components\Lights\PointLightComponent.cpp" />
     <ClCompile Include="src\ECS\Components\Lights\SpotLightComponent.cpp" />
     <ClCompile Include="src\ECS\Components\Lights\Light.cpp" />
     <ClCompile Include="src\Engine\ConstantBufferUpload.cpp" />
-    <ClCompile Include="src\Engine\ConstantBufferDefault.cpp" />
+    <ClCompile Include="src\Engine\ConstantBufferView.cpp" />
     <ClCompile Include="src\Engine\CopyPerFrameTask.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
-    <ClCompile Include="src\Engine\LightConstantBufferPool.cpp" />
+    <ClCompile Include="src\Engine\LightCBVPool.cpp" />
     <ClCompile Include="src\ECS\Components\MeshComponent.cpp" />
     <ClCompile Include="src\Engine\ComputeState.cpp" />
     <ClCompile Include="src\Engine\GraphicsState.cpp" />
@@ -238,14 +239,15 @@
     <ClCompile Include="src\Engine\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\ShaderResourceView.h" />
     <ClInclude Include="src\ECS\Components\Lights\PointLightComponent.h" />
     <ClInclude Include="src\ECS\Components\Lights\SpotLightComponent.h" />
     <ClInclude Include="src\ECS\Components\Lights\Light.h" />
     <ClInclude Include="src\Engine\ConstantBufferUpload.h" />
-    <ClInclude Include="src\Engine\ConstantBufferDefault.h" />
+    <ClInclude Include="src\Engine\ConstantBufferView.h" />
     <ClInclude Include="src\Engine\CopyPerFrameTask.h" />
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
-    <ClInclude Include="src\Engine\LightConstantBufferPool.h" />
+    <ClInclude Include="src\Engine\LightCBVPool.h" />
     <ClInclude Include="src\ECS\Components\MeshComponent.h" />
     <ClInclude Include="src\Engine\ComputeState.h" />
     <ClInclude Include="src\Engine\GraphicsState.h" />

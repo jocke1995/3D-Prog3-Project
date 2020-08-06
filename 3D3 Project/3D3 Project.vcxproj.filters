@@ -152,12 +152,6 @@
     <ClCompile Include="src\Engine\ConstantBufferUpload.cpp">
       <Filter>Engine\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\ConstantBufferDefault.cpp">
-      <Filter>Engine\ConstantBuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
-      <Filter>Engine\ConstantBuffer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\ComputeState.cpp">
       <Filter>Engine\PipelineState</Filter>
     </ClCompile>
@@ -166,9 +160,6 @@
     </ClCompile>
     <ClCompile Include="src\Engine\PipelineState.cpp">
       <Filter>Engine\PipelineState</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\LightConstantBufferPool.cpp">
-      <Filter>Engine\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\ECS\Components\Lights\DirectionalLightComponent.cpp">
       <Filter>ECS\Components\Lights</Filter>
@@ -187,6 +178,18 @@
     </ClCompile>
     <ClCompile Include="src\Engine\CopyPerFrameTask.cpp">
       <Filter>Engine\Tasks\Copy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBuffer.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ConstantBufferView.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\LightCBVPool.cpp">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ShaderResourceView.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,12 +292,6 @@
     <ClInclude Include="src\Engine\ConstantBufferUpload.h">
       <Filter>Engine\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\ConstantBufferDefault.h">
-      <Filter>Engine\ConstantBuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\ConstantBuffer.h">
-      <Filter>Engine\ConstantBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\ComputeState.h">
       <Filter>Engine\PipelineState</Filter>
     </ClInclude>
@@ -303,9 +300,6 @@
     </ClInclude>
     <ClInclude Include="src\Engine\PipelineState.h">
       <Filter>Engine\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\LightConstantBufferPool.h">
-      <Filter>Engine\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\ECS\Components\Lights\DirectionalLightComponent.h">
       <Filter>ECS\Components\Lights</Filter>
@@ -330,6 +324,18 @@
     </ClInclude>
     <ClInclude Include="src\Engine\CopyPerFrameTask.h">
       <Filter>Engine\Tasks\Copy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ConstantBuffer.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ConstantBufferView.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\LightCBVPool.h">
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ShaderResourceView.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

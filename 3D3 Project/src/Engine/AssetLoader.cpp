@@ -85,16 +85,13 @@ Texture* AssetLoader::LoadTexture(std::wstring path)
 	}
 
 	Texture* texture = new Texture();
-
-	if (texture->Init(path, this->device, this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex()) == false)
+	if (texture->Init(path, this->device, this->descriptorHeap_CBV_UAV_SRV) == false)
 	{
 		delete texture;
 		return nullptr;
 	}
+
 	this->loadedTextures[path] = texture;
-
-	this->descriptorHeap_CBV_UAV_SRV->IncrementDescriptorHeapIndex();
-
 	return this->loadedTextures[path];
 }
 
@@ -212,7 +209,7 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 	Mesh* mesh = new Mesh(
 		this->device,
 		vertices, indices,
-		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1));
+		this->descriptorHeap_CBV_UAV_SRV);
 
 	// ---------- Get Textures and set them to the mesh START----------
 	aiMaterial* mat = assimpScene->mMaterials[assimpMesh->mMaterialIndex];

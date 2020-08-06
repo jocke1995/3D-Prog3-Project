@@ -1,12 +1,12 @@
-#include "LightConstantBufferPool.h"
+#include "LightCBVPool.h"
 
-LightConstantBufferPool::LightConstantBufferPool(ID3D12Device5* device, DescriptorHeap* descriptorHeap_CBV_UAV_SRV)
+LightCBVPool::LightCBVPool(ID3D12Device5* device, DescriptorHeap* descriptorHeap_CBV_UAV_SRV)
 {
 	this->device = device;
 	this->descriptorHeap_CBV_UAV_SRV = descriptorHeap_CBV_UAV_SRV;
 }
 
-LightConstantBufferPool::~LightConstantBufferPool()
+LightCBVPool::~LightCBVPool()
 {
 	for (int i = 0; i < LIGHT_TYPE::NUM_LIGHT_TYPES; i++)
 	{
@@ -18,7 +18,7 @@ LightConstantBufferPool::~LightConstantBufferPool()
 	}
 }
 
-ConstantBufferDefault* LightConstantBufferPool::GetFreeConstantBufferDefault(LIGHT_TYPE type)
+ConstantBufferView* LightCBVPool::GetFreeConstantBufferDefault(LIGHT_TYPE type)
 {
 	for (auto& pair : this->constantBufferPools[type])
 	{
@@ -31,12 +31,12 @@ ConstantBufferDefault* LightConstantBufferPool::GetFreeConstantBufferDefault(LIG
 	}
 
 	// No constant buffer of that type exists.. Create and return a new one
-	ConstantBufferDefault* cbd = CreateConstantBufferDefault(type);
+	ConstantBufferView* cbd = CreateConstantBufferDefault(type);
 	this->constantBufferPools[type].push_back(std::make_pair(false, cbd));
 	return cbd;
 }
 
-void LightConstantBufferPool::FreeConstantBuffers()
+void LightCBVPool::FreeConstantBuffers()
 {
 	for (int i = 0; i < LIGHT_TYPE::NUM_LIGHT_TYPES; i++)
 	{
@@ -48,7 +48,7 @@ void LightConstantBufferPool::FreeConstantBuffers()
 	}
 }
 
-ConstantBufferDefault* LightConstantBufferPool::CreateConstantBufferDefault(LIGHT_TYPE type)
+ConstantBufferView* LightCBVPool::CreateConstantBufferDefault(LIGHT_TYPE type)
 {
 	unsigned int entrySize = 0;
 	std::wstring resourceName = L"";
@@ -68,7 +68,7 @@ ConstantBufferDefault* LightConstantBufferPool::CreateConstantBufferDefault(LIGH
 		break;
 	}
 
-	ConstantBufferDefault* cbd = new ConstantBufferDefault(
+	ConstantBufferView* cbd = new ConstantBufferView(
 		device,
 		entrySize,
 		resourceName,

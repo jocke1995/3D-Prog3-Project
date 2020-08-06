@@ -63,9 +63,9 @@ void RenderTask::SetCamera(Camera* camera)
 	this->camera = camera;
 }
 
-void RenderTask::SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE type, DescriptorHeap* dh)
+void RenderTask::SetDescriptorHeaps(std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> dhs)
 {
-	this->descriptorHeaps[type] = dh;
+	this->descriptorHeaps = dhs;
 }
 
 void RenderTask::SetSwapChain(SwapChain* swapChain)

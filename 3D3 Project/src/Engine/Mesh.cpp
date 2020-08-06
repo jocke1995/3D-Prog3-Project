@@ -3,14 +3,10 @@
 Mesh::Mesh(	ID3D12Device5* device,
 			std::vector<Vertex> vertices,
 			std::vector<unsigned int> indices,
-			unsigned int descriptorHeapIndex_SRV)
+			DescriptorHeap* descriptorHeap_SRV)
 {
 	this->vertices = vertices;
 	this->indices = indices;
-
-	this->slotInfo = new SlotInfo();
-	this->descriptorHeapIndex_SRV = descriptorHeapIndex_SRV;
-	this->slotInfo->vertexDataIndex = this->descriptorHeapIndex_SRV;
 
 	// Set vertices
 	this->uploadResourceVertices = new Resource(device, this->GetSizeOfVertices(), RESOURCE_TYPE::UPLOAD, L"Vertex_Upload_Resource");
@@ -23,6 +19,26 @@ Mesh::Mesh(	ID3D12Device5* device,
 	this->uploadResourceIndices->SetData(this->indices.data());
 	this->defaultResourceIndices = new Resource(device, this->GetSizeOfIndices(), RESOURCE_TYPE::DEFAULT, L"Index_Default_Resource");
 	this->CreateIndexBufferView();
+
+	// Create SRV
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC dsrv = {};
+	dsrv.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	dsrv.Buffer.FirstElement = 0;
+	dsrv.Format = DXGI_FORMAT_UNKNOWN;
+	dsrv.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	dsrv.Buffer.NumElements = this->GetNumVertices();
+	dsrv.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
+
+	this->SRV = new ShaderResourceView(
+		device,
+		descriptorHeap_SRV->GetNextDescriptorHeapIndex(1),
+		descriptorHeap_SRV,
+		&dsrv,
+		this->defaultResourceVertices);
+
+	this->slotInfo = new SlotInfo();
+	this->slotInfo->vertexDataIndex = this->SRV->GetDescriptorHeapIndex();
 }
 
 Mesh::Mesh(const Mesh* other)
@@ -41,13 +57,12 @@ Mesh::Mesh(const Mesh* other)
 	this->slotInfo->textureNormal   = other->slotInfo->textureNormal;
 	this->slotInfo->textureEmissive = other->slotInfo->textureEmissive;
 
-	this->descriptorHeapIndex_SRV = other->descriptorHeapIndex_SRV;
-	this->slotInfo->vertexDataIndex = other->descriptorHeapIndex_SRV;
-
 	this->defaultResourceVertices = other->defaultResourceVertices;
 	this->defaultResourceIndices = other->defaultResourceIndices;
 
 	this->indexBufferView = other->indexBufferView;
+
+	this->SRV = other->SRV;
 }
 
 Mesh::~Mesh()
@@ -61,6 +76,8 @@ Mesh::~Mesh()
 
 		delete this->uploadResourceIndices;
 		delete this->defaultResourceIndices;
+
+		delete this->SRV;
 	}
 }
 
@@ -168,11 +185,6 @@ const D3D12_INDEX_BUFFER_VIEW* Mesh::GetIndexBufferView() const
 const SlotInfo* Mesh::GetSlotInfo() const
 {
 	return this->slotInfo;
-}
-
-const UINT Mesh::GetDescriptorHeapIndex() const
-{
-	return this->descriptorHeapIndex_SRV;
 }
 
 Texture* Mesh::GetTexture(TEXTURE_TYPE textureType)

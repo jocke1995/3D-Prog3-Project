@@ -35,12 +35,10 @@ Renderer::~Renderer()
 	Log::Print("10\n");
 	delete this->depthBuffer;
 	Log::Print("11\n");
-	delete this->descriptorHeap_CBV_UAV_SRV;
-	Log::Print("11.5\n");
-	delete this->descriptorHeap_RTV;
-	Log::Print("11.75\n");
-	delete this->descriptorHeap_DSV;
-	Log::Print("12\n");
+	for (auto& pair : this->descriptorHeaps)
+	{
+		delete pair.second;
+	}
 
 	for (auto computeTask : this->computeTasks)
 		delete computeTask;
@@ -106,29 +104,29 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	this->CreateRootSignature();
 
 	// Init assetloader by giving it a pointer to the device
-	AssetLoader::Get(this->device5, this->descriptorHeap_CBV_UAV_SRV);
+	AssetLoader::Get(this->device5, this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
 	
 	// Pool to handle constantBuffers for the lights
-	this->lightCBPool = new LightConstantBufferPool(this->device5, this->descriptorHeap_CBV_UAV_SRV);
+	this->lightCBPool = new LightCBVPool(this->device5, this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
 
 	// Allocate memory for cbPerScene
 	unsigned int CB_PER_SCENE_SizeAligned = (sizeof(CB_PER_SCENE_STRUCT) + 255) & ~255;
-	this->cbPerScene = new ConstantBufferDefault(
+	this->cbPerScene = new ConstantBufferView(
 		this->device5, 
 		CB_PER_SCENE_SizeAligned,
 		L"CB_PER_SCENE_DEFAULT",
-		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1),
-		this->descriptorHeap_CBV_UAV_SRV
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]->GetNextDescriptorHeapIndex(1),
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]
 		);
 
 	// Allocate memory for cbPerFrame
 	unsigned int CB_PER_Frame_SizeAligned = (sizeof(CB_PER_FRAME_STRUCT) + 255) & ~255;
-	this->cbPerFrame = new ConstantBufferDefault(
+	this->cbPerFrame = new ConstantBufferView(
 		this->device5,
 		CB_PER_Frame_SizeAligned,
 		L"CB_PER_FRAME_DEFAULT",
-		this->descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1),
-		this->descriptorHeap_CBV_UAV_SRV
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]->GetNextDescriptorHeapIndex(1),
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]
 	);
 
 	this->cbPerFrameData = new CB_PER_FRAME_STRUCT();
@@ -145,15 +143,10 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 	bool loadedBefore = false;
 	std::vector<Mesh*>* meshes = AssetLoader::Get()->LoadModel(path, &loadedBefore);
 
-	// Only Create the SRVs if its the first time the model is loaded
+	// ------------------------------ TEMPORARY CODE ------------------------------ 
+	// Only Upload to default heaps if its the first time its loaded
 	if (!loadedBefore)
 	{
-		D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-		desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-		desc.Buffer.FirstElement = 0;
-		desc.Format = DXGI_FORMAT_UNKNOWN;
-		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-
 		for (Mesh* mesh : *meshes)
 		{
 			// Upload to Default heap
@@ -162,18 +155,17 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 				this->tempCommandInterface,
 				this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
 			this->WaitForGpu();
-			// SRV
-			desc.Buffer.NumElements = mesh->GetNumVertices();
-			desc.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
-			this->CreateShaderResourceView(	mesh->GetDescriptorHeapIndex(),
-											&desc,
-											mesh->GetDefaultResourceVertices());
 
-			// This function wont make a SRV if the texture already has one bound to it. (Safe to use)
+			// Wont upload data if its already up.. TEMPORARY safecheck inside the texture class
 			for (unsigned int i = 0; i < TEXTURE_TYPE::NUM_TEXTURE_TYPES; i++)
 			{
 				TEXTURE_TYPE type = static_cast<TEXTURE_TYPE>(i);
-				this->CreateSRVForTexture(mesh->GetTexture(type));
+				Texture* texture = mesh->GetTexture(type);
+				texture->UploadTextureData(
+					this->device5,
+					this->tempCommandInterface,
+					this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+				this->WaitForGpu();
 			}
 		}
 	}
@@ -189,10 +181,13 @@ Texture* Renderer::LoadTexture(std::wstring path)
 		return nullptr;
 	}
 
-	if (this->CreateSRVForTexture(texture) == false)
-	{
-		return nullptr;
-	}
+	// ------------------------------ TEMPORARY CODE ------------------------------ 
+	// Wont upload data if its already up.. TEMPORARY safecheck inside the texture class
+	texture->UploadTextureData(
+		this->device5,
+		this->tempCommandInterface,
+		this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+	this->WaitForGpu();
 
 	return texture;
 }
@@ -231,7 +226,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		if (dlc != nullptr)
 		{
 			// Assign resource from resourcePool
-			ConstantBufferDefault* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+			ConstantBufferView* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 
 			// Save in renderer
 			this->directionalLights.push_back(std::make_pair(dlc, cbd));
@@ -241,7 +236,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		if (plc != nullptr)
 		{
 			// Assign resource from resourcePool
-			ConstantBufferDefault* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::POINT_LIGHT);
+			ConstantBufferView* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::POINT_LIGHT);
 
 			// Save in renderer
 			this->pointLights.push_back(std::make_pair(plc, cbd));
@@ -251,7 +246,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		if (slc != nullptr)
 		{
 			// Assign resource from resourcePool
-			ConstantBufferDefault* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::SPOT_LIGHT);
+			ConstantBufferView* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::SPOT_LIGHT);
 
 			// Save in renderer
 			this->spotLights.push_back(std::make_pair(slc, cbd));
@@ -304,19 +299,19 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	for (auto& pair : this->directionalLights)
 	{
 		void* data = pair.first->GetDirectionalLight();
-		ConstantBufferDefault* cbd = pair.second;
+		ConstantBufferView* cbd = pair.second;
 		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
 	}
 	for (auto& pair : this->pointLights)
 	{
 		void* data = pair.first->GetPointLight();
-		ConstantBufferDefault* cbd = pair.second;
+		ConstantBufferView* cbd = pair.second;
 		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
 	}
 	for (auto& pair : this->spotLights)
 	{
 		void* data = pair.first->GetSpotLight();
-		ConstantBufferDefault* cbd = pair.second;
+		ConstantBufferView* cbd = pair.second;
 		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
 	}
 
@@ -414,7 +409,7 @@ void Renderer::Execute()
 		copytask->Execute();	// Non-multithreaded version
 	}
 
-	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA | THREAD_FLAG::ALL);
+	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA);
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
 		this->copyCommandLists[commandInterfaceIndex].size(),
@@ -428,8 +423,8 @@ void Renderer::Execute()
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
-		renderTask->Execute();
+		this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
+		//renderTask->Execute();
 	}
 
 	/* RENDER QUEUE --------------------------------------------------------------- */
@@ -597,7 +592,7 @@ void Renderer::CreateSwapChain(const HWND *hwnd)
 		hwnd,
 		width, height,
 		this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE],
-		this->descriptorHeap_RTV);
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV]);
 }
 
 void Renderer::CreateDepthBuffer()
@@ -605,7 +600,7 @@ void Renderer::CreateDepthBuffer()
 	this->depthBuffer = new DepthBuffer(
 		this->device5,
 		800, 600,	// width, height
-		this->descriptorHeap_DSV);
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
 	//this->depthBuffer = new DepthBuffer(this->device5, 1920, 1080);
 }
 
@@ -668,9 +663,7 @@ void Renderer::InitRenderTasks()
 		L"ForwardRenderingPSO");
 
 	forwardRenderTask->SetSwapChain(this->swapChain);
-	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV, this->descriptorHeap_CBV_UAV_SRV);
-	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::RTV, this->descriptorHeap_RTV);
-	forwardRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::DSV, this->descriptorHeap_DSV);
+	forwardRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
 	forwardRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
 	forwardRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
 
@@ -762,9 +755,7 @@ void Renderer::InitRenderTasks()
 		L"BlendPSO");
 
 	blendRenderTask->SetSwapChain(this->swapChain);
-	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV, this->descriptorHeap_CBV_UAV_SRV);
-	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::RTV, this->descriptorHeap_RTV);
-	blendRenderTask->SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE::DSV, this->descriptorHeap_DSV);
+	blendRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
 	blendRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
 	blendRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
 
@@ -811,46 +802,9 @@ void Renderer::SetRenderTasksRenderComponents()
 
 void Renderer::InitDescriptorHeaps()
 {
-	this->descriptorHeap_CBV_UAV_SRV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
-	this->descriptorHeap_RTV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::RTV);
-	this->descriptorHeap_DSV = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::DSV);
-}
-
-void Renderer::CreateShaderResourceView(unsigned int descriptorHeapIndex,
-	D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
-	const Resource* resource)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE cdh = this->descriptorHeap_CBV_UAV_SRV->GetCPUHeapAt(descriptorHeapIndex);
-
-	this->device5->CreateShaderResourceView(resource->GetID3D12Resource1(), desc, cdh);
-}
-
-bool Renderer::CreateSRVForTexture(Texture* texture)
-{
-	// Check if the texture already has a SRV attached to it
-	if (texture->IsBoundToSRV() == false)
-	{
-		// Tell the texture that it now has a srv binded to it
-		texture->Bind();
-
-		// Upload texturedata
-		texture->UploadTextureData(this->device5,
-			this->tempCommandInterface,
-			this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
-		WaitForGpu();
-
-		D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		desc.Format = *texture->GetGDXIFormat();
-		desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		desc.Texture2D.MipLevels = 1;
-
-		this->CreateShaderResourceView(texture->GetDescriptorHeapIndex(), &desc, texture->GetResource());
-
-		return true;
-	}
-	
-	return false;
+	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV] = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
+	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV] = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::RTV);
+	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV] = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::DSV);
 }
 
 void Renderer::CreateFences()

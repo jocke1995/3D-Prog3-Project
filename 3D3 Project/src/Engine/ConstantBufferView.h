@@ -1,18 +1,18 @@
-#ifndef CONSTANTBUFFERDEFAULT_H
-#define CONSTANTBUFFERDEFAULT_H
+#ifndef CONSTANTBUFFERVIEW_H
+#define CONSTANTBUFFERVIEW_H
 
 #include "ConstantBuffer.h"
 
-class ConstantBufferDefault : public ConstantBuffer
+class ConstantBufferView : public ConstantBuffer
 {
 public:
-	ConstantBufferDefault(ID3D12Device5* device,
+	ConstantBufferView(ID3D12Device5* device,
 		unsigned int entrySize,
 		std::wstring defaultName,
 		unsigned int descriptorHeapIndex,
 		DescriptorHeap* descriptorHeap_CBV_UAV_SRV);
 
-	virtual ~ConstantBufferDefault();
+	virtual ~ConstantBufferView();
 
 	Resource* GetDefaultResource() const;
 	

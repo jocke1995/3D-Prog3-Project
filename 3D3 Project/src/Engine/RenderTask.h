@@ -33,7 +33,7 @@ public:
 													component::TransformComponent*>>* renderComponents);
 
 	void SetCamera(Camera* camera);
-	void SetDescriptorHeap(DESCRIPTOR_HEAP_TYPE type, DescriptorHeap* dh);
+	void SetDescriptorHeaps(std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> dhs);
 	void SetSwapChain(SwapChain* swapChain);
 
 protected:

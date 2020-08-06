@@ -11,7 +11,7 @@ CopyTask::~CopyTask()
 {
 }
 
-void CopyTask::AddDataToUpdate(std::pair<void*, ConstantBufferDefault*>* data_CBD)
+void CopyTask::AddDataToUpdate(std::pair<void*, ConstantBufferView*>* data_CBD)
 {
 	this->data_CBDs.push_back(*data_CBD);
 }

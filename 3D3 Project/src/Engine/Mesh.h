@@ -3,6 +3,7 @@
 
 #include "Resource.h"
 #include "Texture.h"
+#include "ShaderResourceView.h"
 
 class Mesh
 {
@@ -18,7 +19,7 @@ public:
     Mesh(   ID3D12Device5* device,
             std::vector<Vertex> vertices,
             std::vector<unsigned int> indices,
-            unsigned int descriptorHeapIndex_SRV);
+            DescriptorHeap* descriptorHeap_SRV);
     Mesh(const Mesh* other);
     ~Mesh();
 
@@ -27,18 +28,18 @@ public:
     // Sets
     void SetTexture(TEXTURE_TYPE textureType, Texture* texture);
 
-    // Gets
+    // Vertices
     Resource* GetDefaultResourceVertices() const;
     const size_t GetSizeOfVertices() const;
     const size_t GetNumVertices() const;
 
+    // Indices
     Resource* GetDefaultResourceIndices() const;
     const size_t GetSizeOfIndices() const;
     const size_t GetNumIndices() const;
     const D3D12_INDEX_BUFFER_VIEW* GetIndexBufferView() const;
 
     const SlotInfo* GetSlotInfo() const;
-    const UINT GetDescriptorHeapIndex() const;
 
     Texture* GetTexture(TEXTURE_TYPE textureType);
 
@@ -47,7 +48,6 @@ private:
     std::vector<unsigned int> indices;
 
     SlotInfo* slotInfo = nullptr;
-    UINT descriptorHeapIndex_SRV;
 
     std::map<TEXTURE_TYPE,Texture*> textures;
 
@@ -55,6 +55,8 @@ private:
     Resource* uploadResourceIndices = nullptr;
     Resource* defaultResourceVertices = nullptr;
     Resource* defaultResourceIndices = nullptr;
+
+    ShaderResourceView* SRV = nullptr;
 
     D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
     void CreateIndexBufferView();

@@ -111,17 +111,13 @@ Texture::~Texture()
 		delete this->resourceUploadHeap;
 	}
 	
+	delete this->SRV;
 	free(this->imageData);
-}
-
-void Texture::Bind()
-{
-	this->hasSRV = true;
 }
 
 const UINT Texture::GetDescriptorHeapIndex() const
 {
-	return this->descriptorHeapIndex_SRV;
+	return this->SRV->GetDescriptorHeapIndex();
 }
 
 Resource* Texture::GetResource() const
@@ -129,22 +125,19 @@ Resource* Texture::GetResource() const
 	return this->resourceDefaultHeap;
 }
 
-const DXGI_FORMAT* Texture::GetGDXIFormat() const
-{
-	return &this->resourceDescription.Format;
-}
-
-bool Texture::Init(std::wstring filePath, ID3D12Device5* device, UINT descriptorHeapIndex_SRV)
+bool Texture::Init(std::wstring filePath, ID3D12Device5* device, DescriptorHeap* descriptorHeap)
 {
 	this->filePath = filePath;
-	this->descriptorHeapIndex_SRV = descriptorHeapIndex_SRV;
+	unsigned int descriptorHeapIndex = descriptorHeap->GetNextDescriptorHeapIndex(0);
 
-	if (this->CreateTexture(filePath, device, descriptorHeapIndex_SRV) == false)
+	if (this->CreateTexture(filePath, device, descriptorHeapIndex) == false)
 	{
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create texture: \'%s\'.\n", to_string(filePath).c_str());
 		return false;
 	}
+	descriptorHeap->IncrementDescriptorHeapIndex();
 
+	// Default heap
 	this->resourceDefaultHeap = new Resource(
 		device,
 		&this->resourceDescription,
@@ -152,21 +145,40 @@ bool Texture::Init(std::wstring filePath, ID3D12Device5* device, UINT descriptor
 		L"Resource_" + this->filePath);
 
 	UINT64 textureUploadBufferSize;
-	device->GetCopyableFootprints(&this->resourceDescription,
+	device->GetCopyableFootprints(
+		&this->resourceDescription,
 		0, 1, 0,
 		nullptr, nullptr, nullptr,
 		&textureUploadBufferSize);
 
-		this->resourceUploadHeap = new Resource(device,
-		textureUploadBufferSize,
-		RESOURCE_TYPE::UPLOAD,
-		L"Temporary UploadHeap for texture");
+	// Upload heap
+	this->resourceUploadHeap = new Resource(device,
+	textureUploadBufferSize,
+	RESOURCE_TYPE::UPLOAD,
+	L"Temporary UploadHeap for texture");
+
+	// Create srv
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	desc.Format = this->resourceDescription.Format;
+	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	desc.Texture2D.MipLevels = 1;
+
+	this->SRV = new ShaderResourceView(
+		device,
+		descriptorHeapIndex,
+		descriptorHeap,
+		&desc,
+		this->resourceDefaultHeap);
 
 	return true;
 }
 
 void Texture::UploadTextureData(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue)
 {
+	if (this->hasBeenUploadedToDefault == true)
+		return;
+
 	D3D12_SUBRESOURCE_DATA textureData = {};
 	textureData.pData = &imageData[0]; // pointer to our image data
 	textureData.RowPitch = bytesPerRow;
@@ -189,11 +201,8 @@ void Texture::UploadTextureData(ID3D12Device5* device, CommandInterface* command
 	commandInterface->GetCommandList(0)->Close();
 	ID3D12CommandList* ppCommandLists[] = { commandInterface->GetCommandList(0) };
 	cmdQueue->ExecuteCommandLists(ARRAYSIZE(ppCommandLists), ppCommandLists);
-}
 
-bool Texture::IsBoundToSRV()
-{
-	return this->hasSRV;
+	this->hasBeenUploadedToDefault = true;
 }
 
 bool Texture::CreateTexture(std::wstring filePath, ID3D12Device5* device, UINT descriptorHeapIndex_SRV)

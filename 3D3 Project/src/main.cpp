@@ -81,7 +81,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     mc->GetMesh(0)->SetTexture(TEXTURE_TYPE::SPECULAR, ambientDefault);
     mc->GetMesh(0)->SetTexture(TEXTURE_TYPE::NORMAL  , normalDefault);
 
-
     tc = scene->GetEntity("transparentTestObject")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(5.f);
     tc->GetTransform()->SetPosition(0.0f, 5.0f, 1.0f);
@@ -191,10 +190,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
         // Test to update the spotlight color
         static double red = 0.0f;
+        static double green = 0.0f;
         static double blue = 0.0f;
-        red += 0.005f;
-        blue += 0.025f;
-        sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { float(abs(sin(red))), 0.0f, float(abs(sin(blue))), 1.0f });
+        red += 1.1f * timer->GetDeltaTime();
+        green += 0.74f * timer->GetDeltaTime();
+        blue += 0.23f * timer->GetDeltaTime();
+        sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { float(abs(sin(red))), float(abs(sin(green))), float(abs(sin(blue))), 1.0f });
 
         /* ------ Sort ------ */
         renderer.SortObjectsByDistance();

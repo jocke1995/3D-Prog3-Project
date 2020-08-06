@@ -6,8 +6,7 @@
 #include "SwapChain.h"
 #include "ThreadPool.h"
 #include "Camera.h"
-#include "LightConstantBufferPool.h"
-#include "ConstantBufferUpload.h"
+#include "LightCBVPool.h"
 #include "../ECS/Scene.h"
 
 // lights
@@ -87,37 +86,27 @@ private:
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	void SetRenderTasksRenderComponents();
 
-	LightConstantBufferPool* lightCBPool = nullptr;
-	std::vector<std::pair<component::DirectionalLightComponent*, ConstantBufferDefault*>> directionalLights;
-	std::vector<std::pair<component::PointLightComponent*, ConstantBufferDefault*>> pointLights;
-	std::vector<std::pair<component::SpotLightComponent*, ConstantBufferDefault*>> spotLights;
+	LightCBVPool* lightCBPool = nullptr;
+	std::vector<std::pair<component::DirectionalLightComponent*, ConstantBufferView*>> directionalLights;
+	std::vector<std::pair<component::PointLightComponent*, ConstantBufferView*>> pointLights;
+	std::vector<std::pair<component::SpotLightComponent*, ConstantBufferView*>> spotLights;
 
 	// Current scene to be drawn
 	Scene* currActiveScene = nullptr;
-	ConstantBufferDefault* cbPerScene = nullptr;
+	ConstantBufferView* cbPerScene = nullptr;
 
 	// update per frame
-	ConstantBufferDefault* cbPerFrame = nullptr;
 	CB_PER_FRAME_STRUCT* cbPerFrameData = nullptr;
+	ConstantBufferView* cbPerFrame = nullptr;
 
 	// Commandlists holders
 	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> computeCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
 	
-	// DescriptorHeap
-	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
-	DescriptorHeap* descriptorHeap_RTV = nullptr;
-	DescriptorHeap* descriptorHeap_DSV = nullptr;
+	// DescriptorHeaps
+	std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> descriptorHeaps = {};
 	void InitDescriptorHeaps();
-
-	// Views
-	void CreateShaderResourceView(	
-		unsigned int descriptorHeapIndex,
-		D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
-		const Resource* resource);
-
-	bool CreateSRVForTexture(Texture* texture);
 
 	// Fences
 	HANDLE eventHandle = nullptr;
