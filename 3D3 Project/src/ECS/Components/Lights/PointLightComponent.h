@@ -14,7 +14,7 @@ namespace component
 		void SetPosition(float3 position);
 		void SetAttenuation(float3 attenuation);
 
-		PointLight* GetPointLight() const;
+		void* GetLightData() const;
 
 		void Update();
 	private:

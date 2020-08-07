@@ -3,7 +3,7 @@
 
 #include "DX12Task.h"
 
-#include "Camera.h"
+#include "PerspectiveCamera.h"
 #include "GraphicsState.h"
 #include "SwapChain.h"
 
@@ -31,7 +31,7 @@ public:
 		std::vector<std::pair<	component::MeshComponent*,
 								component::TransformComponent*>>* renderComponents);
 
-	void SetCamera(Camera* camera);
+	void SetCamera(PerspectiveCamera* camera);
 	
 protected:
 	std::map<std::string, Resource*> resources;
@@ -40,7 +40,7 @@ protected:
 
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	
-	Camera* camera = nullptr;
+	PerspectiveCamera* camera = nullptr;
 	ID3D12RootSignature* rootSig = nullptr;
 	std::vector<PipelineState*> pipelineStates;
 };

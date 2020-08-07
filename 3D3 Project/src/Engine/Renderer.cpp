@@ -40,13 +40,13 @@ Renderer::~Renderer()
 		delete pair.second;
 	}
 
-	for (auto computeTask : this->computeTasks)
+	for (ComputeTask* computeTask : this->computeTasks)
 		delete computeTask;
 
-	for (auto copyTask : this->copyTasks)
+	for (CopyTask* copyTask : this->copyTasks)
 		delete copyTask;
 
-	for (auto renderTask : this->renderTasks)
+	for (RenderTask* renderTask : this->renderTasks)
 		delete renderTask;
 
 	SAFE_RELEASE(&this->device5);
@@ -56,7 +56,7 @@ Renderer::~Renderer()
 	delete this->threadpool;
 	Log::Print("15\n");
 
-	delete this->lightCBPool;
+	delete this->lightViewsPool;
 	Log::Print("16\n");
 	delete this->cbPerScene;
 	Log::Print("17\n");
@@ -72,7 +72,7 @@ Renderer::~Renderer()
 void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 {
 	// Camera
-	this->camera = new Camera(L"default_cam", hInstance, *hwnd);
+	this->camera = new PerspectiveCamera(hInstance, *hwnd);
 
 	// Create Device
 	if (!this->CreateDevice())
@@ -103,11 +103,15 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Create Rootsignature
 	this->CreateRootSignature();
 
-	// Init assetloader by giving it a pointer to the device
+	// Init Assetloader
 	AssetLoader::Get(this->device5, this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
 	
-	// Pool to handle constantBuffers for the lights
-	this->lightCBPool = new LightCBVPool(this->device5, this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
+	// Pool to handle GPU memory for the lights
+	this->lightViewsPool = new LightViewsPool(
+		this->device5,
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV],
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV],
+		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
 
 	// Allocate memory for cbPerScene
 	unsigned int CB_PER_SCENE_SizeAligned = (sizeof(CB_PER_SCENE_STRUCT) + 255) & ~255;
@@ -197,10 +201,11 @@ void Renderer::SetSceneToDraw(Scene* scene)
 {
 	// Reset
 	this->renderComponents.clear();
-	this->directionalLights.clear();
-	this->pointLights.clear();
-	this->spotLights.clear();
-	this->lightCBPool->FreeConstantBuffers();
+	for (auto& light : this->lights)
+	{
+		light.second.clear();
+	}
+	this->lightViewsPool->Clear();
 	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Clear();
 
 	// Handle and structure the components in the scene
@@ -225,31 +230,34 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		component::DirectionalLightComponent* dlc = entity->GetComponent<component::DirectionalLightComponent>();
 		if (dlc != nullptr)
 		{
-			// Assign resource from resourcePool
-			ConstantBufferView* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+			// Assign CBV from the lightPool
+			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+
+			// Assign views required for shadows from the lightPool
+			// ShadowInfo* si = new ShadowInfo(1, -1, devic)
 
 			// Save in renderer
-			this->directionalLights.push_back(std::make_pair(dlc, cbd));
+			this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].push_back(std::make_pair(dlc, cbd));
 		}
 
 		component::PointLightComponent* plc = entity->GetComponent<component::PointLightComponent>();
 		if (plc != nullptr)
 		{
 			// Assign resource from resourcePool
-			ConstantBufferView* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::POINT_LIGHT);
+			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::POINT_LIGHT);
 
 			// Save in renderer
-			this->pointLights.push_back(std::make_pair(plc, cbd));
+			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_pair(plc, cbd));
 		}
 
 		component::SpotLightComponent* slc = entity->GetComponent<component::SpotLightComponent>();
 		if (slc != nullptr)
 		{
 			// Assign resource from resourcePool
-			ConstantBufferView* cbd = this->lightCBPool->GetFreeConstantBufferDefault(LIGHT_TYPE::SPOT_LIGHT);
+			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::SPOT_LIGHT);
 
 			// Save in renderer
-			this->spotLights.push_back(std::make_pair(slc, cbd));
+			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_pair(slc, cbd));
 		}
 	}
 #pragma endregion HandleComponents
@@ -258,9 +266,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 #pragma region Prepare_CbPerScene
 	CB_PER_SCENE_STRUCT cps = {};
 		// ----- directional lights -----
-		cps.Num_Dir_Lights = this->directionalLights.size();
+		cps.Num_Dir_Lights = this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].size();
 		unsigned int index = 0;
-		for (auto& pair : this->directionalLights)
+		for (auto& pair : this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT])
 		{
 			cps.dirLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
 			index++;
@@ -268,9 +276,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		// ----- directional lights -----
 
 		// ----- point lights -----
-		cps.Num_Point_Lights = this->pointLights.size();
+		cps.Num_Point_Lights = this->lights[LIGHT_TYPE::POINT_LIGHT].size();
 		index = 0;
-		for (auto& pair : this->pointLights)
+		for (auto& pair : this->lights[LIGHT_TYPE::POINT_LIGHT])
 		{
 			cps.pointLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
 			index++;
@@ -278,9 +286,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		// ----- point lights -----
 
 		// ----- spot lights -----
-		cps.Num_Spot_Lights = this->spotLights.size();
+		cps.Num_Spot_Lights = this->lights[LIGHT_TYPE::SPOT_LIGHT].size();
 		index = 0;
-		for (auto& pair : this->spotLights)
+		for (auto& pair : this->lights[LIGHT_TYPE::SPOT_LIGHT])
 		{
 			cps.spotLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
 			index++;
@@ -290,29 +298,23 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	// Upload CB_PER_SCENE to defaultheap
 	this->TempCopyResource( 
 		this->cbPerScene->GetUploadResource(),
-		this->cbPerScene->GetDefaultResource(),
+		this->cbPerScene->GetCBVResource(),
 		&cps);
 #pragma endregion Prepare_CbPerScene
 
 	// Add Per-frame data to the copy queue
 #pragma region Prepare_CbPerFrame
-	for (auto& pair : this->directionalLights)
+
+	// Lights
+	for (unsigned int i = 0; i < LIGHT_TYPE::NUM_LIGHT_TYPES; i++)
 	{
-		void* data = pair.first->GetDirectionalLight();
-		ConstantBufferView* cbd = pair.second;
-		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
-	}
-	for (auto& pair : this->pointLights)
-	{
-		void* data = pair.first->GetPointLight();
-		ConstantBufferView* cbd = pair.second;
-		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
-	}
-	for (auto& pair : this->spotLights)
-	{
-		void* data = pair.first->GetSpotLight();
-		ConstantBufferView* cbd = pair.second;
-		this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
+		LIGHT_TYPE type = static_cast<LIGHT_TYPE>(i);
+		for (auto& pair : this->lights[type])
+		{
+			void* data = pair.first->GetLightData();
+			ConstantBufferView* cbd = pair.second;
+			this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
+		}
 	}
 
 	// CB_PER_FRAME_STRUCT
@@ -454,18 +456,18 @@ ThreadPool* Renderer::GetThreadPool() const
 	return this->threadpool;
 }
 
-Camera* Renderer::GetCamera() const
+PerspectiveCamera* Renderer::GetCamera() const
 {
 	return this->camera;
 }
 
-void Renderer::SetRenderTasksMainCamera(Camera* camera)
+void Renderer::SetRenderTasksMainCamera(PerspectiveCamera* camera)
 {
-	for (auto renderTask : this->renderTasks)
+	for (RenderTask* renderTask : this->renderTasks)
+	{
 		renderTask->SetCamera(camera);
+	}
 }
-
-// -----------------------  Private Functions  ----------------------- //
 
 bool Renderer::CreateDevice()
 {
@@ -666,8 +668,8 @@ void Renderer::InitRenderTasks()
 		&gpsdForwardRenderVector, 
 		L"ForwardRenderingPSO");
 
-	forwardRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
-	forwardRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
+	forwardRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetCBVResource());
+	forwardRenderTask->AddResource("cbPerScene", this->cbPerScene->GetCBVResource());
 	forwardRenderTask->AddRenderTarget("swapChain", this->swapChain);
 	forwardRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
 	
@@ -759,18 +761,16 @@ void Renderer::InitRenderTasks()
 		&gpsdBlendVector,
 		L"BlendPSO");
 
-	blendRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetDefaultResource());
-	blendRenderTask->AddResource("cbPerScene", this->cbPerScene->GetDefaultResource());
+	blendRenderTask->AddResource("cbPerFrame", this->cbPerFrame->GetCBVResource());
+	blendRenderTask->AddResource("cbPerScene", this->cbPerScene->GetCBVResource());
 	blendRenderTask->AddRenderTarget("swapChain", this->swapChain);
 	blendRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
 	
 
 #pragma endregion Blend
 
-#pragma region CopyPerFrameTask
 	CopyTask* copyPerFrameTask = new CopyPerFrameTask(this->device5);
-	
-#pragma endregion CopyPerFrameTask
+
 	// Add the tasks to desired vectors so they can be used in renderer
 	/* -------------------------------------------------------------- */
 

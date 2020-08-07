@@ -185,6 +185,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\OrthographicCamera.cpp" />
+    <ClCompile Include="src\Engine\BaseCamera.cpp" />
+    <ClCompile Include="src\Engine\ShadowInfo.cpp" />
     <ClCompile Include="src\Engine\ShaderResourceView.cpp" />
     <ClCompile Include="src\ECS\Components\Lights\PointLightComponent.cpp" />
     <ClCompile Include="src\ECS\Components\Lights\SpotLightComponent.cpp" />
@@ -193,7 +196,7 @@
     <ClCompile Include="src\Engine\ConstantBufferView.cpp" />
     <ClCompile Include="src\Engine\CopyPerFrameTask.cpp" />
     <ClCompile Include="src\Engine\ConstantBuffer.cpp" />
-    <ClCompile Include="src\Engine\LightCBVPool.cpp" />
+    <ClCompile Include="src\Engine\LightViewsPool.cpp" />
     <ClCompile Include="src\ECS\Components\MeshComponent.cpp" />
     <ClCompile Include="src\Engine\ComputeState.cpp" />
     <ClCompile Include="src\Engine\GraphicsState.cpp" />
@@ -206,7 +209,7 @@
     <ClCompile Include="src\Engine\ComputeTask.cpp" />
     <ClCompile Include="src\Engine\CopyTask.cpp" />
     <ClCompile Include="src\Engine\D3D12Timer.cpp" />
-    <ClCompile Include="src\Engine\Camera.cpp" />
+    <ClCompile Include="src\Engine\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Engine\DepthStencilView.cpp" />
     <ClCompile Include="src\Engine\DescriptorHeap.cpp" />
     <ClCompile Include="src\Engine\DX12Task.cpp" />
@@ -237,8 +240,12 @@
     <ClCompile Include="src\Engine\Timer.cpp" />
     <ClCompile Include="src\ECS\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Engine\Texture.cpp" />
+    <ClCompile Include="src\Engine\TempInputClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\OrthographicCamera.h" />
+    <ClInclude Include="src\Engine\BaseCamera.h" />
+    <ClInclude Include="src\Engine\ShadowInfo.h" />
     <ClInclude Include="src\Engine\ShaderResourceView.h" />
     <ClInclude Include="src\ECS\Components\Lights\PointLightComponent.h" />
     <ClInclude Include="src\ECS\Components\Lights\SpotLightComponent.h" />
@@ -247,7 +254,7 @@
     <ClInclude Include="src\Engine\ConstantBufferView.h" />
     <ClInclude Include="src\Engine\CopyPerFrameTask.h" />
     <ClInclude Include="src\Engine\ConstantBuffer.h" />
-    <ClInclude Include="src\Engine\LightCBVPool.h" />
+    <ClInclude Include="src\Engine\LightViewsPool.h" />
     <ClInclude Include="src\ECS\Components\MeshComponent.h" />
     <ClInclude Include="src\Engine\ComputeState.h" />
     <ClInclude Include="src\Engine\GraphicsState.h" />
@@ -260,7 +267,7 @@
     <ClInclude Include="src\Engine\ComputeTask.h" />
     <ClInclude Include="src\Engine\CopyTask.h" />
     <ClInclude Include="src\Engine\D3D12Timer.h" />
-    <ClInclude Include="src\Engine\Camera.h" />
+    <ClInclude Include="src\Engine\PerspectiveCamera.h" />
     <ClInclude Include="src\Engine\d3dx12.h" />
     <ClInclude Include="src\Engine\DepthStencilView.h" />
     <ClInclude Include="src\Engine\DescriptorHeap.h" />
@@ -287,6 +294,7 @@
     <ClInclude Include="src\Engine\Timer.h" />
     <ClInclude Include="src\ECS\Components\TransformComponent.h" />
     <ClInclude Include="src\Engine\Texture.h" />
+    <ClInclude Include="src\Engine\TempInputClass.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">

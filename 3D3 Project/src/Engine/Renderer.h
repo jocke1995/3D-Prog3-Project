@@ -5,11 +5,11 @@
 #include "SwapChain.h"
 #include "DepthStencilView.h"
 #include "ThreadPool.h"
-#include "Camera.h"
-#include "LightCBVPool.h"
+#include "PerspectiveCamera.h"
 #include "../ECS/Scene.h"
 
 // lights
+#include "LightViewsPool.h"
 #include "../ECS/Components/Lights/DirectionalLightComponent.h"
 #include "../ECS/Components/Lights/PointLightComponent.h"
 #include "../ECS/Components/Lights/SpotLightComponent.h"
@@ -45,11 +45,11 @@ public:
 	void Execute();
 
 	ThreadPool* GetThreadPool() const;
-	Camera* GetCamera() const;
+	PerspectiveCamera* GetCamera() const;
 private:
 	// Camera
-	Camera* camera = nullptr;
-	void SetRenderTasksMainCamera(Camera *camera);
+	PerspectiveCamera* camera = nullptr;
+	void SetRenderTasksMainCamera(PerspectiveCamera *camera);
 
 	unsigned int frameCounter = 0;
 
@@ -86,10 +86,8 @@ private:
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	void SetRenderTasksRenderComponents();
 
-	LightCBVPool* lightCBPool = nullptr;
-	std::vector<std::pair<component::DirectionalLightComponent*, ConstantBufferView*>> directionalLights;
-	std::vector<std::pair<component::PointLightComponent*, ConstantBufferView*>> pointLights;
-	std::vector<std::pair<component::SpotLightComponent*, ConstantBufferView*>> spotLights;
+	LightViewsPool* lightViewsPool = nullptr;
+	std::map<LIGHT_TYPE, std::vector<std::pair<Light*, ConstantBufferView*>>> lights;
 
 	// Current scene to be drawn
 	Scene* currActiveScene = nullptr;

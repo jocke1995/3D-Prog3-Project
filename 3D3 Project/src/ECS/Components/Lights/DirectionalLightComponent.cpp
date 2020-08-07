@@ -16,17 +16,12 @@ namespace component
 		delete this->directionalLight;
 	}
 
-	// void DirectionalLightComponent::SetPosition(float3 position)
-	// {
-	// 	this->directionalLight->position = { position.x, position.y, position.z, 1.0 };
-	// }
-
 	void DirectionalLightComponent::SetDirection(float3 direction)
 	{
 		this->directionalLight->direction = { direction.x, direction.y, direction.z, 0.0f };
 	}
 
-	DirectionalLight* DirectionalLightComponent::GetDirectionalLight() const
+	void* DirectionalLightComponent::GetLightData() const
 	{
 		return this->directionalLight;
 	}

@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-Scene::Scene(Camera* camera)
+Scene::Scene(PerspectiveCamera* camera)
 {
     this->mainCamera = camera;
 }
@@ -62,7 +62,7 @@ unsigned int Scene::GetNrOfEntites() const
     return this->nrOfEntities;
 }
 
-Camera* Scene::GetMainCamera() const
+PerspectiveCamera* Scene::GetMainCamera() const
 {
 	return this->mainCamera;
 }

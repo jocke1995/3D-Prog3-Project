@@ -28,7 +28,7 @@ namespace component
 		this->pointLight->attenuation.z = attenuation.z;
 	}
 
-	PointLight* PointLightComponent::GetPointLight() const
+	void* PointLightComponent::GetLightData() const
 	{
 		return this->pointLight;
 	}

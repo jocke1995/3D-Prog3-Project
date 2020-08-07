@@ -51,7 +51,7 @@ namespace component
         this->spotLight->attenuation.z = attenuation.z;
     }
 
-    SpotLight* SpotLightComponent::GetSpotLight() const
+    void* SpotLightComponent::GetLightData() const
     {
         return this->spotLight;
     }

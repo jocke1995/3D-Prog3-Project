@@ -23,7 +23,7 @@ void CopyPerFrameTask::Execute()
 		this->CopyResource(
 			commandList,
 			pair.second->GetUploadResource(),
-			pair.second->GetDefaultResource(),
+			pair.second->GetCBVResource(),
 			pair.first);	// Data
 	}
 

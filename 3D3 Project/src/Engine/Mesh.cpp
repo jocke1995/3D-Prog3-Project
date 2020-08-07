@@ -31,7 +31,6 @@ Mesh::Mesh(	ID3D12Device5* device,
 
 	this->SRV = new ShaderResourceView(
 		device,
-		descriptorHeap_SRV->GetNextDescriptorHeapIndex(1),
 		descriptorHeap_SRV,
 		&dsrv,
 		this->defaultResourceVertices);

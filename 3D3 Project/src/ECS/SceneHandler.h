@@ -9,7 +9,7 @@ public:
 	SceneHandler();
 	~SceneHandler();
 
-	Scene* CreateScene(std::string sceneName, Camera* camera);
+	Scene* CreateScene(std::string sceneName, PerspectiveCamera* camera);
 
 	Scene* GetScene(std::string sceneName) const;
 

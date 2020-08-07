@@ -16,7 +16,7 @@ namespace component
 		void SetOuterCutOff(float outerCutOff);
 		void SetAttenuation(float3 attenuation);
 
-		SpotLight* GetSpotLight() const;
+		void* GetLightData() const;
 
 		void Update();
 	private:

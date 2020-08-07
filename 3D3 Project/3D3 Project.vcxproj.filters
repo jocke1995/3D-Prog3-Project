@@ -48,6 +48,9 @@
     <Filter Include="Engine\Headers">
       <UniqueIdentifier>{c18803ab-0e6a-4a5b-9a8a-f5fdac835992}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Camera">
+      <UniqueIdentifier>{85a254ce-7beb-43b9-80fe-d8a912e232ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -119,9 +122,6 @@
     <ClCompile Include="src\Engine\Mesh.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Camera.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Timer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -182,14 +182,29 @@
     <ClCompile Include="src\Engine\ConstantBufferView.cpp">
       <Filter>Engine\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\LightCBVPool.cpp">
-      <Filter>Engine\ConstantBuffer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\ShaderResourceView.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\DepthStencilView.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ShadowInfo.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\LightViewsPool.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\TempInputClass.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\BaseCamera.cpp">
+      <Filter>Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\PerspectiveCamera.cpp">
+      <Filter>Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\OrthographicCamera.cpp">
+      <Filter>Engine\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -259,9 +274,6 @@
     <ClInclude Include="src\Engine\Mesh.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Camera.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\Timer.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -328,14 +340,29 @@
     <ClInclude Include="src\Engine\ConstantBufferView.h">
       <Filter>Engine\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\LightCBVPool.h">
-      <Filter>Engine\ConstantBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\ShaderResourceView.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\DepthStencilView.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ShadowInfo.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\LightViewsPool.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\TempInputClass.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\BaseCamera.h">
+      <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\PerspectiveCamera.h">
+      <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\OrthographicCamera.h">
+      <Filter>Engine\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

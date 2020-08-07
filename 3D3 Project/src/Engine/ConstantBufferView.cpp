@@ -12,7 +12,7 @@ ConstantBufferView::~ConstantBufferView()
 	delete this->defaultResource;
 }
 
-Resource* ConstantBufferView::GetDefaultResource() const
+Resource* ConstantBufferView::GetCBVResource() const
 {
 	return this->defaultResource;
 }

@@ -14,7 +14,7 @@ public:
 
 	virtual ~ConstantBufferView();
 
-	Resource* GetDefaultResource() const;
+	Resource* GetCBVResource() const;
 	
 private:
 	Resource* defaultResource = nullptr;

@@ -2,12 +2,11 @@
 
 ShaderResourceView::ShaderResourceView(
 	ID3D12Device5* device,
-	unsigned int descriptorHeapIndex,
 	DescriptorHeap* descriptorHeap_CBV_UAV_SRV,
 	D3D12_SHADER_RESOURCE_VIEW_DESC* desc,
 	Resource* resource)
 {
-	this->descriptorHeapIndex = descriptorHeapIndex;
+	this->descriptorHeapIndex = descriptorHeap_CBV_UAV_SRV->GetNextDescriptorHeapIndex(1);
 
 	this->CreateShaderResourceView(device, descriptorHeap_CBV_UAV_SRV, desc, resource);
 }

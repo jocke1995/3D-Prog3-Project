@@ -11,10 +11,9 @@ namespace component
 		DirectionalLightComponent(Entity* parent, unsigned int lightFlags = 0);
 		virtual ~DirectionalLightComponent();
 
-		//void SetPosition(float3 position);
 		void SetDirection(float3 direction);
 
-		DirectionalLight* GetDirectionalLight() const;
+		void* GetLightData() const;
 
 		void Update();
 	private:

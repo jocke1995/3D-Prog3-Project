@@ -22,21 +22,20 @@ public:
 
 	void UpdateWorldMatrix();
 
-	const XMFLOAT4X4* GetWorldMatrix() const;
+	XMMATRIX* GetWorldMatrix();
 	XMFLOAT3 GetPositionXMFLOAT3() const;
 	float3 GetPositionFloat3() const;
 
 private:
-	XMFLOAT3 position;
-	XMFLOAT4X4 rotationMat;
-	XMFLOAT3 scale;
+	XMMATRIX worldMat;
 
-	XMFLOAT4X4 worldMat;
+	XMFLOAT3 position;
+	XMFLOAT3 scale;
 
 	XMMATRIX rotXMat;
 	XMMATRIX rotYMat;
 	XMMATRIX rotZMat;
-
+	XMMATRIX rotationMat;
 };
 
 #endif

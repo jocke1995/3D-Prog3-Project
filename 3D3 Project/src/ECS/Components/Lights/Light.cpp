@@ -33,7 +33,17 @@ void Light::SetColor(LIGHT_COLOR_TYPE type, float4 color)
 	this->UpdateLightData(type);
 }
 
+void Light::SetShadowInfo(ShadowInfo* shadowInfo)
+{
+	this->shadowInfo = shadowInfo;
+}
+
 unsigned int Light::GetLightFlags() const
 {
 	return this->lightFlags;
+}
+
+ShadowInfo* Light::GetShadowInfo() const
+{
+	return this->shadowInfo;
 }

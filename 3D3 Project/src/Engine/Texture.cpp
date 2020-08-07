@@ -135,7 +135,6 @@ bool Texture::Init(std::wstring filePath, ID3D12Device5* device, DescriptorHeap*
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create texture: \'%s\'.\n", to_string(filePath).c_str());
 		return false;
 	}
-	descriptorHeap->IncrementDescriptorHeapIndex();
 
 	// Default heap
 	this->resourceDefaultHeap = new Resource(
@@ -166,7 +165,6 @@ bool Texture::Init(std::wstring filePath, ID3D12Device5* device, DescriptorHeap*
 
 	this->SRV = new ShaderResourceView(
 		device,
-		descriptorHeapIndex,
 		descriptorHeap,
 		&desc,
 		this->resourceDefaultHeap);

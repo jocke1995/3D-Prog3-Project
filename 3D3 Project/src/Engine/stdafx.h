@@ -58,7 +58,7 @@ inline std::wstring to_wstring(std::string str)
 	return strconverter.from_bytes(str);
 }
 
-typedef DirectX::XMFLOAT4X4 float4x4;
+typedef DirectX::XMMATRIX float4x4;
 
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
 #define SAFE_RELEASE(p)			\

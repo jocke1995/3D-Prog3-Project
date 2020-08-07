@@ -59,8 +59,7 @@ void BlendRenderTask::Execute()
 
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	const XMFLOAT4X4* const viewProjMat = this->camera->GetViewProjMatrix();
-	XMMATRIX tmpViewProjMat = XMLoadFloat4x4(viewProjMat);
+	XMMATRIX * viewProjMat = this->camera->GetViewProjMatrix();
 
 	// Draw from opposite order from the sorted array
 	for(int i = this->renderComponents.size() - 1; i >= 0; i--)
@@ -78,19 +77,15 @@ void BlendRenderTask::Execute()
 				const SlotInfo* info = mc->GetMesh(j)->GetSlotInfo();
 
 				Transform* transform = tc->GetTransform();
-				const XMFLOAT4X4* worldMat = transform->GetWorldMatrix();
-				XMFLOAT4X4 WVPTransposed;
-				XMFLOAT4X4 wTransposed;
+				XMMATRIX* worldMat = transform->GetWorldMatrix();
 
-				XMMATRIX tmpWorldMat = XMLoadFloat4x4(worldMat);
-				XMMATRIX tmpWVP = tmpWorldMat * tmpViewProjMat;
-
-				// Store and transpose the matrices for shader
-				XMStoreFloat4x4(&WVPTransposed, XMMatrixTranspose(tmpWVP));
-				XMStoreFloat4x4(&wTransposed, XMMatrixTranspose(tmpWorldMat));
+				// Transpose matrices
+				XMMATRIX WVP = (*worldMat) * (*viewProjMat);
+				XMMATRIX WVPTransposed = XMMatrixTranspose(WVP);
+				XMMATRIX worldMatTransposed = XMMatrixTranspose(*worldMat);
 
 				// Create a CB_PER_OBJECT struct
-				CB_PER_OBJECT_STRUCT perObject = { wTransposed, WVPTransposed, *info };
+				CB_PER_OBJECT_STRUCT perObject = { worldMatTransposed, WVPTransposed, *info };
 
 				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT_STRUCT) / sizeof(UINT), &perObject, 0);
 
