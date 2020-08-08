@@ -4,6 +4,7 @@
 #include "DX12Task.h"
 
 #include "PerspectiveCamera.h"
+#include "OrthographicCamera.h"
 #include "GraphicsState.h"
 #include "SwapChain.h"
 

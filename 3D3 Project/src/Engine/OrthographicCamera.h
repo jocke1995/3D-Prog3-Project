@@ -6,7 +6,13 @@
 class OrthographicCamera : public BaseCamera
 {
 public:
-    OrthographicCamera();
+    OrthographicCamera(
+        float left = -15.0f,
+        float right = 15.0f,
+        float bot = -15.0f,
+        float top = 15.0f,
+        float nearZ = -1.0f,
+        float farZ = 10.0f);
     virtual ~OrthographicCamera();
 
     void Update(double dt);

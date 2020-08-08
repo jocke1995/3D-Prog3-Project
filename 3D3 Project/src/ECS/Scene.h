@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include "Entity.h"
+#include "../Engine/OrthographicCamera.h"
 #include "../Engine/PerspectiveCamera.h"
 #include <map>
 

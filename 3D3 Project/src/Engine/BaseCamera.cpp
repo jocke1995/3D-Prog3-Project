@@ -13,8 +13,8 @@ BaseCamera::BaseCamera()
 
 BaseCamera::~BaseCamera()
 {
-}
 
+}
 
 void BaseCamera::SetPosition(float x, float y, float z)
 {

@@ -5,7 +5,6 @@
 #include "SwapChain.h"
 #include "DepthStencilView.h"
 #include "ThreadPool.h"
-#include "PerspectiveCamera.h"
 #include "../ECS/Scene.h"
 
 // lights
@@ -49,7 +48,7 @@ public:
 private:
 	// Camera
 	PerspectiveCamera* camera = nullptr;
-	void SetRenderTasksMainCamera(PerspectiveCamera *camera);
+	void SetRenderTasksMainCamera(PerspectiveCamera* camera);
 
 	unsigned int frameCounter = 0;
 

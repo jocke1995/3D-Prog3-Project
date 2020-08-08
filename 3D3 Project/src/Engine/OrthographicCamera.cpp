@@ -1,10 +1,16 @@
 #include "OrthographicCamera.h"
 
-OrthographicCamera::OrthographicCamera()
+OrthographicCamera::OrthographicCamera(
+	float left,
+	float right,
+	float bot,
+	float top,
+	float nearZ,
+	float farZ)
+	:BaseCamera()
 {
-	this->projMatrix = DirectX::XMMatrixOrthographicLH(800, 600, 0.1, 1000);
+	this->projMatrix = DirectX::XMMatrixOrthographicOffCenterLH(left, right, bot, top, nearZ, farZ);
 }
-
 OrthographicCamera::~OrthographicCamera()
 {
 }
