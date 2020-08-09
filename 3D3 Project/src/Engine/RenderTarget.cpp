@@ -5,9 +5,6 @@ RenderTarget::RenderTarget(
 	unsigned int width, unsigned int height,
 	DescriptorHeap* descriptorHeap_RTV)
 {
-	this->width = width;
-	this->height = height;
-	
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	resourceDesc.Width = width;
@@ -42,22 +39,17 @@ RenderTarget::RenderTarget(
 		device->CreateRenderTargetView(resource->GetID3D12Resource1(), &viewDesc, cdh);
 	}
 	
-	this->CreateViewport();
-	this->CreateScissorRect();
+	this->renderView = new RenderView(width, height);
 }
 
 RenderTarget::RenderTarget(unsigned int width, unsigned int height)
 {
-	this->width = width;
-	this->height = height;
-
 	for (unsigned int i = 0; i < NUM_SWAP_BUFFERS; i++)
 	{
 		this->resources.push_back(new Resource());
 	}
 
-	this->CreateViewport();
-	this->CreateScissorRect();
+	this->renderView = new RenderView(width, height);
 }
 
 RenderTarget::~RenderTarget()
@@ -66,6 +58,8 @@ RenderTarget::~RenderTarget()
 	{
 		delete resource;
 	}
+
+	delete this->renderView;
 }
 
 Resource* RenderTarget::GetResource(unsigned int index) const
@@ -73,30 +67,7 @@ Resource* RenderTarget::GetResource(unsigned int index) const
 	return this->resources[index];
 }
 
-const D3D12_VIEWPORT* RenderTarget::GetViewPort() const
+RenderView* RenderTarget::GetRenderView() const
 {
-	return &this->viewport;
-}
-
-const D3D12_RECT* RenderTarget::GetScissorRect() const
-{
-	return &this->scissorRect;
-}
-
-void RenderTarget::CreateViewport()
-{
-	this->viewport.TopLeftX = 0.0f;
-	this->viewport.TopLeftY = 0.0f;
-	this->viewport.Width = (float)this->width;
-	this->viewport.Height = (float)this->height;
-	this->viewport.MinDepth = 0.0f;
-	this->viewport.MaxDepth = 1.0f;
-}
-
-void RenderTarget::CreateScissorRect()
-{
-	this->scissorRect.left = (long)0;
-	this->scissorRect.right = (long)this->width;
-	this->scissorRect.top = (long)0;
-	this->scissorRect.bottom = (long)this->height;
+	return this->renderView;
 }

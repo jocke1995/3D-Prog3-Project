@@ -43,7 +43,7 @@ void PerspectiveCamera::Update(double dt)
 	this->UpdateViewProjMatrix();
 }
 
-XMMATRIX* PerspectiveCamera::GetViewProjMatrix()
+XMMATRIX* PerspectiveCamera::GetViewProjection()
 {
 	return &this->viewProjMatrix;
 }

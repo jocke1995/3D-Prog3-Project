@@ -3,6 +3,12 @@
 
 using namespace DirectX;
 
+enum CAMERA_TYPE
+{
+	PERSPECTIVE,
+	ORTHOGRAPHIC,
+	NUM_CAMERA_TYPES
+};
 class BaseCamera
 {
 public:
@@ -17,6 +23,8 @@ public:
 
 	XMFLOAT3 GetLookAt() const;
 	float3 GetLookAtFloat3() const;
+
+	virtual XMMATRIX* GetViewProjection() = 0;
 
 protected:
 	XMVECTOR rightVector;

@@ -3,13 +3,13 @@
 namespace component
 {
     SpotLightComponent::SpotLightComponent(Entity* parent, unsigned int lightFlags)
-        :Component(parent), Light(lightFlags)
+        :Component(parent), Light(CAMERA_TYPE::PERSPECTIVE, lightFlags)
     {
         
         this->spotLight = new SpotLight();
         this->spotLight->position_cutOff = { 0.0f, 0.0f, 0.0f, cos(XMConvertToRadians(12.5f)) };
         this->spotLight->direction_outerCutoff = { 0.0f, 0.0f, 0.0f, cos(XMConvertToRadians(17.5f)) };
-        //this->spotLight->attenuation = { 1.0f, 0.14f, 0.07f, 0.0f };    // 32 in distance
+        //this->spotLight->attenuation = { 1.0f, 0.14f, 0.07f, 0.0f };    // 32 'distance'
         this->spotLight->attenuation = { 1.0f, 0.09f, 0.032f, 0.0f }; 
 
         this->spotLight->baseLight = *this->baseLight;

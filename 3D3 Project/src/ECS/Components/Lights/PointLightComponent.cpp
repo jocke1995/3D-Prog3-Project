@@ -3,7 +3,7 @@
 namespace component
 {
 	PointLightComponent::PointLightComponent(Entity* parent, unsigned int lightFlags)
-		:Component(parent), Light(lightFlags)
+		:Component(parent), Light(CAMERA_TYPE::PERSPECTIVE, lightFlags)
 	{
 		this->pointLight = new PointLight();
 		this->pointLight->position = { 0.0f,  5.0f,  0.0f, 0.0f };

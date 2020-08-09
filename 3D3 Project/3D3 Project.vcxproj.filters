@@ -206,6 +206,9 @@
     <ClCompile Include="src\Engine\OrthographicCamera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\RenderView.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -363,6 +366,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\OrthographicCamera.h">
       <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderView.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

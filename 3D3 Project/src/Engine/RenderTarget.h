@@ -3,6 +3,7 @@
 
 #include "DescriptorHeap.h"
 #include "Resource.h"
+#include "RenderView.h"
 
 class RenderTarget
 {
@@ -15,24 +16,16 @@ public:
 
 	// RenderTarget without creating a comittedResource
 	RenderTarget(unsigned int width, unsigned int height);
-
 	virtual ~RenderTarget();
 
 	Resource* GetResource(unsigned int index) const;
-	const D3D12_VIEWPORT* GetViewPort() const;
-	const D3D12_RECT* GetScissorRect() const;
-
+	// viewport & scizzorRect
+	RenderView* GetRenderView() const;
 protected:
 	std::vector<Resource*> resources;
 
-	unsigned int width = 0;
-	unsigned int height = 0;
-
-private:
-	D3D12_VIEWPORT viewport = {};
-	D3D12_RECT scissorRect = {};
-	void CreateViewport();
-	void CreateScissorRect();
+	// viewport & scizzorRect
+	RenderView* renderView = nullptr;
 };
 
 #endif

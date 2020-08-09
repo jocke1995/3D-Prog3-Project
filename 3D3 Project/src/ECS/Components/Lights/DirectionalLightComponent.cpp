@@ -3,12 +3,11 @@
 namespace component
 {
 	DirectionalLightComponent::DirectionalLightComponent(Entity* parent, unsigned int lightFlags)
-		:Component(parent), Light(lightFlags)
+		:Component(parent), Light(CAMERA_TYPE::ORTHOGRAPHIC, lightFlags)
 	{
 		this->directionalLight = new DirectionalLight();
 		this->directionalLight->direction = { -1.0f,  -0.5f,  0.0f, 0.0f };
 		this->directionalLight->baseLight = *this->baseLight;
-
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()

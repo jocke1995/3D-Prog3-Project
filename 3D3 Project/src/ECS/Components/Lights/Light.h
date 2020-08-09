@@ -7,7 +7,8 @@
 #include "../src/Engine/stdafx.h"
 #include "../src/Engine/structs.h"
 
-class ShadowInfo;
+#include "../src/Engine/OrthographicCamera.h"
+#include "../src/Engine/PerspectiveCamera.h"
 
 enum LIGHT_FLAG
 {
@@ -42,17 +43,15 @@ enum LIGHT_COLOR_TYPE
 class Light
 {
 public:
-	Light(unsigned int lightFlags = 0);
+	Light(CAMERA_TYPE camType, unsigned int lightFlags = 0);
 	virtual ~Light();
 
-	// Light settings
 	void SetColor(LIGHT_COLOR_TYPE type, float4 color);
-	void SetShadowInfo(ShadowInfo* shadowInfo);
 
 	// Gets
 	unsigned int GetLightFlags() const;
 	virtual void* GetLightData() const = 0;
-	ShadowInfo* GetShadowInfo() const;
+	BaseCamera* GetCamera() const;
 
 protected:
 	BaseLight* baseLight = nullptr;
@@ -60,8 +59,11 @@ protected:
 
 	unsigned int lightFlags = 0;
 
-	ShadowInfo* shadowInfo = nullptr;
+	BaseCamera* camera = nullptr;
+	CAMERA_TYPE cameraType;
 private:
+
+	void CreateCamera();
 };
 
 #endif

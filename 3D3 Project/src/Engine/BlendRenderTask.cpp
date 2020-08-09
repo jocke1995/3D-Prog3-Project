@@ -47,8 +47,8 @@ void BlendRenderTask::Execute()
 	commandList->OMSetRenderTargets(1, &cdh, true, &dsh);
 
 	SwapChain* sc = static_cast<SwapChain*>(this->renderTargets["swapChain"]);
-	const D3D12_VIEWPORT* viewPort = sc->GetViewPort();
-	const D3D12_RECT* rect = sc->GetScissorRect();
+	const D3D12_VIEWPORT* viewPort = sc->GetRenderView()->GetViewPort();
+	const D3D12_RECT* rect = sc->GetRenderView()->GetScissorRect();
 	commandList->RSSetViewports(1, viewPort);
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -59,7 +59,7 @@ void BlendRenderTask::Execute()
 
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	XMMATRIX * viewProjMat = this->camera->GetViewProjMatrix();
+	XMMATRIX * viewProjMat = this->camera->GetViewProjection();
 
 	// Draw from opposite order from the sorted array
 	for(int i = this->renderComponents.size() - 1; i >= 0; i--)
@@ -78,14 +78,14 @@ void BlendRenderTask::Execute()
 
 				Transform* transform = tc->GetTransform();
 				XMMATRIX* worldMat = transform->GetWorldMatrix();
-
-				// Transpose matrices
 				XMMATRIX WVP = (*worldMat) * (*viewProjMat);
+
+				// Transpose
 				XMMATRIX WVPTransposed = XMMatrixTranspose(WVP);
-				XMMATRIX worldMatTransposed = XMMatrixTranspose(*worldMat);
+				XMMATRIX* WTransposed = transform->GetWorldMatrixTransposed();
 
 				// Create a CB_PER_OBJECT struct
-				CB_PER_OBJECT_STRUCT perObject = { worldMatTransposed, WVPTransposed, *info };
+				CB_PER_OBJECT_STRUCT perObject = { *WTransposed, WVPTransposed, *info };
 
 				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT_STRUCT) / sizeof(UINT), &perObject, 0);
 

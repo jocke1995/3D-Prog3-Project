@@ -32,7 +32,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-Window::Window(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle)
+Window::Window(
+	HINSTANCE hInstance,
+	int nCmdShow,
+	bool fullScreen,
+	int screenWidth, int screenHeight,
+	LPCTSTR windowName, LPCTSTR windowTitle)
 {
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
@@ -42,6 +47,7 @@ Window::Window(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHei
 
 	InitWindow(hInstance, nCmdShow);
 }
+
 
 Window::~Window()
 {

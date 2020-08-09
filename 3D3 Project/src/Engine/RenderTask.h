@@ -32,7 +32,7 @@ public:
 		std::vector<std::pair<	component::MeshComponent*,
 								component::TransformComponent*>>* renderComponents);
 
-	void SetCamera(PerspectiveCamera* camera);
+	void SetCamera(BaseCamera* camera);
 	
 protected:
 	std::map<std::string, Resource*> resources;
@@ -41,7 +41,7 @@ protected:
 
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	
-	PerspectiveCamera* camera = nullptr;
+	BaseCamera* camera = nullptr;
 	ID3D12RootSignature* rootSig = nullptr;
 	std::vector<PipelineState*> pipelineStates;
 };

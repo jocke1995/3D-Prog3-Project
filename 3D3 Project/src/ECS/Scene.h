@@ -2,14 +2,12 @@
 #define SCENE_H
 
 #include "Entity.h"
-#include "../Engine/OrthographicCamera.h"
-#include "../Engine/PerspectiveCamera.h"
-#include <map>
 
+#include "../src/Engine/BaseCamera.h"
 class Scene
 {
 public:
-	Scene(PerspectiveCamera* camera);
+	Scene(BaseCamera* camera);
 	~Scene();
 
 	bool AddEntity(std::string entityName);
@@ -19,7 +17,7 @@ public:
 	const std::map<std::string, Entity*> *GetEntities() const;
 
 	unsigned int GetNrOfEntites() const;
-	PerspectiveCamera* GetMainCamera() const;
+	BaseCamera* GetMainCamera() const;
 
 	void UpdateScene(double dt);
 	
@@ -28,7 +26,7 @@ private:
 	std::map<std::string, Entity*> entities;
 	unsigned int nrOfEntities = 0;
 
-	PerspectiveCamera* mainCamera = nullptr;
+	BaseCamera* mainCamera = nullptr;
 
 	void UpdateEntities();
 	bool EntityExists(std::string entityName) const;

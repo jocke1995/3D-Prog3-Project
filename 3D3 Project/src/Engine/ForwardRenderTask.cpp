@@ -53,8 +53,8 @@ void FowardRenderTask::Execute()
 	commandList->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	SwapChain* sc = static_cast<SwapChain*>(this->renderTargets["swapChain"]);
-	const D3D12_VIEWPORT* viewPort = sc->GetViewPort();
-	const D3D12_RECT* rect = sc->GetScissorRect();
+	const D3D12_VIEWPORT* viewPort = sc->GetRenderView()->GetViewPort();
+	const D3D12_RECT* rect = sc->GetRenderView()->GetScissorRect();
 	commandList->RSSetViewports(1, viewPort);
 	commandList->RSSetScissorRects(1, rect);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -65,7 +65,7 @@ void FowardRenderTask::Execute()
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_FRAME, this->resources["cbPerFrame"]->GetGPUVirtualAdress());
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	XMMATRIX* viewProjMat = this->camera->GetViewProjMatrix();
+	XMMATRIX* viewProjMat = this->camera->GetViewProjection();
 
 	// Draw for every Rendercomponent
 	for (int i = 0; i < this->renderComponents.size(); i++)
@@ -84,14 +84,14 @@ void FowardRenderTask::Execute()
 
 				Transform* transform = tc->GetTransform();
 				XMMATRIX* worldMat = transform->GetWorldMatrix();
-
-				// Transpose matrices
 				XMMATRIX WVP = (*worldMat) * (*viewProjMat);
+
+				// Transpose
 				XMMATRIX WVPTransposed = XMMatrixTranspose(WVP);
-				XMMATRIX worldMatTransposed = XMMatrixTranspose(*worldMat);
+				XMMATRIX* WTransposed = transform->GetWorldMatrixTransposed();
 
 				// Create a CB_PER_OBJECT struct
-				CB_PER_OBJECT_STRUCT perObject = { worldMatTransposed, WVPTransposed, *info };
+				CB_PER_OBJECT_STRUCT perObject = { *WTransposed, WVPTransposed, *info };
 
 				commandList->SetGraphicsRoot32BitConstants(RS::CB_PER_OBJECT_CONSTANTS, sizeof(CB_PER_OBJECT_STRUCT) / sizeof(UINT), &perObject, 0);
 

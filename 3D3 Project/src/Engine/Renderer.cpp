@@ -237,7 +237,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			// ShadowInfo* si = new ShadowInfo(1, -1, devic)
 
 			// Save in renderer
-			this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].push_back(std::make_pair(dlc, cbd));
+			this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].push_back(std::make_tuple(dlc, cbd));
 		}
 
 		component::PointLightComponent* plc = entity->GetComponent<component::PointLightComponent>();
@@ -247,7 +247,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::POINT_LIGHT);
 
 			// Save in renderer
-			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_pair(plc, cbd));
+			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_tuple(plc, cbd));
 		}
 
 		component::SpotLightComponent* slc = entity->GetComponent<component::SpotLightComponent>();
@@ -257,7 +257,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::SPOT_LIGHT);
 
 			// Save in renderer
-			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_pair(slc, cbd));
+			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_tuple(slc, cbd));
 		}
 	}
 #pragma endregion HandleComponents
@@ -268,9 +268,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		// ----- directional lights -----
 		cps.Num_Dir_Lights = this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].size();
 		unsigned int index = 0;
-		for (auto& pair : this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT])
+		for (auto& tuple : this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT])
 		{
-			cps.dirLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
+			cps.dirLightIndices[index].x = std::get<1>(tuple)->GetDescriptorHeapIndex();
 			index++;
 		}
 		// ----- directional lights -----
@@ -278,9 +278,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		// ----- point lights -----
 		cps.Num_Point_Lights = this->lights[LIGHT_TYPE::POINT_LIGHT].size();
 		index = 0;
-		for (auto& pair : this->lights[LIGHT_TYPE::POINT_LIGHT])
+		for (auto& tuple : this->lights[LIGHT_TYPE::POINT_LIGHT])
 		{
-			cps.pointLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
+			cps.pointLightIndices[index].x = std::get<1>(tuple)->GetDescriptorHeapIndex();
 			index++;
 		}
 		// ----- point lights -----
@@ -288,9 +288,9 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		// ----- spot lights -----
 		cps.Num_Spot_Lights = this->lights[LIGHT_TYPE::SPOT_LIGHT].size();
 		index = 0;
-		for (auto& pair : this->lights[LIGHT_TYPE::SPOT_LIGHT])
+		for (auto& tuple : this->lights[LIGHT_TYPE::SPOT_LIGHT])
 		{
-			cps.spotLightIndices[index].x = pair.second->GetDescriptorHeapIndex();
+			cps.spotLightIndices[index].x = std::get<1>(tuple)->GetDescriptorHeapIndex();
 			index++;
 		}
 		// ----- spot lights -----
@@ -309,10 +309,10 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	for (unsigned int i = 0; i < LIGHT_TYPE::NUM_LIGHT_TYPES; i++)
 	{
 		LIGHT_TYPE type = static_cast<LIGHT_TYPE>(i);
-		for (auto& pair : this->lights[type])
+		for (auto& tuple : this->lights[type])
 		{
-			void* data = pair.first->GetLightData();
-			ConstantBufferView* cbd = pair.second;
+			void* data = std::get<0>(tuple)->GetLightData();
+			ConstantBufferView* cbd = std::get<1>(tuple);
 			this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
 		}
 	}
@@ -456,12 +456,12 @@ ThreadPool* Renderer::GetThreadPool() const
 	return this->threadpool;
 }
 
-PerspectiveCamera* Renderer::GetCamera() const
+BaseCamera* Renderer::GetCamera() const
 {
 	return this->camera;
 }
 
-void Renderer::SetRenderTasksMainCamera(PerspectiveCamera* camera)
+void Renderer::SetRenderTasksMainCamera(BaseCamera* camera)
 {
 	for (RenderTask* renderTask : this->renderTasks)
 	{

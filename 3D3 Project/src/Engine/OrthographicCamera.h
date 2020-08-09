@@ -17,7 +17,7 @@ public:
 
     void Update(double dt);
 
-    XMMATRIX* GetViewProjMatrix();
+    XMMATRIX* GetViewProjection();
 
 private:
     float moveLeftRight = 0.0f;

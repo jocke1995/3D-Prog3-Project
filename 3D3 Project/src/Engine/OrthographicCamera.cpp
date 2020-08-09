@@ -20,7 +20,7 @@ void OrthographicCamera::Update(double dt)
 	this->viewProjMatrix = this->viewMatrix * this->projMatrix;
 }
 
-XMMATRIX* OrthographicCamera::GetViewProjMatrix()
+XMMATRIX* OrthographicCamera::GetViewProjection()
 {
 	return &this->viewProjMatrix;
 }

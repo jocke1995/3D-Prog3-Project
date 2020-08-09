@@ -1,6 +1,5 @@
 #include "Engine/Renderer.h"
 #include "Engine/Timer.h"
-#include "Window.h"
 
 #include "ECS/SceneHandler.h"
 
@@ -9,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
     /* ------ Window  ------ */
-    Window* window = new Window(hInstance, nCmdShow, 800, 600, false, L"windowName", L"windowTitle");
+    Window* window = new Window(hInstance, nCmdShow);
 
     /* ------ Timer  ------ */
     Timer* timer = new Timer(window);
@@ -50,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene->GetEntity("stone")->AddComponent<component::TransformComponent>();
     scene->GetEntity("transparentTestObject")->AddComponent<component::MeshComponent>();
     scene->GetEntity("transparentTestObject")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>();
+    scene->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>(LIGHT_FLAG::CAST_SHADOW);
     scene->GetEntity("spotLight")->AddComponent<component::MeshComponent>();
     scene->GetEntity("spotLight")->AddComponent<component::TransformComponent>();
     scene->GetEntity("spotLight")->AddComponent<component::SpotLightComponent>(LIGHT_FLAG::USE_TRANSFORM_POSITION);

@@ -1,7 +1,10 @@
 #include "Light.h"
 
-Light::Light(unsigned int lightFlags)
+Light::Light(CAMERA_TYPE camType, unsigned int lightFlags)
 {
+	this->cameraType = camType;
+	this->CreateCamera();
+
 	this->lightFlags = lightFlags;
 
 	this->baseLight = new BaseLight();
@@ -13,6 +16,8 @@ Light::Light(unsigned int lightFlags)
 Light::~Light()
 {
 	delete this->baseLight;
+
+	delete this->camera;
 }
 
 void Light::SetColor(LIGHT_COLOR_TYPE type, float4 color)
@@ -33,17 +38,23 @@ void Light::SetColor(LIGHT_COLOR_TYPE type, float4 color)
 	this->UpdateLightData(type);
 }
 
-void Light::SetShadowInfo(ShadowInfo* shadowInfo)
-{
-	this->shadowInfo = shadowInfo;
-}
 
 unsigned int Light::GetLightFlags() const
 {
 	return this->lightFlags;
 }
 
-ShadowInfo* Light::GetShadowInfo() const
+BaseCamera* Light::GetCamera() const
 {
-	return this->shadowInfo;
+	return this->camera;
+}
+
+void Light::CreateCamera()
+{
+	switch (this->cameraType)
+	{
+	case CAMERA_TYPE::ORTHOGRAPHIC:
+		this->camera = new OrthographicCamera();
+		break;
+	}
 }

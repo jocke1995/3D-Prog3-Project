@@ -63,7 +63,7 @@ void RenderTask::SetRenderComponents(std::vector<std::pair<	component::MeshCompo
 	this->renderComponents = *renderComponents;
 }
 
-void RenderTask::SetCamera(PerspectiveCamera* camera)
+void RenderTask::SetCamera(BaseCamera* camera)
 {
 	this->camera = camera;
 }

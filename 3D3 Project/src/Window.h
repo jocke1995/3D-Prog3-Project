@@ -7,7 +7,15 @@ static bool spacePressed = false;
 class Window
 {
 public:
-	Window(HINSTANCE hInstance, int nCmdShow, int screenWidth, int screenHeight, bool fullScreen, LPCTSTR windowName, LPCTSTR windowTitle);
+	// Varying screensize constructor
+	Window(HINSTANCE hInstance,
+		int nCmdShow,
+		bool fullScreen = false,
+		int screenWidth = 800,
+		int screenHeight = 600,
+		LPCTSTR windowName = L"windowName",
+		LPCTSTR windowTitle = L"windowTitle");
+
 	~Window();
 
 	void SetWindowTitle(std::wstring newTitle);

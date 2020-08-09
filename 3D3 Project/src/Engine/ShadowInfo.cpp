@@ -7,15 +7,41 @@ ShadowInfo::ShadowInfo(
 	DescriptorHeap* dh_SRV)
 {
 	this->CreateResource(device, textureWidth, textureHeight);
+
 	this->CreateDSV(device, dh_DSV);
 	this->CreateSRV(device, dh_SRV);
+
+	this->renderView = new RenderView(textureWidth, textureHeight);
 }
 
 ShadowInfo::~ShadowInfo()
 {
 	delete this->resource;
+
 	delete this->DSV;
 	delete this->SRV;
+
+	delete this->renderView;
+}
+
+Resource* ShadowInfo::GetResource() const
+{
+	return this->resource;
+}
+
+DepthStencilView* ShadowInfo::GetDSV() const
+{
+	return this->DSV;
+}
+
+ShaderResourceView* ShadowInfo::GetSRV() const
+{
+	return this->SRV;
+}
+
+RenderView* ShadowInfo::GetRenderView() const
+{
+	return this->renderView;
 }
 
 void ShadowInfo::CreateResource(ID3D12Device5* device, unsigned int width, unsigned int height)

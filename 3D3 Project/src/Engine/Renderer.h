@@ -44,11 +44,11 @@ public:
 	void Execute();
 
 	ThreadPool* GetThreadPool() const;
-	PerspectiveCamera* GetCamera() const;
+	BaseCamera* GetCamera() const;
 private:
 	// Camera
-	PerspectiveCamera* camera = nullptr;
-	void SetRenderTasksMainCamera(PerspectiveCamera* camera);
+	BaseCamera* camera = nullptr;
+	void SetRenderTasksMainCamera(BaseCamera* camera);
 
 	unsigned int frameCounter = 0;
 
@@ -86,7 +86,7 @@ private:
 	void SetRenderTasksRenderComponents();
 
 	LightViewsPool* lightViewsPool = nullptr;
-	std::map<LIGHT_TYPE, std::vector<std::pair<Light*, ConstantBufferView*>>> lights;
+	std::map<LIGHT_TYPE, std::vector<std::tuple<Light*, ConstantBufferView*>>> lights;
 
 	// Current scene to be drawn
 	Scene* currActiveScene = nullptr;

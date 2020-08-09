@@ -23,11 +23,14 @@ public:
 	void UpdateWorldMatrix();
 
 	XMMATRIX* GetWorldMatrix();
+	XMMATRIX* GetWorldMatrixTransposed();
+
 	XMFLOAT3 GetPositionXMFLOAT3() const;
 	float3 GetPositionFloat3() const;
 
 private:
 	XMMATRIX worldMat;
+	XMMATRIX worldMatTransposed;
 
 	XMFLOAT3 position;
 	XMFLOAT3 scale;
