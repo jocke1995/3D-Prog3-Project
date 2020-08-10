@@ -12,7 +12,7 @@ namespace component
         MeshComponent(Entity* parent);
         virtual ~MeshComponent();
 
-        void Update();
+        void Update(double dt);
 
         // Sets
         void SetMeshes(std::vector<Mesh*>* meshes);

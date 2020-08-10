@@ -98,7 +98,7 @@ enum DRAW_FLAG
 {
 	ForwardRendering = BIT(1),
 	Blend = BIT(2),
-	// Shadow = BIT(3),
+	Shadow = BIT(3),
 	// animation = BIT(4),
 	// WireFrame
 	// etc..

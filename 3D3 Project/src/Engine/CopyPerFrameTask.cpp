@@ -18,7 +18,7 @@ void CopyPerFrameTask::Execute()
 
 	this->commandInterface->Reset(this->commandInterfaceIndex);
 
-	for (auto& pair : this->data_CBDs)
+	for (auto& pair : this->data_CBVs)
 	{
 		this->CopyResource(
 			commandList,

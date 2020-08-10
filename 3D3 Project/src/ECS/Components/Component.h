@@ -11,7 +11,7 @@ public:
 	Component(Entity* parent);
 	virtual ~Component();
 
-	virtual void Update() = 0;
+	virtual void Update(double dt) = 0;
 
 protected:
 	Entity* parent = nullptr;

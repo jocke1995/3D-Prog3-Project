@@ -1,10 +1,10 @@
 #include "BaseCamera.h"
 
-BaseCamera::BaseCamera()
+BaseCamera::BaseCamera(XMVECTOR position, XMVECTOR lookAt)
 {
 	// Create View Matrix
-	this->eyeVector = XMVectorSet(0.0, 3.0, -5.0, 1.0f);
-	this->atVector = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	this->eyeVector = position;
+	this->atVector = lookAt;
 	this->upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	this->viewMatrix = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
 
@@ -16,11 +16,22 @@ BaseCamera::~BaseCamera()
 
 }
 
+void BaseCamera::Update(double dt)
+{
+	this->viewMatrix = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
+
+	this->UpdateSpecific(dt);
+}
+
 void BaseCamera::SetPosition(float x, float y, float z)
 {
 	this->eyeVector = XMVectorSet(x, y, z, 1.0f);
 }
 
+void BaseCamera::SetLookAt(float x, float y, float z)
+{
+	this->atVector = XMVectorSet(x, y, z, 1.0f);
+}
 
 XMFLOAT3 BaseCamera::GetPosition() const
 {

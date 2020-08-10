@@ -12,7 +12,7 @@ namespace component
         TransformComponent(Entity* parent);
         virtual ~TransformComponent();
 
-        void Update();
+        void Update(double dt);
 
         Transform* GetTransform() const;
     private:

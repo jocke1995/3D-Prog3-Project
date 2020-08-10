@@ -13,7 +13,7 @@ namespace component
 		delete this->transform;
 	}
 
-	void TransformComponent::Update()
+	void TransformComponent::Update(double dt)
 	{
 		this->transform->UpdateWorldMatrix();
 	}

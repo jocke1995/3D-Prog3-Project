@@ -16,6 +16,27 @@ namespace component
 		delete this->pointLight;
 	}
 
+	void PointLightComponent::Init()
+	{
+	}
+
+	void PointLightComponent::Update(double dt)
+	{
+		if (this->camera != nullptr)
+		{
+			this->camera->Update(dt);
+		}
+
+		if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
+		{
+			Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
+			float3 position = tc->GetPositionFloat3();
+			this->pointLight->position.x = position.x;
+			this->pointLight->position.y = position.y;
+			this->pointLight->position.z = position.z;
+		}
+	}
+
 	void PointLightComponent::SetPosition(float3 position)
 	{
 		this->pointLight->position = { position.x, position.y, position.z, 1.0f };
@@ -31,18 +52,6 @@ namespace component
 	void* PointLightComponent::GetLightData() const
 	{
 		return this->pointLight;
-	}
-
-	void PointLightComponent::Update()
-	{
-		if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
-		{
-			Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
-			float3 position = tc->GetPositionFloat3();
-			this->pointLight->position.x = position.x;
-			this->pointLight->position.y = position.y;
-			this->pointLight->position.z = position.z;
-		}
 	}
 
 	void PointLightComponent::UpdateLightData(LIGHT_COLOR_TYPE type)

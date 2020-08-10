@@ -234,10 +234,17 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 
 			// Assign views required for shadows from the lightPool
-			// ShadowInfo* si = new ShadowInfo(1, -1, devic)
+			ShadowInfo* si = nullptr;
+			if (dlc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
+			{
+				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+
+				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
+				srt->AddShadowCastingLight(std::make_pair(dlc, si));
+			}
 
 			// Save in renderer
-			this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].push_back(std::make_tuple(dlc, cbd));
+			this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].push_back(std::make_tuple(dlc, cbd, si));
 		}
 
 		component::PointLightComponent* plc = entity->GetComponent<component::PointLightComponent>();
@@ -246,8 +253,18 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			// Assign resource from resourcePool
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::POINT_LIGHT);
 
+			// Assign views required for shadows from the lightPool
+			ShadowInfo* si = nullptr;
+			if (plc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
+			{
+				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::POINT_LIGHT);
+
+				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
+				srt->AddShadowCastingLight(std::make_pair(dlc, si));
+			}
+
 			// Save in renderer
-			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_tuple(plc, cbd));
+			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_tuple(plc, cbd, si));
 		}
 
 		component::SpotLightComponent* slc = entity->GetComponent<component::SpotLightComponent>();
@@ -256,8 +273,18 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			// Assign resource from resourcePool
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::SPOT_LIGHT);
 
+			// Assign views required for shadows from the lightPool
+			ShadowInfo* si = nullptr;
+			if (slc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
+			{
+				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::SPOT_LIGHT);
+
+				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
+				srt->AddShadowCastingLight(std::make_pair(dlc, si));
+
+			}
 			// Save in renderer
-			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_tuple(slc, cbd));
+			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_tuple(slc, cbd, si));
 		}
 	}
 #pragma endregion HandleComponents
@@ -403,37 +430,34 @@ void Renderer::Execute()
 	int backBufferIndex = dx12SwapChain->GetCurrentBackBufferIndex();
 	int commandInterfaceIndex = this->frameCounter++ % 2;
 
-	// Currently there is only 1 copy task.. but later there will be more
-	for (CopyTask* copytask : this->copyTasks)
-	{
-		copytask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(copytask, THREAD_FLAG::COPY_DATA);
-		copytask->Execute();	// Non-multithreaded version
-	}
+	/* --------------------- Record copy command lists --------------------- */
+	// Copy per frame
+	CopyTask* ct = this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME];
+	ct->SetCommandInterfaceIndex(commandInterfaceIndex);
+	this->threadpool->AddTask(ct, THREAD_FLAG::COPY_DATA);
 
-	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA);
+	this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA);
 
+	/* --------------------- Execute copy command lists --------------------- */
+	// Copy per frame
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->ExecuteCommandLists(
 		this->copyCommandLists[commandInterfaceIndex].size(),
 		this->copyCommandLists[commandInterfaceIndex].data());
-
 	UINT64 copyFenceValue = ++this->fenceFrameValue;
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Signal(this->fenceFrame, copyFenceValue);
 
-	// Fill queue with rendertasks and execute them in parallell
+	/* --------------------- Record direct commandlists --------------------- */
 	for (RenderTask* renderTask : this->renderTasks)
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		//this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
-		renderTask->Execute();
+		this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
+		//renderTask->Execute();
 	}
-
-	/* RENDER QUEUE --------------------------------------------------------------- */
+	
 	// Wait for the threads which records the commandlists to complete
 	this->threadpool->WaitForThreads(THREAD_FLAG::RENDER | THREAD_FLAG::ALL);
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, copyFenceValue);
-
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(
 		this->directCommandLists[commandInterfaceIndex].size(), 
@@ -448,7 +472,11 @@ void Renderer::Execute()
 	this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]->Wait(this->fenceFrame, this->fenceFrameValue);
 	WaitForFrame();
 
-	dx12SwapChain->Present(0, 0);
+	HRESULT hr = dx12SwapChain->Present(0, 0);
+	if (FAILED(hr))
+	{
+		Log::PrintSeverity(Log::Severity::CRITICAL, "Swapchain Failed to present\n");
+	}
 }
 
 ThreadPool* Renderer::GetThreadPool() const
@@ -646,7 +674,7 @@ void Renderer::InitRenderTasks()
 	D3D12_DEPTH_STENCIL_DESC dsd = {};
 	dsd.DepthEnable = true;
 	dsd.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;	// Om pixels depth är lägre än den gamla så ritas den nya ut
+	dsd.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 
 	// DepthStencil
 	dsd.StencilEnable = false;
@@ -664,7 +692,7 @@ void Renderer::InitRenderTasks()
 
 	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, 
 		this->rootSignature, 
-		L"VertexShader.hlsl", L"PixelShader.hlsl", 
+		L"ForwardVertex.hlsl", L"ForwardPixel.hlsl", 
 		&gpsdForwardRenderVector, 
 		L"ForwardRenderingPSO");
 
@@ -768,7 +796,53 @@ void Renderer::InitRenderTasks()
 	
 
 #pragma endregion Blend
+#pragma region ShadowPass
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdShadow = { 0 };
+	gpsdShadow.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
+	// RenderTarget
+	gpsdShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+	gpsdShadow.NumRenderTargets = 0;
+	// Depthstencil usage
+	gpsdShadow.SampleDesc.Count = 1;
+	gpsdShadow.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdShadow.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpsdShadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	gpsdShadow.RasterizerState.FrontCounterClockwise = false;
+
+	// Depth descriptor
+	D3D12_DEPTH_STENCIL_DESC dsdShadow = {};
+	dsdShadow.DepthEnable = true;
+	dsdShadow.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsdShadow.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	dsdShadow.StencilEnable = false;
+
+
+	gpsdShadow.DepthStencilState = dsdShadow;
+	gpsdShadow.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	// Specify Blend descriptions
+	D3D12_RENDER_TARGET_BLEND_DESC defaultShadowDesc = {
+		false, false,
+		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+		D3D12_LOGIC_OP_NOOP, D3D12_COLOR_WRITE_ENABLE_ALL };
+	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdShadow.BlendState.RenderTarget[i] = defaultShadowDesc;
+
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdShadowVector;
+	gpsdShadowVector.push_back(&gpsdShadow);
+
+	RenderTask* shadowRenderTask = new ShadowRenderTask(
+		this->device5,
+		this->rootSignature,
+		L"ShadowVertex.hlsl", L"ShadowPixel.hlsl",
+		&gpsdShadowVector,
+		L"ShadowPSO");
+
+	shadowRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
+#pragma endregion ShadowPaass
 	CopyTask* copyPerFrameTask = new CopyPerFrameTask(this->device5);
 
 	// Add the tasks to desired vectors so they can be used in renderer
@@ -787,10 +861,14 @@ void Renderer::InitRenderTasks()
 	// None atm
 
 	/* ------------------------- DirectQueue Tasks ---------------------- */
+	this->renderTasks[RENDER_TASK_TYPE::SHADOW] = shadowRenderTask;
 	this->renderTasks[RENDER_TASK_TYPE::FORWARD_RENDER] = forwardRenderTask;
 	this->renderTasks[RENDER_TASK_TYPE::BLEND] = blendRenderTask;
 
 	// Pushback in the order of execution
+	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+		this->directCommandLists[i].push_back(shadowRenderTask->GetCommandList(i));
+
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 		this->directCommandLists[i].push_back(forwardRenderTask->GetCommandList(i));
 

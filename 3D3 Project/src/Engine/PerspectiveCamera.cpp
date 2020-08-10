@@ -27,7 +27,7 @@ PerspectiveCamera::~PerspectiveCamera()
 	}
 }
 
-void PerspectiveCamera::Update(double dt)
+void PerspectiveCamera::UpdateSpecific(double dt)
 {
 	if (tempHasInputObject == true)
 	{

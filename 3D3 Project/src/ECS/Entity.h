@@ -32,7 +32,7 @@ public:
 
 	unsigned int GetID() const;
 
-	void Update();
+	void Update(double dt);
 
 private:
 	unsigned int id = -1;

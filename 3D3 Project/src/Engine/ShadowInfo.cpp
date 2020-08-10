@@ -69,7 +69,7 @@ void ShadowInfo::CreateResource(ID3D12Device5* device, unsigned int width, unsig
 		&desc,
 		&clearValue,
 		L"LIGHTDEPTH_DEFAULT_RESOURCE",
-		D3D12_RESOURCE_STATE_GENERIC_READ);
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void ShadowInfo::CreateDSV(ID3D12Device5* device, DescriptorHeap* dh_DSV)
@@ -77,7 +77,7 @@ void ShadowInfo::CreateDSV(ID3D12Device5* device, DescriptorHeap* dh_DSV)
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvd = {};
 	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvd.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	dsvd.Flags = D3D12_DSV_FLAG_READ_ONLY_DEPTH;
+	dsvd.Flags = D3D12_DSV_FLAG_NONE;
 	dsvd.Texture2D.MipSlice = 0;
 
 	this->DSV = new DepthStencilView(

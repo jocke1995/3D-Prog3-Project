@@ -12,11 +12,13 @@ enum CAMERA_TYPE
 class BaseCamera
 {
 public:
-	BaseCamera();
+	BaseCamera(XMVECTOR position = { 0.0, 3.0, -5.0, 1.0f }, XMVECTOR lookAt = { 0.0f, 0.0f, 1.0f, 1.0f });
 	virtual ~BaseCamera();
 
-	virtual void Update(double dt = 0.0) = 0;
+	void Update(double dt);
+
 	void SetPosition(float x, float y, float z);
+	void SetLookAt(float x, float y, float z);
 
 	XMFLOAT3 GetPosition() const;
 	float3 GetPositionFloat3() const;
@@ -33,6 +35,8 @@ protected:
 	XMVECTOR upVector;
 
 	XMMATRIX viewMatrix;
+
+	virtual void UpdateSpecific(double dt = 0.0) = 0;
 };
 
 #endif

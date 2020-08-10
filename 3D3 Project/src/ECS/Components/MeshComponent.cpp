@@ -29,7 +29,7 @@ namespace component
 		this->drawFlag = drawFlag;
 	}
 
-	void MeshComponent::Update()
+	void MeshComponent::Update(double dt)
 	{
 
 	}

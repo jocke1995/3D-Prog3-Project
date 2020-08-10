@@ -15,8 +15,6 @@ public:
     PerspectiveCamera();
 	virtual ~PerspectiveCamera();
 
-    void Update(double dt);
-
     XMMATRIX* GetViewProjection();
 
 private:
@@ -30,6 +28,8 @@ private:
     XMMATRIX viewProjMatrix;
 
     void Init();
+
+    void UpdateSpecific(double dt);
     void UpdateCamera();
     void UpdateViewProjMatrix();
 

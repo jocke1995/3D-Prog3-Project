@@ -36,6 +36,8 @@ private:
 		ID3D12Device5* device,
 		DescriptorHeap* descriptorHeap_DSV,
 		D3D12_DEPTH_STENCIL_VIEW_DESC* depthStencilDescInput);
+
+	bool deleteResource = false;
 };
 
 #endif

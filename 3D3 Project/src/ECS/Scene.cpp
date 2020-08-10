@@ -70,14 +70,14 @@ BaseCamera* Scene::GetMainCamera() const
 void Scene::UpdateScene(double dt)
 {
     this->mainCamera->Update(dt);
-    this->UpdateEntities();
+    this->UpdateEntities(dt);
 }
 
-void Scene::UpdateEntities()
+void Scene::UpdateEntities(double dt)
 {
     for (auto pair : this->entities)
     {
-        pair.second->Update();
+        pair.second->Update(dt);
     }
 }
 

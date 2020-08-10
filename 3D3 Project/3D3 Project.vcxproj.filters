@@ -209,6 +209,9 @@
     <ClCompile Include="src\Engine\RenderView.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\ShadowRenderTask.cpp">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -370,14 +373,11 @@
     <ClInclude Include="src\Engine\RenderView.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\ShadowRenderTask.h">
+      <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\Engine\HLSL\PixelShader.hlsl">
-      <Filter>Engine\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Engine\HLSL\VertexShader.hlsl">
-      <Filter>Engine\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
@@ -385,6 +385,18 @@
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\LightCalculations.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ShadowPixel.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ShadowVertex.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ForwardVertex.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\ForwardPixel.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -19,7 +19,6 @@ public:
 
 private:
 	IDXGISwapChain4* swapChain4 = nullptr;
-
 };
 
 #endif

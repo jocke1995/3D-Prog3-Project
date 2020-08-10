@@ -27,10 +27,10 @@ unsigned int Entity::GetID() const
 	return this->id;
 }
 
-void Entity::Update()
+void Entity::Update(double dt)
 {
 	for (Component* component : this->components)
 	{
-		component->Update();
+		component->Update(dt);
 	}
 }

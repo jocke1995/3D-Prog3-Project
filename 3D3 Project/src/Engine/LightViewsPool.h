@@ -18,19 +18,22 @@ public:
 	~LightViewsPool();
 
 	ConstantBufferView* GetFreeConstantBufferView(LIGHT_TYPE type);
-	//ShadowInfo* GetFreeShadowInfo(LIGHT_TYPE type);
+	ShadowInfo* GetFreeShadowInfo(LIGHT_TYPE type);
 
 	void Clear();
-private:
-	std::map<LIGHT_TYPE, std::vector<std::pair<bool, ConstantBufferView*>>> cbvPools;
 
+private:
 	ID3D12Device5* device = nullptr;
 
 	DescriptorHeap* descriptorHeap_CBV_UAV_SRV = nullptr;
 	DescriptorHeap* descriptorHeap_RTV = nullptr;
 	DescriptorHeap* descriptorHeap_DSV = nullptr;
 
+	std::map<LIGHT_TYPE, std::vector<std::pair<bool, ConstantBufferView*>>> cbvPools;
 	ConstantBufferView* CreateConstantBufferView(LIGHT_TYPE type);
+
+	std::map<LIGHT_TYPE, std::vector<std::pair<bool, ShadowInfo*>>> shadowPools;
+	ShadowInfo* CreateShadowInfo(LIGHT_TYPE type);
 };
 
 #endif

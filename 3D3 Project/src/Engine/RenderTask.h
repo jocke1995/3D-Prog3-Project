@@ -11,6 +11,10 @@
 #include "../ECS/Components/MeshComponent.h"
 #include "../ECS/Components/TransformComponent.h"
 
+#include "../ECS/Components/Lights/DirectionalLightComponent.h"
+#include "../ECS/Components/Lights/PointLightComponent.h"
+#include "../ECS/Components/Lights/SpotLightComponent.h"
+
 class RenderTask : public DX12Task
 {
 public:

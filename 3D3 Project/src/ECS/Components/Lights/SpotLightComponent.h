@@ -2,6 +2,7 @@
 #define SPOTLIGHTCOMPONENT_H
 
 #include "Light.h"
+#include <assimp\types.h>
 namespace component
 {
 	class SpotLightComponent : public Light, public Component
@@ -9,6 +10,9 @@ namespace component
 	public:
 		SpotLightComponent(Entity* parent, unsigned int lightFlags = 0);
 		virtual ~SpotLightComponent();
+
+		void Init();
+		void Update(double dt);
 
 		void SetPosition(float3 position);
 		void SetCutOff(float cutOff);
@@ -18,7 +22,6 @@ namespace component
 
 		void* GetLightData() const;
 
-		void Update();
 	private:
 		SpotLight* spotLight = nullptr;
 

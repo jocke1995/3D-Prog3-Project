@@ -15,19 +15,39 @@ namespace component
 		delete this->directionalLight;
 	}
 
+	void DirectionalLightComponent::Init()
+	{
+		if (this->lightFlags & LIGHT_FLAG::CAST_SHADOW)
+		{
+			this->CreateCamera({ 
+					-this->directionalLight->direction.x * 10,
+					-this->directionalLight->direction.y * 10,
+					-this->directionalLight->direction.z * 10},
+					{this->directionalLight->direction.x, 
+					this->directionalLight->direction.y, 
+					this->directionalLight->direction.z, } );
+		}
+	}
+
+	void DirectionalLightComponent::Update(double dt)
+	{
+		if (this->camera != nullptr)
+		{
+			this->camera->Update(dt);
+		}
+	}
+
 	void DirectionalLightComponent::SetDirection(float3 direction)
 	{
 		this->directionalLight->direction = { direction.x, direction.y, direction.z, 0.0f };
+		
+		this->camera->SetPosition(-direction.x * 10, -direction.y * 10, -direction.z * 10);
+		this->camera->SetLookAt(direction.x, direction.y, direction.z);
 	}
 
 	void* DirectionalLightComponent::GetLightData() const
 	{
 		return this->directionalLight;
-	}
-
-	void DirectionalLightComponent::Update()
-	{
-
 	}
 
 	void DirectionalLightComponent::UpdateLightData(LIGHT_COLOR_TYPE type)

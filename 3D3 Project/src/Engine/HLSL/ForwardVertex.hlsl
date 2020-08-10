@@ -31,7 +31,7 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 	output.worldPos = mul(vertexPosition, cbPerObject.worldMatrix);
 
 	output.uv = float4(mesh.uv);
-	
+
 	// Create TBN-Matrix
 	float3 T = normalize(mul(float4(mesh.tang), cbPerObject.worldMatrix)).xyz;
 	float3 N = normalize(mul(float4(mesh.norm), cbPerObject.worldMatrix)).xyz;

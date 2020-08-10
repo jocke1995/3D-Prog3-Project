@@ -24,6 +24,12 @@ LightViewsPool::~LightViewsPool()
 		{
 			delete pair.second;
 		}
+
+		// shadowInfos
+		for (auto& pair : this->shadowPools[typeIndex])
+		{
+			delete pair.second;
+		}
 	}
 }
 
@@ -45,23 +51,23 @@ ConstantBufferView* LightViewsPool::GetFreeConstantBufferView(LIGHT_TYPE type)
 	return cbd;
 }
 
-//ShadowInfo* LightViewsPool::GetFreeShadowInfo(LIGHT_TYPE type)
-//{
-	//for (auto& pair : this->shadowInfoPools[type])
-	//{
-	//	// The resource is free
-	//	if (pair.first == true)
-	//	{
-	//		pair.first = false;
-	//		return pair.second;
-	//	}
-	//}
-	//
-	//// No constant buffer of that type exists.. Create and return a new one
-	//ShadowInfo* si = this->CreateShadowInfo(type);
-	//this->shadowInfoPools[type].push_back(std::make_pair(false, si));
-	//return si;
-//}
+ShadowInfo* LightViewsPool::GetFreeShadowInfo(LIGHT_TYPE type)
+{
+	for (auto& pair : this->shadowPools[type])
+	{
+		// The resource is free
+		if (pair.first == true)
+		{
+			pair.first = false;
+			return pair.second;
+		}
+	}
+	
+	// No shadowInfo of that type exists.. Create and return a new one
+	ShadowInfo* si = this->CreateShadowInfo(type);
+	this->shadowPools[type].push_back(std::make_pair(false, si));
+	return si;
+}
 
 void LightViewsPool::Clear()
 {
@@ -71,6 +77,12 @@ void LightViewsPool::Clear()
 
 		// CBVs
 		for (auto& pair : this->cbvPools[typeIndex])
+		{
+			pair.first = true;
+		}
+
+		// shadowInfos
+		for (auto& pair : this->shadowPools[typeIndex])
 		{
 			pair.first = true;
 		}
@@ -105,4 +117,34 @@ ConstantBufferView* LightViewsPool::CreateConstantBufferView(LIGHT_TYPE type)
 		this->descriptorHeap_CBV_UAV_SRV);
 
 	return cbd;
+}
+
+ShadowInfo* LightViewsPool::CreateShadowInfo(LIGHT_TYPE type)
+{
+	unsigned int depthTextureWidth = 0;
+	unsigned int depthTextureHeight = 0;
+	switch (type)
+	{
+	case LIGHT_TYPE::DIRECTIONAL_LIGHT:
+		depthTextureWidth = 1024;
+		depthTextureHeight = 1024;
+		break;
+	case LIGHT_TYPE::POINT_LIGHT:
+		depthTextureWidth = 1024;
+		depthTextureHeight = 1024;
+		break;
+	case LIGHT_TYPE::SPOT_LIGHT:
+		depthTextureWidth = 1024;
+		depthTextureHeight = 1024;
+		break;
+	}
+
+	ShadowInfo* shadowInfo = new ShadowInfo(
+		depthTextureWidth,
+		depthTextureHeight,
+		this->device,
+		this->descriptorHeap_DSV,
+		this->descriptorHeap_CBV_UAV_SRV);
+
+	return shadowInfo;
 }

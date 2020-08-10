@@ -22,11 +22,11 @@ GraphicsState::GraphicsState(ID3D12Device5* device, RootSignature* rootSignature
 	// Create pipelineStateObject
 	HRESULT hr = device->CreateGraphicsPipelineState(&this->gpsd, IID_PPV_ARGS(&this->PSO));
 
-	this->PSO->SetName(this->psoName);
-	if (!SUCCEEDED(hr))
+	if (FAILED(hr))
 	{
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to create %S\n", this->psoName);
 	}
+	this->PSO->SetName(this->psoName);
 }
 
 GraphicsState::~GraphicsState()

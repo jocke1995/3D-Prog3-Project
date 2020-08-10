@@ -3,7 +3,6 @@
 Light::Light(CAMERA_TYPE camType, unsigned int lightFlags)
 {
 	this->cameraType = camType;
-	this->CreateCamera();
 
 	this->lightFlags = lightFlags;
 
@@ -49,12 +48,14 @@ BaseCamera* Light::GetCamera() const
 	return this->camera;
 }
 
-void Light::CreateCamera()
+void Light::CreateCamera(float3 position, float3 lookAt)
 {
 	switch (this->cameraType)
 	{
 	case CAMERA_TYPE::ORTHOGRAPHIC:
-		this->camera = new OrthographicCamera();
+		this->camera = new OrthographicCamera(
+			{ position.x, position.y, position.z },
+			{ lookAt.x, lookAt.y, lookAt.z });
 		break;
 	}
 }

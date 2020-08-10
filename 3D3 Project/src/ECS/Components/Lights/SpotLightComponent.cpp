@@ -20,6 +20,27 @@ namespace component
         delete this->spotLight;
     }
 
+    void SpotLightComponent::Init()
+    {
+    }
+
+    void SpotLightComponent::Update(double dt)
+    {
+        if (this->camera != nullptr)
+        {
+            this->camera->Update(dt);
+        }
+
+        if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
+        {
+            Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
+            float3 position = tc->GetPositionFloat3();
+            this->spotLight->position_cutOff.x = position.x;
+            this->spotLight->position_cutOff.y = position.y;
+            this->spotLight->position_cutOff.z = position.z;
+        }
+    }
+
     void SpotLightComponent::SetPosition(float3 position)
     {
         this->spotLight->position_cutOff.x = position.x;
@@ -56,17 +77,6 @@ namespace component
         return this->spotLight;
     }
 
-    void SpotLightComponent::Update()
-    {
-        if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
-        {
-        	Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
-        	float3 position = tc->GetPositionFloat3();
-            this->spotLight->position_cutOff.x = position.x;
-            this->spotLight->position_cutOff.y = position.y;
-            this->spotLight->position_cutOff.z = position.z;
-        }
-    }
     void SpotLightComponent::UpdateLightData(LIGHT_COLOR_TYPE type)
     {
         switch (type)

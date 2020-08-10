@@ -28,7 +28,7 @@ private:
 
 	BaseCamera* mainCamera = nullptr;
 
-	void UpdateEntities();
+	void UpdateEntities(double dt);
 	bool EntityExists(std::string entityName) const;
 };
 

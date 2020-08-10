@@ -11,12 +11,12 @@ CopyTask::~CopyTask()
 {
 }
 
-void CopyTask::AddDataToUpdate(std::pair<void*, ConstantBufferView*>* data_CBD)
+void CopyTask::AddDataToUpdate(std::pair<void*, ConstantBufferView*>* data_CBV)
 {
-	this->data_CBDs.push_back(*data_CBD);
+	this->data_CBVs.push_back(*data_CBV);
 }
 
 void CopyTask::Clear()
 {
-	this->data_CBDs.clear();
+	this->data_CBVs.clear();
 }

@@ -6,16 +6,13 @@
 #include "DepthStencilView.h"
 #include "ThreadPool.h"
 #include "../ECS/Scene.h"
-
-// lights
 #include "LightViewsPool.h"
-#include "../ECS/Components/Lights/DirectionalLightComponent.h"
-#include "../ECS/Components/Lights/PointLightComponent.h"
-#include "../ECS/Components/Lights/SpotLightComponent.h"
+
 
 // Graphics
 #include "ForwardRenderTask.h"
 #include "BlendRenderTask.h"
+#include "ShadowRenderTask.h"
 
 // Copy
 #include "CopyPerFrameTask.h"
@@ -75,7 +72,7 @@ private:
 	// ThreadPool
 	ThreadPool* threadpool = nullptr;
 
-	// RenderTasks
+	// Tasks
 	std::vector<RenderTask*>  renderTasks;
 	std::vector<CopyTask*>    copyTasks;
 	std::vector<ComputeTask*> computeTasks;
@@ -86,7 +83,7 @@ private:
 	void SetRenderTasksRenderComponents();
 
 	LightViewsPool* lightViewsPool = nullptr;
-	std::map<LIGHT_TYPE, std::vector<std::tuple<Light*, ConstantBufferView*>>> lights;
+	std::map<LIGHT_TYPE, std::vector<std::tuple<Light*, ConstantBufferView*, ShadowInfo*>>> lights;
 
 	// Current scene to be drawn
 	Scene* currActiveScene = nullptr;
@@ -97,9 +94,9 @@ private:
 	ConstantBufferView* cbPerFrame = nullptr;
 
 	// Commandlists holders
-	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
-	std::vector<ID3D12CommandList*> computeCommandLists[NUM_SWAP_BUFFERS];
 	std::vector<ID3D12CommandList*> directCommandLists[NUM_SWAP_BUFFERS];
+	std::vector<ID3D12CommandList*> computeCommandLists[NUM_SWAP_BUFFERS];
+	std::vector<ID3D12CommandList*> copyCommandLists[NUM_SWAP_BUFFERS];
 	
 	// DescriptorHeaps
 	std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> descriptorHeaps = {};

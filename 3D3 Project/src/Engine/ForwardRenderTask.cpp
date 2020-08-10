@@ -49,7 +49,6 @@ void FowardRenderTask::Execute()
 	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	commandList->ClearRenderTargetView(cdh, clearColor, 0, nullptr);
 
-	int a = 15;
 	commandList->ClearDepthStencilView(dsh, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	SwapChain* sc = static_cast<SwapChain*>(this->renderTargets["swapChain"]);

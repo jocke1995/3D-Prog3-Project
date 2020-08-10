@@ -9,6 +9,8 @@ DepthStencilView::DepthStencilView(
 {
 	this->CreateResource(device, width, height);
 	this->CreateDSV(device, descriptorHeap_DSV, depthStencilDescInput);
+
+	this->deleteResource = true;
 }
 
 // Constructor that assigns a resource
@@ -24,7 +26,8 @@ DepthStencilView::DepthStencilView(
 
 DepthStencilView::~DepthStencilView()
 {
-	delete this->resource;
+	if (this->deleteResource == true)
+		delete this->resource;
 }
 
 Resource* DepthStencilView::GetDSVResource() const
@@ -52,14 +55,15 @@ void DepthStencilView::CreateResource(ID3D12Device5* device, unsigned int width,
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 
 	D3D12_CLEAR_VALUE clearValue = {};
-	clearValue.DepthStencil.Depth = 1;
 	clearValue.Format = DXGI_FORMAT_D32_FLOAT;
+	clearValue.DepthStencil.Depth = 1;
+	clearValue.DepthStencil.Stencil = 0;
 
 	this->resource = new Resource(
 		device,
 		&resourceDesc,
 		&clearValue,
-		L"DSV_DEFAULT_RESOURCE",
+		L"DSV_RESOURCE",
 		D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
