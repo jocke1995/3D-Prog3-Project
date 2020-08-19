@@ -11,7 +11,7 @@ namespace component
 		DirectionalLightComponent(Entity* parent, unsigned int lightFlags = 0);
 		virtual ~DirectionalLightComponent();
 
-		void Init();
+		
 		void Update(double dt);
 
 		void SetDirection(float3 direction);
@@ -20,7 +20,7 @@ namespace component
 
 	private:
 		DirectionalLight* directionalLight = nullptr;
-
+		void InitFlagUsages();
 		void UpdateLightData(LIGHT_COLOR_TYPE type);
 	};
 }

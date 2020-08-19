@@ -29,7 +29,7 @@ RenderTarget::RenderTarget(
 			device,
 			&resourceDesc,
 			nullptr,
-			L"Render_Target_Resource",
+			L"RenderTarget_DEFAULT_RESOURCE",
 			D3D12_RESOURCE_STATE_GENERIC_READ);
 	
 		this->resources.push_back(resource);

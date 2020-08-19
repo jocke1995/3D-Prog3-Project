@@ -141,7 +141,7 @@ bool Texture::Init(std::wstring filePath, ID3D12Device5* device, DescriptorHeap*
 		device,
 		&this->resourceDescription,
 		nullptr,
-		L"Resource_" + this->filePath);
+		this->filePath + L"_DEFAULT_RESOURCE");
 
 	UINT64 textureUploadBufferSize;
 	device->GetCopyableFootprints(
@@ -172,7 +172,7 @@ bool Texture::Init(std::wstring filePath, ID3D12Device5* device, DescriptorHeap*
 	return true;
 }
 
-void Texture::UploadTextureData(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue)
+void Texture::UploadToDefault(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue)
 {
 	if (this->hasBeenUploadedToDefault == true)
 		return;

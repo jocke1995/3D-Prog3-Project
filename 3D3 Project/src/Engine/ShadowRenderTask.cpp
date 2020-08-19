@@ -36,6 +36,7 @@ void ShadowRenderTask::Execute()
 
 	DescriptorHeap* depthBufferHeap = this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV];
 
+	// Draw for every shadow-casting-light
 	for (auto pair : this->lights)
 	{
 		commandList->SetPipelineState(this->pipelineStates[0]->GetPSO());
@@ -46,10 +47,7 @@ void ShadowRenderTask::Execute()
 		commandList->RSSetViewports(1, viewPort);
 		commandList->RSSetScissorRects(1, rect);
 
-		XMMATRIX* viewProjMat = /*this->camera->GetViewProjection();*/pair.first->GetCamera()->GetViewProjection();
-
-		XMFLOAT4X4 test;
-		XMStoreFloat4x4(&test, *viewProjMat);
+		XMMATRIX* viewProjMatTrans = pair.first->GetCamera()->GetViewProjectionTranposed();
 
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 			pair.second->GetResource()->GetID3D12Resource1(),
@@ -78,12 +76,10 @@ void ShadowRenderTask::Execute()
 					const SlotInfo* info = mc->GetMesh(i)->GetSlotInfo();
 
 					Transform* transform = tc->GetTransform();
-					XMMATRIX* worldMat = transform->GetWorldMatrix();
-					XMMATRIX WVP = (*worldMat) * (*viewProjMat);
-
-					// Transpose
-					XMMATRIX WVPTransposed = XMMatrixTranspose(WVP);
 					XMMATRIX* WTransposed = transform->GetWorldMatrixTransposed();
+
+					// kanske fel ordning
+					XMMATRIX WVPTransposed = (*viewProjMatTrans) * (*WTransposed);
 
 					// Create a CB_PER_OBJECT struct
 					CB_PER_OBJECT_STRUCT perObject = { *WTransposed, WVPTransposed, *info };

@@ -12,10 +12,11 @@ public:
     PerspectiveCamera(HINSTANCE hInstance, HWND hwnd);
 
     // main constructor
-    PerspectiveCamera();
+    PerspectiveCamera(XMVECTOR position, XMVECTOR lookAt);
 	virtual ~PerspectiveCamera();
 
     XMMATRIX* GetViewProjection();
+    XMMATRIX* GetViewProjectionTranposed();
 
 private:
     float moveLeftRight = 0.0f;
@@ -25,13 +26,14 @@ private:
     float camPitch = 0.0f;
 
     XMMATRIX projMatrix;
+
     XMMATRIX viewProjMatrix;
+    XMMATRIX viewProjTranposedMatrix;
 
     void Init();
 
     void UpdateSpecific(double dt);
-    void UpdateCamera();
-    void UpdateViewProjMatrix();
+    void UpdateCameraMovement();
 
     //  ------------------------ TEMPORARY IN THIS CLASS ------------------------
     bool tempHasInputObject = false;

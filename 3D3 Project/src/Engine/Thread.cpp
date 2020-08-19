@@ -61,7 +61,7 @@ Thread::~Thread()
 bool Thread::IsTaskNullptr()
 {
 	this->mutex.lock();
-	bool result = this->task == nullptr;
+	bool result = (this->task == nullptr);
 	this->mutex.unlock();
 
 	return result;

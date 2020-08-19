@@ -81,7 +81,7 @@ void LightViewsPool::Clear()
 			pair.first = true;
 		}
 
-		// shadowInfos
+		// ShadowInfos
 		for (auto& pair : this->shadowPools[typeIndex])
 		{
 			pair.first = true;
@@ -121,6 +121,7 @@ ConstantBufferView* LightViewsPool::CreateConstantBufferView(LIGHT_TYPE type)
 
 ShadowInfo* LightViewsPool::CreateShadowInfo(LIGHT_TYPE type)
 {
+	
 	unsigned int depthTextureWidth = 0;
 	unsigned int depthTextureHeight = 0;
 	switch (type)
@@ -139,9 +140,11 @@ ShadowInfo* LightViewsPool::CreateShadowInfo(LIGHT_TYPE type)
 		break;
 	}
 
+
 	ShadowInfo* shadowInfo = new ShadowInfo(
 		depthTextureWidth,
 		depthTextureHeight,
+		this->shadowInfoIdCounter++,
 		this->device,
 		this->descriptorHeap_DSV,
 		this->descriptorHeap_CBV_UAV_SRV);

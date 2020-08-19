@@ -64,7 +64,7 @@ void FowardRenderTask::Execute()
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_FRAME, this->resources["cbPerFrame"]->GetGPUVirtualAdress());
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	XMMATRIX* viewProjMat = this->camera->GetViewProjection();
+	XMMATRIX* viewProjMatTrans = this->camera->GetViewProjectionTranposed();
 
 	// Draw for every Rendercomponent
 	for (int i = 0; i < this->renderComponents.size(); i++)
@@ -82,12 +82,8 @@ void FowardRenderTask::Execute()
 				const SlotInfo* info = mc->GetMesh(i)->GetSlotInfo();
 
 				Transform* transform = tc->GetTransform();
-				XMMATRIX* worldMat = transform->GetWorldMatrix();
-				XMMATRIX WVP = (*worldMat) * (*viewProjMat);
-
-				// Transpose
-				XMMATRIX WVPTransposed = XMMatrixTranspose(WVP);
 				XMMATRIX* WTransposed = transform->GetWorldMatrixTransposed();
+				XMMATRIX WVPTransposed = (*viewProjMatTrans) * (*WTransposed);
 
 				// Create a CB_PER_OBJECT struct
 				CB_PER_OBJECT_STRUCT perObject = { *WTransposed, WVPTransposed, *info };

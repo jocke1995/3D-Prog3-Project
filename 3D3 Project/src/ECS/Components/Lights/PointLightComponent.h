@@ -11,7 +11,6 @@ namespace component
 		PointLightComponent(Entity* parent, unsigned int lightFlags = 0);
 		virtual ~PointLightComponent();
 
-		void Init();
 		void Update(double dt);
 
 		void SetPosition(float3 position);

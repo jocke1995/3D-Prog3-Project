@@ -9,6 +9,7 @@ enum CAMERA_TYPE
 	ORTHOGRAPHIC,
 	NUM_CAMERA_TYPES
 };
+
 class BaseCamera
 {
 public:
@@ -27,6 +28,7 @@ public:
 	float3 GetLookAtFloat3() const;
 
 	virtual XMMATRIX* GetViewProjection() = 0;
+	virtual XMMATRIX* GetViewProjectionTranposed() = 0;
 
 protected:
 	XMVECTOR rightVector;

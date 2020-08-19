@@ -64,6 +64,7 @@ void Transform::UpdateWorldMatrix()
 	XMMATRIX rotMat = this->rotationMat * this->rotXMat * this->rotYMat * this->rotZMat;
 
 	this->worldMat = rotMat * sclMat * posMat;
+	//this->worldMat = XMMatrixIdentity();
 
 	// Update transposed world matrix
 	this->worldMatTransposed = DirectX::XMMatrixTranspose(this->worldMat);

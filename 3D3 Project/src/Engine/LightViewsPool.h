@@ -34,6 +34,7 @@ private:
 
 	std::map<LIGHT_TYPE, std::vector<std::pair<bool, ShadowInfo*>>> shadowPools;
 	ShadowInfo* CreateShadowInfo(LIGHT_TYPE type);
+	unsigned int shadowInfoIdCounter = 0;
 };
 
 #endif

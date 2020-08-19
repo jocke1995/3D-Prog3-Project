@@ -8,6 +8,10 @@ namespace component
 		this->directionalLight = new DirectionalLight();
 		this->directionalLight->direction = { -1.0f,  -0.5f,  0.0f, 0.0f };
 		this->directionalLight->baseLight = *this->baseLight;
+
+		this->directionalLight->textureShadowMap = 0;
+
+		this->InitFlagUsages();
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
@@ -15,25 +19,13 @@ namespace component
 		delete this->directionalLight;
 	}
 
-	void DirectionalLightComponent::Init()
-	{
-		if (this->lightFlags & LIGHT_FLAG::CAST_SHADOW)
-		{
-			this->CreateCamera({ 
-					-this->directionalLight->direction.x * 10,
-					-this->directionalLight->direction.y * 10,
-					-this->directionalLight->direction.z * 10},
-					{this->directionalLight->direction.x, 
-					this->directionalLight->direction.y, 
-					this->directionalLight->direction.z, } );
-		}
-	}
 
 	void DirectionalLightComponent::Update(double dt)
 	{
 		if (this->camera != nullptr)
 		{
 			this->camera->Update(dt);
+			this->directionalLight->viewProj = *this->camera->GetViewProjectionTranposed();
 		}
 	}
 
@@ -41,13 +33,36 @@ namespace component
 	{
 		this->directionalLight->direction = { direction.x, direction.y, direction.z, 0.0f };
 		
-		this->camera->SetPosition(-direction.x * 10, -direction.y * 10, -direction.z * 10);
-		this->camera->SetLookAt(direction.x, direction.y, direction.z);
+		if (this->camera != nullptr)
+		{
+			this->camera->SetPosition(-direction.x * 10, -direction.y * 10, -direction.z * 10);
+			this->camera->SetLookAt(direction.x, direction.y, direction.z);
+		}
 	}
 
 	void* DirectionalLightComponent::GetLightData() const
 	{
 		return this->directionalLight;
+	}
+
+	void DirectionalLightComponent::InitFlagUsages()
+	{
+		if (this->lightFlags & LIGHT_FLAG::CAST_SHADOW)
+		{
+			this->CreateCamera(
+				{
+				-this->directionalLight->direction.x * 30,
+				-this->directionalLight->direction.y * 30,
+				-this->directionalLight->direction.z * 30 },
+				{
+				this->directionalLight->direction.x,
+				this->directionalLight->direction.y,
+				this->directionalLight->direction.z });
+
+			this->directionalLight->baseLight.castShadow = true;
+
+			this->directionalLight->viewProj = *this->camera->GetViewProjectionTranposed();
+		}
 	}
 
 	void DirectionalLightComponent::UpdateLightData(LIGHT_COLOR_TYPE type)

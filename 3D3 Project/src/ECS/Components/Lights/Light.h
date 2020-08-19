@@ -46,7 +46,6 @@ public:
 	Light(CAMERA_TYPE camType, unsigned int lightFlags = 0);
 	virtual ~Light();
 
-	virtual void Init() = 0;
 	virtual void Update(double dt) = 0;
 
 	void SetColor(LIGHT_COLOR_TYPE type, float4 color);

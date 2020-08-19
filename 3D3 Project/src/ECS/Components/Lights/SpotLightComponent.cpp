@@ -7,12 +7,14 @@ namespace component
     {
         
         this->spotLight = new SpotLight();
-        this->spotLight->position_cutOff = { 0.0f, 0.0f, 0.0f, cos(XMConvertToRadians(12.5f)) };
-        this->spotLight->direction_outerCutoff = { 0.0f, 0.0f, 0.0f, cos(XMConvertToRadians(17.5f)) };
-        //this->spotLight->attenuation = { 1.0f, 0.14f, 0.07f, 0.0f };    // 32 'distance'
-        this->spotLight->attenuation = { 1.0f, 0.09f, 0.032f, 0.0f }; 
-
+        this->spotLight->position_cutOff = { 0.0f, 0.0f, 0.0f, cos(XMConvertToRadians(30.0f)) };
+        this->spotLight->direction_outerCutoff = { 1.0f, 0.0f, 0.0f, cos(XMConvertToRadians(45.0f)) };
+        this->spotLight->attenuation = { 1.0f, 0.009f, 0.0032f, 0.0f }; 
         this->spotLight->baseLight = *this->baseLight;
+
+        this->spotLight->textureShadowMap = 0;
+
+        this->InitFlagUsages();
     }
 
     SpotLightComponent::~SpotLightComponent()
@@ -20,17 +22,8 @@ namespace component
         delete this->spotLight;
     }
 
-    void SpotLightComponent::Init()
-    {
-    }
-
     void SpotLightComponent::Update(double dt)
     {
-        if (this->camera != nullptr)
-        {
-            this->camera->Update(dt);
-        }
-
         if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
         {
             Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
@@ -38,7 +31,18 @@ namespace component
             this->spotLight->position_cutOff.x = position.x;
             this->spotLight->position_cutOff.y = position.y;
             this->spotLight->position_cutOff.z = position.z;
+
+            if (this->camera != nullptr)
+            {
+                this->camera->SetPosition(position.x, position.y, position.z);
+            }
         }
+
+        if (this->camera != nullptr)
+        {
+            this->camera->Update(dt);
+            this->spotLight->viewProj = *this->camera->GetViewProjectionTranposed();
+        }  
     }
 
     void SpotLightComponent::SetPosition(float3 position)
@@ -46,6 +50,11 @@ namespace component
         this->spotLight->position_cutOff.x = position.x;
         this->spotLight->position_cutOff.y = position.y;
         this->spotLight->position_cutOff.z = position.z;
+
+        if (this->camera != nullptr)
+        {
+            this->camera->SetPosition(position.x, position.y, position.z);
+        }
     }
 
     void SpotLightComponent::SetCutOff(float cutOff)
@@ -58,6 +67,11 @@ namespace component
         this->spotLight->direction_outerCutoff.x = direction.x;
         this->spotLight->direction_outerCutoff.y = direction.y;
         this->spotLight->direction_outerCutoff.z = direction.z;
+
+        if (this->camera != nullptr)
+        {
+            this->camera->SetLookAt(direction.x, direction.y, direction.z);
+        }
     }
 
     void SpotLightComponent::SetOuterCutOff(float outerCutOff)
@@ -75,6 +89,36 @@ namespace component
     void* SpotLightComponent::GetLightData() const
     {
         return this->spotLight;
+    }
+
+    void SpotLightComponent::InitFlagUsages()
+    {
+        if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
+        {
+            Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
+            float3 position = tc->GetPositionFloat3();
+            this->spotLight->position_cutOff.x = position.x;
+            this->spotLight->position_cutOff.y = position.y;
+            this->spotLight->position_cutOff.z = position.z;
+        }
+
+        if (this->lightFlags & LIGHT_FLAG::CAST_SHADOW)
+        {
+            this->CreateCamera(
+                {
+                this->spotLight->position_cutOff.x,
+                this->spotLight->position_cutOff.y,
+                this->spotLight->position_cutOff.z,
+                },
+                {
+                this->spotLight->direction_outerCutoff.x,
+                this->spotLight->direction_outerCutoff.y,
+                this->spotLight->direction_outerCutoff.z });
+
+            this->spotLight->baseLight.castShadow = true;
+
+            this->spotLight->viewProj = *this->camera->GetViewProjectionTranposed();
+        }
     }
 
     void SpotLightComponent::UpdateLightData(LIGHT_COLOR_TYPE type)

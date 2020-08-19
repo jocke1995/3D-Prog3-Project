@@ -10,6 +10,7 @@ class ShadowInfo
 public:
 	ShadowInfo(
 		unsigned int textureWidth, unsigned int textureHeight,
+		unsigned int shadowInfoId,
 		ID3D12Device5* device,
 		DescriptorHeap* dh_DSV,
 		DescriptorHeap* dh_SRV);
@@ -22,6 +23,8 @@ public:
 	RenderView* GetRenderView() const;
 
 private:
+	unsigned int id = 0;
+
 	Resource* resource = nullptr;
 
 	DepthStencilView* DSV = nullptr;

@@ -5,16 +5,18 @@ PerspectiveCamera::PerspectiveCamera(HINSTANCE hInstance, HWND hwnd)
 	:BaseCamera()
 {
 	this->Init();
+	this->UpdateSpecific(0);
 
 	this->tempHasInputObject = true;
 	this->tempInputClass = new TempInputClass();
 	this->tempInputClass->InitDirectInput(hInstance, hwnd);
 }
 
-PerspectiveCamera::PerspectiveCamera()
-	:BaseCamera()
+PerspectiveCamera::PerspectiveCamera(XMVECTOR position, XMVECTOR lookAt)
+	:BaseCamera(position, lookAt)
 {
 	this->Init();
+	this->UpdateSpecific(0);
 
 	this->tempHasInputObject = false;
 }
@@ -37,15 +39,23 @@ void PerspectiveCamera::UpdateSpecific(double dt)
 			&this->moveUpDown,
 			&this->camYaw,
 			&this->camPitch);
+
+		this->UpdateCameraMovement();
 	}
 	
-	this->UpdateCamera();
-	this->UpdateViewProjMatrix();
+
+	this->viewProjMatrix = this->viewMatrix * this->projMatrix;
+	this->viewProjTranposedMatrix = DirectX::XMMatrixTranspose(this->viewProjMatrix);
 }
 
 XMMATRIX* PerspectiveCamera::GetViewProjection()
 {
 	return &this->viewProjMatrix;
+}
+
+XMMATRIX* PerspectiveCamera::GetViewProjectionTranposed()
+{
+	return &this->viewProjTranposedMatrix;
 }
 
 void PerspectiveCamera::Init()
@@ -58,7 +68,7 @@ void PerspectiveCamera::Init()
 	this->projMatrix = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, zNear, zFar);
 }
 
-void PerspectiveCamera::UpdateCamera()
+void PerspectiveCamera::UpdateCameraMovement()
 {
 	// Update the lookAt Vector depending on the mouse pitch/yaw.... WE DONT HAVE ROLL (hence '0' as the last parameter)
 	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(this->camPitch, this->camYaw, 0);
@@ -86,9 +96,4 @@ void PerspectiveCamera::UpdateCamera()
 	this->moveUpDown = 0.0f;
 
 	this->viewMatrix = XMMatrixLookAtLH(this->eyeVector, this->eyeVector + this->atVector, this->upVector);
-}
-
-void PerspectiveCamera::UpdateViewProjMatrix()
-{
-	this->viewProjMatrix = this->viewMatrix * this->projMatrix;
 }

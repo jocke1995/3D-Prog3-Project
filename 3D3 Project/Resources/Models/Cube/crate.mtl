@@ -9,7 +9,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Ka crate_ambient.png
+map_Ka crate_ambient.jpg
 map_Kd crate_diffuse.jpg
 map_Ks crate_specular.png
 map_Kn crate_normal.png

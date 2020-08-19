@@ -38,11 +38,17 @@ void Shader::CompileShader()
 		entryPoint = "CS_main";
 		shaderModelTarget = "cs_5_1";
 	}
+	// Add geometry shader..? naah
 
 	// shadelModelTarget = fx_5_0
 
 	ID3DBlob* errorMessages = nullptr;
 
+
+	unsigned int flags = D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
+#if defined( DEBUG ) || defined( _DEBUG )
+	flags |= D3DCOMPILE_DEBUG;
+#endif
 
 	HRESULT hr = D3DCompileFromFile(
 		this->path, // filePath + filename
@@ -50,7 +56,7 @@ void Shader::CompileShader()
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,		// optional include files
 		entryPoint.c_str(),		// entry point
 		shaderModelTarget.c_str(),		// shader model (target)
-		D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES,	// shader compile options			// here DEBUGGING OPTIONS
+		flags,	// shader compile options			// here DEBUGGING OPTIONS
 		0,				// effect compile options
 		&this->blob,	// double pointer to ID3DBlob		
 		&errorMessages			// pointer for Error Blob messages.

@@ -15,6 +15,9 @@ Timer::~Timer()
 
 void Timer::Update()
 {
+    static unsigned int fpsCounter = 0;
+    fpsCounter++;
+
     // Calculate deltatime
     this->timeLast = this->timeNow;
     this->timeNow = std::chrono::system_clock::now();
@@ -23,12 +26,13 @@ void Timer::Update()
 
     // Set limit to the updates on the window title
     std::chrono::duration<double> elapsed_timeFps = this->timeNow - this->timeLastTitleUpdate;
-    if (elapsed_timeFps.count() >= 0.1)
+    if (elapsed_timeFps.count() >= 1.0)
     {
-        std::string fpsString = std::to_string(int(1.0 / this->dt));
-        std::wstring tmp = std::wstring(fpsString.begin(), fpsString.end());
-        window->SetWindowTitle(tmp);
+        std::wstring fpsString = std::to_wstring(fpsCounter);
+        window->SetWindowTitle(fpsString);
         this->timeLastTitleUpdate = this->timeNow;
+
+        fpsCounter = 0;
     }
 }
 

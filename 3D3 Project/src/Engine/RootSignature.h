@@ -12,8 +12,6 @@ enum RS
 	NUM_PARAMS
 };
 
-
-
 class RootSignature
 {
 public:

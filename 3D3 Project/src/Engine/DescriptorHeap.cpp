@@ -7,11 +7,11 @@ DescriptorHeap::DescriptorHeap(ID3D12Device5* device, DESCRIPTOR_HEAP_TYPE type)
 	{
 	case DESCRIPTOR_HEAP_TYPE::RTV:
 		this->desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-		this->desc.NumDescriptors = NUM_SWAP_BUFFERS;
+		this->desc.NumDescriptors = 10;
 		break;
 	case DESCRIPTOR_HEAP_TYPE::DSV:
 		this->desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		this->desc.NumDescriptors = NUM_SWAP_BUFFERS;
+		this->desc.NumDescriptors = 10;
 		break;
 	case DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV:
 		this->desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;

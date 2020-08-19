@@ -11,7 +11,7 @@ public:
 	CopyTask(ID3D12Device5* device);
 	virtual ~CopyTask();
 
-	void AddDataToUpdate(std::pair<void*, ConstantBufferView*>* data_CBV);
+	void Submit(std::pair<void*, ConstantBufferView*>* data_CBV);
 
 	void Clear();
 protected:

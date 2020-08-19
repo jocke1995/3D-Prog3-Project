@@ -2,7 +2,7 @@
 # Material Count: 1
 
 newmtl None
-map_Ka rock_ambient.png
+map_Ka rock_ambient.jpg
 map_Kd rock_diffuse.jpg
 map_Ks rock_specular.jpg
 map_Kn rock_normal.jpg

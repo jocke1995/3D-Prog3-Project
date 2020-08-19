@@ -24,17 +24,17 @@ VS_OUT VS_main(uint vID : SV_VertexID)
 {
 	VS_OUT output = (VS_OUT)0;
 
-	vertex mesh = meshes[cbPerObject.info.vertexDataIndex][vID];
-	float4 vertexPosition = float4(mesh.pos.xyz, 1.0f);
+	vertex v = meshes[cbPerObject.info.vertexDataIndex][vID];
+	float4 vertexPosition = float4(v.pos.xyz, 1.0f);
 
 	output.pos = mul(vertexPosition, cbPerObject.WVP);
 	output.worldPos = mul(vertexPosition, cbPerObject.worldMatrix);
 
-	output.uv = float4(mesh.uv);
+	output.uv = float4(v.uv);
 
 	// Create TBN-Matrix
-	float3 T = normalize(mul(float4(mesh.tang), cbPerObject.worldMatrix)).xyz;
-	float3 N = normalize(mul(float4(mesh.norm), cbPerObject.worldMatrix)).xyz;
+	float3 T = normalize(mul(float4(v.tang), cbPerObject.worldMatrix)).xyz;
+	float3 N = normalize(mul(float4(v.norm), cbPerObject.worldMatrix)).xyz;
 
 	// Gram schmidt
 	T = normalize(T - dot(T, N) * N);

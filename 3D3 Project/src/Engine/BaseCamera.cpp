@@ -6,9 +6,9 @@ BaseCamera::BaseCamera(XMVECTOR position, XMVECTOR lookAt)
 	this->eyeVector = position;
 	this->atVector = lookAt;
 	this->upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	this->viewMatrix = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
-
 	this->rightVector = XMVector3Cross(this->atVector, this->upVector);
+
+	this->viewMatrix = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
 }
 
 BaseCamera::~BaseCamera()
@@ -25,12 +25,12 @@ void BaseCamera::Update(double dt)
 
 void BaseCamera::SetPosition(float x, float y, float z)
 {
-	this->eyeVector = XMVectorSet(x, y, z, 1.0f);
+	this->eyeVector = XMVectorSet(x, y, z, 1.0);
 }
 
 void BaseCamera::SetLookAt(float x, float y, float z)
 {
-	this->atVector = XMVectorSet(x, y, z, 1.0f);
+	this->atVector = XMVectorSet(x, y, z, 0.0f);
 }
 
 XMFLOAT3 BaseCamera::GetPosition() const

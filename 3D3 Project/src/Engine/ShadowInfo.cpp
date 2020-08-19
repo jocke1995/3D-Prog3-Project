@@ -2,16 +2,20 @@
 
 ShadowInfo::ShadowInfo(
 	unsigned int textureWidth, unsigned int textureHeight,
+	unsigned int shadowInfoId,
 	ID3D12Device5* device,
 	DescriptorHeap* dh_DSV,
 	DescriptorHeap* dh_SRV)
 {
+	this->id = shadowInfoId;
+
 	this->CreateResource(device, textureWidth, textureHeight);
 
 	this->CreateDSV(device, dh_DSV);
 	this->CreateSRV(device, dh_SRV);
 
 	this->renderView = new RenderView(textureWidth, textureHeight);
+
 }
 
 ShadowInfo::~ShadowInfo()
@@ -51,7 +55,7 @@ void ShadowInfo::CreateResource(ID3D12Device5* device, unsigned int width, unsig
 	desc.Width = width;
 	desc.Height = height;
 	desc.DepthOrArraySize = 1;
-	desc.MipLevels = 0;
+	desc.MipLevels = 1;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
@@ -64,11 +68,12 @@ void ShadowInfo::CreateResource(ID3D12Device5* device, unsigned int width, unsig
 	clearValue.DepthStencil.Depth = 1.0f;
 	clearValue.DepthStencil.Stencil = 0;
 
+	std::wstring resourceName = L"ShadowMap" + std::to_wstring(this->id) + L"_DEFAULT_RESOURCE";
 	this->resource = new Resource(
 		device,
 		&desc,
 		&clearValue,
-		L"LIGHTDEPTH_DEFAULT_RESOURCE",
+		resourceName,
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 

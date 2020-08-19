@@ -23,7 +23,7 @@ public:
 	~Texture();
 	
 	bool Init(std::wstring filePath, ID3D12Device5* device, DescriptorHeap* descriptorHeap);
-	void UploadTextureData(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue);
+	void UploadToDefault(ID3D12Device5* device, CommandInterface* commandInterface, ID3D12CommandQueue* cmdQueue);
 
 	const UINT GetDescriptorHeapIndex() const;
 	Resource* GetResource() const;

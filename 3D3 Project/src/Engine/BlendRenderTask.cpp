@@ -59,7 +59,7 @@ void BlendRenderTask::Execute()
 
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	XMMATRIX * viewProjMat = this->camera->GetViewProjection();
+	XMMATRIX * viewProjMatTrans = this->camera->GetViewProjectionTranposed();
 
 	// Draw from opposite order from the sorted array
 	for(int i = this->renderComponents.size() - 1; i >= 0; i--)
@@ -77,12 +77,9 @@ void BlendRenderTask::Execute()
 				const SlotInfo* info = mc->GetMesh(j)->GetSlotInfo();
 
 				Transform* transform = tc->GetTransform();
-				XMMATRIX* worldMat = transform->GetWorldMatrix();
-				XMMATRIX WVP = (*worldMat) * (*viewProjMat);
 
-				// Transpose
-				XMMATRIX WVPTransposed = XMMatrixTranspose(WVP);
 				XMMATRIX* WTransposed = transform->GetWorldMatrixTransposed();
+				XMMATRIX WVPTransposed = (*viewProjMatTrans) * (*WTransposed);
 
 				// Create a CB_PER_OBJECT struct
 				CB_PER_OBJECT_STRUCT perObject = { *WTransposed, WVPTransposed, *info };

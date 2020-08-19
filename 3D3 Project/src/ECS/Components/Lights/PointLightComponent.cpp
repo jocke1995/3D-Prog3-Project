@@ -16,10 +16,6 @@ namespace component
 		delete this->pointLight;
 	}
 
-	void PointLightComponent::Init()
-	{
-	}
-
 	void PointLightComponent::Update(double dt)
 	{
 		if (this->camera != nullptr)

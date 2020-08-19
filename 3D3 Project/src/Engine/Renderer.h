@@ -100,7 +100,7 @@ private:
 	
 	// DescriptorHeaps
 	std::map<DESCRIPTOR_HEAP_TYPE, DescriptorHeap*> descriptorHeaps = {};
-	void InitDescriptorHeaps();
+	void CreateDescriptorHeaps();
 
 	// Fences
 	HANDLE eventHandle = nullptr;

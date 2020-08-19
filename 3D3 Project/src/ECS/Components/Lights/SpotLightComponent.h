@@ -11,7 +11,6 @@ namespace component
 		SpotLightComponent(Entity* parent, unsigned int lightFlags = 0);
 		virtual ~SpotLightComponent();
 
-		void Init();
 		void Update(double dt);
 
 		void SetPosition(float3 position);
@@ -25,6 +24,7 @@ namespace component
 	private:
 		SpotLight* spotLight = nullptr;
 
+		void InitFlagUsages();
 		void UpdateLightData(LIGHT_COLOR_TYPE type);
 	};
 }

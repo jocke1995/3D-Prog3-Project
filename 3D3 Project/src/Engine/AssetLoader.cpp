@@ -61,7 +61,6 @@ std::vector<Mesh*>* AssetLoader::LoadModel(const std::wstring path, bool* loaded
 
 	if (assimpScene == nullptr)
 	{
-
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to load model with path: \'%s\'\n", filePath.c_str());
 		return nullptr;
 	}
@@ -215,16 +214,16 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 	aiMaterial* mat = assimpScene->mMaterials[assimpMesh->mMaterialIndex];
 	
 	// Split filepath
-	std::string* filePathWithoutTexture = const_cast<std::string*>(filePath);
-	std::size_t indicesInPath = filePathWithoutTexture->find_last_of("/\\");
-	*filePathWithoutTexture = filePathWithoutTexture->substr(0, indicesInPath + 1);
+	std::string filePathWithoutTexture = *filePath;
+	std::size_t indicesInPath = filePathWithoutTexture.find_last_of("/\\");
+	filePathWithoutTexture = filePathWithoutTexture.substr(0, indicesInPath + 1);
 
 	// Add the textures to the mesh
 	Texture* texture = nullptr;
 	for (int i = 0; i < TEXTURE_TYPE::NUM_TEXTURE_TYPES; i++)
 	{
 		TEXTURE_TYPE type = static_cast<TEXTURE_TYPE>(i);
-		texture = ProcessTexture(mat, type, filePathWithoutTexture);
+		texture = ProcessTexture(mat, type, &filePathWithoutTexture);
 		mesh->SetTexture(type, texture);
 	}
 	// ---------- Get Textures and set them to the mesh END----------
@@ -294,4 +293,3 @@ Texture* AssetLoader::ProcessTexture(aiMaterial* mat,
 
 	return nullptr;
 }
-

@@ -7,9 +7,10 @@ Light::Light(CAMERA_TYPE camType, unsigned int lightFlags)
 	this->lightFlags = lightFlags;
 
 	this->baseLight = new BaseLight();
-	this->baseLight->ambient = { 0.15f, 0.15f, 0.15f, 1.0f };
+	this->baseLight->ambient = { 0.005f, 0.005f, 0.005f, 1.0f };
 	this->baseLight->diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
 	this->baseLight->specular = { 0.1f, 0.1f, 0.1f, 1.0f };
+	this->baseLight->castShadow = false;
 }
 
 Light::~Light()
@@ -37,7 +38,6 @@ void Light::SetColor(LIGHT_COLOR_TYPE type, float4 color)
 	this->UpdateLightData(type);
 }
 
-
 unsigned int Light::GetLightFlags() const
 {
 	return this->lightFlags;
@@ -52,10 +52,15 @@ void Light::CreateCamera(float3 position, float3 lookAt)
 {
 	switch (this->cameraType)
 	{
-	case CAMERA_TYPE::ORTHOGRAPHIC:
-		this->camera = new OrthographicCamera(
-			{ position.x, position.y, position.z },
-			{ lookAt.x, lookAt.y, lookAt.z });
-		break;
+		case CAMERA_TYPE::ORTHOGRAPHIC:
+			this->camera = new OrthographicCamera(
+			{ position.x, position.y, position.z , 1.0f},
+			{ lookAt.x, lookAt.y, lookAt.z , 0.0f});
+			break; 
+		case CAMERA_TYPE::PERSPECTIVE:
+			this->camera = new PerspectiveCamera(
+				{ position.x, position.y, position.z, 1.0f},
+				{ lookAt.x, lookAt.y, lookAt.z , 0.0f});
+			break;
 	}
 }

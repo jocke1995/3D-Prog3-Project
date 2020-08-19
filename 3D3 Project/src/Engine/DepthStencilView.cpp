@@ -63,7 +63,7 @@ void DepthStencilView::CreateResource(ID3D12Device5* device, unsigned int width,
 		device,
 		&resourceDesc,
 		&clearValue,
-		L"DSV_RESOURCE",
+		L"DSV_DEFAULT_RESOURCE",
 		D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 

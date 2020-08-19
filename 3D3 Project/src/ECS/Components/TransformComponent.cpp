@@ -15,6 +15,7 @@ namespace component
 
 	void TransformComponent::Update(double dt)
 	{
+
 		this->transform->UpdateWorldMatrix();
 	}
 

@@ -61,8 +61,8 @@ Renderer::~Renderer()
 	delete this->cbPerScene;
 	Log::Print("17\n");
 
-	delete this->cbPerFrameData;
 	delete this->cbPerFrame;
+	delete this->cbPerFrameData;
 	Log::Print("18\n");
 
 	// temp
@@ -80,11 +80,11 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Failed to Create Device\n");
 	}
 
-	// Create CommandQueues (direct and copy)
+	// Create CommandQueues (copy, compute and direct)
 	this->CreateCommandQueues();
 
-	// Create DescriptorHeap
-	this->InitDescriptorHeaps();
+	// Create DescriptorHeaps
+	this->CreateDescriptorHeaps();
 
 	// Fence for WaitForFrame();
 	this->CreateFences();
@@ -93,9 +93,9 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	this->CreateSwapChain(hwnd);
 
 	// ThreadPool
-	int numCPUs = std::thread::hardware_concurrency();
-	if (numCPUs == 0) numCPUs = 1; // function not supported ej vettig dator
-	this->threadpool = new ThreadPool(numCPUs); // Set num threads to number of cores of the cpu
+	int numCores = std::thread::hardware_concurrency();
+	if (numCores == 0) numCores = 1; // function not supported ej vettig dator
+	this->threadpool = new ThreadPool(numCores); // Set num threads to number of cores of the cpu
 
 	// Create Main DepthBuffer
 	this->CreateMainDSV();
@@ -165,7 +165,7 @@ std::vector<Mesh*>* Renderer::LoadModel(std::wstring path)
 			{
 				TEXTURE_TYPE type = static_cast<TEXTURE_TYPE>(i);
 				Texture* texture = mesh->GetTexture(type);
-				texture->UploadTextureData(
+				texture->UploadToDefault(
 					this->device5,
 					this->tempCommandInterface,
 					this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
@@ -187,7 +187,7 @@ Texture* Renderer::LoadTexture(std::wstring path)
 
 	// ------------------------------ TEMPORARY CODE ------------------------------ 
 	// Wont upload data if its already up.. TEMPORARY safecheck inside the texture class
-	texture->UploadTextureData(
+	texture->UploadToDefault(
 		this->device5,
 		this->tempCommandInterface,
 		this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
@@ -223,7 +223,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 				this->renderComponents.push_back(std::make_pair(mc, tc));
 
 				// Send the Textures to GPU here later, so that textures aren't in memory if they aren't used
-				// or save index to a queue and then submit all textures together later..
+				// or submit index to a queue and then submit all textures together later..
 			}
 		}
 
@@ -238,6 +238,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			if (dlc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
 			{
 				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+				static_cast<DirectionalLight*>(dlc->GetLightData())->textureShadowMap = si->GetSRV()->GetDescriptorHeapIndex();
 
 				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
 				srt->AddShadowCastingLight(std::make_pair(dlc, si));
@@ -255,13 +256,14 @@ void Renderer::SetSceneToDraw(Scene* scene)
 
 			// Assign views required for shadows from the lightPool
 			ShadowInfo* si = nullptr;
-			if (plc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
-			{
-				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::POINT_LIGHT);
-
-				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
-				srt->AddShadowCastingLight(std::make_pair(dlc, si));
-			}
+			//if (plc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
+			//{
+			//	si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::POINT_LIGHT);
+			//	static_cast<PointLight*>(plc->GetLightData())->textureShadowMap = si->GetSRV()->GetDescriptorHeapIndex();
+			//
+			//	ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
+			//	srt->AddShadowCastingLight(std::make_pair(plc, si));
+			//}
 
 			// Save in renderer
 			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_tuple(plc, cbd, si));
@@ -278,10 +280,10 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			if (slc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
 			{
 				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::SPOT_LIGHT);
+				static_cast<SpotLight*>(slc->GetLightData())->textureShadowMap = si->GetSRV()->GetDescriptorHeapIndex();
 
 				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
-				srt->AddShadowCastingLight(std::make_pair(dlc, si));
-
+				srt->AddShadowCastingLight(std::make_pair(slc, si));
 			}
 			// Save in renderer
 			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_tuple(slc, cbd, si));
@@ -340,16 +342,21 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		{
 			void* data = std::get<0>(tuple)->GetLightData();
 			ConstantBufferView* cbd = std::get<1>(tuple);
-			this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(data, cbd));
+			this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Submit(&std::make_pair(data, cbd));
 		}
 	}
 
 	// CB_PER_FRAME_STRUCT
-	void* perFrameData = this->cbPerFrameData;
-	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->AddDataToUpdate(&std::make_pair(perFrameData, this->cbPerFrame));
+	void* perFrameData = static_cast<void*>(this->cbPerFrameData);
+	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Submit(&std::make_pair(perFrameData, this->cbPerFrame));
 #pragma endregion Prepare_CbPerFrame
 
+	
+
 	this->SetRenderTasksRenderComponents();
+	//auto& tuple = this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].at(0);
+	//this->camera = std::get<0>(tuple)->GetCamera();
+	//this->SetRenderTasksMainCamera(this->camera);
 	this->SetRenderTasksMainCamera(scene->GetMainCamera());
 
 	this->currActiveScene = scene;
@@ -434,9 +441,10 @@ void Renderer::Execute()
 	// Copy per frame
 	CopyTask* ct = this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME];
 	ct->SetCommandInterfaceIndex(commandInterfaceIndex);
-	this->threadpool->AddTask(ct, THREAD_FLAG::COPY_DATA);
+	//this->threadpool->AddTask(ct, THREAD_FLAG::COPY_DATA);
+	ct->Execute();
+	//this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA);
 
-	this->threadpool->WaitForThreads(THREAD_FLAG::COPY_DATA);
 
 	/* --------------------- Execute copy command lists --------------------- */
 	// Copy per frame
@@ -634,7 +642,7 @@ void Renderer::CreateMainDSV()
 
 	this->mainDSV = new DepthStencilView(
 		this->device5,
-		1920, 1080,	// width, height
+		800, 600,	// width, height
 		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
 }
 
@@ -642,7 +650,6 @@ void Renderer::CreateRootSignature()
 {
 	this->rootSignature = new RootSignature(this->device5);
 }
-
 
 void Renderer::InitRenderTasks()
 {
@@ -808,7 +815,10 @@ void Renderer::InitRenderTasks()
 	gpsdShadow.SampleMask = UINT_MAX;
 	// Rasterizer behaviour
 	gpsdShadow.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-	gpsdShadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	gpsdShadow.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+	gpsdShadow.RasterizerState.DepthBias = 0;
+	gpsdShadow.RasterizerState.DepthBiasClamp = 0.0f;
+	gpsdShadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
 	gpsdShadow.RasterizerState.FrontCounterClockwise = false;
 
 	// Depth descriptor
@@ -884,7 +894,7 @@ void Renderer::SetRenderTasksRenderComponents()
 	}
 }
 
-void Renderer::InitDescriptorHeaps()
+void Renderer::CreateDescriptorHeaps()
 {
 	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV] = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV);
 	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV] = new DescriptorHeap(this->device5, DESCRIPTOR_HEAP_TYPE::RTV);
