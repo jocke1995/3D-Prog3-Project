@@ -68,7 +68,7 @@ void BlendRenderTask::Execute()
 		component::TransformComponent* tc = this->renderComponents.at(i).second;
 
 		// Check if the renderComponent is to be drawn in Blend
-		if (mc->GetDrawFlag() & DRAW_FLAG::Blend)
+		if (mc->GetDrawFlag() & FLAG_DRAW::Blend)
 		{
 			// Draw for every mesh the MeshComponent has
 			for (unsigned int j = 0; j < mc->GetNrOfMeshes(); j++)

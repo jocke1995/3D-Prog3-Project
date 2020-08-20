@@ -10,13 +10,16 @@
 #include "../src/Engine/OrthographicCamera.h"
 #include "../src/Engine/PerspectiveCamera.h"
 
-enum LIGHT_FLAG
+enum FLAG_LIGHT
 {
 	// Set flag to make the light position inherit the position of the corresponding mesh
 	USE_TRANSFORM_POSITION = BIT(1),
 
-	// Option to make the light cast shadows or not.
-	CAST_SHADOW = BIT(2)
+	// Option to make the light cast shadows or not with different resolutions
+	CAST_SHADOW_LOW_RESOLUTION = BIT(2),
+	CAST_SHADOW_MEDIUM_RESOLUTION = BIT(3),
+	CAST_SHADOW_HIGH_RESOLUTION = BIT(4),
+	CAST_SHADOW_ULTRA_RESOLUTION = BIT(5),
 
 	// If this is set, renderer only need to copy data once to GPU
 	// StaticSettings.. = BIT(3),
@@ -32,7 +35,7 @@ enum LIGHT_TYPE
 	NUM_LIGHT_TYPES
 };
 
-enum LIGHT_COLOR_TYPE
+enum class LIGHT_COLOR_TYPE
 {
 	LIGHT_AMBIENT,
 	LIGHT_DIFFUSE,

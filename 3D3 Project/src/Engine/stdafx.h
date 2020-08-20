@@ -94,7 +94,7 @@ typedef union
 
 #include "structs.h"
 
-enum DRAW_FLAG
+enum FLAG_DRAW
 {
 	ForwardRendering = BIT(1),
 	Blend = BIT(2),

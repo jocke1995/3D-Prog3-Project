@@ -2,7 +2,7 @@
 
 #include "Task.h"
 
-enum THREAD_FLAG
+enum FLAG_THREAD
 {
 	RENDER = BIT(1),
 	COPY_DATA = BIT(2),

@@ -23,7 +23,7 @@ namespace component
 			this->camera->Update(dt);
 		}
 
-		if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
+		if (this->lightFlags & FLAG_LIGHT::USE_TRANSFORM_POSITION)
 		{
 			Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
 			float3 position = tc->GetPositionFloat3();

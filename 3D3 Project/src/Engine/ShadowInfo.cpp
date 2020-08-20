@@ -3,11 +3,13 @@
 ShadowInfo::ShadowInfo(
 	unsigned int textureWidth, unsigned int textureHeight,
 	unsigned int shadowInfoId,
+	SHADOW_RESOLUTION shadowResolution,
 	ID3D12Device5* device,
 	DescriptorHeap* dh_DSV,
 	DescriptorHeap* dh_SRV)
 {
 	this->id = shadowInfoId;
+	this->shadowResolution = shadowResolution;
 
 	this->CreateResource(device, textureWidth, textureHeight);
 
@@ -26,6 +28,16 @@ ShadowInfo::~ShadowInfo()
 	delete this->SRV;
 
 	delete this->renderView;
+}
+
+unsigned int ShadowInfo::GetId() const
+{
+	return this->id;
+}
+
+SHADOW_RESOLUTION ShadowInfo::GetShadowResolution() const
+{
+	return this->shadowResolution;
 }
 
 Resource* ShadowInfo::GetResource() const

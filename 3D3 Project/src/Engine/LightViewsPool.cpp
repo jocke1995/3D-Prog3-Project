@@ -26,9 +26,9 @@ LightViewsPool::~LightViewsPool()
 		}
 
 		// shadowInfos
-		for (auto& pair : this->shadowPools[typeIndex])
+		for (auto& tuple : this->shadowPools[typeIndex])
 		{
-			delete pair.second;
+			delete std::get<2>(tuple);
 		}
 	}
 }
@@ -51,21 +51,22 @@ ConstantBufferView* LightViewsPool::GetFreeConstantBufferView(LIGHT_TYPE type)
 	return cbd;
 }
 
-ShadowInfo* LightViewsPool::GetFreeShadowInfo(LIGHT_TYPE type)
+ShadowInfo* LightViewsPool::GetFreeShadowInfo(LIGHT_TYPE lightType, SHADOW_RESOLUTION shadowResolution)
 {
-	for (auto& pair : this->shadowPools[type])
+	// If there are a free shadowInfo, use it
+	for (auto& tuple : this->shadowPools[lightType])
 	{
-		// The resource is free
-		if (pair.first == true)
+		// The resource is free and the resolutions match
+		if (std::get<0>(tuple) == true && std::get<1>(tuple) == shadowResolution)
 		{
-			pair.first = false;
-			return pair.second;
+			std::get<0>(tuple) = false;
+			return std::get<2>(tuple);
 		}
 	}
 	
 	// No shadowInfo of that type exists.. Create and return a new one
-	ShadowInfo* si = this->CreateShadowInfo(type);
-	this->shadowPools[type].push_back(std::make_pair(false, si));
+	ShadowInfo* si = this->CreateShadowInfo(lightType, shadowResolution);
+	this->shadowPools[lightType].push_back(std::tuple(false, shadowResolution, si));
 	return si;
 }
 
@@ -81,10 +82,10 @@ void LightViewsPool::Clear()
 			pair.first = true;
 		}
 
-		// ShadowInfos
-		for (auto& pair : this->shadowPools[typeIndex])
+		// shadowInfos
+		for (auto& tuple : this->shadowPools[typeIndex])
 		{
-			pair.first = true;
+			std::get<0>(tuple) = true;;
 		}
 	}
 }
@@ -119,24 +120,75 @@ ConstantBufferView* LightViewsPool::CreateConstantBufferView(LIGHT_TYPE type)
 	return cbd;
 }
 
-ShadowInfo* LightViewsPool::CreateShadowInfo(LIGHT_TYPE type)
+ShadowInfo* LightViewsPool::CreateShadowInfo(LIGHT_TYPE lightType, SHADOW_RESOLUTION shadowResolution)
 {
 	
 	unsigned int depthTextureWidth = 0;
 	unsigned int depthTextureHeight = 0;
-	switch (type)
+	switch (lightType)
 	{
 	case LIGHT_TYPE::DIRECTIONAL_LIGHT:
-		depthTextureWidth = 1024;
-		depthTextureHeight = 1024;
+		switch (shadowResolution)
+		{
+		case SHADOW_RESOLUTION::LOW:
+			depthTextureWidth = 512;
+			depthTextureHeight = 512;
+			break;
+		case SHADOW_RESOLUTION::MEDIUM:
+			depthTextureWidth = 1024;
+			depthTextureHeight = 1024;
+			break;
+		case SHADOW_RESOLUTION::HIGH:
+			depthTextureWidth = 2048;
+			depthTextureHeight = 2048;
+			break;
+		case SHADOW_RESOLUTION::ULTRA:
+			depthTextureWidth = 4096;
+			depthTextureHeight = 4096;
+			break;
+		}
 		break;
 	case LIGHT_TYPE::POINT_LIGHT:
-		depthTextureWidth = 1024;
-		depthTextureHeight = 1024;
+		switch (shadowResolution)
+		{
+		case SHADOW_RESOLUTION::LOW:
+			depthTextureWidth = 256;
+			depthTextureHeight = 256;
+			break;
+		case SHADOW_RESOLUTION::MEDIUM:
+			depthTextureWidth = 512;
+			depthTextureHeight = 512;
+			break;
+		case SHADOW_RESOLUTION::HIGH:
+			depthTextureWidth = 1024;
+			depthTextureHeight = 1024;
+			break;
+		case SHADOW_RESOLUTION::ULTRA:
+			depthTextureWidth = 2048;
+			depthTextureHeight = 2048;
+			break;
+		}
 		break;
 	case LIGHT_TYPE::SPOT_LIGHT:
-		depthTextureWidth = 1024;
-		depthTextureHeight = 1024;
+		switch (shadowResolution)
+		{
+		case SHADOW_RESOLUTION::LOW:
+			depthTextureWidth = 512;
+			depthTextureHeight = 512;
+			break;
+		case SHADOW_RESOLUTION::MEDIUM:
+			depthTextureWidth = 1024;
+			depthTextureHeight = 1024;
+			break;
+		case SHADOW_RESOLUTION::HIGH:
+			depthTextureWidth = 2048;
+			depthTextureHeight = 2048;
+			break;
+		case SHADOW_RESOLUTION::ULTRA:
+			depthTextureWidth = 4096;
+			depthTextureHeight = 4096;
+			break;
+		}
 		break;
 	}
 
@@ -145,6 +197,7 @@ ShadowInfo* LightViewsPool::CreateShadowInfo(LIGHT_TYPE type)
 		depthTextureWidth,
 		depthTextureHeight,
 		this->shadowInfoIdCounter++,
+		shadowResolution,
 		this->device,
 		this->descriptorHeap_DSV,
 		this->descriptorHeap_CBV_UAV_SRV);

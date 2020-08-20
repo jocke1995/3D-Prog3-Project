@@ -18,7 +18,7 @@ public:
 	~LightViewsPool();
 
 	ConstantBufferView* GetFreeConstantBufferView(LIGHT_TYPE type);
-	ShadowInfo* GetFreeShadowInfo(LIGHT_TYPE type);
+	ShadowInfo* GetFreeShadowInfo(LIGHT_TYPE type, SHADOW_RESOLUTION shadowResolution);
 
 	void Clear();
 
@@ -32,8 +32,8 @@ private:
 	std::map<LIGHT_TYPE, std::vector<std::pair<bool, ConstantBufferView*>>> cbvPools;
 	ConstantBufferView* CreateConstantBufferView(LIGHT_TYPE type);
 
-	std::map<LIGHT_TYPE, std::vector<std::pair<bool, ShadowInfo*>>> shadowPools;
-	ShadowInfo* CreateShadowInfo(LIGHT_TYPE type);
+	std::map<LIGHT_TYPE, std::vector<std::tuple<bool, SHADOW_RESOLUTION, ShadowInfo*>>> shadowPools;
+	ShadowInfo* CreateShadowInfo(LIGHT_TYPE lightType, SHADOW_RESOLUTION shadowResolution);
 	unsigned int shadowInfoIdCounter = 0;
 };
 

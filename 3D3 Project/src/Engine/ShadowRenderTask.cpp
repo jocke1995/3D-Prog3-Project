@@ -67,7 +67,7 @@ void ShadowRenderTask::Execute()
 			component::TransformComponent* tc = this->renderComponents.at(i).second;
 
 			// Check if the object is to be drawn in ShadowPass
-			if (mc->GetDrawFlag() & DRAW_FLAG::Shadow)
+			if (mc->GetDrawFlag() & FLAG_DRAW::Shadow)
 			{
 				// Draw for every mesh the meshComponent has
 				for (unsigned int i = 0; i < mc->GetNrOfMeshes(); i++)

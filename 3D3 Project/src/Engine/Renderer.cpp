@@ -12,7 +12,7 @@ Renderer::~Renderer()
 	Log::Print("----------------------------  Renderer Destructor  ----------------------------------\n");
 	this->WaitForFrame(0);
 	Log::Print("1\n");
-	this->threadpool->WaitForThreads(THREAD_FLAG::ALL);
+	this->threadpool->WaitForThreads(FLAG_THREAD::ALL);
 	Log::Print("2\n");
 	this->threadpool->ExitThreads();
 	Log::Print("3\n");
@@ -233,11 +233,32 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			// Assign CBV from the lightPool
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 
+			// Check if the light is to cast shadows
+			SHADOW_RESOLUTION resolution = SHADOW_RESOLUTION::UNDEFINED;
+
+			if (dlc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::LOW;
+			}
+			else if (dlc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::MEDIUM;
+			}
+			else if (dlc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_HIGH_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::HIGH;
+			}
+			else if (dlc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_ULTRA_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::ULTRA;
+			}
+			
 			// Assign views required for shadows from the lightPool
 			ShadowInfo* si = nullptr;
-			if (dlc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
+			if(resolution != SHADOW_RESOLUTION::UNDEFINED)
 			{
-				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+
+				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::DIRECTIONAL_LIGHT, resolution);
 				static_cast<DirectionalLight*>(dlc->GetLightData())->textureShadowMap = si->GetSRV()->GetDescriptorHeapIndex();
 
 				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
@@ -248,6 +269,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].push_back(std::make_tuple(dlc, cbd, si));
 		}
 
+		// Currently no shadows are implemented for pointLights
 		component::PointLightComponent* plc = entity->GetComponent<component::PointLightComponent>();
 		if (plc != nullptr)
 		{
@@ -256,14 +278,6 @@ void Renderer::SetSceneToDraw(Scene* scene)
 
 			// Assign views required for shadows from the lightPool
 			ShadowInfo* si = nullptr;
-			//if (plc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
-			//{
-			//	si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::POINT_LIGHT);
-			//	static_cast<PointLight*>(plc->GetLightData())->textureShadowMap = si->GetSRV()->GetDescriptorHeapIndex();
-			//
-			//	ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
-			//	srt->AddShadowCastingLight(std::make_pair(plc, si));
-			//}
 
 			// Save in renderer
 			this->lights[LIGHT_TYPE::POINT_LIGHT].push_back(std::make_tuple(plc, cbd, si));
@@ -275,11 +289,31 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			// Assign resource from resourcePool
 			ConstantBufferView* cbd = this->lightViewsPool->GetFreeConstantBufferView(LIGHT_TYPE::SPOT_LIGHT);
 
+			// Check if the light is to cast shadows
+			SHADOW_RESOLUTION resolution = SHADOW_RESOLUTION::UNDEFINED;
+
+			if (slc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::LOW;
+			}
+			else if (slc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::MEDIUM;
+			}
+			else if (slc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_HIGH_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::HIGH;
+			}
+			else if (slc->GetLightFlags() & FLAG_LIGHT::CAST_SHADOW_ULTRA_RESOLUTION)
+			{
+				resolution = SHADOW_RESOLUTION::ULTRA;
+			}
+
 			// Assign views required for shadows from the lightPool
 			ShadowInfo* si = nullptr;
-			if (slc->GetLightFlags() & LIGHT_FLAG::CAST_SHADOW)
+			if (resolution != SHADOW_RESOLUTION::UNDEFINED)
 			{
-				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::SPOT_LIGHT);
+				si = this->lightViewsPool->GetFreeShadowInfo(LIGHT_TYPE::SPOT_LIGHT, resolution);
 				static_cast<SpotLight*>(slc->GetLightData())->textureShadowMap = si->GetSRV()->GetDescriptorHeapIndex();
 
 				ShadowRenderTask* srt = static_cast<ShadowRenderTask*>(this->renderTasks[RENDER_TASK_TYPE::SHADOW]);
@@ -459,12 +493,12 @@ void Renderer::Execute()
 	{
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
-		this->threadpool->AddTask(renderTask, THREAD_FLAG::RENDER);
+		this->threadpool->AddTask(renderTask, FLAG_THREAD::RENDER);
 		//renderTask->Execute();
 	}
 	
 	// Wait for the threads which records the commandlists to complete
-	this->threadpool->WaitForThreads(THREAD_FLAG::RENDER | THREAD_FLAG::ALL);
+	this->threadpool->WaitForThreads(FLAG_THREAD::RENDER | FLAG_THREAD::ALL);
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, copyFenceValue);
 
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(

@@ -5,18 +5,31 @@
 #include "ShaderResourceView.h"
 #include "RenderView.h"
 
+enum SHADOW_RESOLUTION
+{
+	LOW,
+	MEDIUM,
+	HIGH,
+	ULTRA,
+	NUM_SHADOW_RESOLUTIONS,
+	UNDEFINED
+};
+
 class ShadowInfo
 {
 public:
 	ShadowInfo(
 		unsigned int textureWidth, unsigned int textureHeight,
 		unsigned int shadowInfoId,
+		SHADOW_RESOLUTION shadowResolution,
 		ID3D12Device5* device,
 		DescriptorHeap* dh_DSV,
 		DescriptorHeap* dh_SRV);
 
 	virtual ~ShadowInfo();
 
+	unsigned int GetId() const;
+	SHADOW_RESOLUTION GetShadowResolution() const;
 	Resource* GetResource() const;
 	DepthStencilView* GetDSV() const;
 	ShaderResourceView* GetSRV() const;
@@ -24,6 +37,7 @@ public:
 
 private:
 	unsigned int id = 0;
+	SHADOW_RESOLUTION shadowResolution = SHADOW_RESOLUTION::UNDEFINED;
 
 	Resource* resource = nullptr;
 

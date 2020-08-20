@@ -53,20 +53,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene->GetEntity("stone")->AddComponent<component::TransformComponent>();
     scene->GetEntity("transparentTestObject")->AddComponent<component::MeshComponent>();
     scene->GetEntity("transparentTestObject")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>(LIGHT_FLAG::CAST_SHADOW);
-    scene->GetEntity("spotLight")->AddComponent<component::SpotLightComponent>(LIGHT_FLAG::CAST_SHADOW);
+    scene->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
+    scene->GetEntity("spotLight")->AddComponent<component::SpotLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
 
     // Set the components
     component::MeshComponent* mc = scene->GetEntity("floor")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(floorModel);
-    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering | DRAW_FLAG::Shadow);
+    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     component::TransformComponent* tc = scene->GetEntity("floor")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(20, 1, 20);
     tc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
 
     mc = scene->GetEntity("box")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
-    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering | DRAW_FLAG::Shadow);
+    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
 
     tc = scene->GetEntity("box")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
@@ -74,14 +74,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     mc = scene->GetEntity("stone")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(stoneModel);
-    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering | DRAW_FLAG::Shadow);
+    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     tc = scene->GetEntity("stone")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.01f);
     tc->GetTransform()->SetPosition(-8.0f, 0.0f, 0.0f);
 
     mc = scene->GetEntity("transparentTestObject")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(floorModel);
-    mc->SetDrawFlag(DRAW_FLAG::Blend);
+    mc->SetDrawFlag(FLAG_DRAW::Blend);
 
     Texture* ambientDefault = renderer.LoadTexture(L"Resources/Textures/Default/default_ambient.png");
     Texture* normalDefault = renderer.LoadTexture(L"Resources/Textures/Default/default_normal.png");
@@ -120,11 +120,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene->GetEntity("cube2")->AddComponent<component::TransformComponent>();
     scene->GetEntity("cube3")->AddComponent<component::MeshComponent>();
     scene->GetEntity("cube3")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("cube3")->AddComponent<component::DirectionalLightComponent>(LIGHT_FLAG::CAST_SHADOW);
+    scene->GetEntity("cube3")->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
     
     mc = scene->GetEntity("cube1")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
-    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering | DRAW_FLAG::Shadow);
+    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     
     tc = scene->GetEntity("cube1")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
@@ -132,7 +132,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     
     mc = scene->GetEntity("cube2")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
-    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering | DRAW_FLAG::Shadow);
+    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     
     tc = scene->GetEntity("cube2")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
@@ -140,7 +140,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     
     mc = scene->GetEntity("cube3")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
-    mc->SetDrawFlag(DRAW_FLAG::ForwardRendering | DRAW_FLAG::Shadow);
+    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     
     tc = scene->GetEntity("cube3")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);

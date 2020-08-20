@@ -24,7 +24,7 @@ namespace component
 
     void SpotLightComponent::Update(double dt)
     {
-        if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
+        if (this->lightFlags & FLAG_LIGHT::USE_TRANSFORM_POSITION)
         {
             Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
             float3 position = tc->GetPositionFloat3();
@@ -93,7 +93,7 @@ namespace component
 
     void SpotLightComponent::InitFlagUsages()
     {
-        if (this->lightFlags & LIGHT_FLAG::USE_TRANSFORM_POSITION)
+        if (this->lightFlags & FLAG_LIGHT::USE_TRANSFORM_POSITION)
         {
             Transform* tc = this->parent->GetComponent<TransformComponent>()->GetTransform();
             float3 position = tc->GetPositionFloat3();
@@ -102,7 +102,10 @@ namespace component
             this->spotLight->position_cutOff.z = position.z;
         }
 
-        if (this->lightFlags & LIGHT_FLAG::CAST_SHADOW)
+        if (this->lightFlags & FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION ||
+            this->lightFlags & FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION ||
+            this->lightFlags & FLAG_LIGHT::CAST_SHADOW_HIGH_RESOLUTION ||
+            this->lightFlags & FLAG_LIGHT::CAST_SHADOW_ULTRA_RESOLUTION)
         {
             this->CreateCamera(
                 {

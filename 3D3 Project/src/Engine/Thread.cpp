@@ -76,7 +76,7 @@ void Thread::AddTask(Task* task, unsigned int taskFlag)
 {
 	// Specify the type of task
 	this->taskFlag = taskFlag;
-	this->taskFlag |= THREAD_FLAG::ALL;
+	this->taskFlag |= FLAG_THREAD::ALL;
 	
 	// Add the task to the thread and start executing
 	this->mutex.lock();

@@ -4,7 +4,11 @@ Texture2D textures[]   : register (t0);
 SamplerState samplerTypeWrap	: register (s0);
 SamplerState samplerTypeClamp	: register (s1);
 
-float CalculateShadow(in float4 fragPosLightSpace, in float shadowMapIndex)
+float CalculateShadow(
+	in float4 fragPosLightSpace,
+	in float shadowMapIndex,
+	in float3 normal,
+	in float3 lightDir)
 {
 	// Perform perspective divide
 	float2 texCoord = fragPosLightSpace.xy / fragPosLightSpace.w;
@@ -21,6 +25,7 @@ float CalculateShadow(in float4 fragPosLightSpace, in float shadowMapIndex)
 
 	// check whether current fragPos is in shadow
 	float shadow = 0.0f;
+	//float bias = max(0.0005 * (1.0 - dot(normal, lightDir)), 0.00005);	// LearnOpenGl Stuff
 	float bias = 0.0005f;
 	if (depthFromLightToFragPos - bias > closestDepthFromLight)
 	{
@@ -59,7 +64,7 @@ float3 CalcDirLight(
 	{
 		float4 fragPosLightSpace = mul(fragPos, dirLight.viewProj);
 
-		shadow = CalculateShadow(fragPosLightSpace, dirLight.textureShadowMap);
+		shadow = CalculateShadow(fragPosLightSpace, dirLight.textureShadowMap, normalMap, lightDir);
 	}
 
 	float3 DirLightContribution = ambient.rgb + ((1.0f - shadow) * (diffuse.rgb + specular.rgb));
@@ -150,7 +155,7 @@ float3 CalcSpotLight(
 	{
 		float4 fragPosLightSpace = mul(fragPos, spotLight.viewProj);
 
-		shadow = CalculateShadow(fragPosLightSpace, spotLight.textureShadowMap);
+		shadow = CalculateShadow(fragPosLightSpace, spotLight.textureShadowMap, normalMap, lightDir);
 	}
 
 	spotLightContribution =  float3(ambient.rgb + (1.0f - shadow) * attenuation* (diffuse.rgb + specular.rgb)) * intensity;
