@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ECS\Components\BoundingBoxComponent.cpp" />
     <ClCompile Include="src\ECS\Components\CameraComponent.cpp" />
     <ClCompile Include="src\Engine\ShadowRenderTask.cpp" />
     <ClCompile Include="src\Engine\RenderView.cpp" />
@@ -244,8 +245,10 @@
     <ClCompile Include="src\ECS\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Engine\Texture.cpp" />
     <ClCompile Include="src\Engine\TempInputClass.cpp" />
+    <ClCompile Include="src\Engine\WireframeRenderTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\Components\BoundingBoxComponent.h" />
     <ClInclude Include="src\ECS\Components\CameraComponent.h" />
     <ClInclude Include="src\Engine\ShadowRenderTask.h" />
     <ClInclude Include="src\Engine\RenderView.h" />
@@ -301,6 +304,7 @@
     <ClInclude Include="src\ECS\Components\TransformComponent.h" />
     <ClInclude Include="src\Engine\Texture.h" />
     <ClInclude Include="src\Engine\TempInputClass.h" />
+    <ClInclude Include="src\Engine\WireframeRenderTask.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Engine\HLSL\BlendPixel.hlsl">
@@ -344,6 +348,18 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\WhitePixel.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\WhiteVertex.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

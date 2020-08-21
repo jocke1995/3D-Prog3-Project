@@ -58,6 +58,26 @@ inline std::wstring to_wstring(std::string str)
 	return strconverter.from_bytes(str);
 }
 
+template <typename T>
+inline T Min(T a, T b)
+{
+	if (a < b)
+	{
+		return a;
+	}
+	return b;
+}
+
+template <typename T>
+inline T Max(T a, T b)
+{
+	if (a > b)
+	{
+		return a;
+	}
+	return b;
+}
+
 typedef DirectX::XMMATRIX float4x4;
 
 // this will only call release if an object exists (prevents exceptions calling release on non existant objects)
@@ -103,6 +123,8 @@ enum FLAG_DRAW
 	// WireFrame
 	// etc..
 };
+
+#define DRAWBOUNDINGBOX false
 
 namespace Log
 {

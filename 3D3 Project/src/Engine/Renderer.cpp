@@ -42,6 +42,7 @@ Renderer::~Renderer()
 
 	for (RenderTask* renderTask : this->renderTasks)
 		delete renderTask;
+	delete this->wireFrameTask;
 
 	SAFE_RELEASE(&this->device5);
 	delete this->threadpool;
@@ -190,6 +191,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	this->lightViewsPool->Clear();
 	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Clear();
 	this->ScenePrimaryCamera = nullptr;
+	this->wireFrameTask->Clear();
 
 	// Handle and structure the components in the scene
 #pragma region HandleComponents
@@ -306,13 +308,38 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_tuple(slc, cbd, si));
 		}
 
-		component::CameraComponent * cc = entity->GetComponent<component::CameraComponent>();
+		component::CameraComponent* cc = entity->GetComponent<component::CameraComponent>();
 		if (cc != nullptr)
 		{
 			if (cc->IsPrimary() == true)
 			{
 				this->ScenePrimaryCamera = cc->GetCamera();
 			}
+		}
+
+		component::BoundingBoxComponent* bbc = entity->GetComponent<component::BoundingBoxComponent>();
+		if (bbc != nullptr && DRAWBOUNDINGBOX == true)
+		{
+			Mesh* tmp = bbc->GetMesh();
+			if (tmp == nullptr)
+			{
+				// BoundingBoxComponent will delete the mesh when no longer needed
+				Mesh* tmp = new Mesh(
+					this->device5,
+					*bbc->GetVertices(), *bbc->GetIndices(),
+					this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
+
+				bbc->SetMesh(tmp);
+
+				// Upload to Default heap
+				bbc->GetMesh()->UploadToDefault(
+					this->device5,
+					this->tempCommandInterface,
+					this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
+				this->WaitForGpu();
+			}
+			
+			this->wireFrameTask->AddObjectToDraw(&std::make_pair(bbc->GetMesh(), bbc->GetTransform()));
 		}
 	}
 #pragma endregion HandleComponents
@@ -495,6 +522,13 @@ void Renderer::Execute()
 		//renderTask->Execute();
 	}
 	
+	if (DRAWBOUNDINGBOX == true)
+	{
+		this->wireFrameTask->SetBackBufferIndex(backBufferIndex);
+		this->wireFrameTask->SetCommandInterfaceIndex(commandInterfaceIndex);
+		this->threadpool->AddTask(this->wireFrameTask, FLAG_THREAD::RENDER);
+	}
+	
 	// Wait for the threads which records the commandlists to complete
 	this->threadpool->WaitForThreads(FLAG_THREAD::RENDER | FLAG_THREAD::ALL);
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, copyFenceValue);
@@ -529,6 +563,11 @@ void Renderer::SetRenderTasksMainCamera()
 	for (RenderTask* renderTask : this->renderTasks)
 	{
 		renderTask->SetCamera(this->ScenePrimaryCamera);
+	}
+
+	if (DRAWBOUNDINGBOX == true)
+	{
+		this->wireFrameTask->SetCamera(this->ScenePrimaryCamera);
 	}
 }
 
@@ -664,7 +703,8 @@ void Renderer::CreateMainDSV()
 {
 	//this->mainDSV = new DepthStencilView(
 	//	this->device5,
-	//	800, 600,	// width, height
+	//	1920, 1080,	// width, height
+	//	L"MainDSV_DEFAULT_RESOURCE",
 	//	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
 
 	this->mainDSV = new DepthStencilView(
@@ -725,7 +765,7 @@ void Renderer::InitRenderTasks()
 	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdForwardRenderVector;
 	gpsdForwardRenderVector.push_back(&gpsdForwardRender);
 
-	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5, 
+	RenderTask* forwardRenderTask = new FowardRenderTask(this->device5,
 		this->rootSignature, 
 		L"ForwardVertex.hlsl", L"ForwardPixel.hlsl", 
 		&gpsdForwardRenderVector, 
@@ -880,7 +920,40 @@ void Renderer::InitRenderTasks()
 		L"ShadowPSO");
 
 	shadowRenderTask->SetDescriptorHeaps(this->descriptorHeaps);
-#pragma endregion ShadowPaass
+#pragma endregion ShadowPass
+#pragma region WireFrame
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsdWireFrame = {};
+	gpsdWireFrame.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	// RenderTarget
+	gpsdWireFrame.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	gpsdWireFrame.NumRenderTargets = 1;
+	// Depthstencil usage
+	gpsdWireFrame.SampleDesc.Count = 1;
+	gpsdWireFrame.SampleMask = UINT_MAX;
+	// Rasterizer behaviour
+	gpsdWireFrame.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	gpsdWireFrame.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	gpsdWireFrame.RasterizerState.FrontCounterClockwise = false;
+
+	// Specify Blend descriptions
+	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+		gpsdWireFrame.BlendState.RenderTarget[i] = defaultRTdesc;
+
+
+	std::vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC*> gpsdWireFrameVector;
+	gpsdWireFrameVector.push_back(&gpsdWireFrame);
+
+	this->wireFrameTask = new WireframeRenderTask(this->device5,
+		this->rootSignature,
+		L"WhiteVertex.hlsl", L"WhitePixel.hlsl",
+		&gpsdWireFrameVector,
+		L"WireFramePSO");
+
+	this->wireFrameTask->AddRenderTarget("swapChain", this->swapChain);
+	this->wireFrameTask->SetDescriptorHeaps(this->descriptorHeaps);
+#pragma endregion WireFrame
+
 	CopyTask* copyPerFrameTask = new CopyPerFrameTask(this->device5);
 
 	// Add the tasks to desired vectors so they can be used in renderer
@@ -912,6 +985,12 @@ void Renderer::InitRenderTasks()
 
 	for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
 		this->directCommandLists[i].push_back(blendRenderTask->GetCommandList(i));
+
+	if (DRAWBOUNDINGBOX == true)
+	{
+		for (int i = 0; i < NUM_SWAP_BUFFERS; i++)
+			this->directCommandLists[i].push_back(this->wireFrameTask->GetCommandList(i));
+	}
 }
 
 void Renderer::SetRenderTasksRenderComponents()

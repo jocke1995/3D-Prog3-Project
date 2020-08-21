@@ -5,17 +5,17 @@
 #include "Texture.h"
 #include "ShaderResourceView.h"
 
+struct Vertex
+{
+    DirectX::XMFLOAT4 pos;
+    DirectX::XMFLOAT4 uv;
+    DirectX::XMFLOAT4 normal;
+    DirectX::XMFLOAT4 tangent;
+};
+
 class Mesh
 {
 public:
-    struct Vertex
-    {
-        DirectX::XMFLOAT4 pos;
-        DirectX::XMFLOAT4 uv;
-        DirectX::XMFLOAT4 normal;
-        DirectX::XMFLOAT4 tangent;
-    };
-
     Mesh(   ID3D12Device5* device,
             std::vector<Vertex> vertices,
             std::vector<unsigned int> indices,
@@ -30,11 +30,13 @@ public:
 
     // Vertices
     Resource* GetDefaultResourceVertices() const;
+    const std::vector<Vertex>* GetVertices() const;
     const size_t GetSizeOfVertices() const;
     const size_t GetNumVertices() const;
 
     // Indices
     Resource* GetDefaultResourceIndices() const;
+    const std::vector<unsigned int>* GetIndices() const;
     const size_t GetSizeOfIndices() const;
     const size_t GetNumIndices() const;
     const D3D12_INDEX_BUFFER_VIEW* GetIndexBufferView() const;

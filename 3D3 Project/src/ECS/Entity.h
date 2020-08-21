@@ -11,6 +11,7 @@ class PointLightComponent;
 class SpotLightComponent;
 
 class CameraComponent;
+class BoundingBoxComponent;
 
 #include "../Engine/stdafx.h"
 #include "Components/Component.h"

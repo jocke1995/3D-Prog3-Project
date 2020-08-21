@@ -54,18 +54,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     entity = scene->GetEntity("floor");
     entity->AddComponent<component::MeshComponent>();
     entity->AddComponent<component::TransformComponent>();
+    entity->AddComponent<component::BoundingBoxComponent>();
 
     entity = scene->GetEntity("box");
     entity->AddComponent<component::MeshComponent>();
     entity->AddComponent<component::TransformComponent>();
+    entity->AddComponent<component::BoundingBoxComponent>();
 
     entity = scene->GetEntity("stone");
     entity->AddComponent<component::MeshComponent>();
     entity->AddComponent<component::TransformComponent>();
+    entity->AddComponent<component::BoundingBoxComponent>();
 
     entity = scene->GetEntity("transparentTestObject");
     entity->AddComponent<component::MeshComponent>();
     entity->AddComponent<component::TransformComponent>();
+    entity->AddComponent<component::BoundingBoxComponent>();
 
     entity = scene->GetEntity("directionalLight");
     entity->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
@@ -80,6 +84,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     component::TransformComponent* tc = scene->GetEntity("floor")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(20, 1, 20);
     tc->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
+    scene->GetEntity("floor")->GetComponent<component::BoundingBoxComponent>()->Init();
 
     mc = scene->GetEntity("box")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
@@ -88,6 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     tc = scene->GetEntity("box")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
     tc->GetTransform()->SetPosition(-10.0f, 0.5f, 14.0f);
+    scene->GetEntity("box")->GetComponent<component::BoundingBoxComponent>()->Init();
 
     mc = scene->GetEntity("stone")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(stoneModel);
@@ -95,6 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     tc = scene->GetEntity("stone")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.01f);
     tc->GetTransform()->SetPosition(-8.0f, 0.0f, 0.0f);
+    scene->GetEntity("stone")->GetComponent<component::BoundingBoxComponent>()->Init();
 
     mc = scene->GetEntity("transparentTestObject")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(floorModel);
@@ -112,6 +119,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     tc->GetTransform()->SetPosition(0.0f, 5.0f, 1.0f);
     tc->GetTransform()->RotateZ(3.141572f / 2.0f);
     tc->GetTransform()->RotateX(3.141572f / 2.0f);
+
+    scene->GetEntity("transparentTestObject")->GetComponent<component::BoundingBoxComponent>()->Init();
 
     component::DirectionalLightComponent* dl = scene->GetEntity("directionalLight")->GetComponent<component::DirectionalLightComponent>();
     dl->SetDirection({ -1.0f, -1.0f, -1.0f });

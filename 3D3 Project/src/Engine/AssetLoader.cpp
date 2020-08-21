@@ -129,14 +129,14 @@ void AssetLoader::ProcessNode(aiNode* node, const aiScene* assimpScene, std::vec
 Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, const std::string* filePath)
 {
 	// Fill this data
-	std::vector<Mesh::Vertex> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::map<TEXTURE_TYPE, Texture*> textures;
 
 	// Get data from assimpMesh and store it
 	for (unsigned int i = 0; i < assimpMesh->mNumVertices; i++)
 	{
-		Mesh::Vertex vTemp = {};
+		Vertex vTemp = {};
 
 		// Get positions
 		if (assimpMesh->HasPositions())

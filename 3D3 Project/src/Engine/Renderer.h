@@ -10,8 +10,10 @@
 // ECS
 #include "../ECS/Scene.h"
 #include "../ECS/Components/CameraComponent.h"
+#include "../ECS/Components/BoundingBoxComponent.h"
 
 // Graphics
+#include "WireframeRenderTask.h"
 #include "ForwardRenderTask.h"
 #include "BlendRenderTask.h"
 #include "ShadowRenderTask.h"
@@ -74,9 +76,10 @@ private:
 	ThreadPool* threadpool = nullptr;
 
 	// Tasks
-	std::vector<RenderTask*>  renderTasks;
-	std::vector<CopyTask*>    copyTasks;
 	std::vector<ComputeTask*> computeTasks;
+	std::vector<CopyTask*>    copyTasks;
+	std::vector<RenderTask*>  renderTasks;
+	WireframeRenderTask* wireFrameTask = nullptr;
 	void InitRenderTasks();
 
 	// Group of components that's needed for rendering:

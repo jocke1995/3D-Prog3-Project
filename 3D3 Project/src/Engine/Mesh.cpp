@@ -27,7 +27,7 @@ Mesh::Mesh(	ID3D12Device5* device,
 	dsrv.Format = DXGI_FORMAT_UNKNOWN;
 	dsrv.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	dsrv.Buffer.NumElements = this->GetNumVertices();
-	dsrv.Buffer.StructureByteStride = sizeof(Mesh::Vertex);
+	dsrv.Buffer.StructureByteStride = sizeof(Vertex);
 
 	this->SRV = new ShaderResourceView(
 		device,
@@ -150,6 +150,11 @@ Resource* Mesh::GetDefaultResourceVertices() const
 	return this->defaultResourceVertices;
 }
 
+const std::vector<Vertex>* Mesh::GetVertices() const
+{
+	return &this->vertices;
+}
+
 const size_t Mesh::GetSizeOfVertices() const
 {
 	return this->vertices.size() * sizeof(Vertex);
@@ -163,6 +168,11 @@ const size_t Mesh::GetNumVertices() const
 Resource* Mesh::GetDefaultResourceIndices() const
 {
 	return this->defaultResourceIndices;
+}
+
+const std::vector<unsigned int>* Mesh::GetIndices() const
+{
+	return &this->indices;
 }
 
 const size_t Mesh::GetSizeOfIndices() const

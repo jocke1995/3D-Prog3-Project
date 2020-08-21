@@ -51,6 +51,12 @@
     <Filter Include="Engine\Camera">
       <UniqueIdentifier>{85a254ce-7beb-43b9-80fe-d8a912e232ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tasks\Render\WireFrame">
+      <UniqueIdentifier>{2afbf0d5-0a96-4b12-bbde-5dd66f5030ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tasks\Render\Solid">
+      <UniqueIdentifier>{b7c5d89d-ec7a-4dfa-94e5-c04f38d37db1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -104,17 +110,8 @@
     <ClCompile Include="src\Engine\CopyTask.cpp">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\RenderTask.cpp">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\ComputeTask.cpp">
       <Filter>Engine\Tasks\Compute</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\ForwardRenderTask.cpp">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine\BlendRenderTask.cpp">
-      <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\AssetLoader.cpp">
       <Filter>Engine</Filter>
@@ -209,11 +206,26 @@
     <ClCompile Include="src\Engine\RenderView.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\ShadowRenderTask.cpp">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClCompile>
     <ClCompile Include="src\ECS\Components\CameraComponent.cpp">
       <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Components\BoundingBoxComponent.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\BlendRenderTask.cpp">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ForwardRenderTask.cpp">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\ShadowRenderTask.cpp">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\WireframeRenderTask.cpp">
+      <Filter>Engine\Tasks\Render\WireFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\RenderTask.cpp">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,17 +277,8 @@
     <ClInclude Include="src\Engine\CopyTask.h">
       <Filter>Engine\Tasks\Copy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\RenderTask.h">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\ComputeTask.h">
       <Filter>Engine\Tasks\Compute</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\ForwardRenderTask.h">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\BlendRenderTask.h">
-      <Filter>Engine\Tasks\Render</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\AssetLoader.h">
       <Filter>Engine</Filter>
@@ -376,11 +379,26 @@
     <ClInclude Include="src\Engine\RenderView.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\ShadowRenderTask.h">
-      <Filter>Engine\Tasks\Render</Filter>
-    </ClInclude>
     <ClInclude Include="src\ECS\Components\CameraComponent.h">
       <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\BoundingBoxComponent.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\BlendRenderTask.h">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ForwardRenderTask.h">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ShadowRenderTask.h">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\WireframeRenderTask.h">
+      <Filter>Engine\Tasks\Render\WireFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\RenderTask.h">
+      <Filter>Engine\Tasks\Render\Solid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -403,6 +421,12 @@
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\Engine\HLSL\ForwardPixel.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\WhitePixel.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Engine\HLSL\WhiteVertex.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
