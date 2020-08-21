@@ -54,9 +54,9 @@ namespace component
 		{
 			this->CreateCamera(
 				{
-				-this->directionalLight->direction.x * 30,
-				-this->directionalLight->direction.y * 30,
-				-this->directionalLight->direction.z * 30 },
+				-this->directionalLight->direction.x * 10,
+				-this->directionalLight->direction.y * 10,
+				-this->directionalLight->direction.z * 10 },
 				{
 				this->directionalLight->direction.x,
 				this->directionalLight->direction.y,

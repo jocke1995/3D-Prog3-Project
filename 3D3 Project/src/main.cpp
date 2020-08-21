@@ -68,10 +68,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     entity->AddComponent<component::TransformComponent>();
 
     entity = scene->GetEntity("directionalLight");
-    entity->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION);
+    entity->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
 
     entity = scene->GetEntity("spotLight");
-    entity->AddComponent<component::SpotLightComponent>(FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION);
+    entity->AddComponent<component::SpotLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
 
     // Set the components
     component::MeshComponent* mc = scene->GetEntity("floor")->GetComponent<component::MeshComponent>();

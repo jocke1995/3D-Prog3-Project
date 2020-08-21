@@ -9,10 +9,10 @@ public:
     OrthographicCamera(
         XMVECTOR position,
         XMVECTOR lookAt,
-        float left = -40.0f,
-        float right = 40.0f,
-        float bot = -40.0f,
-        float top = 40.0f,
+        float left = -30.0f,
+        float right = 30.0f,
+        float bot = -30.0f,
+        float top = 30.0f,
         float nearZ = 0.01f,
         float farZ = 1000.0f);
     virtual ~OrthographicCamera();

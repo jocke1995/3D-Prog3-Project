@@ -379,7 +379,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 
 	// -------------------- DEBUG STUFF --------------------
 	// Test to change camera to the shadow casting lights cameras
-	//auto& tuple = this->lights[LIGHT_TYPE::SPOT_LIGHT].at(0);
+	//auto& tuple = this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].at(0);
 	//BaseCamera* tempCam = std::get<0>(tuple)->GetCamera();
 	//this->ScenePrimaryCamera = tempCam;
 
