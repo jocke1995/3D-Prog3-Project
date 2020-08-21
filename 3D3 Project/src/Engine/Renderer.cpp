@@ -11,13 +11,16 @@ Renderer::~Renderer()
 {
 	Log::Print("----------------------------  Deleting Renderer  ----------------------------------\n");
 	this->WaitForFrame(0);
+
 	this->threadpool->WaitForThreads(FLAG_THREAD::ALL);
 	this->threadpool->ExitThreads();
+
 	SAFE_RELEASE(&this->fenceFrame);
 	if (!CloseHandle(this->eventHandle))
 	{
 		Log::Print("Failed To Close Handle... ErrorCode: %d\n", GetLastError());
 	}
+
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]);
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]);
@@ -41,7 +44,6 @@ Renderer::~Renderer()
 		delete renderTask;
 
 	SAFE_RELEASE(&this->device5);
-	delete this->camera;
 	delete this->threadpool;
 
 	delete this->lightViewsPool;
@@ -55,9 +57,6 @@ Renderer::~Renderer()
 
 void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 {
-	// Camera
-	this->camera = new PerspectiveCamera(hInstance, *hwnd);
-
 	// Create Device
 	if (!this->CreateDevice())
 	{
@@ -118,7 +117,6 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	);
 
 	this->cbPerFrameData = new CB_PER_FRAME_STRUCT();
-	this->cbPerFrameData->camPos = this->camera->GetPositionFloat3();
 
 	this->InitRenderTasks();
 
@@ -191,6 +189,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	}
 	this->lightViewsPool->Clear();
 	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Clear();
+	this->ScenePrimaryCamera = nullptr;
 
 	// Handle and structure the components in the scene
 #pragma region HandleComponents
@@ -306,6 +305,15 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			// Save in renderer
 			this->lights[LIGHT_TYPE::SPOT_LIGHT].push_back(std::make_tuple(slc, cbd, si));
 		}
+
+		component::CameraComponent * cc = entity->GetComponent<component::CameraComponent>();
+		if (cc != nullptr)
+		{
+			if (cc->IsPrimary() == true)
+			{
+				this->ScenePrimaryCamera = cc->GetCamera();
+			}
+		}
 	}
 #pragma endregion HandleComponents
 	
@@ -369,13 +377,19 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Submit(&std::make_pair(perFrameData, this->cbPerFrame));
 #pragma endregion Prepare_CbPerFrame
 
-	
+	// -------------------- DEBUG STUFF --------------------
+	// Test to change camera to the shadow casting lights cameras
+	//auto& tuple = this->lights[LIGHT_TYPE::SPOT_LIGHT].at(0);
+	//BaseCamera* tempCam = std::get<0>(tuple)->GetCamera();
+	//this->ScenePrimaryCamera = tempCam;
 
+	if (this->ScenePrimaryCamera == nullptr)
+	{
+		Log::PrintSeverity(Log::Severity::CRITICAL, "No primary camera was set in scene: %s\n", scene->GetName());
+	}
+	scene->SetPrimaryCamera(this->ScenePrimaryCamera);
 	this->SetRenderTasksRenderComponents();
-	//auto& tuple = this->lights[LIGHT_TYPE::DIRECTIONAL_LIGHT].at(0);
-	//this->camera = std::get<0>(tuple)->GetCamera();
-	//this->SetRenderTasksMainCamera(this->camera);
-	this->SetRenderTasksMainCamera(scene->GetMainCamera());
+	this->SetRenderTasksMainCamera();
 
 	this->currActiveScene = scene;
 }
@@ -383,7 +397,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 void Renderer::Update(double dt)
 {
 	// Update CB_PER_FRAME data
-	this->cbPerFrameData->camPos = this->camera->GetPositionFloat3();
+	this->cbPerFrameData->camPos = this->ScenePrimaryCamera->GetPositionFloat3();
 
 	// Update scene
 	this->currActiveScene->UpdateScene(dt);
@@ -403,7 +417,7 @@ void Renderer::SortObjectsByDistance()
 	DistFromCamera* distFromCamArr = new DistFromCamera[numRenderComponents];
 
 	// Get all the distances of each objects and store them by ID and distance
-	XMFLOAT3 camPos = this->camera->GetPosition();
+	XMFLOAT3 camPos = this->ScenePrimaryCamera->GetPosition();
 	for (int i = 0; i < numRenderComponents; i++)
 	{
 		XMFLOAT3 objectPos = this->renderComponents.at(i).second->GetTransform()->GetPositionXMFLOAT3();
@@ -510,16 +524,11 @@ ThreadPool* Renderer::GetThreadPool() const
 	return this->threadpool;
 }
 
-BaseCamera* Renderer::GetCamera() const
-{
-	return this->camera;
-}
-
-void Renderer::SetRenderTasksMainCamera(BaseCamera* camera)
+void Renderer::SetRenderTasksMainCamera()
 {
 	for (RenderTask* renderTask : this->renderTasks)
 	{
-		renderTask->SetCamera(camera);
+		renderTask->SetCamera(this->ScenePrimaryCamera);
 	}
 }
 

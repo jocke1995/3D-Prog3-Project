@@ -1,17 +1,39 @@
 #include "Scene.h"
 
-Scene::Scene(BaseCamera* camera)
+Scene::Scene(std::string sceneName)
 {
-    this->mainCamera = camera;
+    this->sceneName = sceneName;
 }
 
 Scene::~Scene()
 {
     for (auto pair : this->entities)
     {
-        delete pair.second;
+        if (pair.second != nullptr)
+        {
+            if (pair.second->GetRefCount() == 1)
+            {
+                delete pair.second;
+            }
+            pair.second->DecrementRefCount();
+        }
     }
     this->entities.clear();
+}
+
+Entity* Scene::AddEntityFromOther(Entity* other)
+{
+    if (this->EntityExists(other->GetName()) == true)
+    {
+        Log::PrintSeverity(Log::Severity::CRITICAL, "Trying to add two components with the same name \'%s\' into scene: %s\n", other->GetName(), this->sceneName);
+        return nullptr;
+    }
+
+    this->entities[other->GetName()] = other;
+    other->IncrementRefCount();
+
+    this->nrOfEntities++;
+    return other;
 }
 
 // Returns false if the entity couldn't be created
@@ -19,10 +41,11 @@ Entity* Scene::AddEntity(std::string entityName)
 {
     if (this->EntityExists(entityName) == true)
     {
+        Log::PrintSeverity(Log::Severity::CRITICAL, "Trying to add two components with the same name \'%s\' into scene: %s\n", entityName, this->sceneName);
         return nullptr;
     }
 
-    this->entities[entityName] = new Entity();
+    this->entities[entityName] = new Entity(entityName);
     this->nrOfEntities++;
     return this->entities[entityName];
 }
@@ -39,6 +62,11 @@ bool Scene::RemoveEntity(std::string entityName)
 
     this->nrOfEntities--;
     return true;
+}
+
+void Scene::SetPrimaryCamera(BaseCamera* primaryCamera)
+{
+    this->primaryCamera = primaryCamera;
 }
 
 Entity* Scene::GetEntity(std::string entityName)
@@ -64,16 +92,15 @@ unsigned int Scene::GetNrOfEntites() const
 
 BaseCamera* Scene::GetMainCamera() const
 {
-	return this->mainCamera;
+	return this->primaryCamera;
+}
+
+std::string Scene::GetName() const
+{
+    return this->sceneName;
 }
 
 void Scene::UpdateScene(double dt)
-{
-    this->mainCamera->Update(dt);
-    this->UpdateEntities(dt);
-}
-
-void Scene::UpdateEntities(double dt)
 {
     for (auto pair : this->entities)
     {

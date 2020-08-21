@@ -5,9 +5,11 @@
 #include "SwapChain.h"
 #include "DepthStencilView.h"
 #include "ThreadPool.h"
-#include "../ECS/Scene.h"
 #include "LightViewsPool.h"
 
+// ECS
+#include "../ECS/Scene.h"
+#include "../ECS/Components/CameraComponent.h"
 
 // Graphics
 #include "ForwardRenderTask.h"
@@ -41,11 +43,10 @@ public:
 	void Execute();
 
 	ThreadPool* GetThreadPool() const;
-	BaseCamera* GetCamera() const;
 private:
 	// Camera
-	BaseCamera* camera = nullptr;
-	void SetRenderTasksMainCamera(BaseCamera* camera);
+	BaseCamera* ScenePrimaryCamera = nullptr;
+	void SetRenderTasksMainCamera();
 
 	unsigned int frameCounter = 0;
 

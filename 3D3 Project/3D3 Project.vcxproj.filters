@@ -212,6 +212,9 @@
     <ClCompile Include="src\Engine\ShadowRenderTask.cpp">
       <Filter>Engine\Tasks\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\ECS\Components\CameraComponent.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -375,6 +378,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\ShadowRenderTask.h">
       <Filter>Engine\Tasks\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\Components\CameraComponent.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

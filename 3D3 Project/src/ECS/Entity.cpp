@@ -1,8 +1,11 @@
 #include "Entity.h"
 
-Entity::Entity()
+Entity::Entity(std::string entityName)
 {
 	this->id = staticID++;
+	this->name = entityName;
+
+	this->referenceCount = 1;
 }
 
 bool Entity::operator==(const Entity* rhs) const
@@ -25,6 +28,26 @@ Entity::~Entity()
 unsigned int Entity::GetID() const
 {
 	return this->id;
+}
+
+std::string Entity::GetName() const
+{
+	return this->name;
+}
+
+unsigned int Entity::GetRefCount() const
+{
+	return this->referenceCount;
+}
+
+void Entity::IncrementRefCount()
+{
+	this->referenceCount++;
+}
+
+void Entity::DecrementRefCount()
+{
+	this->referenceCount--;
 }
 
 void Entity::Update(double dt)

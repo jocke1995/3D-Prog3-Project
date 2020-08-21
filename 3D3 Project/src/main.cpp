@@ -31,11 +31,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
 #pragma region CreateScene0
     // Create Scene
-    sceneHandler->CreateScene("scene0", renderer.GetCamera());
+    sceneHandler->CreateScene("scene0");
 
     Scene* scene = sceneHandler->GetScene("scene0");
     
     // Add Entity to Scene
+    scene->AddEntity("player");
     scene->AddEntity("floor");
     scene->AddEntity("box");
     scene->AddEntity("stone");
@@ -46,6 +47,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     // Add Components to Entities
     Entity* entity;
+
+    entity = scene->GetEntity("player");
+    entity->AddComponent<component::CameraComponent>(hInstance, *window->GetHwnd(), true);
+
     entity = scene->GetEntity("floor");
     entity->AddComponent<component::MeshComponent>();
     entity->AddComponent<component::TransformComponent>();
@@ -124,38 +129,43 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 #pragma endregion CreateScene0
 #pragma region CreateScene1
     // Create Scene
-    sceneHandler->CreateScene("scene1", renderer.GetCamera());
-    scene = sceneHandler->GetScene("scene1");
-    scene->AddEntity("cube1");
-    scene->AddEntity("cube2");
-    scene->AddEntity("cube3");
-    scene->GetEntity("cube1")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("cube1")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("cube2")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("cube2")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("cube3")->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
+    sceneHandler->CreateScene("scene1");
+    Scene* scene1 = sceneHandler->GetScene("scene1");
+
+    // Use the same player as in the first scene
+    entity = scene->GetEntity("player");
+    scene1->AddEntityFromOther(entity);
     
-    mc = scene->GetEntity("cube1")->GetComponent<component::MeshComponent>();
+    scene1->AddEntity("cube1");
+    scene1->AddEntity("cube2");
+    scene1->AddEntity("directionalLight");
+    scene1->GetEntity("cube1")->AddComponent<component::MeshComponent>();
+    scene1->GetEntity("cube1")->AddComponent<component::TransformComponent>();
+    scene1->GetEntity("cube2")->AddComponent<component::MeshComponent>();
+    scene1->GetEntity("cube2")->AddComponent<component::TransformComponent>();
+    scene1->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
+    
+    mc = scene1->GetEntity("cube1")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
     mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     
-    tc = scene->GetEntity("cube1")->GetComponent<component::TransformComponent>();
+    tc = scene1->GetEntity("cube1")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
     tc->GetTransform()->SetPosition(-15.0f, 1.0f, 0.0f);
     
-    mc = scene->GetEntity("cube2")->GetComponent<component::MeshComponent>();
+    mc = scene1->GetEntity("cube2")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
     mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
     
-    tc = scene->GetEntity("cube2")->GetComponent<component::TransformComponent>();
+    tc = scene1->GetEntity("cube2")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
     tc->GetTransform()->SetPosition(-5.0f, 1.0f, 0.0f);
    
-    dl = scene->GetEntity("cube3")->GetComponent<component::DirectionalLightComponent>();
+    dl = scene1->GetEntity("directionalLight")->GetComponent<component::DirectionalLightComponent>();
     dl->SetDirection({ -1.0f, -1.0f, -1.0f });
-    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_AMBIENT, { 0.05f, 0.05f, 0.05f, 1.0f });
-    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { 0.4f, 0.4f, 0.4f, 1.0f });
-    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_SPECULAR, { 0.4f, 0.4f, 0.4f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_AMBIENT, { 0.02f, 0.08f, 0.08f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { 0.2f, 0.8f, 0.8f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_SPECULAR, { 0.2f, 0.8f, 0.8f, 1.0f });
 
 #pragma endregion CreateScene1
     renderer.SetSceneToDraw(sceneHandler->GetScene("scene0"));
@@ -164,12 +174,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         if (window->WasSpacePressed())
         {
             // Test to change scene during runtime
-            // char sceneName[10];
-            // static int sceneSwapper = 1;
-            // sceneSwapper %= 2;
-            // sprintf(sceneName, "scene%d", sceneSwapper);
-            // renderer.SetSceneToDraw(sceneHandler->GetScene(sceneName));
-            // sceneSwapper++;
+            //char sceneName[10];
+            //static int sceneSwapper = 1;
+            //sceneSwapper %= 2;
+            //sprintf(sceneName, "scene%d", sceneSwapper);
+            //renderer.SetSceneToDraw(sceneHandler->GetScene(sceneName));
+            //sceneSwapper++;
 
             // Test to move objects during runtime
             scene = sceneHandler->GetScene("scene0");

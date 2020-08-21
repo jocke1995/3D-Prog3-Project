@@ -10,6 +10,8 @@ class DirectionalLightComponent;
 class PointLightComponent;
 class SpotLightComponent;
 
+class CameraComponent;
+
 #include "../Engine/stdafx.h"
 #include "Components/Component.h"
 
@@ -17,7 +19,7 @@ static unsigned int staticID = 0;
 class Entity
 {
 public:
-	Entity();
+	Entity(std::string entityName);
 	bool operator == (const Entity* rhs) const;
 	~Entity();
 
@@ -31,11 +33,20 @@ public:
 	bool HasComponent() const;
 
 	unsigned int GetID() const;
+	std::string GetName() const;
+	unsigned int GetRefCount() const;
 
+	void IncrementRefCount();
+	void DecrementRefCount();
 	void Update(double dt);
 
 private:
 	unsigned int id = -1;
+	std::string name = "";
+	
+	// Multiple scenes can use the same entity (player for example).
+	// This is to make sure that the player doesn't get deleted if its still in use AND to not delete it twice
+	unsigned int referenceCount = 0;
 
 	std::vector<Component*> components;
 };

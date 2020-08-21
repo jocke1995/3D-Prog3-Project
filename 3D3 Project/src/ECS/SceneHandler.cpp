@@ -13,7 +13,7 @@ SceneHandler::~SceneHandler()
     this->scenes.clear();
 }
 
-Scene* SceneHandler::CreateScene(std::string sceneName, BaseCamera* camera)
+Scene* SceneHandler::CreateScene(std::string sceneName)
 {
     if (this->SceneExists(sceneName))
     {
@@ -22,7 +22,7 @@ Scene* SceneHandler::CreateScene(std::string sceneName, BaseCamera* camera)
     }
 
     // Create Scene and return it
-    this->scenes[sceneName] = new Scene(camera);
+    this->scenes[sceneName] = new Scene(sceneName);
     return this->scenes[sceneName];
 }
 

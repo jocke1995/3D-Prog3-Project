@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ECS\Components\CameraComponent.cpp" />
     <ClCompile Include="src\Engine\ShadowRenderTask.cpp" />
     <ClCompile Include="src\Engine\RenderView.cpp" />
     <ClCompile Include="src\Engine\OrthographicCamera.cpp" />
@@ -245,6 +246,7 @@
     <ClCompile Include="src\Engine\TempInputClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\Components\CameraComponent.h" />
     <ClInclude Include="src\Engine\ShadowRenderTask.h" />
     <ClInclude Include="src\Engine\RenderView.h" />
     <ClInclude Include="src\Engine\OrthographicCamera.h" />

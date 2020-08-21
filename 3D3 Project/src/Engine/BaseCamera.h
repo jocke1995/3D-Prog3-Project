@@ -3,11 +3,12 @@
 
 using namespace DirectX;
 
-enum CAMERA_TYPE
+enum class CAMERA_TYPE
 {
 	PERSPECTIVE,
 	ORTHOGRAPHIC,
-	NUM_CAMERA_TYPES
+	NUM_CAMERA_TYPES,
+	UNDEFINED
 };
 
 class BaseCamera
