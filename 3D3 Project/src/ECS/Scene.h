@@ -10,7 +10,7 @@ public:
 	Scene(BaseCamera* camera);
 	~Scene();
 
-	bool AddEntity(std::string entityName);
+	Entity* AddEntity(std::string entityName);
 	bool RemoveEntity(std::string entityName);
 
 	Entity* GetEntity(std::string entityName);

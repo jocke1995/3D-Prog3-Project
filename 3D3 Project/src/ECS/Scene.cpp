@@ -15,16 +15,16 @@ Scene::~Scene()
 }
 
 // Returns false if the entity couldn't be created
-bool Scene::AddEntity(std::string entityName)
+Entity* Scene::AddEntity(std::string entityName)
 {
     if (this->EntityExists(entityName) == true)
     {
-        return false;
+        return nullptr;
     }
 
     this->entities[entityName] = new Entity();
     this->nrOfEntities++;
-    return true;
+    return this->entities[entityName];
 }
 
 bool Scene::RemoveEntity(std::string entityName)

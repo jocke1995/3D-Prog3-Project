@@ -985,6 +985,7 @@ void Renderer::TempCopyResource(Resource* uploadResource, Resource* defaultResou
 
 	this->tempCommandInterface->GetCommandList(0)->Close();
 	ID3D12CommandList* ppCommandLists[] = { this->tempCommandInterface->GetCommandList(0) };
+	// this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->Wait(this->fenceFrame, this->fenceFrameValue - 1);
 	this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]->ExecuteCommandLists(ARRAYSIZE(ppCommandLists), ppCommandLists);
 	this->WaitForGpu();
 }
