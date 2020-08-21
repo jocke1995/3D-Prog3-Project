@@ -1,7 +1,6 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-// TODO: precompiled header problem
 #include "../../Engine/stdafx.h"
 class Entity;
 
