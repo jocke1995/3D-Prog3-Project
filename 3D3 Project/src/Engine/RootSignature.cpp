@@ -106,11 +106,17 @@ void RootSignature::CreateRootSignatureStructure()
 
 	ssd[1].ShaderRegister = 1;
 	ssd[1].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
-	ssd[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	ssd[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	ssd[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	ssd[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	ssd[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	ssd[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
 	ssd[1].ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 	ssd[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	ssd[1].MinLOD = 0;
+	ssd[1].MaxLOD = D3D12_FLOAT32_MAX;
+	ssd[1].MipLODBias = 0.0f;
+	ssd[1].MaxAnisotropy = 1;
+	ssd[1].BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE;
+
 	rsDesc.pStaticSamplers = ssd;
 
 

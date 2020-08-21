@@ -7,9 +7,9 @@ Light::Light(CAMERA_TYPE camType, unsigned int lightFlags)
 	this->lightFlags = lightFlags;
 
 	this->baseLight = new BaseLight();
-	this->baseLight->ambient = { 0.005f, 0.005f, 0.005f, 1.0f };
-	this->baseLight->diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
-	this->baseLight->specular = { 0.1f, 0.1f, 0.1f, 1.0f };
+	this->baseLight->ambient = { 0.05f, 0.05f, 0.05f, 1.0f };
+	this->baseLight->diffuse = { 0.35f, 0.35f, 0.35f, 1.0f };
+	this->baseLight->specular = { 0.2f, 0.2f, 0.2f, 1.0f };
 	this->baseLight->castShadow = false;
 }
 
@@ -60,7 +60,8 @@ void Light::CreateCamera(float3 position, float3 lookAt)
 		case CAMERA_TYPE::PERSPECTIVE:
 			this->camera = new PerspectiveCamera(
 				{ position.x, position.y, position.z, 1.0f},
-				{ lookAt.x, lookAt.y, lookAt.z , 0.0f});
+				{ lookAt.x, lookAt.y, lookAt.z , 0.0f},
+				60.0f);	// Field of view
 			break;
 	}
 }

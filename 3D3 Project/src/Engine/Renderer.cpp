@@ -9,32 +9,23 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	Log::Print("----------------------------  Renderer Destructor  ----------------------------------\n");
+	Log::Print("----------------------------  Deleting Renderer  ----------------------------------\n");
 	this->WaitForFrame(0);
-	Log::Print("1\n");
 	this->threadpool->WaitForThreads(FLAG_THREAD::ALL);
-	Log::Print("2\n");
 	this->threadpool->ExitThreads();
-	Log::Print("3\n");
 	SAFE_RELEASE(&this->fenceFrame);
-	Log::Print("4\n");
 	if (!CloseHandle(this->eventHandle))
 	{
 		Log::Print("Failed To Close Handle... ErrorCode: %d\n", GetLastError());
 	}
-	Log::Print("5\n");
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
-	Log::Print("6\n");
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COMPUTE_TYPE]);
-	Log::Print("7\n");
 	SAFE_RELEASE(&this->commandQueues[COMMAND_INTERFACE_TYPE::COPY_TYPE]);
-	Log::Print("8\n");
+
 	delete this->rootSignature;
-	Log::Print("9\n");
 	delete this->swapChain;
-	Log::Print("10\n");
 	delete this->mainDSV;
-	Log::Print("11\n");
+
 	for (auto& pair : this->descriptorHeaps)
 	{
 		delete pair.second;
@@ -50,20 +41,13 @@ Renderer::~Renderer()
 		delete renderTask;
 
 	SAFE_RELEASE(&this->device5);
-	Log::Print("13\n");
 	delete this->camera;
-	Log::Print("14\n");
 	delete this->threadpool;
-	Log::Print("15\n");
 
 	delete this->lightViewsPool;
-	Log::Print("16\n");
 	delete this->cbPerScene;
-	Log::Print("17\n");
-
 	delete this->cbPerFrame;
 	delete this->cbPerFrameData;
-	Log::Print("18\n");
 
 	// temp
 	delete this->tempCommandInterface;
@@ -677,6 +661,7 @@ void Renderer::CreateMainDSV()
 	this->mainDSV = new DepthStencilView(
 		this->device5,
 		800, 600,	// width, height
+		L"MainDSV_DEFAULT_RESOURCE",
 		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
 }
 

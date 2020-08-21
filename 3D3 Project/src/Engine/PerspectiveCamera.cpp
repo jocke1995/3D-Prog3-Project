@@ -1,10 +1,10 @@
 #include "PerspectiveCamera.h"
 
 // TEMPORARY CONSTRUCTOR
-PerspectiveCamera::PerspectiveCamera(HINSTANCE hInstance, HWND hwnd)
+PerspectiveCamera::PerspectiveCamera(HINSTANCE hInstance, HWND hwnd, double fov)
 	:BaseCamera()
 {
-	this->Init();
+	this->Init(fov);
 	this->UpdateSpecific(0);
 
 	this->tempHasInputObject = true;
@@ -12,10 +12,10 @@ PerspectiveCamera::PerspectiveCamera(HINSTANCE hInstance, HWND hwnd)
 	this->tempInputClass->InitDirectInput(hInstance, hwnd);
 }
 
-PerspectiveCamera::PerspectiveCamera(XMVECTOR position, XMVECTOR lookAt)
+PerspectiveCamera::PerspectiveCamera(XMVECTOR position, XMVECTOR lookAt, double fov)
 	:BaseCamera(position, lookAt)
 {
-	this->Init();
+	this->Init(fov);
 	this->UpdateSpecific(0);
 
 	this->tempHasInputObject = false;
@@ -58,10 +58,10 @@ XMMATRIX* PerspectiveCamera::GetViewProjectionTranposed()
 	return &this->viewProjTranposedMatrix;
 }
 
-void PerspectiveCamera::Init()
+void PerspectiveCamera::Init(double fov)
 {
 	// Create Projection Matrix
-	float fovAngleY = 45.0f * XM_PI / 180.0f;
+	float fovAngleY = fov * XM_PI / 180.0f;
 	float aspectRatio = 16.0f / 9.0f;
 	float zNear = 0.1f;
 	float zFar = 1000.0f;

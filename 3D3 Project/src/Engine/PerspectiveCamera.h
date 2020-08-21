@@ -9,10 +9,10 @@ class PerspectiveCamera : public BaseCamera
 {
 public:
     // Temp constructor for input (USED ONCE ATM)
-    PerspectiveCamera(HINSTANCE hInstance, HWND hwnd);
+    PerspectiveCamera(HINSTANCE hInstance, HWND hwnd, double fov = 45.0f);
 
     // main constructor
-    PerspectiveCamera(XMVECTOR position, XMVECTOR lookAt);
+    PerspectiveCamera(XMVECTOR position, XMVECTOR lookAt, double fov = 45.0f);
 	virtual ~PerspectiveCamera();
 
     XMMATRIX* GetViewProjection();
@@ -30,7 +30,7 @@ private:
     XMMATRIX viewProjMatrix;
     XMMATRIX viewProjTranposedMatrix;
 
-    void Init();
+    void Init(double fov);
 
     void UpdateSpecific(double dt);
     void UpdateCameraMovement();

@@ -45,16 +45,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene->AddEntity("spotLight2");
 
     // Add Components to Entities
-    scene->GetEntity("floor")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("floor")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("box")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("box")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("stone")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("stone")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("transparentTestObject")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("transparentTestObject")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("directionalLight")->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
-    scene->GetEntity("spotLight")->AddComponent<component::SpotLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
+    Entity* entity;
+    entity = scene->GetEntity("floor");
+    entity->AddComponent<component::MeshComponent>();
+    entity->AddComponent<component::TransformComponent>();
+
+    entity = scene->GetEntity("box");
+    entity->AddComponent<component::MeshComponent>();
+    entity->AddComponent<component::TransformComponent>();
+
+    entity = scene->GetEntity("stone");
+    entity->AddComponent<component::MeshComponent>();
+    entity->AddComponent<component::TransformComponent>();
+
+    entity = scene->GetEntity("transparentTestObject");
+    entity->AddComponent<component::MeshComponent>();
+    entity->AddComponent<component::TransformComponent>();
+
+    entity = scene->GetEntity("directionalLight");
+    entity->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION);
+
+    entity = scene->GetEntity("spotLight");
+    entity->AddComponent<component::SpotLightComponent>(FLAG_LIGHT::CAST_SHADOW_MEDIUM_RESOLUTION);
 
     // Set the components
     component::MeshComponent* mc = scene->GetEntity("floor")->GetComponent<component::MeshComponent>();
@@ -70,7 +82,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     tc = scene->GetEntity("box")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
-    tc->GetTransform()->SetPosition(32.0f, 1.0f, 20.0f);
+    tc->GetTransform()->SetPosition(-10.0f, 0.5f, 14.0f);
 
     mc = scene->GetEntity("stone")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(stoneModel);
@@ -98,13 +110,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     component::DirectionalLightComponent* dl = scene->GetEntity("directionalLight")->GetComponent<component::DirectionalLightComponent>();
     dl->SetDirection({ -1.0f, -1.0f, -1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_AMBIENT, { 0.05f, 0.05f, 0.05f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { 0.4f, 0.4f, 0.4f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_SPECULAR, { 0.4f, 0.4f, 0.4f, 1.0f });
 
     component::SpotLightComponent* sl = scene->GetEntity("spotLight")->GetComponent<component::SpotLightComponent>();
     sl->SetPosition({ -20.0f, 6.0f, -3.0f });
     sl->SetDirection({ 2.0, -1.0, 0.0f });
-    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { 1.0f, 0.0f, 0.0f, 1.0f });
-    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_AMBIENT, { 0.005f, 0.005f, 0.005f, 1.0f });
-    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_SPECULAR, { 1.0f, 0.0f, 0.0f, 1.0f });
+    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_AMBIENT, { 0.05f, 0.00f, 0.05f, 1.0f });
+    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { 1.0f, 0.00f, 1.0f, 1.0f });
+    sl->SetColor(LIGHT_COLOR_TYPE::LIGHT_SPECULAR, { 1.0f, 0.00f, 1.0f, 1.0f });
 
 #pragma endregion CreateScene0
 #pragma region CreateScene1
@@ -118,8 +133,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     scene->GetEntity("cube1")->AddComponent<component::TransformComponent>();
     scene->GetEntity("cube2")->AddComponent<component::MeshComponent>();
     scene->GetEntity("cube2")->AddComponent<component::TransformComponent>();
-    scene->GetEntity("cube3")->AddComponent<component::MeshComponent>();
-    scene->GetEntity("cube3")->AddComponent<component::TransformComponent>();
     scene->GetEntity("cube3")->AddComponent<component::DirectionalLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
     
     mc = scene->GetEntity("cube1")->GetComponent<component::MeshComponent>();
@@ -137,18 +150,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     tc = scene->GetEntity("cube2")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
     tc->GetTransform()->SetPosition(-5.0f, 1.0f, 0.0f);
-    
-    mc = scene->GetEntity("cube3")->GetComponent<component::MeshComponent>();
-    mc->SetMeshes(cubeModel);
-    mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
-    
-    tc = scene->GetEntity("cube3")->GetComponent<component::TransformComponent>();
-    tc->GetTransform()->SetScale(0.5f);
-    tc->GetTransform()->SetPosition(10.0f, 5.0f, 5.0f);
    
-    //dl = scene->GetEntity("cube3")->GetComponent<component::DirectionalLightComponent>();
-    //dl->Init();
-    //dl->SetDirection({ -1.0f, -0.5f, -0.5f });
+    dl = scene->GetEntity("cube3")->GetComponent<component::DirectionalLightComponent>();
+    dl->SetDirection({ -1.0f, -1.0f, -1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_AMBIENT, { 0.05f, 0.05f, 0.05f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_DIFFUSE, { 0.4f, 0.4f, 0.4f, 1.0f });
+    dl->SetColor(LIGHT_COLOR_TYPE::LIGHT_SPECULAR, { 0.4f, 0.4f, 0.4f, 1.0f });
 
 #pragma endregion CreateScene1
     renderer.SetSceneToDraw(sceneHandler->GetScene("scene0"));
@@ -157,45 +164,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         if (window->WasSpacePressed())
         {
             //Test to change scene during runtime
-            //char sceneName[10];
-            //static int sceneSwapper = 1;
-            //sceneSwapper %= 2;
-            //sprintf(sceneName, "scene%d", sceneSwapper);
-            //renderer.SetSceneToDraw(sceneHandler->GetScene(sceneName));
-            //sceneSwapper++;
+            // char sceneName[10];
+            // static int sceneSwapper = 1;
+            // sceneSwapper %= 2;
+            // sprintf(sceneName, "scene%d", sceneSwapper);
+            // renderer.SetSceneToDraw(sceneHandler->GetScene(sceneName));
+            // sceneSwapper++;
 
             scene = sceneHandler->GetScene("scene0");
             tc = scene->GetEntity("stone")->GetComponent<component::TransformComponent>();
             float3 posa = tc->GetTransform()->GetPositionFloat3();
             tc->GetTransform()->SetPosition(posa.x, posa.y, posa.z + 0.1);
-
-
-        // Test to add objects during runtime
-        //    char entityName[10];
-        //    static int entityCounter = 0;
-        //    sprintf(entityName, "cube%d", entityCounter);
-        //
-        //    entityCounter++;
-        //
-        //    // Test to add entity during runtime
-        //    scene1->AddEntity(entityName);
-        //    scene1->GetEntity(entityName)->AddComponent<RenderCompoanent>();
-        //    rc = scene1->GetEntity(entityName)->GetComponent<RenderCaomponent>();
-        //    rc->SetMesh(cubeMesh);
-        //    rc->SetDrawFlag(DrawOptions::ForwardRendering);
-        //    
-        //    // Create entity infront of camera
-        //    rc->GetTransform()->SetPosition(scene1->GetMainCamera()->GetPosition().x + scene1->GetMainCamera()->GetLookAt().x*8,
-        //                                    scene1->GetMainCamera()->GetPosition().y + scene1->GetMainCamera()->GetLookAt().y*8,
-        //                                    scene1->GetMainCamera()->GetPosition().z + scene1->GetMainCamera()->GetLookAt().z*8);
-        //
-        //    renderer->AddEntityToDraw(scene1->GetEntity(entityName));
-        //
-        //    // Test To Remove Entity
-        //    //renderer->RemoveEntityFromDraw(scene1->GetEntity(entityName2));
-        //    //char entityName2[10];
-        //    //sprintf(entityName2, "mino%d", entityCounter);
-        //    //scene1->RemoveEntity(entityName2);
         } 
 
         /* ------ Update ------ */

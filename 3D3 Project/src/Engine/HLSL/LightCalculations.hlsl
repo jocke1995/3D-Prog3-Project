@@ -2,7 +2,7 @@
 
 Texture2D textures[]   : register (t0);
 SamplerState samplerTypeWrap	: register (s0);
-SamplerState samplerTypeClamp	: register (s1);
+SamplerState samplerTypeBorder	: register (s1);
 
 float CalculateShadow(
 	in float4 fragPosLightSpace,
@@ -17,21 +17,30 @@ float CalculateShadow(
 	texCoord = texCoord * 0.5 + 0.5;
 	texCoord.y = 1 - texCoord.y;
 
-	// Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepthFromLight = textures[shadowMapIndex].Sample(samplerTypeClamp, texCoord).r;
-
 	// get depth of current fragment from light's perspective
 	float depthFromLightToFragPos = fragPosLightSpace.z / fragPosLightSpace.w;
 
 	// check whether current fragPos is in shadow
 	float shadow = 0.0f;
-	//float bias = max(0.0005 * (1.0 - dot(normal, lightDir)), 0.00005);	// LearnOpenGl Stuff
-	float bias = 0.0005f;
-	if (depthFromLightToFragPos - bias > closestDepthFromLight)
+	float bias = 0.0004f;
+
+	// Anti aliasing
+	float2 texelSize = float2(0.0f, 0.0f);
+	textures[shadowMapIndex].GetDimensions(texelSize.x, texelSize.y);
+	texelSize = 1.0f / texelSize;
+
+	for (int x = -1; x <= 1; ++x)
 	{
-		// the pixel is in shadow
-		shadow = 1.0f;
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = textures[shadowMapIndex].Sample(samplerTypeBorder, texCoord + float2(x,y) * texelSize).r;
+			if (depthFromLightToFragPos - bias > pcfDepth)
+			{
+				shadow += 1.0f;
+			}
+		}
 	}
+	shadow = shadow / 9.0f;
 
 	return shadow;
 }

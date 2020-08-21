@@ -11,6 +11,7 @@ public:
 	DepthStencilView(
 		ID3D12Device5* device,
 		unsigned int width, unsigned int height,
+		std::wstring dsvResourceName,
 		DescriptorHeap* descriptorHeap_DSV,
 		D3D12_DEPTH_STENCIL_VIEW_DESC* depthStencilDescInput = nullptr);	// Set to nullptr to use default
 
@@ -31,7 +32,10 @@ private:
 	Resource* resource = nullptr;
 	unsigned int descriptorHeapIndex_DSV = -1;
 
-	void CreateResource(ID3D12Device5* device, unsigned int width, unsigned int height);
+	void CreateResource(
+		ID3D12Device5* device,
+		unsigned int width, unsigned int height,
+		std::wstring dsvResourceName);
 	void CreateDSV(
 		ID3D12Device5* device,
 		DescriptorHeap* descriptorHeap_DSV,
