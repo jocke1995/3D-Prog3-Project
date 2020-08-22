@@ -90,7 +90,6 @@ typedef DirectX::XMMATRIX float4x4;
 	}							\
 }
 
-
 #define NUM_SWAP_BUFFERS 2
 #define BIT(x) (1 << x)
 

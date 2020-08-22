@@ -47,6 +47,8 @@ Renderer::~Renderer()
 	SAFE_RELEASE(&this->device5);
 	delete this->threadpool;
 
+	delete this->mousePicker;
+
 	delete this->lightViewsPool;
 	delete this->cbPerScene;
 	delete this->cbPerFrame;
@@ -80,6 +82,9 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	int numCores = std::thread::hardware_concurrency();
 	if (numCores == 0) numCores = 1; // function not supported ej vettig dator
 	this->threadpool = new ThreadPool(numCores); // Set num threads to number of cores of the cpu
+
+	// Picking
+	this->mousePicker = new MousePicker();
 
 	// Create Main DepthBuffer
 	this->CreateMainDSV();
@@ -192,6 +197,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	this->copyTasks[COPY_TASK_TYPE::COPY_PER_FRAME]->Clear();
 	this->ScenePrimaryCamera = nullptr;
 	this->wireFrameTask->Clear();
+	this->boundingBoxesToBePicked.clear();
 
 	// Handle and structure the components in the scene
 #pragma region HandleComponents
@@ -318,7 +324,7 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		}
 
 		component::BoundingBoxComponent* bbc = entity->GetComponent<component::BoundingBoxComponent>();
-		if (bbc != nullptr && DRAWBOUNDINGBOX == true)
+		if (bbc != nullptr)
 		{
 			Mesh* tmp = bbc->GetMesh();
 			if (tmp == nullptr)
@@ -339,7 +345,18 @@ void Renderer::SetSceneToDraw(Scene* scene)
 				this->WaitForGpu();
 			}
 			
-			this->wireFrameTask->AddObjectToDraw(&std::make_pair(bbc->GetMesh(), bbc->GetTransform()));
+			// Add it to task so it can be drawn
+			if (DRAWBOUNDINGBOX == true)
+			{
+				this->wireFrameTask->AddObjectToDraw(&std::make_pair(bbc->GetMesh(), bbc->GetTransform()));
+			}
+
+			// Add to vector so the mouse picker can check for intersections
+			if (bbc->Pick() == true)
+			{
+				this->boundingBoxesToBePicked.push_back(bbc);
+			}
+			
 		}
 	}
 #pragma endregion HandleComponents
@@ -414,9 +431,10 @@ void Renderer::SetSceneToDraw(Scene* scene)
 	{
 		Log::PrintSeverity(Log::Severity::CRITICAL, "No primary camera was set in scene: %s\n", scene->GetName());
 	}
+	this->mousePicker->SetPrimaryCamera(this->ScenePrimaryCamera);
 	scene->SetPrimaryCamera(this->ScenePrimaryCamera);
 	this->SetRenderTasksRenderComponents();
-	this->SetRenderTasksMainCamera();
+	this->SetRenderTasksPrimaryCamera();
 
 	this->currActiveScene = scene;
 }
@@ -425,6 +443,42 @@ void Renderer::Update(double dt)
 {
 	// Update CB_PER_FRAME data
 	this->cbPerFrameData->camPos = this->ScenePrimaryCamera->GetPositionFloat3();
+
+	// Picking
+	this->mousePicker->UpdateRay();
+	
+	struct PickedBBC
+	{
+		component::BoundingBoxComponent* bbc;
+		float distance = -1.0f;
+	};
+
+	PickedBBC pbbc;
+
+	float tempDist;
+	float closestDist = 100000.0f;
+
+	for (component::BoundingBoxComponent* bbc : this->boundingBoxesToBePicked)
+	{
+		if (this->mousePicker->Pick(bbc, tempDist) == true)
+		{
+			if (tempDist < closestDist)
+			{
+				pbbc.bbc = bbc;
+				pbbc.distance = tempDist;
+
+				closestDist = tempDist;
+			}
+		}		
+	}
+
+	if (closestDist < 100000.0f)
+	{
+		// outline..?
+		
+		Log::Print("%s is picked! %d\n", pbbc.bbc->GetParentName().c_str(), this->frameCounter);
+	}
+	
 
 	// Update scene
 	this->currActiveScene->UpdateScene(dt);
@@ -558,7 +612,7 @@ ThreadPool* Renderer::GetThreadPool() const
 	return this->threadpool;
 }
 
-void Renderer::SetRenderTasksMainCamera()
+void Renderer::SetRenderTasksPrimaryCamera()
 {
 	for (RenderTask* renderTask : this->renderTasks)
 	{

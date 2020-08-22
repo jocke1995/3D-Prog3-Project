@@ -2,10 +2,11 @@
 
 namespace component
 {
-	BoundingBoxComponent::BoundingBoxComponent(Entity* parent)
+	BoundingBoxComponent::BoundingBoxComponent(Entity* parent, bool pick, bool outlineWhenPicked)
 		:Component(parent)
 	{
-		
+		this->pick = pick;
+		this->outlineWhenPicked = outlineWhenPicked;
 	}
 
 	BoundingBoxComponent::~BoundingBoxComponent()
@@ -46,6 +47,22 @@ namespace component
 	const std::vector<unsigned int>* BoundingBoxComponent::GetIndices() const
 	{
 		return &this->boundingBoxIndices;
+	}
+
+	std::string BoundingBoxComponent::GetParentName() const
+	{
+		std::string parentName = this->parent->GetName();
+		return parentName;
+	}
+
+	bool BoundingBoxComponent::Pick() const
+	{
+		return this->pick;
+	}
+
+	bool BoundingBoxComponent::Outline() const
+	{
+		return this->outlineWhenPicked;
 	}
 
 	bool BoundingBoxComponent::CreateBoundingBox()

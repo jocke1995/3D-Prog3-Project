@@ -58,12 +58,12 @@ void PerspectiveCamera::UpdateSpecific(double dt)
 	this->viewProjTranposedMatrix = DirectX::XMMatrixTranspose(this->viewProjMatrix);
 }
 
-XMMATRIX* PerspectiveCamera::GetViewProjection()
+const XMMATRIX* PerspectiveCamera::GetViewProjection() const
 {
 	return &this->viewProjMatrix;
 }
 
-XMMATRIX* PerspectiveCamera::GetViewProjectionTranposed()
+const XMMATRIX* PerspectiveCamera::GetViewProjectionTranposed() const
 {
 	return &this->viewProjTranposedMatrix;
 }

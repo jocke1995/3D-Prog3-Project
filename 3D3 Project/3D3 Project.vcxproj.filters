@@ -227,6 +227,9 @@
     <ClCompile Include="src\Engine\RenderTask.cpp">
       <Filter>Engine\Tasks\Render\Solid</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\MousePicker.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -399,6 +402,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\RenderTask.h">
       <Filter>Engine\Tasks\Render\Solid</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\MousePicker.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

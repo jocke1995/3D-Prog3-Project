@@ -30,12 +30,12 @@ void OrthographicCamera::UpdateSpecific(double dt)
 	this->viewProjTranposedMatrix = DirectX::XMMatrixTranspose(this->viewProjMatrix);
 }
 
-XMMATRIX* OrthographicCamera::GetViewProjection()
+const XMMATRIX* OrthographicCamera::GetViewProjection() const
 {
 	return &this->viewProjMatrix;
 }
 
-XMMATRIX* OrthographicCamera::GetViewProjectionTranposed()
+const XMMATRIX* OrthographicCamera::GetViewProjectionTranposed() const
 {
 	return &this->viewProjTranposedMatrix;
 }

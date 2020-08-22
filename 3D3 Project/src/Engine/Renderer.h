@@ -6,6 +6,7 @@
 #include "DepthStencilView.h"
 #include "ThreadPool.h"
 #include "LightViewsPool.h"
+#include "MousePicker.h"
 
 // ECS
 #include "../ECS/Scene.h"
@@ -48,7 +49,7 @@ public:
 private:
 	// Camera
 	BaseCamera* ScenePrimaryCamera = nullptr;
-	void SetRenderTasksMainCamera();
+	void SetRenderTasksPrimaryCamera();
 
 	unsigned int frameCounter = 0;
 
@@ -75,6 +76,9 @@ private:
 	// ThreadPool
 	ThreadPool* threadpool = nullptr;
 
+	// Picking
+	MousePicker* mousePicker = nullptr;
+
 	// Tasks
 	std::vector<ComputeTask*> computeTasks;
 	std::vector<CopyTask*>    copyTasks;
@@ -85,6 +89,9 @@ private:
 	// Group of components that's needed for rendering:
 	std::vector<std::pair<component::MeshComponent*, component::TransformComponent*>> renderComponents;
 	void SetRenderTasksRenderComponents();
+
+	// BoundingBoxes to be picked
+	std::vector<component::BoundingBoxComponent*> boundingBoxesToBePicked;
 
 	LightViewsPool* lightViewsPool = nullptr;
 	std::map<LIGHT_TYPE, std::vector<std::tuple<Light*, ConstantBufferView*, ShadowInfo*>>> lights;

@@ -28,8 +28,10 @@ public:
 	XMFLOAT3 GetLookAt() const;
 	float3 GetLookAtFloat3() const;
 
-	virtual XMMATRIX* GetViewProjection() = 0;
-	virtual XMMATRIX* GetViewProjectionTranposed() = 0;
+	const XMMATRIX* GetViewMatrix() const;
+	const XMMATRIX* GetViewMatrixInverse() const;
+	virtual const XMMATRIX* GetViewProjection() const = 0;
+	virtual const XMMATRIX* GetViewProjectionTranposed() const = 0;
 
 protected:
 	XMVECTOR rightVector;
@@ -38,6 +40,7 @@ protected:
 	XMVECTOR upVector;
 
 	XMMATRIX viewMatrix;
+	XMMATRIX viewMatrixInverse;
 
 	virtual void UpdateSpecific(double dt = 0.0) = 0;
 };

@@ -64,7 +64,7 @@ void FowardRenderTask::Execute()
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_FRAME, this->resources["cbPerFrame"]->GetGPUVirtualAdress());
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	XMMATRIX* viewProjMatTrans = this->camera->GetViewProjectionTranposed();
+	const XMMATRIX* viewProjMatTrans = this->camera->GetViewProjectionTranposed();
 
 	// Draw for every Rendercomponent
 	for (int i = 0; i < this->renderComponents.size(); i++)

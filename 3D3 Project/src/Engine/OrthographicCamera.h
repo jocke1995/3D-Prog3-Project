@@ -17,8 +17,8 @@ public:
         float farZ = 1000.0f);
     virtual ~OrthographicCamera();
 
-    XMMATRIX* GetViewProjection();
-    XMMATRIX* GetViewProjectionTranposed();
+    const XMMATRIX* GetViewProjection() const;
+    const XMMATRIX* GetViewProjectionTranposed() const;
 
 private:
     float left  = 0;

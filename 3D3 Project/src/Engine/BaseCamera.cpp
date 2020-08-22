@@ -20,6 +20,10 @@ void BaseCamera::Update(double dt)
 {
 	this->viewMatrix = XMMatrixLookAtLH(this->eyeVector, this->atVector + this->eyeVector, this->upVector);
 
+	// Inverse
+	XMVECTOR matInvDeter;	// Not used, but the function doesn't allow null params :)))
+	this->viewMatrixInverse = XMMatrixInverse(&matInvDeter, this->viewMatrix);
+
 	this->UpdateSpecific(dt);
 }
 
@@ -73,4 +77,14 @@ float3 BaseCamera::GetLookAtFloat3() const
 	temp.z = DXfloat3.z;
 
 	return temp;
+}
+
+const XMMATRIX* BaseCamera::GetViewMatrix() const
+{
+	return &this->viewMatrix;
+}
+
+const XMMATRIX* BaseCamera::GetViewMatrixInverse() const
+{
+	return &this->viewMatrixInverse;
 }

@@ -59,7 +59,7 @@ void BlendRenderTask::Execute()
 
 	commandList->SetGraphicsRootConstantBufferView(RS::CB_PER_SCENE, this->resources["cbPerScene"]->GetGPUVirtualAdress());
 
-	XMMATRIX * viewProjMatTrans = this->camera->GetViewProjectionTranposed();
+	const XMMATRIX * viewProjMatTrans = this->camera->GetViewProjectionTranposed();
 
 	// Draw from opposite order from the sorted array
 	for(int i = this->renderComponents.size() - 1; i >= 0; i--)

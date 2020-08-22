@@ -47,7 +47,7 @@ void ShadowRenderTask::Execute()
 		commandList->RSSetViewports(1, viewPort);
 		commandList->RSSetScissorRects(1, rect);
 
-		XMMATRIX* viewProjMatTrans = pair.first->GetCamera()->GetViewProjectionTranposed();
+		const XMMATRIX* viewProjMatTrans = pair.first->GetCamera()->GetViewProjectionTranposed();
 
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 			pair.second->GetResource()->GetID3D12Resource1(),

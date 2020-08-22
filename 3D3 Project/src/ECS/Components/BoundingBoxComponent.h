@@ -15,7 +15,7 @@ namespace component
 	class BoundingBoxComponent : public Component
 	{
 	public:
-		BoundingBoxComponent(Entity* parent);
+		BoundingBoxComponent(Entity* parent, bool pick = false, bool outlineWhenPicked = false);
 		virtual ~BoundingBoxComponent();
 
 		void Init();
@@ -30,10 +30,16 @@ namespace component
 		Transform* GetTransform() const;
 		const std::vector<Vertex>* GetVertices() const;
 		const std::vector<unsigned int>* GetIndices() const;
+		std::string GetParentName() const;
+		bool Pick() const;
+		bool Outline() const;
 
 	private:
 		std::vector<Vertex> boundingBoxVertices;
 		std::vector<unsigned int> boundingBoxIndices;
+
+		bool pick = false;
+		bool outlineWhenPicked = false;
 
 		// Will be set when scene is set to be drawn in renderer
 		Mesh* mesh = nullptr;

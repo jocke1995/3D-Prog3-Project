@@ -63,7 +63,7 @@ void WireframeRenderTask::Execute()
 
 	commandList->SetPipelineState(this->pipelineStates[0]->GetPSO());
 
-	XMMATRIX* viewProjMatTrans = this->camera->GetViewProjectionTranposed();
+	const XMMATRIX* viewProjMatTrans = this->camera->GetViewProjectionTranposed();
 
 	// Draw for every mesh
 	for (int i = 0; i < this->objectsToDraw.size(); i++)

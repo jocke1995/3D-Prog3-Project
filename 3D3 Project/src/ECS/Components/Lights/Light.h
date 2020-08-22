@@ -22,7 +22,7 @@ enum FLAG_LIGHT
 	CAST_SHADOW_ULTRA_RESOLUTION = BIT(5),
 
 	// If this is set, renderer only need to copy data once to GPU
-	// StaticSettings.. = BIT(3),
+	// STATIC_DATA .. = BIT(6),
 
 	// etc..
 };

@@ -20,8 +20,8 @@ public:
 
 	virtual ~PerspectiveCamera();
 
-    XMMATRIX* GetViewProjection();
-    XMMATRIX* GetViewProjectionTranposed();
+    const XMMATRIX* GetViewProjection() const;
+    const XMMATRIX* GetViewProjectionTranposed() const;
 
 private:
     float moveLeftRight = 0.0f;
