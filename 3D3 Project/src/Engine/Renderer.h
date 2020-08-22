@@ -67,7 +67,7 @@ private:
 
 	// Depthbuffer
 	DepthStencilView* mainDSV = nullptr;
-	void CreateMainDSV();
+	void CreateMainDSV(const HWND* hwnd);
 
 	// Rootsignature
 	RootSignature* rootSignature = nullptr;

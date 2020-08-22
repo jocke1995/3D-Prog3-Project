@@ -78,6 +78,9 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 	// Create SwapChain
 	this->CreateSwapChain(hwnd);
 
+	// Create Main DepthBuffer
+	this->CreateMainDSV(hwnd);
+
 	// ThreadPool
 	int numCores = std::thread::hardware_concurrency();
 	if (numCores == 0) numCores = 1; // function not supported ej vettig dator
@@ -85,9 +88,6 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 
 	// Picking
 	this->mousePicker = new MousePicker();
-
-	// Create Main DepthBuffer
-	this->CreateMainDSV();
 	
 	// Create Rootsignature
 	this->CreateRootSignature();
@@ -753,17 +753,20 @@ void Renderer::CreateSwapChain(const HWND *hwnd)
 		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::RTV]);
 }
 
-void Renderer::CreateMainDSV()
+void Renderer::CreateMainDSV(const HWND* hwnd)
 {
-	//this->mainDSV = new DepthStencilView(
-	//	this->device5,
-	//	1920, 1080,	// width, height
-	//	L"MainDSV_DEFAULT_RESOURCE",
-	//	this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
-
+	RECT rect;
+	unsigned int width = 0;
+	unsigned int height = 0;
+	if (GetWindowRect(*hwnd, &rect))
+	{
+		width = rect.right - rect.left;
+		height = rect.bottom - rect.top;
+	}
+	
 	this->mainDSV = new DepthStencilView(
 		this->device5,
-		800, 600,	// width, height
+		width, height,	// width, height
 		L"MainDSV_DEFAULT_RESOURCE",
 		this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::DSV]);
 }

@@ -8,7 +8,8 @@ class Window
 {
 public:
 	// Varying screensize constructor
-	Window(HINSTANCE hInstance,
+	Window(
+		HINSTANCE hInstance,
 		int nCmdShow,
 		bool fullScreen = false,
 		int screenWidth = 800,
