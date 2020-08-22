@@ -48,7 +48,7 @@ namespace component
 		return &this->boundingBoxIndices;
 	}
 
-	void BoundingBoxComponent::CreateBoundingBox()
+	bool BoundingBoxComponent::CreateBoundingBox()
 	{
 		if (this->parent->HasComponent<MeshComponent>() == true && this->parent->HasComponent<TransformComponent>() == true)
 		{
@@ -56,20 +56,22 @@ namespace component
 			this->transform = this->parent->GetComponent<TransformComponent>()->GetTransform();
 
 			// Create new mesh (the bounding box)
-			std::vector<Vertex> modelVertices = *this->parent->GetComponent<MeshComponent>()->GetMesh(0)->GetVertices();
-
 			float3 minVertex = { 1000000.0f, 1000000.0f, 1000000.0f };
 			float3 maxVertex = { -1000000.0f, -1000000.0f, -1000000.0f };
 
-			for (unsigned int i = 0; i < modelVertices.size(); i++)
+			for (unsigned int i = 0; i < this->parent->GetComponent<MeshComponent>()->GetNrOfMeshes(); i++)
 			{
-				minVertex.x = Min(minVertex.x, modelVertices[i].pos.x);
-				minVertex.y = Min(minVertex.y, modelVertices[i].pos.y);
-				minVertex.z = Min(minVertex.z, modelVertices[i].pos.z);
+				std::vector<Vertex> modelVertices = *this->parent->GetComponent<MeshComponent>()->GetMesh(i)->GetVertices();
+				for (unsigned int j = 0; j < modelVertices.size(); j++)
+				{
+					minVertex.x = Min(minVertex.x, modelVertices[j].pos.x);
+					minVertex.y = Min(minVertex.y, modelVertices[j].pos.y);
+					minVertex.z = Min(minVertex.z, modelVertices[j].pos.z);
 
-				maxVertex.x = Max(maxVertex.x, modelVertices[i].pos.x);
-				maxVertex.y = Max(maxVertex.y, modelVertices[i].pos.y);
-				maxVertex.z = Max(maxVertex.z, modelVertices[i].pos.z);
+					maxVertex.x = Max(maxVertex.x, modelVertices[j].pos.x);
+					maxVertex.y = Max(maxVertex.y, modelVertices[j].pos.y);
+					maxVertex.z = Max(maxVertex.z, modelVertices[j].pos.z);
+				}
 			}
 
 			// Create bounding box
@@ -122,6 +124,13 @@ namespace component
 			{
 				this->boundingBoxIndices.push_back(indices[i]);
 			}
+
+			return true;
+		}
+		else
+		{
+			Log::PrintSeverity(Log::Severity::CRITICAL, "Trying to add a bounding box when no mesh and/or transform exists on entity.\n");
+			return false;
 		}
 	}
 }

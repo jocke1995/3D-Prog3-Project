@@ -39,7 +39,7 @@ namespace component
 		Mesh* mesh = nullptr;
 		Transform* transform = nullptr;
 
-		void CreateBoundingBox();
+		bool CreateBoundingBox();
 	};
 }
 
