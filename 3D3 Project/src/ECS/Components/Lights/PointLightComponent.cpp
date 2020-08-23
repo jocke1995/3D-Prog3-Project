@@ -6,7 +6,7 @@ namespace component
 		:Component(parent), Light(CAMERA_TYPE::PERSPECTIVE, lightFlags)
 	{
 		this->pointLight = new PointLight();
-		this->pointLight->position = { 0.0f,  5.0f,  0.0f, 0.0f };
+		this->pointLight->position = { 0.0f,  2.0f,  0.0f, 0.0f };
 		this->pointLight->attenuation = { 1.0f, 0.09f, 0.032f, 0.0f };
 		this->pointLight->baseLight = *this->baseLight;
 	}

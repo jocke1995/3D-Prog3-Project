@@ -121,7 +121,6 @@ enum FLAG_DRAW
 	Blend = BIT(2),
 	Shadow = BIT(3),
 	// animation = BIT(4),
-	// WireFrame
 	// etc..
 };
 

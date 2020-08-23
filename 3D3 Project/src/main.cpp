@@ -31,9 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
 #pragma region CreateScene0
     // Create Scene
-    sceneHandler->CreateScene("scene0");
-
-    Scene* scene = sceneHandler->GetScene("scene0");
+    Scene* scene = sceneHandler->CreateScene("scene0");
     
     // Add Entity to Scene
     scene->AddEntity("player");
@@ -76,6 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     entity = scene->GetEntity("spotLight");
     entity->AddComponent<component::SpotLightComponent>(FLAG_LIGHT::CAST_SHADOW_LOW_RESOLUTION);
+
 
     // Set the components
     component::MeshComponent* mc = scene->GetEntity("floor")->GetComponent<component::MeshComponent>();

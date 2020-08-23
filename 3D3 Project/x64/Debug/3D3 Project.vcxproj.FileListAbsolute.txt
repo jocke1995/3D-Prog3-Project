@@ -1,4 +1,2 @@
 C:\Users\joaki\OneDrive\Documents\GitHub\3D-Prog3-Project\3D3 Project\x64\Debug\3D3 Project.exe
 C:\Users\joaki\OneDrive\Documents\GitHub\3D-Prog3-Project\3D3 Project\x64\Debug\3D3 Project.pdb
-C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\x64\Debug\3D3 Project.pdb
-C:\Users\joaki\Documents\Github Projects\3D Programming3 Project\3D3 Project\x64\Debug\3D3 Project.exe
