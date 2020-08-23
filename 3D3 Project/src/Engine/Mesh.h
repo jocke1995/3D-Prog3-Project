@@ -19,7 +19,8 @@ public:
     Mesh(   ID3D12Device5* device,
             std::vector<Vertex> vertices,
             std::vector<unsigned int> indices,
-            DescriptorHeap* descriptorHeap_SRV);
+            DescriptorHeap* descriptorHeap_SRV,
+            const std::string path = "");
     Mesh(const Mesh* other);
     ~Mesh();
 
@@ -42,12 +43,13 @@ public:
     const D3D12_INDEX_BUFFER_VIEW* GetIndexBufferView() const;
 
     const SlotInfo* GetSlotInfo() const;
-
     Texture* GetTexture(TEXTURE_TYPE textureType);
+    std::string GetPath();
 
 private:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    std::string path = "";
 
     SlotInfo* slotInfo = nullptr;
 

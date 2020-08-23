@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\BoundingBoxPool.cpp" />
     <ClCompile Include="src\Engine\MousePicker.cpp" />
     <ClCompile Include="src\ECS\Components\BoundingBoxComponent.cpp" />
     <ClCompile Include="src\ECS\Components\CameraComponent.cpp" />
@@ -249,6 +250,7 @@
     <ClCompile Include="src\Engine\WireframeRenderTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\BoundingBoxPool.h" />
     <ClInclude Include="src\Engine\MousePicker.h" />
     <ClInclude Include="src\ECS\Components\BoundingBoxComponent.h" />
     <ClInclude Include="src\ECS\Components\CameraComponent.h" />

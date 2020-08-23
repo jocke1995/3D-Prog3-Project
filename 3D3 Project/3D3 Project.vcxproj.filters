@@ -230,6 +230,9 @@
     <ClCompile Include="src\Engine\MousePicker.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\BoundingBoxPool.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window.h">
@@ -404,6 +407,9 @@
       <Filter>Engine\Tasks\Render\Solid</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\MousePicker.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\BoundingBoxPool.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

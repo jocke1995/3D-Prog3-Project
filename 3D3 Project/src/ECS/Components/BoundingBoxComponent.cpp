@@ -11,7 +11,7 @@ namespace component
 
 	BoundingBoxComponent::~BoundingBoxComponent()
 	{
-		delete this->mesh;
+		
 	}
 
 	void BoundingBoxComponent::Init()
@@ -29,24 +29,24 @@ namespace component
 		this->mesh = mesh;
 	}
 
-	Mesh* BoundingBoxComponent::GetMesh() const
-	{
-		return this->mesh;
-	}
-
 	Transform* BoundingBoxComponent::GetTransform() const
 	{
 		return this->transform;
 	}
 
-	const std::vector<Vertex>* BoundingBoxComponent::GetVertices() const
+	const Mesh* BoundingBoxComponent::GetMesh() const
 	{
-		return &this->boundingBoxVertices;
+		return this->mesh;
 	}
 
-	const std::vector<unsigned int>* BoundingBoxComponent::GetIndices() const
+	const BoundingBoxData* BoundingBoxComponent::GetBoundingBoxData() const
 	{
-		return &this->boundingBoxIndices;
+		return this->bbd;
+	}
+
+	const std::string BoundingBoxComponent::GetPathOfModel() const
+	{
+		return this->pathOfModel;
 	}
 
 	std::string BoundingBoxComponent::GetParentName() const
@@ -71,14 +71,27 @@ namespace component
 		{
 			// Use the same transform as the model
 			this->transform = this->parent->GetComponent<TransformComponent>()->GetTransform();
+			MeshComponent* mc = this->parent->GetComponent<MeshComponent>();
+			this->pathOfModel = mc->GetMesh(0)->GetPath();
 
-			// Create new mesh (the bounding box)
-			float3 minVertex = { 1000000.0f, 1000000.0f, 1000000.0f };
-			float3 maxVertex = { -1000000.0f, -1000000.0f, -1000000.0f };
-
-			for (unsigned int i = 0; i < this->parent->GetComponent<MeshComponent>()->GetNrOfMeshes(); i++)
+			BoundingBoxPool* bbp = BoundingBoxPool::Get();
+			if (bbp->BoundingBoxDataExists(this->pathOfModel) == true)
 			{
-				std::vector<Vertex> modelVertices = *this->parent->GetComponent<MeshComponent>()->GetMesh(i)->GetVertices();
+				this->bbd = bbp->GetBoundingBoxData(this->pathOfModel);
+				return true;
+			}
+
+			// Create new bounding box
+			float3 minVertex = { MAXNUMBER, MAXNUMBER, MAXNUMBER };
+			float3 maxVertex = { -MAXNUMBER, -MAXNUMBER, -MAXNUMBER };
+
+			std::vector<Vertex> boundingBoxVerticesLocal;
+			std::vector<unsigned int> boundingBoxIndicesLocal;
+
+			for (unsigned int i = 0; i < mc->GetNrOfMeshes(); i++)
+			{
+				std::vector<Vertex> modelVertices = *mc->GetMesh(i)->GetVertices();
+
 				for (unsigned int j = 0; j < modelVertices.size(); j++)
 				{
 					minVertex.x = Min(minVertex.x, modelVertices[j].pos.x);
@@ -108,7 +121,7 @@ namespace component
 
 			for (unsigned int i = 0; i < 8; i++)
 			{
-				this->boundingBoxVertices.push_back(v[i]);
+				boundingBoxVerticesLocal.push_back(v[i]);
 			}
 
 			// Indices
@@ -139,9 +152,11 @@ namespace component
 
 			for (unsigned int i = 0; i < 36; i++)
 			{
-				this->boundingBoxIndices.push_back(indices[i]);
+				boundingBoxIndicesLocal.push_back(indices[i]);
 			}
 
+			this->bbd = bbp->CreateBoundingBoxData(boundingBoxVerticesLocal, boundingBoxIndicesLocal, this->pathOfModel);
+			
 			return true;
 		}
 		else

@@ -20,7 +20,7 @@ float CalculateShadow(
 
 	// check whether current fragPos is in shadow
 	float shadow = 0.0f;
-	float bias = 0.0004f;
+	float bias = 0.0003f;
 
 	// Anti aliasing
 	float2 texelSize = float2(0.0f, 0.0f);

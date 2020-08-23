@@ -28,9 +28,10 @@ void MousePicker::UpdateRay()
 
 bool MousePicker::Pick(component::BoundingBoxComponent* bbc, float& distance)
 {
+	const BoundingBoxData* bbd = bbc->GetBoundingBoxData();
 	distance = -1;
-	std::vector<Vertex> vertices = *bbc->GetVertices();
-	std::vector<unsigned int> indices = *bbc->GetIndices();
+	std::vector<Vertex> vertices = bbd->boundingBoxVertices;
+	std::vector<unsigned int> indices = bbd->boundingBoxIndices;
 	XMMATRIX worldMatrix = *bbc->GetTransform()->GetWorldMatrix();
 
 	// For each triangle
@@ -103,11 +104,11 @@ bool MousePicker::Pick(component::BoundingBoxComponent* bbc, float& distance)
 
 			pointInPlane = XMVectorSet(planeIntersectX, planeIntersectY, planeIntersectZ, 0.0f);
 
-			//Call function to check if point is in the triangle
+			// Call function to check if point is in the triangle
 			if (this->IsPointInTriangle(tri1V1, tri1V2, tri1V3, pointInPlane))
 			{
-				//Return the distance to the hit, so you can check all the other pickable objects in your scene
-				//and choose whichever object is closest to the camera
+				// Return the distance to the hit, so you can check all the other pickable objects in your scene
+				// and choose whichever object is closest to the camera
 				distance = t / 2.0f;
 				return true;
 			}
@@ -118,8 +119,8 @@ bool MousePicker::Pick(component::BoundingBoxComponent* bbc, float& distance)
 
 bool MousePicker::IsPointInTriangle(XMVECTOR& triV1, XMVECTOR& triV2, XMVECTOR& triV3, XMVECTOR& point)
 {
-	//To find out if the point is inside the triangle, we will check to see if the point
-	//is on the correct side of each of the triangles edges.
+	// To find out if the point is inside the triangle, we will check to see if the point
+	// is on the correct side of each of the triangles edges.
 
 	XMVECTOR cp1 = XMVector3Cross((triV3 - triV2), (point - triV2));
 	XMVECTOR cp2 = XMVector3Cross((triV3 - triV2), (triV1 - triV2));

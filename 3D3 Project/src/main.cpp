@@ -89,7 +89,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     mc = scene->GetEntity("box")->GetComponent<component::MeshComponent>();
     mc->SetMeshes(cubeModel);
     mc->SetDrawFlag(FLAG_DRAW::ForwardRendering | FLAG_DRAW::Shadow);
-
     tc = scene->GetEntity("box")->GetComponent<component::TransformComponent>();
     tc->GetTransform()->SetScale(0.5f);
     tc->GetTransform()->SetPosition(-10.0f, 0.5f, 14.0f);
@@ -120,7 +119,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     tc->GetTransform()->RotateZ(3.141572f / 2.0f);
     tc->GetTransform()->RotateX(3.141572f / 2.0f);
 
-    scene->GetEntity("transparentTestObject")->GetComponent<component::BoundingBoxComponent>()->Init();
+    entity = scene->GetEntity("transparentTestObject");
+    entity->GetComponent<component::BoundingBoxComponent>()->Init();
 
     component::DirectionalLightComponent* dl = scene->GetEntity("directionalLight")->GetComponent<component::DirectionalLightComponent>();
     dl->SetDirection({ -1.0f, -1.0f, -1.0f });

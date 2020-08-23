@@ -1,6 +1,10 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+#define MAX_DIR_LIGHTS   10
+#define MAX_POINT_LIGHTS 10
+#define MAX_SPOT_LIGHTS  10
+
 // Indicies of where the descriptors are stored in the descriptorHeap
 struct SlotInfo
 {
@@ -32,9 +36,9 @@ struct CB_PER_FRAME_STRUCT
 
 struct CB_PER_SCENE_STRUCT
 {
-	float4 dirLightIndices[10];
-	float4 pointLightIndices[10];
-	float4 spotLightIndices[10];
+	float4 dirLightIndices[MAX_DIR_LIGHTS];
+	float4 pointLightIndices[MAX_POINT_LIGHTS];
+	float4 spotLightIndices[MAX_SPOT_LIGHTS];
 
 	unsigned int Num_Dir_Lights;
 	unsigned int Num_Point_Lights;

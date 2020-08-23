@@ -10,6 +10,8 @@
 // Using the same transform as the models transform
 #include "TransformComponent.h"
 
+#include "../../Engine/BoundingBoxPool.h"
+
 namespace component
 {
 	class BoundingBoxComponent : public Component
@@ -21,28 +23,25 @@ namespace component
 		void Init();
 		void Update(double dt);
 
-		// Renderer will call this when creating the bounding box
 		void SetMesh(Mesh* mesh);
 
-		// This will only be a valid call if the mesh is drawn. Otherwise use other functions to get the data needed.
-		Mesh* GetMesh() const;
-
 		Transform* GetTransform() const;
-		const std::vector<Vertex>* GetVertices() const;
-		const std::vector<unsigned int>* GetIndices() const;
+		const Mesh* GetMesh() const;
+		const BoundingBoxData* GetBoundingBoxData() const;
+		const std::string GetPathOfModel() const;
 		std::string GetParentName() const;
+
 		bool Pick() const;
 		bool Outline() const;
 
 	private:
-		std::vector<Vertex> boundingBoxVertices;
-		std::vector<unsigned int> boundingBoxIndices;
+		std::string pathOfModel = "";
+		BoundingBoxData* bbd = nullptr;
+		Mesh* mesh = nullptr;
 
 		bool pick = false;
 		bool outlineWhenPicked = false;
 
-		// Will be set when scene is set to be drawn in renderer
-		Mesh* mesh = nullptr;
 		Transform* transform = nullptr;
 
 		bool CreateBoundingBox();

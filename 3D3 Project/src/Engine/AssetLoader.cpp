@@ -208,7 +208,8 @@ Mesh* AssetLoader::ProcessMesh(aiMesh* assimpMesh, const aiScene* assimpScene, c
 	Mesh* mesh = new Mesh(
 		this->device,
 		vertices, indices,
-		this->descriptorHeap_CBV_UAV_SRV);
+		this->descriptorHeap_CBV_UAV_SRV,
+		*filePath);
 
 	// ---------- Get Textures and set them to the mesh START----------
 	aiMaterial* mat = assimpScene->mMaterials[assimpMesh->mMaterialIndex];

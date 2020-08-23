@@ -94,6 +94,9 @@ void Renderer::InitD3D12(const HWND *hwnd, HINSTANCE hInstance)
 
 	// Init Assetloader
 	AssetLoader::Get(this->device5, this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
+
+	// Init BoundingBoxPool
+	BoundingBoxPool::Get(this->device5, this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
 	
 	// Pool to handle GPU memory for the lights
 	this->lightViewsPool = new LightViewsPool(
@@ -326,29 +329,26 @@ void Renderer::SetSceneToDraw(Scene* scene)
 		component::BoundingBoxComponent* bbc = entity->GetComponent<component::BoundingBoxComponent>();
 		if (bbc != nullptr)
 		{
-			Mesh* tmp = bbc->GetMesh();
-			if (tmp == nullptr)
+			// Add it to task so it can be drawn
+			if (DRAWBOUNDINGBOX == true)
 			{
-				// BoundingBoxComponent will delete the mesh when no longer needed
-				Mesh* tmp = new Mesh(
-					this->device5,
-					*bbc->GetVertices(), *bbc->GetIndices(),
-					this->descriptorHeaps[DESCRIPTOR_HEAP_TYPE::CBV_UAV_SRV]);
-
-				bbc->SetMesh(tmp);
+				Mesh* m = BoundingBoxPool::Get()->CreateBoundingBoxMesh(bbc->GetPathOfModel());
+				if (m == nullptr)
+				{
+					Log::PrintSeverity(Log::Severity::WARNING, "Forgot to initialize BoundingBoxComponent on Entity: %s\n", bbc->GetParentName().c_str());
+					continue;
+				}
 
 				// Upload to Default heap
-				bbc->GetMesh()->UploadToDefault(
+				m->UploadToDefault(
 					this->device5,
 					this->tempCommandInterface,
 					this->commandQueues[COMMAND_INTERFACE_TYPE::DIRECT_TYPE]);
 				this->WaitForGpu();
-			}
-			
-			// Add it to task so it can be drawn
-			if (DRAWBOUNDINGBOX == true)
-			{
-				this->wireFrameTask->AddObjectToDraw(&std::make_pair(bbc->GetMesh(), bbc->GetTransform()));
+
+				bbc->SetMesh(m);
+
+				this->wireFrameTask->AddObjectToDraw(&std::make_pair(m, bbc->GetTransform()));
 			}
 
 			// Add to vector so the mouse picker can check for intersections
@@ -356,7 +356,6 @@ void Renderer::SetSceneToDraw(Scene* scene)
 			{
 				this->boundingBoxesToBePicked.push_back(bbc);
 			}
-			
 		}
 	}
 #pragma endregion HandleComponents
@@ -456,7 +455,7 @@ void Renderer::Update(double dt)
 	PickedBBC pbbc;
 
 	float tempDist;
-	float closestDist = 100000.0f;
+	float closestDist = MAXNUMBER;
 
 	for (component::BoundingBoxComponent* bbc : this->boundingBoxesToBePicked)
 	{
@@ -472,14 +471,13 @@ void Renderer::Update(double dt)
 		}		
 	}
 
-	if (closestDist < 100000.0f)
+	if (closestDist < MAXNUMBER)
 	{
 		// outline..?
 		
-		Log::Print("%s is picked! %d\n", pbbc.bbc->GetParentName().c_str(), this->frameCounter);
+		//Log::Print("%s is picked! %d\n", pbbc.bbc->GetParentName().c_str(), this->frameCounter);
 	}
 	
-
 	// Update scene
 	this->currActiveScene->UpdateScene(dt);
 }

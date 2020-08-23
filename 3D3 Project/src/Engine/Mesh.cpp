@@ -3,10 +3,13 @@
 Mesh::Mesh(	ID3D12Device5* device,
 			std::vector<Vertex> vertices,
 			std::vector<unsigned int> indices,
-			DescriptorHeap* descriptorHeap_SRV)
+			DescriptorHeap* descriptorHeap_SRV,
+			const std::string path)
 {
 	this->vertices = vertices;
 	this->indices = indices;
+	
+	this->path = path;
 
 	// Set vertices
 	this->uploadResourceVertices = new Resource(device, this->GetSizeOfVertices(), RESOURCE_TYPE::UPLOAD, L"Vertex_UPLOAD_RESOURCE");
@@ -46,6 +49,7 @@ Mesh::Mesh(const Mesh* other)
 	// TODO: use the same vertices instead of copy
 	this->vertices = other->vertices;
 	this->indices = other->indices;
+	this->path = other->path;
 
 	this->slotInfo = new SlotInfo();
 	this->slotInfo->vertexDataIndex = other->slotInfo->vertexDataIndex;
@@ -198,6 +202,11 @@ const SlotInfo* Mesh::GetSlotInfo() const
 Texture* Mesh::GetTexture(TEXTURE_TYPE textureType)
 {
 	return this->textures[textureType];
+}
+
+std::string Mesh::GetPath()
+{
+	return this->path;
 }
 
 void Mesh::CreateIndexBufferView()

@@ -92,7 +92,8 @@ typedef DirectX::XMMATRIX float4x4;
 
 #define NUM_SWAP_BUFFERS 2
 #define BIT(x) (1 << x)
-#define DRAWBOUNDINGBOX false
+#define MAXNUMBER 10000000.0f
+#define DRAWBOUNDINGBOX true
 
 typedef union
 {
