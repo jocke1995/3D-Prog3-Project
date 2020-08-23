@@ -180,6 +180,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     renderer.SetSceneToDraw(sceneHandler->GetScene("scene0"));
     while (!window->ExitWindow())
     {
+        // ONLY HERE FOR TESTING
         if (window->WasSpacePressed())
         {
             // Test to change scene during runtime

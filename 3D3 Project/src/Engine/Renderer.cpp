@@ -571,7 +571,7 @@ void Renderer::Execute()
 		renderTask->SetBackBufferIndex(backBufferIndex);
 		renderTask->SetCommandInterfaceIndex(commandInterfaceIndex);
 		this->threadpool->AddTask(renderTask, FLAG_THREAD::RENDER);
-		//renderTask->Execute();
+		//renderTask->Execute();	// NON-MULTITHREADED-VERSION 
 	}
 	
 	if (DRAWBOUNDINGBOX == true)
@@ -599,10 +599,13 @@ void Renderer::Execute()
 	WaitForFrame();
 
 	HRESULT hr = dx12SwapChain->Present(0, 0);
+	
+#ifdef _DEBUG
 	if (FAILED(hr))
 	{
 		Log::PrintSeverity(Log::Severity::CRITICAL, "Swapchain Failed to present\n");
 	}
+#endif
 }
 
 ThreadPool* Renderer::GetThreadPool() const
